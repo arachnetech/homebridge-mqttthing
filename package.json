@@ -1,0 +1,30 @@
+{
+  "name": "homebridge-mqttthing",
+  "version": "1.0.0",
+  "description": "Homebridge plugin for a few simple services, based on homebridge-mqttswitch and homebridge-mqttlightbulb",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "echo \"Error: configuration and run homebridge\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arachnetech/homebridge-mqttthing.git"
+  },
+  "keywords": [
+    "homebridge-plugin",
+    "MQTT",
+    "homekit",
+    "Siri",
+    "IoT"
+  ],
+  "author": "David Miller",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/arachnetech/homebridge-mqttthing/issues"
+  },
+  "homepage": "https://github.com/arachnetech/homebridge-mqttthing#readme",
+  "dependencies": {
+    "mqtt": "^2.9.0"
+  }
+}
