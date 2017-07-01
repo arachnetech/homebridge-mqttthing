@@ -1,0 +1,29 @@
+{
+  "bridge": {
+    "name": "Homebridge",
+    "username": "AA:BB:CC:DD:EE:FF",
+    "port": 55555,
+    "pin": "123-45-678"
+  },
+  "description": "This is an example configuration file. You can use this as a template for creating your own configuration file.",
+  "platforms": [],
+  "accessories": [
+    {
+      "accessory": "mqttthing",
+      "type": "lightbulb",
+      "name": "Test lightbulb",
+      "url": "http://192.168.10.35:1883",
+      "topics": {
+        "getOn": "test/lightbulb/getOn",
+        "setOn": "test/lightbulb/setOn",
+        "getBrightness": "test/lightbulb/getBrightness",
+        "setBrightness": "test/lightbulb/setBrightness",
+        "getHue": "test/lightbulb/getHue",
+        "setHue": "test/lightbulb/setHue",
+        "getSaturation": "test/lightbulb/getSaturation",
+        "setSaturation": "test/lightbulb/setSaturation"
+      },
+      "integerValue": true
+    }
+  ]
+}

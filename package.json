@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "echo \"Error: configuration and run homebridge\" && exit 1"
+    "start": "homebridge -P . -U test"
+  },
+  "engines": {
+    "node": ">4.0.0",
+    "homebridge": ">=0.2.0"
   },
   "repository": {
     "type": "git",
