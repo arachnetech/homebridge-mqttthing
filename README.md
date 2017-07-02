@@ -36,3 +36,24 @@ Various different service types are supported by this single 'mqttthing' accesso
     "offValue": "<value representing off (optional)>"
 }
 ```
+
+## Switch
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "switch",
+    "name": "<name of switch>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "caption": "<label (optional)>",
+    "topics":
+    {
+        "getOn": 	        "<topic to get the status>",
+        "setOn": 	        "<topic to set the status>"
+    },
+    "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
+    "onValue": "<value representing on (optional)>",
+    "offValue": "<value representing off (optional)>"
+}
+```

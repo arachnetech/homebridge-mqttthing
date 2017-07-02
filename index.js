@@ -173,6 +173,9 @@ function makeThing(log, config) {
             if( config.topics.setSaturation) {
                 characteristic_Saturation(service);
             }
+        } else if( config.type == "switch" ) {
+            service = new Service.Switch( name );
+            characteristic_On(service);
         } else {
             log("ERROR: Unrecognized type: " + config.type);
         }
