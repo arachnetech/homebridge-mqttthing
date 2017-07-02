@@ -84,3 +84,28 @@ An outlet can be configured as a light or as a fan in the Home app.
     "offValue": "<value representing off (optional)>"
 }
 ```
+
+## Motion Sensor
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "motionSensor",
+    "name": "<name of sensor>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "caption": "<label (optional)>",
+    "topics":
+    {
+        "getMotionDetected":         "<topic used to provide 'motion detected' status>",
+        "getStatusActive":           "<topic used to provide 'active' status>",
+        "getStatusFault":            "<topic used to provide 'fault' status>",
+        "getStatusTampered":         "<topic used to provide 'tampered' status>",
+        "getStatusLowBattery":       "<topic used to provide 'low battery' status>"
+    },
+    "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
+    "onValue": "<value representing on (optional)>",
+    "offValue": "<value representing off (optional)>"
+}
+```

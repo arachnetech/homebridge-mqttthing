@@ -83,12 +83,12 @@ function makeThing(log, config) {
         state[property] = false;
 
         // set up characteristic
-        var svc = service.getCharacteristic(characteristic);
-        svc.on('get', function (callback) {
+        var charac = service.getCharacteristic(characteristic);
+        charac.on('get', function (callback) {
             callback(null, state[property]);
         });
-        if( setTopic ) {
-            svc.on('set', function (value, callback, context) {
+        if (setTopic) {
+            charac.on('set', function (value, callback, context) {
                 if (context !== c_mySetContext) {
                     state[property] = value;
                     mqttPublish(setTopic, onOffValue(value));
@@ -114,16 +114,19 @@ function makeThing(log, config) {
         state[property] = 0;
 
         // set up characteristic
-        service.getCharacteristic(characteristic)
-            .on('get', function (callback) {
-                callback(null, state[property]);
-            }).on('set', function (value, callback, context) {
+        var charac = service.getCharacteristic(characteristic);
+        charac.on('get', function (callback) {
+            callback(null, state[property]);
+        });
+        if( setTopic ) {
+            charac.on('set', function (value, callback, context) {
                 if (context !== c_mySetContext) {
                     state[property] = value;
                     mqttPublish(setTopic, value);
                 }
                 callback();
             });
+        }
 
         // subscribe to get topic
         if (getTopic) {
@@ -142,12 +145,12 @@ function makeThing(log, config) {
         state[property] = config.name ? config.name : '';
 
         // set up characteristic
-        var svc = service.getCharacteristic(characteristic);
-        svc.on('get', function (callback) {
+        var charac = service.getCharacteristic(characteristic);
+        charac.on('get', function (callback) {
             callback(null, state[property]);
         });
-        if( setTopic ) {
-            svc.on('set', function (value, callback, context) {
+        if (setTopic) {
+            charac.on('set', function (value, callback, context) {
                 if (context !== c_mySetContext) {
                     state[property] = value;
                     mqttPublish(setTopic, value);
@@ -166,7 +169,7 @@ function makeThing(log, config) {
                 }
             });
         }
-    }    
+    }
 
     // Characteristic.On
     function characteristic_On(service) {
@@ -198,6 +201,31 @@ function makeThing(log, config) {
         stringCharacteristic(service, 'name', Characteristic.Name, null, config.topics.getName);
     }
 
+    // Characteristic.characteristic_MotionDetected
+    function characteristic_MotionDetected(service) {
+        booleanCharacteristic(service, 'motionDetected', Characteristic.MotionDetected, null, config.topics.getMotionDetected);
+    }
+
+    // Characteristic.characteristic_StatusActive
+    function characteristic_StatusActive(service) {
+        booleanCharacteristic(service, 'statusActive', Characteristic.StatusActive, null, config.topics.getStatusActive);
+    }
+
+    // Characteristic.characteristic_StatusFault
+    function characteristic_StatusFault(service) {
+        booleanCharacteristic(service, 'statusFault', Characteristic.StatusFault, null, config.topics.getStatusFault);
+    }
+
+    // Characteristic.characteristic_StatusTampered
+    function characteristic_StatusTampered(service) {
+        booleanCharacteristic(service, 'statusTampered', Characteristic.StatusTampered, null, config.topics.getStatusTampered);
+    }
+
+    // Characteristic.characteristic_StatusLowBattery
+    function characteristic_StatusLowBattery(service) {
+        booleanCharacteristic(service, 'statusLowBattery', Characteristic.StatusLowBattery, null, config.topics.getStatusLowBattery);
+    }
+
     // Create service
     function createService() {
 
@@ -226,12 +254,27 @@ function makeThing(log, config) {
             if (config.topics.getInUse) {
                 characteristic_OutletInUse(service);
             }
+        } else if (config.type == "motionSensor") {
+            service = new Service.MotionSensor(name);
+            characteristic_MotionDetected(service);
+            if( config.topics.getStatusActive ) {
+                characteristic_StatusActive(service);
+            }
+            if( config.topics.getStatusFault ) {
+                characteristic_StatusFault(service);
+            }
+            if( config.topics.getStatusTampered ) {
+                characteristic_StatusTampered(service);
+            }
+            if( config.topics.getStatusLowBattery ) {
+                characteristic_StatusLowBattery(service);
+            }
         } else {
             log("ERROR: Unrecognized type: " + config.type);
         }
 
-        if( service ) {
-            if( config.topics.getName ) {
+        if (service) {
+            if (config.topics.getName) {
                 characteristic_Name(service);
             }
         }

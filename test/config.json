@@ -48,6 +48,20 @@
         "getInUse": "test/outlet/getInUse"
       },
       "integerValue": true
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "motionSensor",
+      "name": "Test motion sensor",
+      "url": "http://192.168.10.35:1883",
+      "topics": {
+        "getMotionDetected": "test/motion/detected",
+        "getStatusActive": "test/motion/active",
+        "getStatusFault": "test/motion/fault",
+        "getStatusTampered": "test/motion/tampered",
+        "getStatusLowBattery": "test/motion/lowBattery"
+      },
+      "integerValue": true
     }
   ]
 }
