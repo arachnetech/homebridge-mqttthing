@@ -137,6 +137,37 @@ function makeThing(log, config) {
         }
     }
 
+    function stringCharacteristic(service, property, characteristic, setTopic, getTopic) {
+        // default state
+        state[property] = config.name ? config.name : '';
+
+        // set up characteristic
+        var svc = service.getCharacteristic(characteristic);
+        svc.on('get', function (callback) {
+            callback(null, state[property]);
+        });
+        if( setTopic ) {
+            svc.on('set', function (value, callback, context) {
+                if (context !== c_mySetContext) {
+                    state[property] = value;
+                    mqttPublish(setTopic, value);
+                }
+                callback();
+            });
+        }
+
+        // subscribe to get topic
+        if (getTopic) {
+            mqttSubscribe(getTopic, function (topic, message) {
+                var newState = message.toString();
+                if (state[property] != newState) {
+                    state[property] = newState;
+                    service.getCharacteristic(characteristic).setValue(newState, undefined, c_mySetContext);
+                }
+            });
+        }
+    }    
+
     // Characteristic.On
     function characteristic_On(service) {
         booleanCharacteristic(service, 'on', Characteristic.On, config.topics.setOn, config.topics.getOn);
@@ -160,6 +191,11 @@ function makeThing(log, config) {
     // Characteristic.OutletInUse
     function characteristic_OutletInUse(service) {
         booleanCharacteristic(service, 'inUse', Characteristic.OutletInUse, null, config.topics.getInUse);
+    }
+
+    // Characteristic.Name
+    function characteristic_Name(service) {
+        stringCharacteristic(service, 'name', Characteristic.Name, null, config.topics.getName);
     }
 
     // Create service
@@ -192,6 +228,12 @@ function makeThing(log, config) {
             }
         } else {
             log("ERROR: Unrecognized type: " + config.type);
+        }
+
+        if( service ) {
+            if( config.topics.getName ) {
+                characteristic_Name(service);
+            }
         }
 
         return service;

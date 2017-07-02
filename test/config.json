@@ -21,7 +21,8 @@
         "getHue": "test/lightbulb/getHue",
         "setHue": "test/lightbulb/setHue",
         "getSaturation": "test/lightbulb/getSaturation",
-        "setSaturation": "test/lightbulb/setSaturation"
+        "setSaturation": "test/lightbulb/setSaturation",
+        "getName": "test/lightbulb/getName"
       },
       "integerValue": true
     },
