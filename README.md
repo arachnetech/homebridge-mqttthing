@@ -3,7 +3,13 @@ A Homebridge plugin for a simple simple services, based on homebrige-mqttswitch 
 
 # Installation
 Follow the instruction in [homebridge](https://www.npmjs.com/package/homebridge) for the homebridge server installation.
-This plugin will be published through NPM...
+This plugin is published through [NPM](https://www.npmjs.com/package/homebridge-mqttlightbulb) and should be installed "globally" by typing:
+
+    npm install -g homebridge-mqttthing
+
+#Release notes
+Version 1.0.1
++ Initial public version with Light bulb, Switch, Outlet, Motion Sensor, Occupancy Sensor
 
 # Configuration
 Configure the plugin in your homebridge config.json file.
@@ -75,8 +81,8 @@ An outlet can be configured as a light or as a fan in the Home app.
     "caption": "<label (optional)>",
     "topics":
     {
-        "getOn": 	        "<topic to get the status>",
-        "setOn": 	        "<topic to set the status>",
+        "getOn":            "<topic to get the status>",
+        "setOn":            "<topic to set the status>",
         "getInUse":         "<topic used to provide 'outlet is in use' feedback>"
     },
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
