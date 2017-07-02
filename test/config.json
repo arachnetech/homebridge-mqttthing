@@ -76,6 +76,16 @@
         "getStatusLowBattery": "test/occupancy/lowBattery"
       },
       "integerValue": true
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "lightSensor",
+      "name": "Test light sensor",
+      "url": "http://192.168.10.35:1883",
+      "topics": {
+        "getCurrentAmbientLightLevel": "test/light/level"
+      },
+      "integerValue": true
     }
   ]
 }

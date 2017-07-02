@@ -38,6 +38,7 @@ function makeThing(log, config) {
         });
 
         mqttClient.on('message', function (topic, message) {
+            log( "Received MQTT: " + topic + " = " + message );
             var handler = mqttDispatch[topic];
             if (handler) {
                 handler(topic, message);
@@ -78,13 +79,14 @@ function makeThing(log, config) {
         return pubVal;
     }
 
-    function booleanCharacteristic(service, property, characteristic, setTopic, getTopic) {
+    function booleanCharacteristic(service, property, characteristic, setTopic, getTopic, initialValue) {
         // default state
-        state[property] = false;
+        state[property] = ( initialValue ? true : false );
 
         // set up characteristic
         var charac = service.getCharacteristic(characteristic);
         charac.on('get', function (callback) {
+            log( 'read ' + property + ' as ' + state[ property ] );
             callback(null, state[property]);
         });
         if (setTopic) {
@@ -95,6 +97,9 @@ function makeThing(log, config) {
                 }
                 callback();
             });
+        }
+        if( initialValue ) {
+            charac.setValue( initialValue, undefined, c_mySetContext );
         }
 
         // subscribe to get topic
@@ -132,6 +137,40 @@ function makeThing(log, config) {
         if (getTopic) {
             mqttSubscribe(getTopic, function (topic, message) {
                 var newState = parseInt(message);
+                if (state[property] != newState) {
+                    state[property] = newState;
+                    service.getCharacteristic(characteristic).setValue(newState, undefined, c_mySetContext);
+                }
+            });
+        }
+    }
+
+    function floatCharacteristic(service, property, characteristic, setTopic, getTopic, initialValue) {
+        // default state
+        state[property] = initialValue;
+
+        // set up characteristic
+        var charac = service.getCharacteristic(characteristic);
+        charac.on('get', function (callback) {
+            callback(null, state[property]);
+        });
+        if( setTopic ) {
+            charac.on('set', function (value, callback, context) {
+                if (context !== c_mySetContext) {
+                    state[property] = value;
+                    mqttPublish(setTopic, value);
+                }
+                callback();
+            });
+        }
+        if( initialValue ) {
+            charac.setValue( initialValue, undefined, c_mySetContext );
+        }
+
+        // subscribe to get topic
+        if (getTopic) {
+            mqttSubscribe(getTopic, function (topic, message) {
+                var newState = parseFloat(message);
                 if (state[property] != newState) {
                     state[property] = newState;
                     service.getCharacteristic(characteristic).setValue(newState, undefined, c_mySetContext);
@@ -201,41 +240,47 @@ function makeThing(log, config) {
         stringCharacteristic(service, 'name', Characteristic.Name, null, config.topics.getName);
     }
 
-    // Characteristic.characteristic_MotionDetected
+    // Characteristic.MotionDetected
     function characteristic_MotionDetected(service) {
         booleanCharacteristic(service, 'motionDetected', Characteristic.MotionDetected, null, config.topics.getMotionDetected);
     }
 
-    // Characteristic.characteristic_StatusActive
+    // Characteristic.StatusActive
     function characteristic_StatusActive(service) {
-        booleanCharacteristic(service, 'statusActive', Characteristic.StatusActive, null, config.topics.getStatusActive);
+        booleanCharacteristic(service, 'statusActive', Characteristic.StatusActive, null, config.topics.getStatusActive, true);
     }
 
-    // Characteristic.characteristic_StatusFault
+    // Characteristic.StatusFault
     function characteristic_StatusFault(service) {
         booleanCharacteristic(service, 'statusFault', Characteristic.StatusFault, null, config.topics.getStatusFault);
     }
 
-    // Characteristic.characteristic_StatusTampered
+    // Characteristic.StatusTampered
     function characteristic_StatusTampered(service) {
         booleanCharacteristic(service, 'statusTampered', Characteristic.StatusTampered, null, config.topics.getStatusTampered);
     }
 
-    // Characteristic.characteristic_StatusLowBattery
+    // Characteristic.StatusLowBattery
     function characteristic_StatusLowBattery(service) {
         booleanCharacteristic(service, 'statusLowBattery', Characteristic.StatusLowBattery, null, config.topics.getStatusLowBattery);
     }
 
-    // Characteristic.characteristic_OccupancyDetected
+    // Characteristic.OccupancyDetected
     function characteristic_OccupancyDetected(service) {
         booleanCharacteristic(service, 'occupancyDetected', Characteristic.OccupancyDetected, null, config.topics.getOccupancyDetected);
     }
-   
+
+    // Characteristic.CurrentAmbientLightLevel
+    function characteristic_CurrentAmbientLightLevel(service) {
+        floatCharacteristic(service, 'currentAmbientLightLevel', Characteristic.CurrentAmbientLightLevel, 
+                            null, config.topics.getCurrentAmbientLightLevel, 0.0001);
+    }
 
     // Create service
     function createService() {
 
         var name = config.name;
+        var addSensorOptionalProps = false;
 
         var service;
 
@@ -263,21 +308,20 @@ function makeThing(log, config) {
         } else if (config.type == "motionSensor") {
             service = new Service.MotionSensor(name);
             characteristic_MotionDetected(service);
-            if( config.topics.getStatusActive ) {
-                characteristic_StatusActive(service);
-            }
-            if( config.topics.getStatusFault ) {
-                characteristic_StatusFault(service);
-            }
-            if( config.topics.getStatusTampered ) {
-                characteristic_StatusTampered(service);
-            }
-            if( config.topics.getStatusLowBattery ) {
-                characteristic_StatusLowBattery(service);
-            }
+            addSensorOptionalProps = true;
         } else if (config.type == "occupancySensor") {
             service = new Service.OccupancySensor(name);
             characteristic_OccupancyDetected(service);
+            addSensorOptionalProps = true;
+        } else if (config.type == "lightSensor") {
+            service = new Service.LightSensor(name);
+            characteristic_CurrentAmbientLightLevel(service);
+            addSensorOptionalProps = true;
+        } else {
+            log("ERROR: Unrecognized type: " + config.type);
+        }
+
+        if( addSensorOptionalProps ) {
             if( config.topics.getStatusActive ) {
                 characteristic_StatusActive(service);
             }
@@ -290,8 +334,6 @@ function makeThing(log, config) {
             if( config.topics.getStatusLowBattery ) {
                 characteristic_StatusLowBattery(service);
             }
-        } else {
-            log("ERROR: Unrecognized type: " + config.type);
         }
 
         if (service) {

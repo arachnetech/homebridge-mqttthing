@@ -18,6 +18,32 @@ Note that setXxx topics are published by Homebridge and should be subscribed-to 
 
 Various different service types are supported by this single 'mqttthing' accessory...
 
+## Common settings
+
+The following settings apply to all device types:
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "<type of thing - supported types are described in the following sections>",
+    "name": "<name of thing>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "caption": "<label (optional)>",
+    "topics":
+    {
+        "getName": 	        "<topic to get the name>"
+    },
+    "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
+    "onValue": "<value representing on (optional)>",
+    "offValue": "<value representing off (optional)>"
+}
+```
+
+Boolean types like on/off use  true/false unless `integerValue: true` is configured, in which case they default to 1/0. Alternatively, specific values can be configured using `onValue` and `offValue`. Integer and string types are not affected by these settings.
+
+
 ## Light bulb
 ```javascript
 {
@@ -134,6 +160,33 @@ An outlet can be configured as a light or as a fan in the Home app.
         "getStatusFault":            "<topic used to provide 'fault' status (optional)>",
         "getStatusTampered":         "<topic used to provide 'tampered' status (optional)>",
         "getStatusLowBattery":       "<topic used to provide 'low battery' status (optional)>"
+    },
+    "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
+    "onValue": "<value representing on (optional)>",
+    "offValue": "<value representing off (optional)>"
+}
+```
+
+## Light Sensor
+
+Current ambient light level must be in the range 0.0001 Lux to 100000 Lux to a maximum of 4dp.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "lightSensor",
+    "name": "<name of sensor>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "caption": "<label (optional)>",
+    "topics":
+    {
+        "getCurrentAmbientLightLevel":  "<topic used to provide 'current ambient light level'>",
+        "getStatusActive":              "<topic used to provide 'active' status (optional)>",
+        "getStatusFault":               "<topic used to provide 'fault' status (optional)>",
+        "getStatusTampered":            "<topic used to provide 'tampered' status (optional)>",
+        "getStatusLowBattery":          "<topic used to provide 'low battery' status (optional)>"
     },
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
