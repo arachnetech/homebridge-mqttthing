@@ -35,6 +35,18 @@
         "setOn": "test/switch/setOn"
       },
       "integerValue": true
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "outlet",
+      "name": "Test outlet",
+      "url": "http://192.168.10.35:1883",
+      "topics": {
+        "getOn": "test/outlet/getOn",
+        "setOn": "test/outlet/setOn",
+        "getInUse": "test/outlet/getInUse"
+      },
+      "integerValue": true
     }
   ]
 }

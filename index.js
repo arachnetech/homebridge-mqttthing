@@ -83,16 +83,19 @@ function makeThing(log, config) {
         state[property] = false;
 
         // set up characteristic
-        service.getCharacteristic(characteristic)
-            .on('get', function (callback) {
-                callback(null, state[property]);
-            }).on('set', function (value, callback, context) {
+        var svc = service.getCharacteristic(characteristic);
+        svc.on('get', function (callback) {
+            callback(null, state[property]);
+        });
+        if( setTopic ) {
+            svc.on('set', function (value, callback, context) {
                 if (context !== c_mySetContext) {
                     state[property] = value;
                     mqttPublish(setTopic, onOffValue(value));
                 }
                 callback();
             });
+        }
 
         // subscribe to get topic
         if (getTopic) {
@@ -154,6 +157,11 @@ function makeThing(log, config) {
         integerCharacteristic(service, 'saturation', Characteristic.Saturation, config.topics.setSaturation, config.topics.getSaturation);
     }
 
+    // Characteristic.OutletInUse
+    function characteristic_OutletInUse(service) {
+        booleanCharacteristic(service, 'inUse', Characteristic.OutletInUse, null, config.topics.getInUse);
+    }
+
     // Create service
     function createService() {
 
@@ -167,15 +175,21 @@ function makeThing(log, config) {
             if (config.topics.setBrightness) {
                 characteristic_Brightness(service);
             }
-            if( config.topics.setHue) {
+            if (config.topics.setHue) {
                 characteristic_Hue(service);
             }
-            if( config.topics.setSaturation) {
+            if (config.topics.setSaturation) {
                 characteristic_Saturation(service);
             }
-        } else if( config.type == "switch" ) {
-            service = new Service.Switch( name );
+        } else if (config.type == "switch") {
+            service = new Service.Switch(name);
             characteristic_On(service);
+        } else if (config.type == "outlet") {
+            service = new Service.Outlet(name);
+            characteristic_On(service);
+            if (config.topics.getInUse) {
+                characteristic_OutletInUse(service);
+            }
         } else {
             log("ERROR: Unrecognized type: " + config.type);
         }
