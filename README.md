@@ -11,6 +11,10 @@ This plugin is published through [NPM](https://www.npmjs.com/package/homebridge-
 Version 1.0.1
 + Initial public version with Light bulb, Switch, Outlet, Motion Sensor, Occupancy Sensor
 
+Version 1.0.2
++ Added light sensor
++ Default sensors to 'active'
+
 # Configuration
 Configure the plugin in your homebridge config.json file.
 
