@@ -1,5 +1,5 @@
 # homebridge-mqttthing
-A Homebridge plugin for a simple simple services, based on homebrige-mqtt-switch and homebridge-mqttlightbulb
+A Homebridge plugin for a simple simple services, based on homebrige-mqttswitch and homebridge-mqttlightbulb
 
 # Installation
 Follow the instruction in [homebridge](https://www.npmjs.com/package/homebridge) for the homebridge server installation.
