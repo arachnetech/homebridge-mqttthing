@@ -7,7 +7,7 @@ This plugin is published through [NPM](https://www.npmjs.com/package/homebridge-
 
     npm install -g homebridge-mqttthing
 
-#Release notes
+# Release notes
 Version 1.0.1
 + Initial public version with Light bulb, Switch, Outlet, Motion Sensor, Occupancy Sensor
 
