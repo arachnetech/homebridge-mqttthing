@@ -226,6 +226,12 @@ function makeThing(log, config) {
         booleanCharacteristic(service, 'statusLowBattery', Characteristic.StatusLowBattery, null, config.topics.getStatusLowBattery);
     }
 
+    // Characteristic.characteristic_OccupancyDetected
+    function characteristic_OccupancyDetected(service) {
+        booleanCharacteristic(service, 'occupancyDetected', Characteristic.OccupancyDetected, null, config.topics.getOccupancyDetected);
+    }
+   
+
     // Create service
     function createService() {
 
@@ -257,6 +263,21 @@ function makeThing(log, config) {
         } else if (config.type == "motionSensor") {
             service = new Service.MotionSensor(name);
             characteristic_MotionDetected(service);
+            if( config.topics.getStatusActive ) {
+                characteristic_StatusActive(service);
+            }
+            if( config.topics.getStatusFault ) {
+                characteristic_StatusFault(service);
+            }
+            if( config.topics.getStatusTampered ) {
+                characteristic_StatusTampered(service);
+            }
+            if( config.topics.getStatusLowBattery ) {
+                characteristic_StatusLowBattery(service);
+            }
+        } else if (config.type == "occupancySensor") {
+            service = new Service.OccupancySensor(name);
+            characteristic_OccupancyDetected(service);
             if( config.topics.getStatusActive ) {
                 characteristic_StatusActive(service);
             }

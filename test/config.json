@@ -62,6 +62,20 @@
         "getStatusLowBattery": "test/motion/lowBattery"
       },
       "integerValue": true
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "occupancySensor",
+      "name": "Test occupancy sensor",
+      "url": "http://192.168.10.35:1883",
+      "topics": {
+        "getOccupancyDetected": "test/occupancy/detected",
+        "getStatusActive": "test/occupancy/active",
+        "getStatusFault": "test/occupancy/fault",
+        "getStatusTampered": "test/occupancy/tampered",
+        "getStatusLowBattery": "test/occupancy/lowBattery"
+      },
+      "integerValue": true
     }
   ]
 }
