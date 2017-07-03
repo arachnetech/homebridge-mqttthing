@@ -275,7 +275,9 @@ function makeThing(log, config) {
 
     // Characteristic.OccupancyDetected
     function characteristic_OccupancyDetected(service) {
-        booleanCharacteristic(service, 'occupancyDetected', Characteristic.OccupancyDetected, null, config.topics.getOccupancyDetected);
+        booleanCharacteristic(service, 'occupancyDetected', Characteristic.OccupancyDetected, null, config.topics.getOccupancyDetected, false, function( val ) {
+            return val ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED;
+        });
     }
 
     // Characteristic.CurrentAmbientLightLevel

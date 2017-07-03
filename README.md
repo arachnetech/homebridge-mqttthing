@@ -18,6 +18,9 @@ Version 1.0.2
 Version 1.0.3
 + Added Contact Sensor
 
+Version 1.0.4
++ Fixed Occupancy Sensor values
+
 # Configuration
 Configure the plugin in your homebridge config.json file.
 
@@ -150,6 +153,9 @@ An outlet can be configured as a light or as a fan in the Home app.
 ```
 
 ## Occupancy Sensor
+
+Occupancy sensor state is exposed as a Boolean. True (or 1 with integer values) maps to `OCCUPANCY_DETECTED` (sensor triggered)
+and False (or 0) maps to `OCCUPANCY_NOT_DETECTED` (not triggered). To use different MQTT values, configure `onValue` and `offValue`.
 
 ```javascript
 {
