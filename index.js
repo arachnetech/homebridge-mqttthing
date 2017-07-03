@@ -38,7 +38,7 @@ function makeThing(log, config) {
         });
 
         mqttClient.on('message', function (topic, message) {
-            log( "Received MQTT: " + topic + " = " + message );
+            //log("Received MQTT: " + topic + " = " + message);
             var handler = mqttDispatch[topic];
             if (handler) {
                 handler(topic, message);
@@ -79,14 +79,22 @@ function makeThing(log, config) {
         return pubVal;
     }
 
-    function booleanCharacteristic(service, property, characteristic, setTopic, getTopic, initialValue) {
+    function mapValueForHomebridge(val, mapValueFunc) {
+        if (mapValueFunc) {
+            return mapValueFunc(val);
+        } else {
+            return val;
+        }
+    }
+
+    function booleanCharacteristic(service, property, characteristic, setTopic, getTopic, initialValue, mapValueFunc) {
         // default state
-        state[property] = ( initialValue ? true : false );
+        state[property] = (initialValue ? true : false);
 
         // set up characteristic
         var charac = service.getCharacteristic(characteristic);
         charac.on('get', function (callback) {
-            log( 'read ' + property + ' as ' + state[ property ] );
+            //log('read ' + property + ' as ' + state[property]);
             callback(null, state[property]);
         });
         if (setTopic) {
@@ -98,8 +106,8 @@ function makeThing(log, config) {
                 callback();
             });
         }
-        if( initialValue ) {
-            charac.setValue( initialValue, undefined, c_mySetContext );
+        if (initialValue) {
+            charac.setValue(mapValueForHomebridge(initialValue, mapValueFunc), undefined, c_mySetContext);
         }
 
         // subscribe to get topic
@@ -108,7 +116,7 @@ function makeThing(log, config) {
                 var newState = (message == onOffValue(true));
                 if (state[property] != newState) {
                     state[property] = newState;
-                    service.getCharacteristic(characteristic).setValue(newState, undefined, c_mySetContext);
+                    service.getCharacteristic(characteristic).setValue(mapValueForHomebridge(newState, mapValueFunc), undefined, c_mySetContext);
                 }
             });
         }
@@ -123,7 +131,7 @@ function makeThing(log, config) {
         charac.on('get', function (callback) {
             callback(null, state[property]);
         });
-        if( setTopic ) {
+        if (setTopic) {
             charac.on('set', function (value, callback, context) {
                 if (context !== c_mySetContext) {
                     state[property] = value;
@@ -154,7 +162,7 @@ function makeThing(log, config) {
         charac.on('get', function (callback) {
             callback(null, state[property]);
         });
-        if( setTopic ) {
+        if (setTopic) {
             charac.on('set', function (value, callback, context) {
                 if (context !== c_mySetContext) {
                     state[property] = value;
@@ -163,8 +171,8 @@ function makeThing(log, config) {
                 callback();
             });
         }
-        if( initialValue ) {
-            charac.setValue( initialValue, undefined, c_mySetContext );
+        if (initialValue) {
+            charac.setValue(initialValue, undefined, c_mySetContext);
         }
 
         // subscribe to get topic
@@ -272,8 +280,16 @@ function makeThing(log, config) {
 
     // Characteristic.CurrentAmbientLightLevel
     function characteristic_CurrentAmbientLightLevel(service) {
-        floatCharacteristic(service, 'currentAmbientLightLevel', Characteristic.CurrentAmbientLightLevel, 
-                            null, config.topics.getCurrentAmbientLightLevel, 0.0001);
+        floatCharacteristic(service, 'currentAmbientLightLevel', Characteristic.CurrentAmbientLightLevel,
+            null, config.topics.getCurrentAmbientLightLevel, 0.0001);
+    }
+
+    // Characteristic.ContactSensorState
+    function characteristic_ContactSensorState(service) {
+        booleanCharacteristic(service, 'contactSensor', Characteristic.ContactSensorState,
+            null, config.topics.getContactSensorState, false, function (val) {
+                return val ? Characteristic.ContactSensorState.CONTACT_NOT_DETECTED : Characteristic.ContactSensorState.CONTACT_DETECTED;
+            });
     }
 
     // Create service
@@ -317,21 +333,25 @@ function makeThing(log, config) {
             service = new Service.LightSensor(name);
             characteristic_CurrentAmbientLightLevel(service);
             addSensorOptionalProps = true;
+        } else if (config.type == "contactSensor") {
+            service = new Service.ContactSensor(name);
+            characteristic_ContactSensorState(service);
+            addSensorOptionalProps = true;
         } else {
             log("ERROR: Unrecognized type: " + config.type);
         }
 
-        if( addSensorOptionalProps ) {
-            if( config.topics.getStatusActive ) {
+        if (addSensorOptionalProps) {
+            if (config.topics.getStatusActive) {
                 characteristic_StatusActive(service);
             }
-            if( config.topics.getStatusFault ) {
+            if (config.topics.getStatusFault) {
                 characteristic_StatusFault(service);
             }
-            if( config.topics.getStatusTampered ) {
+            if (config.topics.getStatusTampered) {
                 characteristic_StatusTampered(service);
             }
-            if( config.topics.getStatusLowBattery ) {
+            if (config.topics.getStatusLowBattery) {
                 characteristic_StatusLowBattery(service);
             }
         }

@@ -2,8 +2,8 @@
 A Homebridge plugin for a simple simple services, based on homebrige-mqttswitch and homebridge-mqttlightbulb
 
 # Installation
-Follow the instruction in [homebridge](https://www.npmjs.com/package/homebridge) for the homebridge server installation.
-This plugin is published through [NPM](https://www.npmjs.com/package/homebridge-mqttlightbulb) and should be installed "globally" by typing:
+Follow the instructions in [homebridge](https://www.npmjs.com/package/homebridge) for the homebridge server installation.
+This plugin is published through [NPM](https://www.npmjs.com/package/homebridge-mqttthing) and should be installed "globally" by typing:
 
     npm install -g homebridge-mqttthing
 
@@ -12,8 +12,11 @@ Version 1.0.1
 + Initial public version with Light bulb, Switch, Outlet, Motion Sensor, Occupancy Sensor
 
 Version 1.0.2
-+ Added light sensor
-+ Default sensors to 'active'
++ Added Light Sensor
++ Default sensors to 'active' state
+
+Version 1.0.3
++ Added Contact Sensor
 
 # Configuration
 Configure the plugin in your homebridge config.json file.
@@ -191,6 +194,34 @@ Current ambient light level must be in the range 0.0001 Lux to 100000 Lux to a m
         "getStatusFault":               "<topic used to provide 'fault' status (optional)>",
         "getStatusTampered":            "<topic used to provide 'tampered' status (optional)>",
         "getStatusLowBattery":          "<topic used to provide 'low battery' status (optional)>"
+    },
+    "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
+    "onValue": "<value representing on (optional)>",
+    "offValue": "<value representing off (optional)>"
+}
+```
+
+## Contact Sensor
+
+Contact sensor state is exposed as a Boolean. True (or 1 with integer values) maps to `CONTACT_NOT_DETECTED` (sensor triggered)
+and False (or 0) maps to `CONTACT_DETECTED` (not triggered). To use different MQTT values, configure `onValue` and `offValue`.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "contactSensor",
+    "name": "<name of sensor>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "caption": "<label (optional)>",
+    "topics":
+    {
+        "getContactSensorState": "<topic used to provide contact sensor state>"
+        "getStatusActive":       "<topic used to provide 'active' status (optional)>",
+        "getStatusFault":        "<topic used to provide 'fault' status (optional)>",
+        "getStatusTampered":     "<topic used to provide 'tampered' status (optional)>",
+        "getStatusLowBattery":   "<topic used to provide 'low battery' status (optional)>"
     },
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",

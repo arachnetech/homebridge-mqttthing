@@ -86,6 +86,16 @@
         "getCurrentAmbientLightLevel": "test/light/level"
       },
       "integerValue": true
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "contactSensor",
+      "name": "Test contact sensor",
+      "url": "http://192.168.10.35:1883",
+      "topics": {
+        "getContactSensorState": "test/contact/state"
+      },
+      "integerValue": 1
     }
   ]
 }
