@@ -257,6 +257,6 @@ Doorbell ring switch state can be be `SINGLE_PRESS`, `DOUBLE_PRESS` or `LONG_PRE
         "getVolume":        "<topic used to get volume (optional)>",
         "setVolume":        "<topic used to set volume (optional)>"
     },
-    "switchValues": "<array of 3 switch values corresponding to single-press, double-press and long-press respectively(optional)>"
+    "switchValues": "<array of 3 switch values corresponding to single-press, double-press and long-press respectively (optional)>"
 }
 ```
