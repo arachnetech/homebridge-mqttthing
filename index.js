@@ -187,9 +187,9 @@ function makeThing(log, config) {
         }
     }
 
-    function stringCharacteristic(service, property, characteristic, setTopic, getTopic) {
+    function stringCharacteristic(service, property, characteristic, setTopic, getTopic, initialValue) {
         // default state
-        state[property] = config.name ? config.name : '';
+        state[property] = initialValue ? initialValue : '';
 
         // set up characteristic
         var charac = service.getCharacteristic(characteristic);
@@ -211,6 +211,51 @@ function makeThing(log, config) {
             mqttSubscribe(getTopic, function (topic, message) {
                 var newState = message.toString();
                 if (state[property] != newState) {
+                    state[property] = newState;
+                    service.getCharacteristic(characteristic).setValue(newState, undefined, c_mySetContext);
+                }
+            });
+        }
+    }
+
+    function multiCharacteristic(service, property, characteristic, setTopic, getTopic, values, initialValue, eventOnly) {
+        // Values is an array of MQTT values indexed by <value of Homekit enumeration>.
+        // Build map of MQTT values to homekit values
+        let mqttToHomekit = {};
+        for( let i = 0; i < values.length; i++ ) {
+            mqttToHomekit[ values[ i ] ] = i;
+        }
+
+        state[property] = initialValue;
+
+        var charac = service.getCharacteristic(characteristic);
+        
+        // Homekit get
+        if (! eventOnly) {
+            charac.on('get', function(callback) {
+                callback(null, state[property]);
+            });
+        }
+
+        // Homekit set
+        if (setTopic) {
+            charac.on('set', function (value, callback, context) {
+                if (context !== c_mySetContext) {
+                    state[property] = value;
+                    let mqttVal = values[ value ];
+                    if (mqttVal !== undefined) {
+                        mqttPublish(setTopic, mqttVal);
+                    }
+                }
+            });
+        }
+
+        // MQTT set (Homekit get)
+        if (getTopic) {
+            mqttSubscribe(getTopic, function (topic, message) {
+                let data = message.toString();
+                let newState = mqttToHomekit[ data ];
+                if( newState !== undefined && state[property] != newState) {
                     state[property] = newState;
                     service.getCharacteristic(characteristic).setValue(newState, undefined, c_mySetContext);
                 }
@@ -245,7 +290,7 @@ function makeThing(log, config) {
 
     // Characteristic.Name
     function characteristic_Name(service) {
-        stringCharacteristic(service, 'name', Characteristic.Name, null, config.topics.getName);
+        stringCharacteristic(service, 'name', Characteristic.Name, null, config.topics.getName, config.name);
     }
 
     // Characteristic.MotionDetected
@@ -294,6 +339,20 @@ function makeThing(log, config) {
             });
     }
 
+    // Characteristic.ProgrammableSwitchEvent
+    function characteristic_ProgrammableSwitchEvent(service) {
+        let values = config.switchValues;
+        if (!values) {
+            values = [ '1', '2', 'L' ]; // 1 means SINGLE_PRESS, 2 means DOUBLE_PRESS, L means LONG_PRESS
+        }
+        multiCharacteristic(service, 'progswitch', Characteristic.ProgrammableSwitchEvent, null, config.topics.getSwitch, values, null, true );
+    }
+
+    // Characteristic.Volume
+    function characteristic_Volume(service) {
+        floatCharacteristic(service, 'volume', Characteristic.Volume, config.topics.setVolume, config.topics.getVolume, 0);
+    }
+
     // Create service
     function createService() {
 
@@ -339,6 +398,15 @@ function makeThing(log, config) {
             service = new Service.ContactSensor(name);
             characteristic_ContactSensorState(service);
             addSensorOptionalProps = true;
+        } else if (config.type == "doorbell") {
+            service = new Service.Doorbell(name);
+            characteristic_ProgrammableSwitchEvent(service);
+            if( config.topics.setBrightness || config.topics.getBrightness ) {
+                characteristic_Brightness(service);
+            }
+            if( config.topics.setVolume || config.topics.getVolume ) {
+                characteristic_Volume(service);
+            }
         } else {
             log("ERROR: Unrecognized type: " + config.type);
         }

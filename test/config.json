@@ -94,6 +94,18 @@
         "getContactSensorState": "test/contact/state"
       },
       "integerValue": 1
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "doorbell",
+      "name": "Test doorbell",
+      "url": "http://192.168.10.35:1883",
+      "topics": {
+        "getSwitch": "test/doorbell/ring",
+        "setVolume": "test/doorbell/volume",
+        "setBrightness": "test/doorbell/brightness"
+      },
+      "switchValues": [ "SINGLE", "DOUBLE", "LONG" ]
     }
   ]
 }
