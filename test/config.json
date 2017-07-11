@@ -106,6 +106,17 @@
         "setBrightness": "test/doorbell/brightness"
       },
       "switchValues": [ "SINGLE", "DOUBLE", "LONG" ]
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "securitySystem",
+      "name": "Test Security System",
+      "url": "http://192.168.10.35:1883",
+      "topics": {
+        "getCurrentState": "test/security/current",
+        "setTargetState":  "test/security/target",
+        "getTargetState":  "test/security/targetack"
+      }
     }
   ]
 }

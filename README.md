@@ -22,6 +22,9 @@ Version 1.0.4
 + Fixed Occupancy Sensor values
 + Added Doorbell
 
+Version 1.0.5
++ Added SecuritySystem
+
 # Configuration
 Configure the plugin in your homebridge config.json file.
 

@@ -222,17 +222,17 @@ function makeThing(log, config) {
         // Values is an array of MQTT values indexed by <value of Homekit enumeration>.
         // Build map of MQTT values to homekit values
         let mqttToHomekit = {};
-        for( let i = 0; i < values.length; i++ ) {
-            mqttToHomekit[ values[ i ] ] = i;
+        for (let i = 0; i < values.length; i++) {
+            mqttToHomekit[values[i]] = i;
         }
 
         state[property] = initialValue;
 
         var charac = service.getCharacteristic(characteristic);
-        
+
         // Homekit get
-        if (! eventOnly) {
-            charac.on('get', function(callback) {
+        if (!eventOnly) {
+            charac.on('get', function (callback) {
                 callback(null, state[property]);
             });
         }
@@ -242,20 +242,26 @@ function makeThing(log, config) {
             charac.on('set', function (value, callback, context) {
                 if (context !== c_mySetContext) {
                     state[property] = value;
-                    let mqttVal = values[ value ];
+                    let mqttVal = values[value];
                     if (mqttVal !== undefined) {
                         mqttPublish(setTopic, mqttVal);
                     }
+                    callback();
                 }
             });
+        }
+
+        if (initialValue) {
+            charac.setValue(initialValue, undefined, c_mySetContext);
         }
 
         // MQTT set (Homekit get)
         if (getTopic) {
             mqttSubscribe(getTopic, function (topic, message) {
                 let data = message.toString();
-                let newState = mqttToHomekit[ data ];
-                if( newState !== undefined && state[property] != newState) {
+                log( JSON.stringify( mqttToHomekit ) );
+                let newState = mqttToHomekit[data];
+                if (newState !== undefined && state[property] != newState) {
                     state[property] = newState;
                     service.getCharacteristic(characteristic).setValue(newState, undefined, c_mySetContext);
                 }
@@ -320,7 +326,7 @@ function makeThing(log, config) {
 
     // Characteristic.OccupancyDetected
     function characteristic_OccupancyDetected(service) {
-        booleanCharacteristic(service, 'occupancyDetected', Characteristic.OccupancyDetected, null, config.topics.getOccupancyDetected, false, function( val ) {
+        booleanCharacteristic(service, 'occupancyDetected', Characteristic.OccupancyDetected, null, config.topics.getOccupancyDetected, false, function (val) {
             return val ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED;
         });
     }
@@ -343,14 +349,32 @@ function makeThing(log, config) {
     function characteristic_ProgrammableSwitchEvent(service) {
         let values = config.switchValues;
         if (!values) {
-            values = [ '1', '2', 'L' ]; // 1 means SINGLE_PRESS, 2 means DOUBLE_PRESS, L means LONG_PRESS
+            values = ['1', '2', 'L']; // 1 means SINGLE_PRESS, 2 means DOUBLE_PRESS, L means LONG_PRESS
         }
-        multiCharacteristic(service, 'progswitch', Characteristic.ProgrammableSwitchEvent, null, config.topics.getSwitch, values, null, true );
+        multiCharacteristic(service, 'progswitch', Characteristic.ProgrammableSwitchEvent, null, config.topics.getSwitch, values, null, true);
     }
 
     // Characteristic.Volume
     function characteristic_Volume(service) {
         floatCharacteristic(service, 'volume', Characteristic.Volume, config.topics.setVolume, config.topics.getVolume, 0);
+    }
+
+    // Characteristic.SecuritySystemCurrentState
+    function characteristic_SecuritySystemCurrentState(service) {
+        let values = config.currentStateValues;
+        if (!values) {
+            values = ['SA', 'AA', 'NA', 'D', 'T'];
+        }
+        multiCharacteristic(service, 'seccur', Characteristic.SecuritySystemCurrentState, null, config.topics.getCurrentState, values, Characteristic.SecuritySystemCurrentState.DISARMED );
+    }
+
+    // Characteristic.SecuritySystemTargetState
+    function characteristic_SecuritySystemTargetState(service) {
+        let values = config.targetStateValues;
+        if( ! values) {
+            values = ['SA', 'AA', 'NA', 'D' ];
+        }
+        multiCharacteristic(service, 'sectar', Characteristic.SecuritySystemTargetState, config.topics.setTargetState, config.topics.getTargetState, values, Characteristic.SecuritySystemTargetState.DISARM );
     }
 
     // Create service
@@ -401,12 +425,23 @@ function makeThing(log, config) {
         } else if (config.type == "doorbell") {
             service = new Service.Doorbell(name);
             characteristic_ProgrammableSwitchEvent(service);
-            if( config.topics.setBrightness || config.topics.getBrightness ) {
+            if (config.topics.setBrightness || config.topics.getBrightness) {
                 characteristic_Brightness(service);
             }
-            if( config.topics.setVolume || config.topics.getVolume ) {
+            if (config.topics.setVolume || config.topics.getVolume) {
                 characteristic_Volume(service);
             }
+        } else if (config.type == "securitySystem") {
+            service = new Service.SecuritySystem(name);
+            characteristic_SecuritySystemCurrentState(service);
+            characteristic_SecuritySystemTargetState(service);
+            if (config.topics.getStatusFault) {
+                characteristic_StatusFault(service);
+            }
+            if (config.topics.getStatusTampered) {
+                characteristic_StatusTampered(service);
+            }
+            // todo: SecuritySystemAlarmType
         } else {
             log("ERROR: Unrecognized type: " + config.type);
         }
