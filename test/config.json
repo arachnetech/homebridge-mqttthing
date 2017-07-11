@@ -114,9 +114,18 @@
       "url": "http://192.168.10.35:1883",
       "topics": {
         "getCurrentState": "test/security/current",
-        "setTargetState":  "test/security/target",
-        "getTargetState":  "test/security/targetack"
+        "setTargetState":  "test/security/target"
       }
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "smokeSensor",
+      "name": "Test smoke sensor",
+      "url": "http://192.168.10.35:1883",
+      "topics": {
+        "getSmokeDetected": "test/smoke/detected"
+      },
+      "integerValue": 1
     }
   ]
 }

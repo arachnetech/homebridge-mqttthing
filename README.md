@@ -24,6 +24,7 @@ Version 1.0.4
 
 Version 1.0.5
 + Added SecuritySystem
++ Added SmokeSensor
 
 # Configuration
 Configure the plugin in your homebridge config.json file.
@@ -261,5 +262,58 @@ Doorbell ring switch state can be be `SINGLE_PRESS`, `DOUBLE_PRESS` or `LONG_PRE
         "setVolume":        "<topic used to set volume (optional)>"
     },
     "switchValues": "<array of 3 switch values corresponding to single-press, double-press and long-press respectively (optional)>"
+}
+```
+
+## Security System
+
+Security System current state can be `STAY_ARM`, `AWAY_ARM`, `NIGHT_ARM`, `DISARMED` or `ALARM_TRIGGERED`. By default, these events are raised when values of `SA`, `AA`, `NA`, `D` and `T` respectively are published to the **getCurrentState** topic. However, these values may be overriden by specifying an alternative array in the **currentStateValues** setting.
+
+Security System target state can be `STAY_ARM`, `AWAY_ARM`, `NIGHT_ARM` or `DISARM`. By default, these states correspond to values of `SA`, `AA`, `NA` and `D`. Homebridge expects to control the target state (causing one of these values to be published to the **setTargetState** topic), and to receive confirmation from the security system that the state has been achieved through a change in the current state (received through the **getCurrentState** topic). The values used for target state can be specified as an an array in the **targetStateValues** setting.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "securitySystem",
+    "name": "<name of sensor>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "caption": "<label (optional)>",
+    "topics":
+    {
+        "getCurrentState":    "<topic used to get security system current state>",
+        "setTargetState":     "<topic used to set security system target state>"
+    },
+    "currentStateValues": "<array of 5 values corresponding to security system current states (optional)>",
+    "targetStateValues": "<array of 4 values corresponding to security system target states (optional)>"
+}
+```
+
+## Smoke Sensor
+
+Contact sensor state is exposed as a Boolean. True (or 1 with integer values) maps to `SMOKE_DETECTED` 
+and False (or 0) maps to `SMOKE_NOT_DETECTED`. To use different MQTT values, configure `onValue` and `offValue`.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "smokeSensor",
+    "name": "<name of sensor>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "caption": "<label (optional)>",
+    "topics":
+    {
+        "getSmokeDetected":      "<topic used to provide contact sensor state>"
+        "getStatusActive":       "<topic used to provide 'active' status (optional)>",
+        "getStatusFault":        "<topic used to provide 'fault' status (optional)>",
+        "getStatusTampered":     "<topic used to provide 'tampered' status (optional)>",
+        "getStatusLowBattery":   "<topic used to provide 'low battery' status (optional)>"
+    },
+    "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
+    "onValue": "<value representing on (optional)>",
+    "offValue": "<value representing off (optional)>"
 }
 ```

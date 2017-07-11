@@ -5,6 +5,7 @@
 
 var Service, Characteristic;
 var mqtt = require("mqtt");
+var logmqtt = true;
 
 function makeThing(log, config) {
 
@@ -38,7 +39,9 @@ function makeThing(log, config) {
         });
 
         mqttClient.on('message', function (topic, message) {
-            //log("Received MQTT: " + topic + " = " + message);
+            if (logmqtt) {
+                log("Received MQTT: " + topic + " = " + message);
+            }
             var handler = mqttDispatch[topic];
             if (handler) {
                 handler(topic, message);
@@ -259,7 +262,7 @@ function makeThing(log, config) {
         if (getTopic) {
             mqttSubscribe(getTopic, function (topic, message) {
                 let data = message.toString();
-                log( JSON.stringify( mqttToHomekit ) );
+                log(JSON.stringify(mqttToHomekit));
                 let newState = mqttToHomekit[data];
                 if (newState !== undefined && state[property] != newState) {
                     state[property] = newState;
@@ -365,16 +368,24 @@ function makeThing(log, config) {
         if (!values) {
             values = ['SA', 'AA', 'NA', 'D', 'T'];
         }
-        multiCharacteristic(service, 'seccur', Characteristic.SecuritySystemCurrentState, null, config.topics.getCurrentState, values, Characteristic.SecuritySystemCurrentState.DISARMED );
+        multiCharacteristic(service, 'seccur', Characteristic.SecuritySystemCurrentState, null, config.topics.getCurrentState, values, Characteristic.SecuritySystemCurrentState.DISARMED);
     }
 
     // Characteristic.SecuritySystemTargetState
     function characteristic_SecuritySystemTargetState(service) {
         let values = config.targetStateValues;
-        if( ! values) {
-            values = ['SA', 'AA', 'NA', 'D' ];
+        if (!values) {
+            values = ['SA', 'AA', 'NA', 'D'];
         }
-        multiCharacteristic(service, 'sectar', Characteristic.SecuritySystemTargetState, config.topics.setTargetState, config.topics.getTargetState, values, Characteristic.SecuritySystemTargetState.DISARM );
+        multiCharacteristic(service, 'sectar', Characteristic.SecuritySystemTargetState, config.topics.setTargetState, config.topics.getTargetState, values, Characteristic.SecuritySystemTargetState.DISARM);
+    }
+
+    // Characteristic.SmokeDetected
+    function characteristic_SmokeDetected(service) {
+        booleanCharacteristic(service, 'smokeDetected', Characteristic.SmokeDetected,
+            null, config.topics.getSmokeDetected, false, function (val) {
+                return val ? Characteristic.ContactSensorState.SMOKE_DETECTED : Characteristic.ContactSensorState.SMOKE_NOT_DETECTED;
+            });
     }
 
     // Create service
@@ -442,6 +453,10 @@ function makeThing(log, config) {
                 characteristic_StatusTampered(service);
             }
             // todo: SecuritySystemAlarmType
+        } else if (config.type == "smokeSensor") {
+            service = new Service.SmokeSensor(name);
+            characteristic_SmokeDetected(service);
+            addSensorOptionalProps = true;
         } else {
             log("ERROR: Unrecognized type: " + config.type);
         }
