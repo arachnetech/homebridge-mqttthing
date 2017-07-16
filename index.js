@@ -1,5 +1,5 @@
 // MQTT Thing Accessory plugin for Homebridge
-// A Homebridge plugin for a simple simple services, based on homebrige-mqtt-switch and homebridge-mqttlightbulb
+// A Homebridge plugin for serveral services, based on homebrige-mqtt-switch and homebridge-mqttlightbulb
 
 'use strict';
 
