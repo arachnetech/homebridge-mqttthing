@@ -262,9 +262,9 @@ function makeThing(log, config) {
         if (getTopic) {
             mqttSubscribe(getTopic, function (topic, message) {
                 let data = message.toString();
-                log(JSON.stringify(mqttToHomekit));
                 let newState = mqttToHomekit[data];
-                if (newState !== undefined && state[property] != newState) {
+                if (newState !== undefined && ( eventOnly || state[property] != newState ) ) {
+                    log( 'State: ' + newState );
                     state[property] = newState;
                     service.getCharacteristic(characteristic).setValue(newState, undefined, c_mySetContext);
                 }
@@ -389,12 +389,13 @@ function makeThing(log, config) {
     }
 
     // Create service
-    function createService() {
+    function createServices() {
 
         var name = config.name;
         var addSensorOptionalProps = false;
 
-        var service;
+        var service = null; // to return a single service
+        var services = null; // if returning multiple services
 
         if (config.type == "lightbulb") {
             service = new Service.Lightbulb(name);
@@ -442,6 +443,11 @@ function makeThing(log, config) {
             if (config.topics.setVolume || config.topics.getVolume) {
                 characteristic_Volume(service);
             }
+            // also create motion sensor (test)
+            let motionsvc = new Service.MotionSensor(name + '-motion' );
+            characteristic_MotionDetected(motionsvc);
+            // return both
+            services = [ service, motionsvc ];
         } else if (config.type == "securitySystem") {
             service = new Service.SecuritySystem(name);
             characteristic_SecuritySystemCurrentState(service);
@@ -482,20 +488,24 @@ function makeThing(log, config) {
             }
         }
 
-        return service;
+        if( services ) {
+            return services;
+        } else if( service ) {
+            return [ service ];
+        } else {
+            log( 'Error: No service(s) returned for ' + name );
+        }
     }
 
     // The service
-    var service = createService();
+    var services = createServices();
 
     // Our accessory instance
     var thing = {};
 
     // Return services
     thing.getServices = function () {
-        if (service) {
-            return [service];
-        }
+        return services;
     };
 
     return thing;

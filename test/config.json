@@ -102,6 +102,7 @@
       "url": "http://192.168.10.35:1883",
       "topics": {
         "getSwitch": "test/doorbell/ring",
+        "getMotionDetected": "test/doorbell/motion/detected",
         "setVolume": "test/doorbell/volume",
         "setBrightness": "test/doorbell/brightness"
       },
