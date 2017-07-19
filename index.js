@@ -28,8 +28,8 @@ function makeThing(log, config) {
                 qos: 0,
                 retain: false
             },
-            username: config["username"],
-            password: config["password"],
+            username: config.username,
+            password: config.password,
             rejectUnauthorized: false
         };
 
@@ -72,7 +72,7 @@ function makeThing(log, config) {
 
     function onOffValue(value) {
         var pubVal = (value ? config.onValue : config.offValue);
-        if (pubVal == null) {
+        if (pubVal === undefined) {
             if (config.integerValue) {
                 pubVal = value ? 1 : 0;
             } else {
@@ -213,7 +213,7 @@ function makeThing(log, config) {
         if (getTopic) {
             mqttSubscribe(getTopic, function (topic, message) {
                 var newState = message.toString();
-                if (state[property] != newState) {
+                if (state[property] !== newState) {
                     state[property] = newState;
                     service.getCharacteristic(characteristic).setValue(newState, undefined, c_mySetContext);
                 }
@@ -224,7 +224,7 @@ function makeThing(log, config) {
     function multiCharacteristic(service, property, characteristic, setTopic, getTopic, values, initialValue, eventOnly) {
         // Values is an array of MQTT values indexed by <value of Homekit enumeration>.
         // Build map of MQTT values to homekit values
-        let mqttToHomekit = {};
+        var mqttToHomekit = {};
         for (let i = 0; i < values.length; i++) {
             mqttToHomekit[values[i]] = i;
         }
