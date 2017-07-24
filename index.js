@@ -5,12 +5,13 @@
 
 var Service, Characteristic;
 var mqtt = require("mqtt");
-var logmqtt = true;
 
 function makeThing(log, config) {
 
     // MQTT message dispatch
     var mqttDispatch = {}; // map of topic to function( topic, message ) to handle
+
+    var logmqtt = config.logMqtt;
 
     function mqttInit() {
         var clientId = 'mqttthing_' + config.name + '_' + Math.random().toString(16).substr(2, 8);
@@ -62,6 +63,9 @@ function makeThing(log, config) {
     }
 
     function mqttPublish(topic, message) {
+        if( logmqtt ) {
+            log( 'Publishing MQTT: ' + topic + ' = ' + message );
+        }
         mqttClient.publish(topic, message.toString());
     }
 
@@ -79,7 +83,7 @@ function makeThing(log, config) {
                 pubVal = value ? true : false;
             }
         }
-        return pubVal;
+        return pubVal.toString();
     }
 
     function mapValueForHomebridge(val, mapValueFunc) {
@@ -264,7 +268,9 @@ function makeThing(log, config) {
                 let data = message.toString();
                 let newState = mqttToHomekit[data];
                 if (newState !== undefined && ( eventOnly || state[property] != newState ) ) {
-                    log( 'State: ' + newState );
+                    if( logmqtt ) {
+                        log( 'State is now: ' + newState );
+                    }
                     state[property] = newState;
                     service.getCharacteristic(characteristic).setValue(newState, undefined, c_mySetContext);
                 }
@@ -443,11 +449,14 @@ function makeThing(log, config) {
             if (config.topics.setVolume || config.topics.getVolume) {
                 characteristic_Volume(service);
             }
-            // also create motion sensor (test)
-            let motionsvc = new Service.MotionSensor(name + '-motion' );
-            characteristic_MotionDetected(motionsvc);
-            // return both
-            services = [ service, motionsvc ];
+            services = [service];
+            if( config.topics.getMotionDetected ) {
+                // also create motion sensor
+                let motionsvc = new Service.MotionSensor(name + '-motion' );
+                characteristic_MotionDetected(motionsvc);
+                // return motion sensor too
+                services.push( motionsvc );
+            }
         } else if (config.type == "securitySystem") {
             service = new Service.SecuritySystem(name);
             characteristic_SecuritySystemCurrentState(service);

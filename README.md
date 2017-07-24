@@ -46,6 +46,7 @@ The following settings apply to all device types:
     "username": "<username for MQTT (optional)>",
     "password": "<password for MQTT (optional)>",
     "caption": "<label (optional)>",
+    "logMqtt": "true to enable logging of MQTT messages sent and received for this accessory",
     "topics":
     {
         "getName": 	        "<topic to get the name>"
@@ -255,11 +256,12 @@ Doorbell ring switch state can be be `SINGLE_PRESS`, `DOUBLE_PRESS` or `LONG_PRE
     "caption": "<label (optional)>",
     "topics":
     {
-        "getSwitch":        "<topic used to provide doorbell switch state>"
-        "getBrightness":    "<topic used to get brightness (optional)>",
-        "setBrightness":    "<topic used to set brightness (optional)>",
-        "getVolume":        "<topic used to get volume (optional)>",
-        "setVolume":        "<topic used to set volume (optional)>"
+        "getSwitch":         "<topic used to provide doorbell switch state>"
+        "getBrightness":     "<topic used to get brightness (optional)>",
+        "setBrightness":     "<topic used to set brightness (optional)>",
+        "getVolume":         "<topic used to get volume (optional)>",
+        "setVolume":         "<topic used to set volume (optional)>",
+        "getMotionDetected": "<topic used to provide 'motion detected' status (optional, if exposing motion sensor)>"
     },
     "switchValues": "<array of 3 switch values corresponding to single-press, double-press and long-press respectively (optional)>"
 }

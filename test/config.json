@@ -93,26 +93,29 @@
       "topics": {
         "getContactSensorState": "test/contact/state"
       },
-      "integerValue": 1
+      "integerValue": true
     },
     {
       "accessory": "mqttthing",
       "type": "doorbell",
       "name": "Test doorbell",
       "url": "http://192.168.10.35:1883",
+      "logMqtt": true,
       "topics": {
         "getSwitch": "test/doorbell/ring",
         "getMotionDetected": "test/doorbell/motion/detected",
         "setVolume": "test/doorbell/volume",
         "setBrightness": "test/doorbell/brightness"
       },
-      "switchValues": [ "SINGLE", "DOUBLE", "LONG" ]
+      "switchValues": [ "SINGLE", "DOUBLE", "LONG" ],
+      "integerValue": true
     },
     {
       "accessory": "mqttthing",
       "type": "securitySystem",
       "name": "Test Security System",
       "url": "http://192.168.10.35:1883",
+      "logMqtt": true,
       "topics": {
         "getCurrentState": "test/security/current",
         "setTargetState":  "test/security/target"
@@ -126,7 +129,7 @@
       "topics": {
         "getSmokeDetected": "test/smoke/detected"
       },
-      "integerValue": 1
+      "integerValue": true
     }
   ]
 }
