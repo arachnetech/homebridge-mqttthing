@@ -23,8 +23,12 @@ Version 1.0.4
 + Added Doorbell
 
 Version 1.0.5
-+ Added SecuritySystem
-+ Added SmokeSensor
++ Added Security System
++ Added Smoke Sensor
+
+Version 1.0.6
++ Added Temperature Sensor
+
 
 # Configuration
 Configure the plugin in your homebridge config.json file.
@@ -60,7 +64,63 @@ The following settings apply to all device types:
 Boolean types like on/off use  true/false unless `integerValue: true` is configured, in which case they default to 1/0. Alternatively, specific values can be configured using `onValue` and `offValue`. Integer and string types are not affected by these settings.
 
 
+## Contact Sensor
+
+Contact sensor state is exposed as a Boolean. True (or 1 with integer values) maps to `CONTACT_NOT_DETECTED` (sensor triggered)
+and False (or 0) maps to `CONTACT_DETECTED` (not triggered). To use different MQTT values, configure `onValue` and `offValue`.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "contactSensor",
+    "name": "<name of sensor>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "caption": "<label (optional)>",
+    "topics":
+    {
+        "getContactSensorState": "<topic used to provide contact sensor state>"
+        "getStatusActive":       "<topic used to provide 'active' status (optional)>",
+        "getStatusFault":        "<topic used to provide 'fault' status (optional)>",
+        "getStatusTampered":     "<topic used to provide 'tampered' status (optional)>",
+        "getStatusLowBattery":   "<topic used to provide 'low battery' status (optional)>"
+    },
+    "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
+    "onValue": "<value representing on (optional)>",
+    "offValue": "<value representing off (optional)>"
+}
+```
+
+
+## Doorbell
+
+Doorbell ring switch state can be be `SINGLE_PRESS`, `DOUBLE_PRESS` or `LONG_PRESS`. By default, these events are raised when values of `1`, `2` and `L` respectively are published to the **getSwitch** topic. However, these values may be overridden by specifying an alternative array in the **switchValues** setting.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "contactSensor",
+    "name": "<name of sensor>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "caption": "<label (optional)>",
+    "topics":
+    {
+        "getSwitch":         "<topic used to provide doorbell switch state>"
+        "getBrightness":     "<topic used to get brightness (optional)>",
+        "setBrightness":     "<topic used to set brightness (optional)>",
+        "getVolume":         "<topic used to get volume (optional)>",
+        "setVolume":         "<topic used to set volume (optional)>",
+        "getMotionDetected": "<topic used to provide 'motion detected' status (optional, if exposing motion sensor)>"
+    },
+    "switchValues": "<array of 3 switch values corresponding to single-press, double-press and long-press respectively (optional)>"
+}
+```
+
 ## Light bulb
+
 ```javascript
 {
     "accessory": "mqttthing",
@@ -87,20 +147,27 @@ Boolean types like on/off use  true/false unless `integerValue: true` is configu
 }
 ```
 
-## Switch
+
+## Light Sensor
+
+Current ambient light level must be in the range 0.0001 Lux to 100000 Lux to a maximum of 4dp.
+
 ```javascript
 {
     "accessory": "mqttthing",
-    "type": "switch",
-    "name": "<name of switch>",
+    "type": "lightSensor",
+    "name": "<name of sensor>",
     "url": "<url of MQTT server (optional)>",
     "username": "<username for MQTT (optional)>",
     "password": "<password for MQTT (optional)>",
     "caption": "<label (optional)>",
     "topics":
     {
-        "getOn": 	        "<topic to get the status>",
-        "setOn": 	        "<topic to set the status>"
+        "getCurrentAmbientLightLevel":  "<topic used to provide 'current ambient light level'>",
+        "getStatusActive":              "<topic used to provide 'active' status (optional)>",
+        "getStatusFault":               "<topic used to provide 'fault' status (optional)>",
+        "getStatusTampered":            "<topic used to provide 'tampered' status (optional)>",
+        "getStatusLowBattery":          "<topic used to provide 'low battery' status (optional)>"
     },
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
@@ -108,30 +175,6 @@ Boolean types like on/off use  true/false unless `integerValue: true` is configu
 }
 ```
 
-## Outlet
-
-An outlet can be configured as a light or as a fan in the Home app.
-
-```javascript
-{
-    "accessory": "mqttthing",
-    "type": "outlet",
-    "name": "<name of outlet>",
-    "url": "<url of MQTT server (optional)>",
-    "username": "<username for MQTT (optional)>",
-    "password": "<password for MQTT (optional)>",
-    "caption": "<label (optional)>",
-    "topics":
-    {
-        "getOn":            "<topic to get the status>",
-        "setOn":            "<topic to set the status>",
-        "getInUse":         "<topic used to provide 'outlet is in use' feedback>"
-    },
-    "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
-    "onValue": "<value representing on (optional)>",
-    "offValue": "<value representing off (optional)>"
-}
-```
 
 ## Motion Sensor
 
@@ -157,6 +200,7 @@ An outlet can be configured as a light or as a fan in the Home app.
     "offValue": "<value representing off (optional)>"
 }
 ```
+
 
 ## Occupancy Sensor
 
@@ -186,26 +230,25 @@ and False (or 0) maps to `OCCUPANCY_NOT_DETECTED` (not triggered). To use differ
 }
 ```
 
-## Light Sensor
 
-Current ambient light level must be in the range 0.0001 Lux to 100000 Lux to a maximum of 4dp.
+## Outlet
+
+An outlet can be configured as a light or as a fan in the Home app.
 
 ```javascript
 {
     "accessory": "mqttthing",
-    "type": "lightSensor",
-    "name": "<name of sensor>",
+    "type": "outlet",
+    "name": "<name of outlet>",
     "url": "<url of MQTT server (optional)>",
     "username": "<username for MQTT (optional)>",
     "password": "<password for MQTT (optional)>",
     "caption": "<label (optional)>",
     "topics":
     {
-        "getCurrentAmbientLightLevel":  "<topic used to provide 'current ambient light level'>",
-        "getStatusActive":              "<topic used to provide 'active' status (optional)>",
-        "getStatusFault":               "<topic used to provide 'fault' status (optional)>",
-        "getStatusTampered":            "<topic used to provide 'tampered' status (optional)>",
-        "getStatusLowBattery":          "<topic used to provide 'low battery' status (optional)>"
+        "getOn":            "<topic to get the status>",
+        "setOn":            "<topic to set the status>",
+        "getInUse":         "<topic used to provide 'outlet is in use' feedback>"
     },
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
@@ -213,83 +256,6 @@ Current ambient light level must be in the range 0.0001 Lux to 100000 Lux to a m
 }
 ```
 
-## Temperature Sensor
-
-Current temperature must be in the range 0 to 100 degrees Celsius to a maximum of 1dp.
-
-```javascript
-{
-    "accessory": "mqttthing",
-    "type": "temperatureSensor",
-    "name": "<name of sensor>",
-    "url": "<url of MQTT server (optional)>",
-    "username": "<username for MQTT (optional)>",
-    "password": "<password for MQTT (optional)>",
-    "caption": "<label (optional)>",
-    "topics":
-    {
-        "getCurrentTemperature":        "<topic used to provide 'current temperature'>",
-        "getStatusActive":              "<topic used to provide 'active' status (optional)>",
-        "getStatusFault":               "<topic used to provide 'fault' status (optional)>",
-        "getStatusTampered":            "<topic used to provide 'tampered' status (optional)>",
-        "getStatusLowBattery":          "<topic used to provide 'low battery' status (optional)>"
-    }
-}
-```
-
-## Contact Sensor
-
-Contact sensor state is exposed as a Boolean. True (or 1 with integer values) maps to `CONTACT_NOT_DETECTED` (sensor triggered)
-and False (or 0) maps to `CONTACT_DETECTED` (not triggered). To use different MQTT values, configure `onValue` and `offValue`.
-
-```javascript
-{
-    "accessory": "mqttthing",
-    "type": "contactSensor",
-    "name": "<name of sensor>",
-    "url": "<url of MQTT server (optional)>",
-    "username": "<username for MQTT (optional)>",
-    "password": "<password for MQTT (optional)>",
-    "caption": "<label (optional)>",
-    "topics":
-    {
-        "getContactSensorState": "<topic used to provide contact sensor state>"
-        "getStatusActive":       "<topic used to provide 'active' status (optional)>",
-        "getStatusFault":        "<topic used to provide 'fault' status (optional)>",
-        "getStatusTampered":     "<topic used to provide 'tampered' status (optional)>",
-        "getStatusLowBattery":   "<topic used to provide 'low battery' status (optional)>"
-    },
-    "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
-    "onValue": "<value representing on (optional)>",
-    "offValue": "<value representing off (optional)>"
-}
-```
-
-## Doorbell
-
-Doorbell ring switch state can be be `SINGLE_PRESS`, `DOUBLE_PRESS` or `LONG_PRESS`. By default, these events are raised when values of `1`, `2` and `L` respectively are published to the **getSwitch** topic. However, these values may be overridden by specifying an alternative array in the **switchValues** setting.
-
-```javascript
-{
-    "accessory": "mqttthing",
-    "type": "contactSensor",
-    "name": "<name of sensor>",
-    "url": "<url of MQTT server (optional)>",
-    "username": "<username for MQTT (optional)>",
-    "password": "<password for MQTT (optional)>",
-    "caption": "<label (optional)>",
-    "topics":
-    {
-        "getSwitch":         "<topic used to provide doorbell switch state>"
-        "getBrightness":     "<topic used to get brightness (optional)>",
-        "setBrightness":     "<topic used to set brightness (optional)>",
-        "getVolume":         "<topic used to get volume (optional)>",
-        "setVolume":         "<topic used to set volume (optional)>",
-        "getMotionDetected": "<topic used to provide 'motion detected' status (optional, if exposing motion sensor)>"
-    },
-    "switchValues": "<array of 3 switch values corresponding to single-press, double-press and long-press respectively (optional)>"
-}
-```
 
 ## Security System
 
@@ -341,5 +307,52 @@ and False (or 0) maps to `SMOKE_NOT_DETECTED`. To use different MQTT values, con
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
     "offValue": "<value representing off (optional)>"
+}
+```
+
+
+## Switch
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "switch",
+    "name": "<name of switch>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "caption": "<label (optional)>",
+    "topics":
+    {
+        "getOn": 	        "<topic to get the status>",
+        "setOn": 	        "<topic to set the status>"
+    },
+    "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
+    "onValue": "<value representing on (optional)>",
+    "offValue": "<value representing off (optional)>"
+}
+```
+
+
+## Temperature Sensor
+
+Current temperature must be in the range 0 to 100 degrees Celsius to a maximum of 1dp.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "temperatureSensor",
+    "name": "<name of sensor>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "caption": "<label (optional)>",
+    "topics":
+    {
+        "getCurrentTemperature":        "<topic used to provide 'current temperature'>",
+        "getStatusActive":              "<topic used to provide 'active' status (optional)>",
+        "getStatusFault":               "<topic used to provide 'fault' status (optional)>",
+        "getStatusTampered":            "<topic used to provide 'tampered' status (optional)>",
+        "getStatusLowBattery":          "<topic used to provide 'low battery' status (optional)>"
+    }
 }
 ```
