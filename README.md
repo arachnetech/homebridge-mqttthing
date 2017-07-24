@@ -213,6 +213,30 @@ Current ambient light level must be in the range 0.0001 Lux to 100000 Lux to a m
 }
 ```
 
+## Temperature Sensor
+
+Current temperature must be in the range 0 to 100 degrees Celsius to a maximum of 1dp.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "temperatureSensor",
+    "name": "<name of sensor>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "caption": "<label (optional)>",
+    "topics":
+    {
+        "getCurrentTemperature":        "<topic used to provide 'current temperature'>",
+        "getStatusActive":              "<topic used to provide 'active' status (optional)>",
+        "getStatusFault":               "<topic used to provide 'fault' status (optional)>",
+        "getStatusTampered":            "<topic used to provide 'tampered' status (optional)>",
+        "getStatusLowBattery":          "<topic used to provide 'low battery' status (optional)>"
+    }
+}
+```
+
 ## Contact Sensor
 
 Contact sensor state is exposed as a Boolean. True (or 1 with integer values) maps to `CONTACT_NOT_DETECTED` (sensor triggered)

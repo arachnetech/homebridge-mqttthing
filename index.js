@@ -346,6 +346,12 @@ function makeThing(log, config) {
             null, config.topics.getCurrentAmbientLightLevel, 0.0001);
     }
 
+    // Characteristic.CurrentTemperature
+    function characteristic_CurrentTemperature(service) {
+        floatCharacteristic(service, 'currentTemperature', Characteristic.CurrentTemperature,
+            null, config.topics.getCurrentTemperature, 0 );
+    }
+
     // Characteristic.ContactSensorState
     function characteristic_ContactSensorState(service) {
         booleanCharacteristic(service, 'contactSensor', Characteristic.ContactSensorState,
@@ -435,6 +441,10 @@ function makeThing(log, config) {
         } else if (config.type == "lightSensor") {
             service = new Service.LightSensor(name);
             characteristic_CurrentAmbientLightLevel(service);
+            addSensorOptionalProps = true;
+        } else if (config.type == "temperatureSensor") {
+            service = new Service.TemperatureSensor(name);
+            characteristic_CurrentTemperature(service);
             addSensorOptionalProps = true;
         } else if (config.type == "contactSensor") {
             service = new Service.ContactSensor(name);
