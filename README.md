@@ -28,6 +28,7 @@ Version 1.0.5
 
 Version 1.0.6
 + Added Temperature Sensor
++ Humidity Sensor
 
 
 # Configuration
@@ -63,6 +64,8 @@ The following settings apply to all device types:
 
 Boolean types like on/off use  true/false unless `integerValue: true` is configured, in which case they default to 1/0. Alternatively, specific values can be configured using `onValue` and `offValue`. Integer and string types are not affected by these settings.
 
+
+# Supported Accessories
 
 ## Contact Sensor
 
@@ -118,6 +121,31 @@ Doorbell ring switch state can be be `SINGLE_PRESS`, `DOUBLE_PRESS` or `LONG_PRE
     "switchValues": "<array of 3 switch values corresponding to single-press, double-press and long-press respectively (optional)>"
 }
 ```
+
+## Humidity Sensor
+
+Current relative humidity must be in the range 0 to 100 percent with no decimal places.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "humiditySensor",
+    "name": "<name of sensor>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "caption": "<label (optional)>",
+    "topics":
+    {
+        "getCurrentRelativeHumidity":   "<topic used to provide 'current relative humidity'>",
+        "getStatusActive":              "<topic used to provide 'active' status (optional)>",
+        "getStatusFault":               "<topic used to provide 'fault' status (optional)>",
+        "getStatusTampered":            "<topic used to provide 'tampered' status (optional)>",
+        "getStatusLowBattery":          "<topic used to provide 'low battery' status (optional)>"
+    }
+}
+```
+
 
 ## Light bulb
 

@@ -352,6 +352,12 @@ function makeThing(log, config) {
             null, config.topics.getCurrentTemperature, 0 );
     }
 
+    // Characteristic.CurrentRelativeHumidity
+    function characteristic_CurrentRelativeHumidity(service) {
+        floatCharacteristic(service, 'currentRelativeHumidity', Characteristic.CurrentRelativeHumidity,
+            null, config.topics.getCurrentRelativeHumidity, 0 );
+    }
+
     // Characteristic.ContactSensorState
     function characteristic_ContactSensorState(service) {
         booleanCharacteristic(service, 'contactSensor', Characteristic.ContactSensorState,
@@ -445,6 +451,10 @@ function makeThing(log, config) {
         } else if (config.type == "temperatureSensor") {
             service = new Service.TemperatureSensor(name);
             characteristic_CurrentTemperature(service);
+            addSensorOptionalProps = true;
+        } else if (config.type == "humiditySensor") {
+            service = new Service.HumiditySensor(name);
+            characteristic_CurrentRelativeHumidity(service);
             addSensorOptionalProps = true;
         } else if (config.type == "contactSensor") {
             service = new Service.ContactSensor(name);
