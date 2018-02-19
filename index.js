@@ -421,11 +421,11 @@ function makeThing(log, config) {
             if (config.topics.setBrightness) {
                 characteristic_Brightness(service);
             }
-            if (config.topics.setHue) {
-                characteristic_Hue(service);
-            }
             if (config.topics.setSaturation) {
                 characteristic_Saturation(service);
+            }
+            if (config.topics.setHue) {
+                characteristic_Hue(service);
             }
         } else if (config.type == "switch") {
             service = new Service.Switch(name);
