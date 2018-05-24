@@ -402,7 +402,7 @@ function makeThing(log, config) {
     function characteristic_SmokeDetected(service) {
         booleanCharacteristic(service, 'smokeDetected', Characteristic.SmokeDetected,
             null, config.topics.getSmokeDetected, false, function (val) {
-                return val ? Characteristic.ContactSensorState.SMOKE_DETECTED : Characteristic.ContactSensorState.SMOKE_NOT_DETECTED;
+                return val ? Characteristic.SmokeDetected.SMOKE_DETECTED : Characteristic.SmokeDetected.SMOKE_NOT_DETECTED;
             });
     }
 
