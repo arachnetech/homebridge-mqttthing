@@ -28,7 +28,7 @@ Version 1.0.5
 
 Version 1.0.6
 + Added Temperature Sensor
-+ Humidity Sensor
++ Added Humidity Sensor
 
 
 # Configuration
@@ -290,6 +290,8 @@ An outlet can be configured as a light or as a fan in the Home app.
 Security System current state can be `STAY_ARM`, `AWAY_ARM`, `NIGHT_ARM`, `DISARMED` or `ALARM_TRIGGERED`. By default, these events are raised when values of `SA`, `AA`, `NA`, `D` and `T` respectively are published to the **getCurrentState** topic. However, these values may be overriden by specifying an alternative array in the **currentStateValues** setting.
 
 Security System target state can be `STAY_ARM`, `AWAY_ARM`, `NIGHT_ARM` or `DISARM`. By default, these states correspond to values of `SA`, `AA`, `NA` and `D`. Homebridge expects to control the target state (causing one of these values to be published to the **setTargetState** topic), and to receive confirmation from the security system that the state has been achieved through a change in the current state (received through the **getCurrentState** topic). The values used for target state can be specified as an an array in the **targetStateValues** setting.
+
+Homebridge publishes a value to the **getCurrentState** topic to indicate the state that the HomeKit users wishes the alarm to be in. The alarm system must echo this state back to the **setCurrentState** topic to confirm that it has set the alarm state appropriately. The alarm system may also publish the ALARM_TRIGGERED value (`T` by default) to the **setCurrentState** topic in order to indicate that the alarm has been triggered. If the alarm system publishes any other states to the **setCurrentState** topic, HomeKit will wait for it to return to the user's target state; in other words, only the HomeKit user can control the arming state of the alarm, not the alarm system itself.
 
 ```javascript
 {
