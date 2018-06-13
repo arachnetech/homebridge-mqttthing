@@ -30,7 +30,7 @@ Version 1.0.6
 + Added Temperature Sensor
 + Added Humidity Sensor
 
-Version 1.0.6
+Version 1.0.7
 + Fixed Smoke Sensor
 
 # Configuration
