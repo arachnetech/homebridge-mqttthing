@@ -144,6 +144,7 @@
       "type": "smokeSensor",
       "name": "Test smoke sensor",
       "url": "http://192.168.10.35:1883",
+      "logMqtt": true,
       "topics": {
         "getSmokeDetected": "test/smoke/detected"
       },

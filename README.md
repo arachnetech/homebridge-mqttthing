@@ -30,6 +30,8 @@ Version 1.0.6
 + Added Temperature Sensor
 + Added Humidity Sensor
 
+Version 1.0.6
++ Fixed Smoke Sensor
 
 # Configuration
 Configure the plugin in your homebridge config.json file.
