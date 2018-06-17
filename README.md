@@ -34,7 +34,8 @@ Version 1.0.7
 + Fixed Smoke Sensor
 
 Version 1.0.8
-+ Added StatelessProgrammableSwitch
++ Added Stateless Programmable Switch
++ Added Garage Door Opener
 
 # Configuration
 Configure the plugin in your homebridge config.json file.
