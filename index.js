@@ -406,6 +406,7 @@ function makeThing(log, config) {
             });
     }
 
+    
     // Create service
     function createServices() {
 
@@ -477,6 +478,9 @@ function makeThing(log, config) {
                 // return motion sensor too
                 services.push( motionsvc );
             }
+        } else if( config.type == "statelessProgrammableSwitch" ) {
+            service = new Service.StatelessProgrammableSwitch( name );
+            characteristic_ProgrammableSwitchEvent(service);
         } else if (config.type == "securitySystem") {
             service = new Service.SecuritySystem(name);
             characteristic_SecuritySystemCurrentState(service);

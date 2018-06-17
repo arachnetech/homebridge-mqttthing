@@ -1,7 +1,7 @@
 {
   "bridge": {
     "name": "Homebridge",
-    "username": "AA:BB:CC:DD:EE:FF",
+    "username": "DD:7C:A6:26:A7:69",
     "port": 55555,
     "pin": "123-45-678"
   },
@@ -81,6 +81,7 @@
       "type": "lightSensor",
       "name": "Test light sensor",
       "url": "http://192.168.10.35:1883",
+      "logMqtt": true,
       "topics": {
         "getCurrentAmbientLightLevel": "test/light/level"
       }
@@ -149,6 +150,16 @@
         "getSmokeDetected": "test/smoke/detected"
       },
       "integerValue": true
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "statelessProgrammableSwitch",
+      "name": "Test Stateless Programmable Switch",
+      "url": "http://192.168.10.35:1883",
+      "logMqtt": true,
+      "topics": {
+        "getSwitch": "test/spswitch/state"
+      }
     }
   ]
 }

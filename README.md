@@ -33,6 +33,9 @@ Version 1.0.6
 Version 1.0.7
 + Fixed Smoke Sensor
 
+Version 1.0.8
++ Added StatelessProgrammableSwitch
+
 # Configuration
 Configure the plugin in your homebridge config.json file.
 
@@ -123,6 +126,7 @@ Doorbell ring switch state can be be `SINGLE_PRESS`, `DOUBLE_PRESS` or `LONG_PRE
     "switchValues": "<array of 3 switch values corresponding to single-press, double-press and long-press respectively (optional)>"
 }
 ```
+
 
 ## Humidity Sensor
 
@@ -339,6 +343,28 @@ and False (or 0) maps to `SMOKE_NOT_DETECTED`. To use different MQTT values, con
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
     "offValue": "<value representing off (optional)>"
+}
+```
+
+
+## StatelessProgrammableSwitch
+
+Like a doorbell (which is based on it), the state of a stateless programmable switch can be be `SINGLE_PRESS`, `DOUBLE_PRESS` or `LONG_PRESS`. By default, these events are raised when values of `1`, `2` and `L` respectively are published to the **getSwitch** topic. However, these values may be overridden by specifying an alternative array in the **switchValues** setting.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "statelessProgrammableSwitch",
+    "name": "<name of sensor>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "caption": "<label (optional)>",
+    "topics":
+    {
+        "getSwitch":            "<topic used to provide switch state>"
+    },
+    "switchValues": "<array of 3 switch values corresponding to single-press, double-press and long-press respectively (optional)>"
 }
 ```
 
