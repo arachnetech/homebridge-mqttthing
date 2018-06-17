@@ -160,6 +160,22 @@
       "topics": {
         "getSwitch": "test/spswitch/state"
       }
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "garageDoorOpener",
+      "name": "Test Garage Door",
+      "url": "http://192.168.10.35:1883",
+      "logMqtt": true,
+      "topics":
+      {
+          "getCurrentDoorState":      "test/garage/current",
+          "setTargetDoorState":       "test/garage/target",
+          "getObstructionDetected":   "test/garage/obstruction",
+          "getLockCurrentState":      "test/garagelock/current",
+          "setLockTargetState":       "test/garagelock/target"
+      },
+      "integerValue": true
     }
   ]
 }

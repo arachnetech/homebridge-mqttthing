@@ -405,7 +405,48 @@ function makeThing(log, config) {
                 return val ? Characteristic.SmokeDetected.SMOKE_DETECTED : Characteristic.SmokeDetected.SMOKE_NOT_DETECTED;
             });
     }
+    
+    // Characteristic.CurrentDoorState
+    function characteristic_CurrentDoorState(service) {
+        let values = config.doorValues;
+        if (!values) {
+            values = ['O', 'C', 'o', 'c', 'S'];
+        }
+        multiCharacteristic(service, 'doorcur', Characteristic.CurrentDoorState, null, config.topics.getCurrentDoorState, values, Characteristic.CurrentDoorState.OPEN);
+    }
 
+    // Characteristic.TargetDoorState
+    function characteristic_TargetDoorState(service) {
+        let values = config.doorValues;
+        if (!values) {
+            values = ['O', 'C'];
+        }
+        multiCharacteristic(service, 'doortar', Characteristic.TargetDoorState, config.topics.setTargetDoorState, config.topics.getTargetDoorState, values, Characteristic.TargetDoorState.OPEN);
+    }
+
+    // Characteristic.ObstructionDetected
+    function characteristic_ObstructionDetected(service) {
+        booleanCharacteristic(service, 'obstrucdet', Characteristic.ObstructionDetected, null, config.topics.getObstructionDetected, false);
+    }
+    
+    // Characteristic.LockCurrentState
+    function characteristic_LockCurrentState(service) {
+        let values = config.lockValues;
+        if( ! values ) {
+            values = [ 'U', 'S', 'J', '?' ];
+        }
+        multiCharacteristic( service, 'lockcur', Characteristic.LockCurrentState, null, config.topics.getLockCurrentState, values, Characteristic.LockCurrentState.UNSECURED );
+    }
+
+    // Characteristic.LockTargetState
+    function characteristic_LockTargetState(service) {
+        let values = config.lockValues;
+        if( ! values ) {
+            values = [ 'U', 'S' ];
+        }
+        multiCharacteristic( service, 'locktar', Characteristic.LockTargetState, config.topics.setLockTargetState, config.topics.getLockTargetState, values, Characteristic.LockTargetState.UNSECURED );
+    }
+   
     
     // Create service
     function createServices() {
@@ -496,6 +537,17 @@ function makeThing(log, config) {
             service = new Service.SmokeSensor(name);
             characteristic_SmokeDetected(service);
             addSensorOptionalProps = true;
+        } else if( config.type == "garageDoorOpener" ) {
+            service = new Service.GarageDoorOpener(name);
+            characteristic_CurrentDoorState(service);
+            characteristic_TargetDoorState(service);
+            characteristic_ObstructionDetected(service);
+            if( config.topics.getLockCurrentState ) {
+                characteristic_LockCurrentState(service);
+            }
+            if( config.topics.setLockTargetState ) {
+                characteristic_LockTargetState(service);
+            }
         } else {
             log("ERROR: Unrecognized type: " + config.type);
         }

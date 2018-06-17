@@ -128,6 +128,40 @@ Doorbell ring switch state can be be `SINGLE_PRESS`, `DOUBLE_PRESS` or `LONG_PRE
 ```
 
 
+## Garage Door Opener
+
+Garage door opener current door state can be `OPEN`, `CLOSED`, `OPENING`, `CLOSING`, `STOPPED`. By default, these use values of `O`, `C`, `o`, `c` and `S` respectively; these defaults can be changed using the **doorValues** setting.
+
+Garage door opener target state can be `OPEN` or `CLOSED`. By default, values of `0` and `1` are used respectively (unless changed through **doorValues**).
+
+Lock current state can be `UNSECURED`, `SECURED`, `JAMMED` or `UNKNOWN`. By default, these use values of `U`, `S`, `J`, `?` respectively; these can be changed using the **lockValues** setting.
+
+Lock target state can be `UNSECURED` or `SECURED`. By default, these use values of `U` and `S` respectively (unless changed through **lockValues**).
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "garageDoorOpener",
+    "name": "<name of sensor>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "caption": "<label (optional)>",
+    "topics":
+    {
+        "getCurrentDoorState":      "<topic used to get current door state>",
+        "setTargetDoorState":       "<topic used to set target door state>",
+        "getObstructionDetected":   "<topic used to get obstruction detected state>",
+        "getLockCurrentState":      "<topic used to get lock current state (optional)>",
+        "setLockTargetState":       "<topic used to set lock current state (optional)>"
+    },
+    "doorValues": "<array of 5 door values corresponding to open, closed, opening, closing and stopped respectively (optional)>",
+    "lockValues": "<array of 4 lock values corresponding to unsecured, secured, jammed and unknown respectively (optional)>",
+    "integerValue": "true to use 1|0 instead of true|false for obstruction detected value"
+}
+```
+
+
 ## Humidity Sensor
 
 Current relative humidity must be in the range 0 to 100 percent with no decimal places.
