@@ -27,6 +27,17 @@
     },
     {
       "accessory": "mqttthing",
+      "type": "lightbulb",
+      "name": "Test HSV Light",
+      "url": "http://192.168.10.35:1883",
+      "topics": {
+        "getHSV": "test/hsvlight/getHSV",
+        "setHSV": "test/hsvlight/setHSV"
+      },
+      "logMqtt": true
+    },
+    {
+      "accessory": "mqttthing",
       "type": "switch",
       "name": "Test switch",
       "url": "http://192.168.10.35:1883",

@@ -160,6 +160,88 @@ function makeThing(log, config) {
         }
     }
 
+    function addCharacteristic( service, property, characteristic, defaultValue, characteristicChanged ) {
+
+        state[ property ] = defaultValue;
+
+        var charac = service.getCharacteristic( characteristic );
+
+        charac.setValue( defaultValue, undefined, c_mySetContext );
+
+        charac.on( 'get', function( callback ) {
+            //log( 'read ' + property );
+            callback( null, state[ property ] );
+        } );
+
+        if( characteristicChanged ) {
+            charac.on( 'set', function( value, callback, context ) {
+                if( context !== c_mySetContext ) {
+                    //log( 'set ' + property + ' to ' + value );
+                    state[ property ] = value;
+                    characteristicChanged();
+                }
+                callback();
+            } );
+        }
+    }
+
+    function characteristics_HSVLight( service ) {
+
+        function publish() {
+            var bri = state.bri;
+            if( state.on ) {
+                if( bri == 0 ) {
+                    bri = 100;
+                }
+            } else {
+                bri = 0;
+            }
+            var msg = state.hue + ',' + state.sat + ',' + bri;
+            mqttPublish( config.topics.setHSV, msg );
+        }
+
+        addCharacteristic( service, 'on', Characteristic.On, 0, publish );
+        addCharacteristic( service, 'hue', Characteristic.Hue, 0, publish );
+        addCharacteristic( service, 'sat', Characteristic.Saturation, 0, publish );
+        addCharacteristic( service, 'bri', Characteristic.Brightness, 100, publish );
+
+        if( config.topics.getHSV ) {
+            mqttSubscribe( config.topics.getHSV, function( topic, message ) {
+                var comps =  ('' + message ).split( ',' );
+                if( comps.length == 3 ) {
+                    var hue = parseInt( comps[ 0 ] );
+                    var sat = parseInt( comps[ 1 ] );
+                    var bri = parseInt( comps[ 2 ] );
+                    var on = bri > 0 ? 1 : 0;
+
+                    //log( 'h' + hue + ' s' + sat + ' b' + bri + ' /' + on );
+                    if( on != state.on ) {
+                        state.on = on;
+                        //log( 'on ' + on );
+                        service.getCharacteristic( Characteristic.On ).setValue( on, undefined, c_mySetContext );
+                    }
+                    if( hue != state.hue ) {
+                        state.hue = hue;
+                        //log( 'hue ' + hue );
+                        service.getCharacteristic( Characteristic.Hue ).setValue( hue, undefined, c_mySetContext );
+                    }
+
+                    if( sat != state.sat ) {
+                        state.sat = sat;
+                        //log( 'sat ' + sat );
+                        service.getCharacteristic( Characteristic.Saturation ).setValue( sat, undefined, c_mySetContext );
+                    }
+
+                    if( bri != state.bri ) {
+                        state.bri = bri;
+                        //log( 'bri ' + bri );
+                        service.getCharacteristic( Characteristic.Brightness ).setValue( bri, undefined, c_mySetContext );
+                    }
+                }
+            } );
+        }
+    }
+
     function floatCharacteristic(service, property, characteristic, setTopic, getTopic, initialValue) {
         // default state
         state[property] = initialValue;
@@ -446,7 +528,7 @@ function makeThing(log, config) {
         }
         multiCharacteristic( service, 'locktar', Characteristic.LockTargetState, config.topics.setLockTargetState, config.topics.getLockTargetState, values, Characteristic.LockTargetState.UNSECURED );
     }
-   
+
     
     // Create service
     function createServices() {
@@ -459,15 +541,19 @@ function makeThing(log, config) {
 
         if (config.type == "lightbulb") {
             service = new Service.Lightbulb(name);
-            characteristic_On(service);
-            if (config.topics.setBrightness) {
-                characteristic_Brightness(service);
-            }
-            if (config.topics.setHue) {
-                characteristic_Hue(service);
-            }
-            if (config.topics.setSaturation) {
-                characteristic_Saturation(service);
+            if( config.topics.setHSV ) {
+                characteristics_HSVLight(service);
+            } else {
+                characteristic_On(service);
+                if (config.topics.setBrightness) {
+                    characteristic_Brightness(service);
+                }
+                if (config.topics.setHue) {
+                    characteristic_Hue(service);
+                }
+                if (config.topics.setSaturation) {
+                    characteristic_Saturation(service);
+                }
             }
         } else if (config.type == "switch") {
             service = new Service.Switch(name);

@@ -37,6 +37,10 @@ Version 1.0.8
 + Added Stateless Programmable Switch
 + Added Garage Door Opener
 
+Version 1.0.9
++ Added option to combine Light bulb hue (0-360), saturation (0-100) and value/brightness (0-100) into a single topic containing "hue,saturation,value"
+
+
 # Configuration
 Configure the plugin in your homebridge config.json file.
 
@@ -190,6 +194,9 @@ Current relative humidity must be in the range 0 to 100 percent with no decimal 
 
 ## Light bulb
 
+Light bulb can either use separate topics (for on, brightness, hue and saturation), or it can be configured to use a combined value holding comma-separated hue,sat,val.
+If `topics.setHSV` is populated, a combined value is used and any individual on, brightness, hue and saturation topics are ignored.
+
 ```javascript
 {
     "accessory": "mqttthing",
@@ -208,7 +215,9 @@ Current relative humidity must be in the range 0 to 100 percent with no decimal 
         "getHue": 	        "<topic to get the hue (optional)>",
         "setHue": 	        "<topic to set the hue (optional - if coloured)>",
         "getSaturation": 	"<topic to get the saturation (optional)>",
-        "setSaturation": 	"<topic to set the saturation (optional - if coloured)>"
+        "setSaturation": 	"<topic to set the saturation (optional - if coloured)>",
+        "getHSV":           "<in HSV mode, topic to get comma-separated gue, saturation and value>",
+        "setHSV":           "<in HSV mode, topic to set comma-separated gue, saturation and value>",
     },
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
