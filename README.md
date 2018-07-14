@@ -227,6 +227,8 @@ If `topics.setRGB` is populated, a combined value is used in the format red,gree
         "setSaturation": 	"<topic to set the saturation (optional - if coloured)>",
         "getHSV":           "<in HSV mode, topic to get comma-separated hue, saturation and value>",
         "setHSV":           "<in HSV mode, topic to set comma-separated hue, saturation and value>",
+        "getRGB":           "<in RGB mode, topic to get comma-separated red, green, blue>",
+        "setRGB":           "<in RGB mode, topic to set comma-separated red, green, blue>",
     },
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
