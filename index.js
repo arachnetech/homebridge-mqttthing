@@ -251,6 +251,152 @@ function makeThing(log, config) {
         }
     }
 
+    /* 
+     * HSV to RGB conversion from https://stackoverflow.com/questions/17242144/javascript-convert-hsb-hsv-color-to-rgb-accurately
+     * accepts parameters
+     * h  Object = {h:x, s:y, v:z}
+     * OR 
+     * h, s, v
+     */
+    function HSVtoRGB(h, s, v) {
+        var r, g, b, i, f, p, q, t;
+        if (arguments.length === 1) {
+            s = h.s, v = h.v, h = h.h;
+        }
+        i = Math.floor(h * 6);
+        f = h * 6 - i;
+        p = v * (1 - s);
+        q = v * (1 - f * s);
+        t = v * (1 - (1 - f) * s);
+        switch (i % 6) {
+            case 0: r = v, g = t, b = p; break;
+            case 1: r = q, g = v, b = p; break;
+            case 2: r = p, g = v, b = t; break;
+            case 3: r = p, g = q, b = v; break;
+            case 4: r = t, g = p, b = v; break;
+            case 5: r = v, g = p, b = q; break;
+        }
+        return {
+            r: Math.round(r * 255),
+            g: Math.round(g * 255),
+            b: Math.round(b * 255)
+        };
+    }
+
+    function ScaledHSVtoRGB( h, s, v ) {
+        return HSVtoRGB( h / 360, s / 100, v / 100 );
+    }
+
+    /* accepts parameters
+     * r  Object = {r:x, g:y, b:z}
+     * OR 
+     * r, g, b
+     */
+    function RGBtoHSV(r, g, b) {
+        if (arguments.length === 1) {
+            g = r.g, b = r.b, r = r.r;
+        }
+        var max = Math.max(r, g, b), min = Math.min(r, g, b),
+            d = max - min,
+            h,
+            s = (max === 0 ? 0 : d / max),
+            v = max / 255;
+
+        switch (max) {
+            case min: h = 0; break;
+            case r: h = (g - b) + d * (g < b ? 6: 0); h /= 6 * d; break;
+            case g: h = (b - r) + d * 2; h /= 6 * d; break;
+            case b: h = (r - g) + d * 4; h /= 6 * d; break;
+        }
+
+        return {
+            h: h,
+            s: s,
+            v: v
+        };
+    }
+
+    function RGBtoScaledHSV( r, g, b ) {
+        var hsv = RGBtoHSV( r, g, b );
+        return { 
+            h: hsv.h * 360,
+            s: hsv.s * 100,
+            v: hsv.v * 100
+        };
+    }
+
+    function characteristics_RGBLight( service ) {
+
+        function publish() {
+            var bri = state.bri;
+            if( ! config.topics.setOn ) {
+                if( state.on ) {
+                    if( bri == 0 ) {
+                        bri = 100;
+                    }
+                } else {
+                    bri = 0;
+                }
+            }
+            var rgb = ScaledHSVtoRGB( state.hue, state.sat, bri );
+            var msg = rgb.r + ',' + rgb.g + ',' + rgb.b;
+            mqttPublish( config.topics.setHSV, msg );
+        }
+
+        if( config.topics.setOn ) {
+            characteristic_On( service );
+        } else {
+            addCharacteristic( service, 'on', Characteristic.On, 0, publish );
+        }
+        addCharacteristic( service, 'hue', Characteristic.Hue, 0, publish );
+        addCharacteristic( service, 'sat', Characteristic.Saturation, 0, publish );
+        addCharacteristic( service, 'bri', Characteristic.Brightness, 100, publish );
+
+        if( config.topics.getHSV ) {
+            mqttSubscribe( config.topics.getHSV, function( topic, message ) {
+                var comps =  ('' + message ).split( ',' );
+                if( comps.length == 3 ) {
+                    var red = parseInt( comps[ 0 ] );
+                    var green = parseInt( comps[ 1 ] );
+                    var blue = parseInt( comps[ 2 ] );
+
+                    var hsv = RGBtoScaledHSV( red, green, blue );
+                    var hue = hsv.h;
+                    var sat = hsv.s;
+                    var bri = hsv.b;
+
+                    if( ! config.topics.setOn ) {
+                        var on = bri > 0 ? 1 : 0;
+
+                        if( on != state.on ) {
+                            state.on = on;
+                            //log( 'on ' + on );
+                            service.getCharacteristic( Characteristic.On ).setValue( on, undefined, c_mySetContext );
+                        }
+                    }
+
+                    if( hue != state.hue ) {
+                        state.hue = hue;
+                        //log( 'hue ' + hue );
+                        service.getCharacteristic( Characteristic.Hue ).setValue( hue, undefined, c_mySetContext );
+                    }
+
+                    if( sat != state.sat ) {
+                        state.sat = sat;
+                        //log( 'sat ' + sat );
+                        service.getCharacteristic( Characteristic.Saturation ).setValue( sat, undefined, c_mySetContext );
+                    }
+
+                    if( bri != state.bri ) {
+                        state.bri = bri;
+                        //log( 'bri ' + bri );
+                        service.getCharacteristic( Characteristic.Brightness ).setValue( bri, undefined, c_mySetContext );
+                    }
+                }
+            } );
+        }
+    }    
+
     function floatCharacteristic(service, property, characteristic, setTopic, getTopic, initialValue) {
         // default state
         state[property] = initialValue;
@@ -552,6 +698,8 @@ function makeThing(log, config) {
             service = new Service.Lightbulb(name);
             if( config.topics.setHSV ) {
                 characteristics_HSVLight(service);
+            } else if( config.topics.setRGB ) {
+                characteristics_RGBLight(service);
             } else {
                 characteristic_On(service);
                 if (config.topics.setBrightness) {
