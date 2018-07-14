@@ -40,6 +40,10 @@ Version 1.0.8
 Version 1.0.9
 + Added option to combine Light bulb hue (0-360), saturation (0-100) and value/brightness (0-100) into a single topic containing "hue,saturation,value"
 
+Version 1.0.10
++ Allow separate on/off topic when using combined hue,saturation,value topic with light bulb
++ Add combined red,green,blue topic support for light bulb
+
 
 # Configuration
 Configure the plugin in your homebridge config.json file.
@@ -195,8 +199,11 @@ Current relative humidity must be in the range 0 to 100 percent with no decimal 
 ## Light bulb
 
 Light bulb can either use separate topics (for on, brightness, hue and saturation), or it can be configured to use a combined value holding comma-separated hue,sat,val or red,green,blue. 
+
 Hue is 0-360. Saturation is 0-100. Brightness is 0-100. Red, green and blue are 0-255.
+
 If `topics.setHSV` is populated, a combined value is used and any individual brightness, hue and saturation topics are ignored. On/off is sent with `setOn` if configured, or by setting V to 0 when off.
+
 If `topics.setRGB` is populated, a combined value is used in the format red,green,blue (ranging from 0-255). On/off may be sent with `setOn`; brightness, hue and saturation topics are ignored.
 
 ```javascript
