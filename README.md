@@ -195,7 +195,7 @@ Current relative humidity must be in the range 0 to 100 percent with no decimal 
 ## Light bulb
 
 Light bulb can either use separate topics (for on, brightness, hue and saturation), or it can be configured to use a combined value holding comma-separated hue,sat,val.
-If `topics.setHSV` is populated, a combined value is used and any individual on, brightness, hue and saturation topics are ignored.
+If `topics.setHSV` is populated, a combined value is used and any individual brightness, hue and saturation topics are ignored. On/off is sent with setOn if configured, or by setting V to 0 when off.
 
 ```javascript
 {

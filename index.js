@@ -189,18 +189,24 @@ function makeThing(log, config) {
 
         function publish() {
             var bri = state.bri;
-            if( state.on ) {
-                if( bri == 0 ) {
-                    bri = 100;
+            if( ! config.topics.setOn ) {
+                if( state.on ) {
+                    if( bri == 0 ) {
+                        bri = 100;
+                    }
+                } else {
+                    bri = 0;
                 }
-            } else {
-                bri = 0;
             }
             var msg = state.hue + ',' + state.sat + ',' + bri;
             mqttPublish( config.topics.setHSV, msg );
         }
 
-        addCharacteristic( service, 'on', Characteristic.On, 0, publish );
+        if( config.topics.setOn ) {
+            characteristic_On( service );
+        } else {
+            addCharacteristic( service, 'on', Characteristic.On, 0, publish );
+        }
         addCharacteristic( service, 'hue', Characteristic.Hue, 0, publish );
         addCharacteristic( service, 'sat', Characteristic.Saturation, 0, publish );
         addCharacteristic( service, 'bri', Characteristic.Brightness, 100, publish );
@@ -212,14 +218,17 @@ function makeThing(log, config) {
                     var hue = parseInt( comps[ 0 ] );
                     var sat = parseInt( comps[ 1 ] );
                     var bri = parseInt( comps[ 2 ] );
-                    var on = bri > 0 ? 1 : 0;
 
-                    //log( 'h' + hue + ' s' + sat + ' b' + bri + ' /' + on );
-                    if( on != state.on ) {
-                        state.on = on;
-                        //log( 'on ' + on );
-                        service.getCharacteristic( Characteristic.On ).setValue( on, undefined, c_mySetContext );
+                    if( ! config.topics.setOn ) {
+                        var on = bri > 0 ? 1 : 0;
+
+                        if( on != state.on ) {
+                            state.on = on;
+                            //log( 'on ' + on );
+                            service.getCharacteristic( Characteristic.On ).setValue( on, undefined, c_mySetContext );
+                        }
                     }
+
                     if( hue != state.hue ) {
                         state.hue = hue;
                         //log( 'hue ' + hue );

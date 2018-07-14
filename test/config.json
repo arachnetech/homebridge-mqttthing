@@ -38,6 +38,20 @@
     },
     {
       "accessory": "mqttthing",
+      "type": "lightbulb",
+      "name": "Test espurna Light",
+      "url": "http://192.168.10.35:1883",
+      "topics": {
+        "getHSV": "test/hsvlight2/hsv",
+        "setHSV": "test/hsvlight2/hsv/set",
+        "getOn": "test/hsvlight2/on",
+        "setOn": "test/hsvlight2/on/set"
+      },
+      "logMqtt": true,
+      "integerValue": true
+    },
+    {
+      "accessory": "mqttthing",
       "type": "switch",
       "name": "Test switch",
       "url": "http://192.168.10.35:1883",
