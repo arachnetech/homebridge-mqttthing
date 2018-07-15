@@ -62,7 +62,8 @@
         "setOn": "test/rgblight/on/set"
       },
       "logMqtt": true,
-      "integerValue": true
+      "integerValue": true,
+      "hex": true
     },
     {
       "accessory": "mqttthing",
@@ -76,7 +77,8 @@
         "setOn": "test/rgbwlight/on/set"
       },
       "logMqtt": true,
-      "integerValue": true
+      "integerValue": true,
+      "hexPrefix": "#"
     },
     {
       "accessory": "mqttthing",

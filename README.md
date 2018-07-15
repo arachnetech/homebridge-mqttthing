@@ -45,6 +45,9 @@ Version 1.0.10
 + Added Light bulb combined "red,green,blue" topic support
 + Added Light bulb RGBW support through combined "red,green,blue,white" topic
 
+Version 1.0.11
++ Added Light bulb option to publish RGB and RGBW values as hex
+
 # Configuration
 Configure the plugin in your homebridge config.json file.
 
@@ -236,7 +239,9 @@ If `topics.setRGBW` is populated, a combined value is used in the format red,gre
     },
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
-    "offValue": "<value representing off (optional)>"
+    "offValue": "<value representing off (optional)>",
+    "hex": "true to format RGB/RGBW in hexadecimal instead of as comma-separated decimals",
+    "hexPrefix": "format RGB/RGBW in hexadecimal with specified prefix (typically '#') instead of as comma-separated decimals"
 }
 ```
 

@@ -322,6 +322,12 @@ function makeThing(log, config) {
         };
     }
 
+    // byte to 2-characters of hex
+    function toHex( num ) {
+        var s = '0' + num.toString( 16 );
+        return s.substr( s.length - 2 );
+    }
+
     function characteristics_RGBLight( service ) {
 
         var setTopic, getTopic, separateWhite, numComponents;
@@ -337,6 +343,13 @@ function makeThing(log, config) {
             numComponents = 3;
         }
 
+        var hexPrefix = null;
+        if( config.hexPrefix ) {
+            hexPrefix = config.hexPrefix;
+        } else if( config.hex ) {
+            hexPrefix = '';
+        }
+
         function publish() {
             var bri = state.bri;
             if( ! config.topics.setOn ) {
@@ -350,15 +363,26 @@ function makeThing(log, config) {
             }
             var rgb = ScaledHSVtoRGB( state.hue, state.sat, bri );
             if( separateWhite ) {
+                // remove common component from red, green and blue to white
                 var min = Math.min( rgb.r, rgb.g, rgb.b );
                 rgb.w = min;
                 rgb.r -= min;
                 rgb.g -= min;
                 rgb.b -= min;
             }
-            var msg = rgb.r + ',' + rgb.g + ',' + rgb.b;
-            if( separateWhite ) {
-                msg += ',' + rgb.w;
+            var msg;
+            if( hexPrefix == null ) {
+                // comma-separated decimal
+                msg = rgb.r + ',' + rgb.g + ',' + rgb.b;
+                if( separateWhite ) {
+                    msg += ',' + rgb.w;
+                }
+            } else {
+                // hex
+                msg = hexPrefix + toHex( rgb.r ) + toHex( rgb.g ) + toHex( rgb.b );
+                if( separateWhite ) {
+                    msg += toHex( rgb.w );
+                }
             }
             mqttPublish( setTopic, msg );
         }
@@ -374,13 +398,38 @@ function makeThing(log, config) {
 
         if( getTopic ) {
             mqttSubscribe( getTopic, function( topic, message ) {
-                var comps =  ('' + message ).split( ',' );
-                if( comps.length == numComponents ) {
-                    var red = parseInt( comps[ 0 ] );
-                    var green = parseInt( comps[ 1 ] );
-                    var blue = parseInt( comps[ 2 ] );
+                var ok = false;
+                var red, green, blue, white;
+                if( hexPrefix == null ) {
+                    // comma-separated decimal
+                    var comps =  ('' + message ).split( ',' );
+                    if( comps.length == numComponents ) {
+                        red = parseInt( comps[ 0 ] );
+                        green = parseInt( comps[ 1 ] );
+                        blue = parseInt( comps[ 2 ] );
+                        if( separateWhite ) {
+                            white = parseInt( comps[ 3 ] );
+                        }
+                        ok = true;
+                    }
+                } else {
+                    // hex
+                    if( message.length == hexPrefix.length + 2 * numComponents ) {
+                        message = '' + message;
+                        if( message.substr( 0, hexPrefix.length ) == hexPrefix ) {
+                            red = parseInt( message.substr( hexPrefix.length, 2 ), 16 );
+                            green = parseInt( message.substr( hexPrefix.length + 2, 2 ), 16 );
+                            blue = parseInt( message.substr( hexPrefix.length + 4, 2 ), 16 );
+                            if( separateWhite ) {
+                                white = parseInt( message.substr( hexPrefix.length + 6, 2 ), 16 );
+                            }
+                            ok = true;
+                        }
+                    }
+                }
+                if( ok ) {
                     if( separateWhite ) {
-                        var white = parseInt( comps[ 3 ] );
+                        // add white component to red, green and blue
                         red = Math.min( red + white, 255 );
                         green = Math.min( green + white, 255 );
                         blue = Math.min( blue + white, 255 );
