@@ -82,6 +82,23 @@
     },
     {
       "accessory": "mqttthing",
+      "type": "lightbulb",
+      "name": "Test RGBW Light 2",
+      "url": "http://192.168.10.35:1883",
+      "topics": {
+        "getRGB": "test/rgbwlight2/rgb",
+        "setRGB": "test/rgbwlight2/rgb/set",
+        "getWhite": "test/rgbwlight2/white",
+        "setWhite": "test/rgbwlight2/white/set",
+        "getOn": "test/rgbwlight2/on",
+        "setOn": "test/rgbwlight2/on/set"
+      },
+      "logMqtt": true,
+      "integerValue": true,
+      "hexPrefix": "#"
+    },
+    {
+      "accessory": "mqttthing",
       "type": "switch",
       "name": "Test switch",
       "url": "http://192.168.10.35:1883",

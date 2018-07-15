@@ -330,16 +330,25 @@ function makeThing(log, config) {
 
     function characteristics_RGBLight( service ) {
 
-        var setTopic, getTopic, separateWhite, numComponents;
+        state.red = 0;
+        state.green = 0;
+        state.blue = 0;
+        state.white = 0;
+
+        var setTopic, getTopic, numComponents;
+        var whiteComp = false;
+        var whiteSep = false;
         if( config.topics.setRGBW ) {
             setTopic = config.topics.setRGBW;
             getTopic = config.topics.getRGBW;
-            separateWhite = true;
+            whiteComp = true;
             numComponents = 4;
         } else {
             setTopic = config.topics.setRGB;
             getTopic = config.topics.getRGB;
-            separateWhite = false;
+            if( config.topics.setWhite ) {
+                whiteSep = true;
+            }
             numComponents = 3;
         }
 
@@ -362,29 +371,39 @@ function makeThing(log, config) {
                 }
             }
             var rgb = ScaledHSVtoRGB( state.hue, state.sat, bri );
-            if( separateWhite ) {
+            if( whiteSep || whiteComp ) {
                 // remove common component from red, green and blue to white
                 var min = Math.min( rgb.r, rgb.g, rgb.b );
                 rgb.w = min;
                 rgb.r -= min;
                 rgb.g -= min;
                 rgb.b -= min;
+
+                state.white = rgb.w;
             }
+            state.red = rgb.r;
+            state.green = rgb.g;
+            state.blue = rgb.b;
+
             var msg;
             if( hexPrefix == null ) {
                 // comma-separated decimal
                 msg = rgb.r + ',' + rgb.g + ',' + rgb.b;
-                if( separateWhite ) {
+                if( whiteComp ) {
                     msg += ',' + rgb.w;
                 }
             } else {
                 // hex
                 msg = hexPrefix + toHex( rgb.r ) + toHex( rgb.g ) + toHex( rgb.b );
-                if( separateWhite ) {
+                if( whiteComp ) {
                     msg += toHex( rgb.w );
                 }
             }
             mqttPublish( setTopic, msg );
+
+            if( whiteSep ) {
+                mqttPublish( config.topics.setWhite, rgb.w );
+            }
         }
 
         if( config.topics.setOn ) {
@@ -395,6 +414,47 @@ function makeThing(log, config) {
         addCharacteristic( service, 'hue', Characteristic.Hue, 0, publish );
         addCharacteristic( service, 'sat', Characteristic.Saturation, 0, publish );
         addCharacteristic( service, 'bri', Characteristic.Brightness, 100, publish );
+
+        function updateColour( red, green, blue, white ) {
+
+            // add any white component to red, green and blue
+            red = Math.min( red + white, 255 );
+            green = Math.min( green + white, 255 );
+            blue = Math.min( blue + white, 255 );
+
+            var hsv = RGBtoScaledHSV( red, green, blue );
+            var hue = hsv.h;
+            var sat = hsv.s;
+            var bri = hsv.v;
+
+            if( ! config.topics.setOn ) {
+                var on = bri > 0 ? 1 : 0;
+
+                if( on != state.on ) {
+                    state.on = on;
+                    //log( 'on ' + on );
+                    service.getCharacteristic( Characteristic.On ).setValue( on, undefined, c_mySetContext );
+                }
+            }
+
+            if( hue != state.hue ) {
+                state.hue = hue;
+                //log( 'hue ' + hue );
+                service.getCharacteristic( Characteristic.Hue ).setValue( hue, undefined, c_mySetContext );
+            }
+
+            if( sat != state.sat ) {
+                state.sat = sat;
+                //log( 'sat ' + sat );
+                service.getCharacteristic( Characteristic.Saturation ).setValue( sat, undefined, c_mySetContext );
+            }
+
+            if( bri != state.bri ) {
+                state.bri = bri;
+                //log( 'bri ' + bri );
+                service.getCharacteristic( Characteristic.Brightness ).setValue( bri, undefined, c_mySetContext );
+            }
+        }
 
         if( getTopic ) {
             mqttSubscribe( getTopic, function( topic, message ) {
@@ -407,7 +467,7 @@ function makeThing(log, config) {
                         red = parseInt( comps[ 0 ] );
                         green = parseInt( comps[ 1 ] );
                         blue = parseInt( comps[ 2 ] );
-                        if( separateWhite ) {
+                        if( whiteComp ) {
                             white = parseInt( comps[ 3 ] );
                         }
                         ok = true;
@@ -420,7 +480,7 @@ function makeThing(log, config) {
                             red = parseInt( message.substr( hexPrefix.length, 2 ), 16 );
                             green = parseInt( message.substr( hexPrefix.length + 2, 2 ), 16 );
                             blue = parseInt( message.substr( hexPrefix.length + 4, 2 ), 16 );
-                            if( separateWhite ) {
+                            if( whiteComp ) {
                                 white = parseInt( message.substr( hexPrefix.length + 6, 2 ), 16 );
                             }
                             ok = true;
@@ -428,46 +488,25 @@ function makeThing(log, config) {
                     }
                 }
                 if( ok ) {
-                    if( separateWhite ) {
-                        // add white component to red, green and blue
-                        red = Math.min( red + white, 255 );
-                        green = Math.min( green + white, 255 );
-                        blue = Math.min( blue + white, 255 );
-                    }
-
-                    var hsv = RGBtoScaledHSV( red, green, blue );
-                    var hue = hsv.h;
-                    var sat = hsv.s;
-                    var bri = hsv.v;
-
-                    if( ! config.topics.setOn ) {
-                        var on = bri > 0 ? 1 : 0;
-
-                        if( on != state.on ) {
-                            state.on = on;
-                            //log( 'on ' + on );
-                            service.getCharacteristic( Characteristic.On ).setValue( on, undefined, c_mySetContext );
-                        }
-                    }
-
-                    if( hue != state.hue ) {
-                        state.hue = hue;
-                        //log( 'hue ' + hue );
-                        service.getCharacteristic( Characteristic.Hue ).setValue( hue, undefined, c_mySetContext );
-                    }
-
-                    if( sat != state.sat ) {
-                        state.sat = sat;
-                        //log( 'sat ' + sat );
-                        service.getCharacteristic( Characteristic.Saturation ).setValue( sat, undefined, c_mySetContext );
-                    }
-
-                    if( bri != state.bri ) {
-                        state.bri = bri;
-                        //log( 'bri ' + bri );
-                        service.getCharacteristic( Characteristic.Brightness ).setValue( bri, undefined, c_mySetContext );
+                    state.red = red;
+                    state.green = green;
+                    state.blue = blue;
+                    if( whiteComp ) {
+                        state.white = white;
+                        updateColour( red, green, blue, white );
+                    } else if( whiteSep ) {
+                        updateColour( red, green, blue, state.white );
+                    } else {
+                        updateColour( red, green, blue, 0 );
                     }
                 }
+            } );
+        }
+
+        if( whiteSep ) {
+            mqttSubscribe( config.topics.getWhite, function( topic, message ) {
+                state.white = parseInt( message );
+                updateColour( state.red, state.green, state.blue, state.white );
             } );
         }
     }    

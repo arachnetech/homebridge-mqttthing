@@ -47,6 +47,7 @@ Version 1.0.10
 
 Version 1.0.11
 + Added Light bulb option to publish RGB and RGBW values as hex
++ Added Light bulb option to publish RGB white level separately
 
 # Configuration
 Configure the plugin in your homebridge config.json file.
@@ -207,7 +208,7 @@ Hue is 0-360. Saturation is 0-100. Brightness is 0-100. Red, green and blue are 
 
 If `topics.setHSV` is populated, a combined value is used and any individual brightness, hue and saturation topics are ignored. On/off is sent with `setOn` if configured, or by setting V to 0 when off.
 
-If `topics.setRGB` is populated, a combined value is used in the format red,green,blue (ranging from 0-255). On/off may be sent with `setOn`; brightness, hue and saturation topics are ignored.
+If `topics.setRGB` is populated, a combined value is used in the format red,green,blue (ranging from 0-255). On/off may be sent with `setOn`; brightness, hue and saturation topics are ignored. If `topics.setWhite` is also populated, the white level is extracted and sent separately to the combined RGB value.
 
 If `topics.setRGBW` is populated, a combined value is used in the format red,green,blue,white (ranging from 0-255). On/off may be set with `setOn`; brightness, hue and saturation topics are ignored.
 
@@ -236,12 +237,14 @@ If `topics.setRGBW` is populated, a combined value is used in the format red,gre
         "setRGB":           "<in RGB mode, topic to set comma-separated red, green, blue>",
         "getRGBW":          "<in RGBW mode, topic to get comma-separated red, green, blue, white>",
         "setRGBW":          "<in RGBW mode, topic to set comma-separated red, green, blue, white>",
+        "getWhite":         "<topic to get white level (0-255)> - used with getRGB for RGBW with separately-published white level",
+        "setWhite":         "<topic to set white level (0-255)> - used with setRGB for RGBW with separately-published white level",
     },
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
     "offValue": "<value representing off (optional)>",
-    "hex": "true to format RGB/RGBW in hexadecimal instead of as comma-separated decimals",
-    "hexPrefix": "format RGB/RGBW in hexadecimal with specified prefix (typically '#') instead of as comma-separated decimals"
+    "hex": "true to format combined RGB/RGBW in hexadecimal instead of as comma-separated decimals",
+    "hexPrefix": "format combined RGB/RGBW in hexadecimal with specified prefix (typically '#') instead of as comma-separated decimals"
 }
 ```
 
