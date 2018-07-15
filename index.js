@@ -101,7 +101,6 @@ function makeThing(log, config) {
         // set up characteristic
         var charac = service.getCharacteristic(characteristic);
         charac.on('get', function (callback) {
-            //log('read ' + property + ' as ' + state[property]);
             callback(null, state[property]);
         });
         if (setTopic) {
@@ -169,14 +168,12 @@ function makeThing(log, config) {
         charac.setValue( defaultValue, undefined, c_mySetContext );
 
         charac.on( 'get', function( callback ) {
-            //log( 'read ' + property );
             callback( null, state[ property ] );
         } );
 
         if( characteristicChanged ) {
             charac.on( 'set', function( value, callback, context ) {
                 if( context !== c_mySetContext ) {
-                    //log( 'set ' + property + ' to ' + value );
                     state[ property ] = value;
                     characteristicChanged();
                 }
@@ -327,6 +324,19 @@ function makeThing(log, config) {
 
     function characteristics_RGBLight( service ) {
 
+        var setTopic, getTopic, separateWhite, numComponents;
+        if( config.topics.setRGBW ) {
+            setTopic = config.topics.setRGBW;
+            getTopic = config.topics.getRGBW;
+            separateWhite = true;
+            numComponents = 4;
+        } else {
+            setTopic = config.topics.setRGB;
+            getTopic = config.topics.getRGB;
+            separateWhite = false;
+            numComponents = 3;
+        }
+
         function publish() {
             var bri = state.bri;
             if( ! config.topics.setOn ) {
@@ -339,8 +349,18 @@ function makeThing(log, config) {
                 }
             }
             var rgb = ScaledHSVtoRGB( state.hue, state.sat, bri );
+            if( separateWhite ) {
+                var min = Math.min( rgb.r, rgb.g, rgb.b );
+                rgb.w = min;
+                rgb.r -= min;
+                rgb.g -= min;
+                rgb.b -= min;
+            }
             var msg = rgb.r + ',' + rgb.g + ',' + rgb.b;
-            mqttPublish( config.topics.setRGB, msg );
+            if( separateWhite ) {
+                msg += ',' + rgb.w;
+            }
+            mqttPublish( setTopic, msg );
         }
 
         if( config.topics.setOn ) {
@@ -352,18 +372,24 @@ function makeThing(log, config) {
         addCharacteristic( service, 'sat', Characteristic.Saturation, 0, publish );
         addCharacteristic( service, 'bri', Characteristic.Brightness, 100, publish );
 
-        if( config.topics.getRGB ) {
-            mqttSubscribe( config.topics.getRGB, function( topic, message ) {
+        if( getTopic ) {
+            mqttSubscribe( getTopic, function( topic, message ) {
                 var comps =  ('' + message ).split( ',' );
-                if( comps.length == 3 ) {
+                if( comps.length == numComponents ) {
                     var red = parseInt( comps[ 0 ] );
                     var green = parseInt( comps[ 1 ] );
                     var blue = parseInt( comps[ 2 ] );
+                    if( separateWhite ) {
+                        var white = parseInt( comps[ 3 ] );
+                        red = Math.min( red + white, 255 );
+                        green = Math.min( green + white, 255 );
+                        blue = Math.min( blue + white, 255 );
+                    }
 
                     var hsv = RGBtoScaledHSV( red, green, blue );
                     var hue = hsv.h;
                     var sat = hsv.s;
-                    var bri = hsv.b;
+                    var bri = hsv.v;
 
                     if( ! config.topics.setOn ) {
                         var on = bri > 0 ? 1 : 0;
@@ -698,7 +724,7 @@ function makeThing(log, config) {
             service = new Service.Lightbulb(name);
             if( config.topics.setHSV ) {
                 characteristics_HSVLight(service);
-            } else if( config.topics.setRGB ) {
+            } else if( config.topics.setRGB || config.topics.setRGBW ) {
                 characteristics_RGBLight(service);
             } else {
                 characteristic_On(service);

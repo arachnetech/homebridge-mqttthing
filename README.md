@@ -41,9 +41,9 @@ Version 1.0.9
 + Added option to combine Light bulb hue (0-360), saturation (0-100) and value/brightness (0-100) into a single topic containing "hue,saturation,value"
 
 Version 1.0.10
-+ Allow separate on/off topic when using combined hue,saturation,value topic with light bulb
-+ Add combined red,green,blue topic support for light bulb
-
++ Allowed separate on/off topic when using combined "hue,saturation,value" topic with Light bulb
++ Added Light bulb combined "red,green,blue" topic support
++ Added Light bulb RGBW support through combined "red,green,blue,white" topic
 
 # Configuration
 Configure the plugin in your homebridge config.json file.
@@ -206,6 +206,8 @@ If `topics.setHSV` is populated, a combined value is used and any individual bri
 
 If `topics.setRGB` is populated, a combined value is used in the format red,green,blue (ranging from 0-255). On/off may be sent with `setOn`; brightness, hue and saturation topics are ignored.
 
+If `topics.setRGBW` is populated, a combined value is used in the format red,green,blue,white (ranging from 0-255). On/off may be set with `setOn`; brightness, hue and saturation topics are ignored.
+
 ```javascript
 {
     "accessory": "mqttthing",
@@ -229,6 +231,8 @@ If `topics.setRGB` is populated, a combined value is used in the format red,gree
         "setHSV":           "<in HSV mode, topic to set comma-separated hue, saturation and value>",
         "getRGB":           "<in RGB mode, topic to get comma-separated red, green, blue>",
         "setRGB":           "<in RGB mode, topic to set comma-separated red, green, blue>",
+        "getRGBW":          "<in RGBW mode, topic to get comma-separated red, green, blue, white>",
+        "setRGBW":          "<in RGBW mode, topic to set comma-separated red, green, blue, white>",
     },
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
