@@ -340,7 +340,7 @@ function makeThing(log, config) {
             }
             var rgb = ScaledHSVtoRGB( state.hue, state.sat, bri );
             var msg = rgb.r + ',' + rgb.g + ',' + rgb.b;
-            mqttPublish( config.topics.setHSV, msg );
+            mqttPublish( config.topics.setRGB, msg );
         }
 
         if( config.topics.setOn ) {
@@ -352,8 +352,8 @@ function makeThing(log, config) {
         addCharacteristic( service, 'sat', Characteristic.Saturation, 0, publish );
         addCharacteristic( service, 'bri', Characteristic.Brightness, 100, publish );
 
-        if( config.topics.getHSV ) {
-            mqttSubscribe( config.topics.getHSV, function( topic, message ) {
+        if( config.topics.getRGB ) {
+            mqttSubscribe( config.topics.getRGB, function( topic, message ) {
                 var comps =  ('' + message ).split( ',' );
                 if( comps.length == 3 ) {
                     var red = parseInt( comps[ 0 ] );
