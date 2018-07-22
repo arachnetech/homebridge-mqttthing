@@ -8,46 +8,51 @@ This plugin is published through [NPM](https://www.npmjs.com/package/homebridge-
     npm install -g homebridge-mqttthing
 
 # Release notes
-Version 1.0.1
-+ Initial public version with Light bulb, Switch, Outlet, Motion Sensor, Occupancy Sensor
 
-Version 1.0.2
-+ Added Light Sensor
-+ Default sensors to 'active' state
+Version 1.0.12
++ Added Fan
 
-Version 1.0.3
-+ Added Contact Sensor
-
-Version 1.0.4
-+ Fixed Occupancy Sensor values
-+ Added Doorbell
-
-Version 1.0.5
-+ Added Security System
-+ Added Smoke Sensor
-
-Version 1.0.6
-+ Added Temperature Sensor
-+ Added Humidity Sensor
-
-Version 1.0.7
-+ Fixed Smoke Sensor
-
-Version 1.0.8
-+ Added Stateless Programmable Switch
-+ Added Garage Door Opener
-
-Version 1.0.9
-+ Added option to combine Light bulb hue (0-360), saturation (0-100) and value/brightness (0-100) into a single topic containing "hue,saturation,value"
+Version 1.0.11
++ Added Light bulb option to publish RGB and RGBW values as hex
++ Added Light bulb option to publish RGB white level separately
 
 Version 1.0.10
 + Allowed separate on/off topic when using combined "hue,saturation,value" topic with Light bulb
 + Added Light bulb combined "red,green,blue" topic support
 + Added Light bulb RGBW support through combined "red,green,blue,white" topic
 
-Version 1.0.11
-+ Added Light bulb option to publish RGB and RGBW values as hex
-+ Added Light bulb option to publish RGB white level separately
+Version 1.0.9
++ Added option to combine Light bulb hue (0-360), saturation (0-100) and value/brightness (0-100) into a single topic containing "hue,saturation,value"
+
+Version 1.0.8
++ Added Stateless Programmable Switch
++ Added Garage Door Opener
+
+Version 1.0.7
++ Fixed Smoke Sensor
+
+Version 1.0.6
++ Added Temperature Sensor
++ Added Humidity Sensor
+
+Version 1.0.5
++ Added Security System
++ Added Smoke Sensor
+
+Version 1.0.4
++ Fixed Occupancy Sensor values
++ Added Doorbell
+
+Version 1.0.3
++ Added Contact Sensor
+
+Version 1.0.2
++ Added Light Sensor
++ Default sensors to 'active' state
+
+Version 1.0.1
++ Initial public version with Light bulb, Switch, Outlet, Motion Sensor, Occupancy Sensor
+
 
 # Configuration
 Configure the plugin in your homebridge config.json file.
@@ -137,6 +142,38 @@ Doorbell ring switch state can be be `SINGLE_PRESS`, `DOUBLE_PRESS` or `LONG_PRE
         "getMotionDetected": "<topic used to provide 'motion detected' status (optional, if exposing motion sensor)>"
     },
     "switchValues": "<array of 3 switch values corresponding to single-press, double-press and long-press respectively (optional)>"
+}
+```
+
+## Fan
+
+Fan running state ('on') is true or false, or 1 or 0 if `integerValue: true` specified.
+
+Fan rotation direction is 0 for clockwise or 1 for anticlockwise.
+
+Fan rotation speed is an integer between 0 (off) and 100 (full speed).
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "fan",
+    "name": "<name of sensor>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "caption": "<label (optional)>",
+    "topics":
+    {
+        "getOn": 	            "<topic to notify homebridge of 'fan on' status>",
+        "setOn": 	            "<topic published by homebridge to set 'fan on' status>",
+        "getRotationDirection": "<topic to notify homebridge of rotation direction (optional)> ",
+        "setRotationDirection": "<topic published by homebridge to set rotation direction (optional)>",
+        "getRotationSpeed":     "<topic to notify homebridge of rotation speed (optional)",
+        "setRotationSpeed":     "<topic published by homebridge to set rotation speed (optional)"
+    },
+    "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
+    "onValue": "<value representing on (optional)>",
+    "offValue": "<value representing off (optional)>"
 }
 ```
 

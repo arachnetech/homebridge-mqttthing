@@ -798,6 +798,16 @@ function makeThing(log, config) {
         multiCharacteristic( service, 'locktar', Characteristic.LockTargetState, config.topics.setLockTargetState, config.topics.getLockTargetState, values, Characteristic.LockTargetState.UNSECURED );
     }
 
+    // Characteristic.RotationDirection
+    function characteristic_RotationDirection(service) {
+        integerCharacteristic(service, 'rotationDirection', Characteristic.RotationDirection, config.topics.setRotationDirection, config.topics.getRotationDirection);
+    }
+
+    // Characteristic.RotationSpeed
+    function characteristic_RotationSpeed(service) {
+        integerCharacteristic(service, 'rotationSpeed', Characteristic.RotationSpeed, config.topics.setRotationSpeed, config.topics.getRotationSpeed);
+    }
+
     
     // Create service
     function createServices() {
@@ -904,6 +914,15 @@ function makeThing(log, config) {
             }
             if( config.topics.setLockTargetState ) {
                 characteristic_LockTargetState(service);
+            }
+        } else if( config.type == "fan" ) {
+            service = new Service.Fan(name);
+            characteristic_On(service);
+            if( config.topics.getRotationDirection || config.topics.setRotationDirection ) {
+                characteristic_RotationDirection(service);
+            }
+            if( config.topics.getRotationSpeed || config.topics.setRotationSpeed ) {
+                characteristic_RotationSpeed(service);
             }
         } else {
             log("ERROR: Unrecognized type: " + config.type);
