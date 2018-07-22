@@ -164,8 +164,8 @@ Fan rotation speed is an integer between 0 (off) and 100 (full speed).
     "caption": "<label (optional)>",
     "topics":
     {
-        "getOn": 	            "<topic to notify homebridge of 'fan on' status>",
-        "setOn": 	            "<topic published by homebridge to set 'fan on' status>",
+        "getOn":                "<topic to notify homebridge of 'fan on' status>",
+        "setOn":                "<topic published by homebridge to set 'fan on' status>",
         "getRotationDirection": "<topic to notify homebridge of rotation direction (optional)> ",
         "setRotationDirection": "<topic published by homebridge to set rotation direction (optional)>",
         "getRotationSpeed":     "<topic to notify homebridge of rotation speed (optional)",
