@@ -1,7 +1,7 @@
 {
   "name": "homebridge-mqttthing",
-  "version": "1.0.12",
-  "description": "Homebridge plugin for a few simple services, based on homebridge-mqttswitch and homebridge-mqttlightbulb",
+  "version": "1.0.13",
+  "description": "Homebridge plugin supporting various services over MQTT",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

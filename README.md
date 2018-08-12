@@ -1,5 +1,5 @@
 # homebridge-mqttthing
-A Homebridge plugin for several services, based on homebrige-mqttswitch and homebridge-mqttlightbulb
+Homebridge plugin supporting various services over MQTT, originally based on homebrige-mqttswitch and homebridge-mqttlightbulb
 
 # Installation
 Follow the instructions in [homebridge](https://www.npmjs.com/package/homebridge) for the homebridge server installation.
@@ -8,6 +8,9 @@ This plugin is published through [NPM](https://www.npmjs.com/package/homebridge-
     npm install -g homebridge-mqttthing
 
 # Release notes
+
+Version 1.0.13
++ Remove non-ASCII characters from MQTT client ID (thanks, twinkelm)
 
 Version 1.0.12
 + Added Fan

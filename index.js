@@ -14,7 +14,7 @@ function makeThing(log, config) {
     var logmqtt = config.logMqtt;
 
     function mqttInit() {
-        var clientId = 'mqttthing_' + config.name + '_' + Math.random().toString(16).substr(2, 8);
+        var clientId = 'mqttthing_' + config.name.replace(/[^\x20-\x7F]/g, "") + '_' + Math.random().toString(16).substr(2, 8);
         var options = {
             keepalive: 10,
             clientId: clientId,
@@ -248,11 +248,11 @@ function makeThing(log, config) {
         }
     }
 
-    /* 
+    /*
      * HSV to RGB conversion from https://stackoverflow.com/questions/17242144/javascript-convert-hsb-hsv-color-to-rgb-accurately
      * accepts parameters
      * h  Object = {h:x, s:y, v:z}
-     * OR 
+     * OR
      * h, s, v
      */
     function HSVtoRGB(h, s, v) {
@@ -286,7 +286,7 @@ function makeThing(log, config) {
 
     /* accepts parameters
      * r  Object = {r:x, g:y, b:z}
-     * OR 
+     * OR
      * r, g, b
      */
     function RGBtoHSV(r, g, b) {
@@ -315,7 +315,7 @@ function makeThing(log, config) {
 
     function RGBtoScaledHSV( r, g, b ) {
         var hsv = RGBtoHSV( r, g, b );
-        return { 
+        return {
             h: hsv.h * 360,
             s: hsv.s * 100,
             v: hsv.v * 100
@@ -509,7 +509,7 @@ function makeThing(log, config) {
                 updateColour( state.red, state.green, state.blue, state.white );
             } );
         }
-    }    
+    }
 
     function floatCharacteristic(service, property, characteristic, setTopic, getTopic, initialValue) {
         // default state
@@ -756,7 +756,7 @@ function makeThing(log, config) {
                 return val ? Characteristic.SmokeDetected.SMOKE_DETECTED : Characteristic.SmokeDetected.SMOKE_NOT_DETECTED;
             });
     }
-    
+
     // Characteristic.CurrentDoorState
     function characteristic_CurrentDoorState(service) {
         let values = config.doorValues;
@@ -779,7 +779,7 @@ function makeThing(log, config) {
     function characteristic_ObstructionDetected(service) {
         booleanCharacteristic(service, 'obstrucdet', Characteristic.ObstructionDetected, null, config.topics.getObstructionDetected, false);
     }
-    
+
     // Characteristic.LockCurrentState
     function characteristic_LockCurrentState(service) {
         let values = config.lockValues;
@@ -808,7 +808,7 @@ function makeThing(log, config) {
         integerCharacteristic(service, 'rotationSpeed', Characteristic.RotationSpeed, config.topics.setRotationSpeed, config.topics.getRotationSpeed);
     }
 
-    
+
     // Create service
     function createServices() {
 
