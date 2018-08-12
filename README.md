@@ -185,7 +185,7 @@ Fan rotation speed is an integer between 0 (off) and 100 (full speed).
 
 Garage door opener current door state can be `OPEN`, `CLOSED`, `OPENING`, `CLOSING`, `STOPPED`. By default, these use values of `O`, `C`, `o`, `c` and `S` respectively; these defaults can be changed using the **doorValues** setting.
 
-Garage door opener target state can be `OPEN` or `CLOSED`. By default, values of `0` and `1` are used respectively (unless changed through **doorValues**).
+Garage door opener target state can be `OPEN` or `CLOSED`. By default, values of `O` and `C` are used respectively (unless changed through **doorValues**).
 
 Lock current state can be `UNSECURED`, `SECURED`, `JAMMED` or `UNKNOWN`. By default, these use values of `U`, `S`, `J`, `?` respectively; these can be changed using the **lockValues** setting.
 

@@ -247,7 +247,7 @@
           "getLockCurrentState":      "test/garagelock/current",
           "setLockTargetState":       "test/garagelock/target"
       },
-      "integerValue": true
+      "doorValues": [ "Open", "Closed", "Opening", "Closing", "Stopped" ]
     },
     {
       "accessory": "mqttthing",
