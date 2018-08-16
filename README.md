@@ -82,13 +82,13 @@ The following settings apply to all device types:
     {
         "getName": 	        "<topic to get the name>"
     },
-    "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
+    "integerValue": "true to use 1|0 instead of true|false for onValue and offValue (optional)",
     "onValue": "<value representing on (optional)>",
     "offValue": "<value representing off (optional)>"
 }
 ```
 
-Boolean types like on/off use  true/false unless `integerValue: true` is configured, in which case they default to 1/0. Alternatively, specific values can be configured using `onValue` and `offValue`. Integer and string types are not affected by these settings.
+Homekit Boolean types like on/off use strings "true" and "false" in MQTT messages unless `integerValue: true` is configured, in which case they use to "1" and "0". Alternatively, specific values can be configured using `onValue` and `offValue` (in which case `integerValue` is ignored). Other Homekit types (integer, string, etc.) are not affected by these settings.
 
 
 # Supported Accessories
