@@ -94,7 +94,11 @@ function makeThing(log, config) {
         }
     }
 
-    function booleanCharacteristic(service, property, characteristic, setTopic, getTopic, initialValue, mapValueFunc) {
+    function booleanCharacteristic(service, property, characteristic, setTopic, getTopic, initialValue, mapValueFunc, turnOffAfterms) {
+
+        // auto-turn-off timer
+        var autoOffTimer = null;
+
         // default state
         state[property] = (initialValue ? true : false);
 
@@ -110,6 +114,21 @@ function makeThing(log, config) {
                     mqttPublish(setTopic, onOffValue(value));
                 }
                 callback();
+
+                // optionally turn off after timeout
+                if( value && turnOffAfterms ) {
+                    if( autoOffTimer ) {
+                        clearTimeout( autoOffTimer );
+                    }
+                    autoOffTimer = setTimeout( function() {
+                        autoOffTimer = null;
+
+                        state[property] = false;
+                        mqttPublish( setTopic, onOffValue( false ) );
+                        service.getCharacteristic(characteristic).setValue(mapValueForHomebridge(false, mapValueFunc), undefined, c_mySetContext);
+
+                    }, turnOffAfterms );
+                }
             });
         }
         if (initialValue) {
@@ -631,7 +650,7 @@ function makeThing(log, config) {
 
     // Characteristic.On
     function characteristic_On(service) {
-        booleanCharacteristic(service, 'on', Characteristic.On, config.topics.setOn, config.topics.getOn);
+        booleanCharacteristic(service, 'on', Characteristic.On, config.topics.setOn, config.topics.getOn, null, null, config.turnOffAfterms);
     }
 
     // Characteristic.Brightness

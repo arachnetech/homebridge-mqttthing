@@ -23,7 +23,8 @@
         "getSaturation": "test/lightbulb/getSaturation",
         "setSaturation": "test/lightbulb/setSaturation"
       },
-      "integerValue": true
+      "integerValue": true,
+      "turnOffAfterms": 5000
     },
     {
       "accessory": "mqttthing",
@@ -106,7 +107,8 @@
         "getOn": "test/switch/getOn",
         "setOn": "test/switch/setOn"
       },
-      "integerValue": true
+      "integerValue": true,
+      "turnOffAfterms": 2000
     },
     {
       "accessory": "mqttthing",

@@ -9,6 +9,9 @@ This plugin is published through [NPM](https://www.npmjs.com/package/homebridge-
 
 # Release notes
 
+Version 1.0.14
++ Added `turnOffAfterms` to items with an On characteristic like Switch, causing them to turn off automatically after a specified timeout (in milliseconds).
+
 Version 1.0.13
 + Remove non-ASCII characters from MQTT client ID (thanks, twinkelm)
 
@@ -477,6 +480,11 @@ Like a doorbell (which is based on it), the state of a stateless programmable sw
 
 
 ## Switch
+
+On/off switch.
+
+Configuring `turnOffAfter` causes the switch to turn off automatically the specified number of milliseconds after it is turned on.
+
 ```javascript
 {
     "accessory": "mqttthing",
@@ -493,7 +501,8 @@ Like a doorbell (which is based on it), the state of a stateless programmable sw
     },
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
-    "offValue": "<value representing off (optional)>"
+    "offValue": "<value representing off (optional)>",
+    "turnOffAfter": <milliseconds after which to turn off automatically>
 }
 ```
 
