@@ -1,3 +1,6 @@
+_Apologies for my slow responses to issues raised over the last few weeks. I do hope to catch up fully and respond soon. Thanks for all the feedback/suggestions. It's good to know that people are using this._
+
+
 # homebridge-mqttthing
 Homebridge plugin supporting various services over MQTT, originally based on homebrige-mqttswitch and homebridge-mqttlightbulb
 
