@@ -4,64 +4,15 @@ _Apologies for my slow responses to issues raised over the last few weeks. I do 
 # homebridge-mqttthing
 Homebridge plugin supporting various services over MQTT, originally based on homebrige-mqttswitch and homebridge-mqttlightbulb
 
+   * [Installation](#installation)
+   * [Configuration](#configuration)
+   * [Release notes](#release-notes)
+
 # Installation
 Follow the instructions in [homebridge](https://www.npmjs.com/package/homebridge) for the homebridge server installation.
 This plugin is published through [NPM](https://www.npmjs.com/package/homebridge-mqttthing) and should be installed "globally" by typing:
 
     npm install -g homebridge-mqttthing
-
-# Release notes
-
-Version 1.0.14
-+ Added `turnOffAfterms` to items with an On characteristic like Switch, causing them to turn off automatically after a specified timeout (in milliseconds).
-
-Version 1.0.13
-+ Remove non-ASCII characters from MQTT client ID (thanks, twinkelm)
-
-Version 1.0.12
-+ Added Fan
-
-Version 1.0.11
-+ Added Light bulb option to publish RGB and RGBW values as hex
-+ Added Light bulb option to publish RGB white level separately
-
-Version 1.0.10
-+ Allowed separate on/off topic when using combined "hue,saturation,value" topic with Light bulb
-+ Added Light bulb combined "red,green,blue" topic support
-+ Added Light bulb RGBW support through combined "red,green,blue,white" topic
-
-Version 1.0.9
-+ Added option to combine Light bulb hue (0-360), saturation (0-100) and value/brightness (0-100) into a single topic containing "hue,saturation,value"
-
-Version 1.0.8
-+ Added Stateless Programmable Switch
-+ Added Garage Door Opener
-
-Version 1.0.7
-+ Fixed Smoke Sensor
-
-Version 1.0.6
-+ Added Temperature Sensor
-+ Added Humidity Sensor
-
-Version 1.0.5
-+ Added Security System
-+ Added Smoke Sensor
-
-Version 1.0.4
-+ Fixed Occupancy Sensor values
-+ Added Doorbell
-
-Version 1.0.3
-+ Added Contact Sensor
-
-Version 1.0.2
-+ Added Light Sensor
-+ Default sensors to 'active' state
-
-Version 1.0.1
-+ Initial public version with Light bulb, Switch, Outlet, Motion Sensor, Occupancy Sensor
-
 
 # Configuration
 Configure the plugin in your homebridge config.json file.
@@ -535,3 +486,55 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
     }
 }
 ```
+
+# Release notes
+
+Version 1.0.14
++ Added `turnOffAfterms` to items with an On characteristic like Switch, causing them to turn off automatically after a specified timeout (in milliseconds).
+
+Version 1.0.13
++ Remove non-ASCII characters from MQTT client ID (thanks, twinkelm)
+
+Version 1.0.12
++ Added Fan
+
+Version 1.0.11
++ Added Light bulb option to publish RGB and RGBW values as hex
++ Added Light bulb option to publish RGB white level separately
+
+Version 1.0.10
++ Allowed separate on/off topic when using combined "hue,saturation,value" topic with Light bulb
++ Added Light bulb combined "red,green,blue" topic support
++ Added Light bulb RGBW support through combined "red,green,blue,white" topic
+
+Version 1.0.9
++ Added option to combine Light bulb hue (0-360), saturation (0-100) and value/brightness (0-100) into a single topic containing "hue,saturation,value"
+
+Version 1.0.8
++ Added Stateless Programmable Switch
++ Added Garage Door Opener
+
+Version 1.0.7
++ Fixed Smoke Sensor
+
+Version 1.0.6
++ Added Temperature Sensor
++ Added Humidity Sensor
+
+Version 1.0.5
++ Added Security System
++ Added Smoke Sensor
+
+Version 1.0.4
++ Fixed Occupancy Sensor values
++ Added Doorbell
+
+Version 1.0.3
++ Added Contact Sensor
+
+Version 1.0.2
++ Added Light Sensor
++ Default sensors to 'active' state
+
+Version 1.0.1
++ Initial public version with Light bulb, Switch, Outlet, Motion Sensor, Occupancy Sensor
