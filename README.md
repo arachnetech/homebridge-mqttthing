@@ -6,6 +6,7 @@ Homebridge plugin supporting various services over MQTT, originally based on hom
 
    * [Installation](#installation)
    * [Configuration](#configuration)
+   * [Supported Accessories](#supported-accessories)
    * [Release notes](#release-notes)
 
 # Installation
@@ -51,6 +52,21 @@ Homekit Boolean types like on/off use strings "true" and "false" in MQTT message
 
 
 # Supported Accessories
+
+   * [Contact Sensor](#contact-sensor)
+   * [Doorbell](#doorbell)
+   * [Fan](#fan)
+   * [Garage door opener](#garage-door-opener)
+   * [Humidity Sensor](#humidity-sensor)
+   * [Light bulb](#light-bulb)
+   * [Light Sensor](#light-sensor)
+   * [Motion Sensor](#motion-sensor)
+   * [Occupancy Sensor](#occupancy-sensor)
+   * [Outlet](#outlet)
+   * [Security System](#security-system)
+   * [StatelessProgrammableSwitch](#statelessprogrammableswitch)
+   * [Switch](#switch)
+   * [Temperature Sensor](#temperature-sensor)
 
 ## Contact Sensor
 
