@@ -618,10 +618,15 @@ function makeThing(log, config) {
         if (setTopic) {
             charac.on('set', function (value, callback, context) {
                 if (context !== c_mySetContext) {
-                    state[property] = value;
-                    let mqttVal = values[value];
-                    if (mqttVal !== undefined) {
-                        mqttPublish(setTopic, mqttVal);
+                	if (property == 'doortar' && (state['doorcur'] == 2 || state['doorcur'] == 3)){
+                		//Skip publish for open/close as DoorState change was initiated oudside of homekit
+                        state[property] = value;
+                    } else {
+                        state[property] = value;
+                        let mqttVal = values[value];
+                        if (mqttVal !== undefined) {
+                            mqttPublish(setTopic, mqttVal);
+                        }
                     }
                     callback();
                 }
@@ -642,6 +647,14 @@ function makeThing(log, config) {
                         log( 'State is now: ' + newState );
                     }
                     state[property] = newState;
+                    if (property == 'doorcur' && newState == 2 ) {
+                        // Opening doorstate change was initiated outside of homebridge. Keep TargetDoorState in sync
+                        service.getCharacteristic(Characteristic.TargetDoorState).setValue(Characteristic.TargetDoorState.OPEN);
+                    }
+                    if (property == 'doorcur' && newState == 3 ) {
+                        // Closing doorstate change was initiated outside of homebridge. Keep TargetDoorState in sync
+                        service.getCharacteristic(Characteristic.TargetDoorState).setValue(Characteristic.TargetDoorState.CLOSED);
+                    }
                     service.getCharacteristic(characteristic).setValue(newState, undefined, c_mySetContext);
                 }
             });
