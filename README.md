@@ -70,6 +70,8 @@ Note that setXxx topics are published by Homebridge and should be subscribed-to 
 
 Various different service types are supported by this single 'mqttthing' accessory...
 
+**All values shown below (often within <>) are comments/descriptions, and should not be copied into your configuration file. For an example of an actual configuration file, please see `test/config.json`.**
+
 ## Common settings
 
 The following settings apply to all device types:
