@@ -158,13 +158,13 @@ Fan rotation speed is an integer between 0 (off) and 100 (full speed).
 
 ## Garage Door Opener
 
-Garage door opener current door state can be `OPEN`, `CLOSED`, `OPENING`, `CLOSING`, `STOPPED`. By default, these use values of `O`, `C`, `o`, `c` and `S` respectively; these defaults can be changed using the **doorValues** setting.
+Garage door opener current door state can be **OPEN**, **CLOSED**, **OPENING**, **CLOSING**, **STOPPED**. By default, these use values of `O`, `C`, `o`, `c` and `S` respectively; these defaults can be changed using the **doorValues** setting.
 
-Garage door opener target state can be `OPEN` or `CLOSED`. By default, values of `O` and `C` are used respectively (unless changed through **doorValues**).
+Garage door opener target state can be **OPEN** or **CLOSED**. By default, values of `O` and `C` are used respectively (unless changed through **doorValues**).
 
-Lock current state can be `UNSECURED`, `SECURED`, `JAMMED` or `UNKNOWN`. By default, these use values of `U`, `S`, `J`, `?` respectively; these can be changed using the **lockValues** setting.
+Lock current state can be **UNSECURED**, **SECURED**, **JAMMED** or **UNKNOWN**. By default, these use values of `U`, `S`, `J`, `?` respectively; these can be changed using the **lockValues** setting.
 
-Lock target state can be `UNSECURED` or `SECURED`. By default, these use values of `U` and `S` respectively (unless changed through **lockValues**).
+Lock target state can be **UNSECURED** or **SECURED**. By default, these use values of `U` and `S` respectively (unless changed through **lockValues**).
 
 ```javascript
 {
@@ -177,17 +177,42 @@ Lock target state can be `UNSECURED` or `SECURED`. By default, these use values 
     "caption": "<label (optional)>",
     "topics":
     {
-        "getCurrentDoorState":      "<topic used to get current door state>",
-        "setTargetDoorState":       "<topic used to set target door state>",
-        "getObstructionDetected":   "<topic used to get obstruction detected state>",
-        "getLockCurrentState":      "<topic used to get lock current state (optional)>",
-        "setLockTargetState":       "<topic used to set lock current state (optional)>"
+        "setTargetDoorState":       "test/garage/target",
+        "getTargetDoorState":       "test/garage/current",
+        "getCurrentDoorState":      "test/garage/current",
+        "setLockTargetState":       "test/garagelock/target",
+        "getLockTargetState":       "test/garagelock/current",
+        "getLockCurrentState":      "test/garagelock/current",
+        "getObstructionDetected":   "test/garage/obstruction"
     },
-    "doorValues": "<array of 5 door values corresponding to open, closed, opening, closing and stopped respectively (optional)>",
-    "lockValues": "<array of 4 lock values corresponding to unsecured, secured, jammed and unknown respectively (optional)>",
-    "integerValue": "true to use 1|0 instead of true|false for obstruction detected value"
+    "doorValues": [ "Open", "Closed", "Opening", "Closing", "Stopped" ],
+    "lockValues": [ "Unsecured", "Secured", "Jammed",  "Unknown" ]
 }
 ```
+
+### Topics
+
+`setTargetDoorState` - Topic published when the target door state is changed in HomeKit. Values are _final_ `doorValues` (not opening/closing).
+
+`getTargetDoorState` - Topic that may be published to notify HomeKit that the target door state has been changed externally. Values are _final_ `doorValues` (not opening/closing). May use same topic as `getCurrentDoorState` as above. Omit if all control is through HomeKit.
+
+`getCurrentDoorState` - Topic published to notify HomeKit that a door state has been achieved. HomeKit will expect current door state to end up matching target door state. Values are `doorValues`.
+
+`setLockTargetState` - Topic published when the target lock state is changed in HomeKit. Values are `lockValues`.
+
+`getLockTargetState` - Topic that may be published to notify HomeKit that the target lock state has been changed externally. Values are `lockValues`. May use same topic as `getLockCurrentState` as above. Omit if all control is through HomeKit.
+
+`getLockCurrentState` - Topic published to notify HomeKit that a lock state has been achieved. Values are `lockValues`.
+
+`getObstructionDetected` - Topic published to notify HomeKit whether an obstruction has been detected (Boolean value).
+
+### Values
+
+`doorValues` - Array of 5 door values corresponding to open, closed, opening, closing and stopped respectively. If not specified, defaults to `[ 'O', 'C', 'o', 'c', 'S' ]`.
+
+`lockValues` - Array of 4 lock values corresponding to unsecured, secured, jammed and unknown respectively. if not specified, defaults to `[ 'U', 'S', 'J', '?' ]`.
+
+`integerValue` - Set to true to use values 1 and 0 instead of "true" and "false" respectively for obstruction detected value.
 
 
 ## Humidity Sensor
@@ -375,9 +400,9 @@ An outlet can be configured as a light or as a fan in the Home app.
 
 ## Security System
 
-Security System current state can be `STAY_ARM`, `AWAY_ARM`, `NIGHT_ARM`, `DISARMED` or `ALARM_TRIGGERED`. By default, these events are raised when values of `SA`, `AA`, `NA`, `D` and `T` respectively are published to the **getCurrentState** topic. However, these values may be overriden by specifying an alternative array in the **currentStateValues** setting.
+Security System current state can be **STAY_ARM**, **AWAY_ARM**, **NIGHT_ARM**, **DISARMED** or **ALARM_TRIGGERED**. By default, these events are raised when values of `SA`, `AA`, `NA`, `D` and `T` respectively are published to the **getCurrentState** topic. However, these values may be overriden by specifying an alternative array in the **currentStateValues** setting.
 
-Security System target state can be `STAY_ARM`, `AWAY_ARM`, `NIGHT_ARM` or `DISARM`. By default, these states correspond to values of `SA`, `AA`, `NA` and `D`. Homebridge expects to control the target state (causing one of these values to be published to the **setTargetState** topic), and to receive confirmation from the security system that the state has been achieved through a change in the current state (received through the **getCurrentState** topic). The values used for target state can be specified as an an array in the **targetStateValues** setting.
+Security System target state can be **STAY_ARM**, **AWAY_ARM**, **NIGHT_ARM** or **DISARM**. By default, these states correspond to values of `SA`, `AA`, `NA` and `D`. Homebridge expects to control the target state (causing one of these values to be published to the **setTargetState** topic), and to receive confirmation from the security system that the state has been achieved through a change in the current state (received through the **getCurrentState** topic). The values used for target state can be specified as an an array in the **targetStateValues** setting.
 
 Homebridge publishes a value to the **getCurrentState** topic to indicate the state that the HomeKit users wishes the alarm to be in. The alarm system must echo this state back to the **setCurrentState** topic to confirm that it has set the alarm state appropriately. The alarm system may also publish the ALARM_TRIGGERED value (`T` by default) to the **setCurrentState** topic in order to indicate that the alarm has been triggered. If the alarm system publishes any other states to the **setCurrentState** topic, HomeKit will wait for it to return to the user's target state; in other words, only the HomeKit user can control the arming state of the alarm, not the alarm system itself.
 
@@ -390,15 +415,30 @@ Homebridge publishes a value to the **getCurrentState** topic to indicate the st
     "username": "<username for MQTT (optional)>",
     "password": "<password for MQTT (optional)>",
     "caption": "<label (optional)>",
-    "topics":
-    {
-        "getCurrentState":    "<topic used to get security system current state>",
-        "setTargetState":     "<topic used to set security system target state>"
+    "topics": {
+    "setTargetState": "test/security/target",
+    "getTargetState": "test/security/current",
+    "getCurrentState": "test/security/current"
     },
-    "currentStateValues": "<array of 5 values corresponding to security system current states (optional)>",
-    "targetStateValues": "<array of 4 values corresponding to security system target states (optional)>"
+    "targetStateValues": [ "StayArm", "AwayArm", "NightArm", "Disarmed" ],
+    "currentStateValues": [ "StayArm", "AwayArm", "NightArm", "Disarmed", "Triggered" ]
 }
 ```
+
+### Topics
+
+`setTargetState` - Topic published when the target alarm state is changed in HomeKit. Values are `targetStateValues`.
+
+`getTargetState` - Topic that may be published to notify HomeKit that the target alarm state has been changed externally. Values are `targetStateValues`. May use same topic as `getCurrentState` as above. Omit if all control is through HomeKit.
+
+`getCurrentState` - Topic published to notify HomeKit that an alarm state has been achieved. HomeKit will expect current state to end up matching target state. Values are `currentStateValues`.
+
+### Values
+
+`targetStateValues` - Array of 4 values for target state corresponding to **STAY_ARM**, **AWAY_ARM**, **NIGHT_ARM** and **DISARMED** respectively. If not specified, defaults to `[ 'SA', 'AA', 'NA', 'D' ]`.
+
+`currentStateValues` - Array of 5 values for current state corresponding to **STAY_ARM**, **AWAY_ARM**, **NIGHT_ARM**, **DISARMED** and **ALARM_TRIGGERED** respectively. If not specified, defaults to `[ 'SA', 'AA', 'NA', 'D', 'T' ]`.
+
 
 ## Smoke Sensor
 

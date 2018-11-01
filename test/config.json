@@ -210,9 +210,12 @@
       "url": "http://192.168.10.35:1883",
       "logMqtt": true,
       "topics": {
-        "getCurrentState": "test/security/current",
-        "setTargetState":  "test/security/target"
-      }
+        "setTargetState": "test/security/target",
+        "getTargetState": "test/security/current",
+        "getCurrentState": "test/security/current"
+      },
+      "targetStateValues": [ "StayArm", "AwayArm", "NightArm", "Disarmed" ],
+      "currentStateValues": [ "StayArm", "AwayArm", "NightArm", "Disarmed", "Triggered" ]
     },
     {
       "accessory": "mqttthing",
@@ -243,13 +246,16 @@
       "logMqtt": true,
       "topics":
       {
-          "getCurrentDoorState":      "test/garage/current",
           "setTargetDoorState":       "test/garage/target",
-          "getObstructionDetected":   "test/garage/obstruction",
+          "getTargetDoorState":       "test/garage/current",
+          "getCurrentDoorState":      "test/garage/current",
+          "setLockTargetState":       "test/garagelock/target",
+          "getLockTargetState":       "test/garagelock/current",
           "getLockCurrentState":      "test/garagelock/current",
-          "setLockTargetState":       "test/garagelock/target"
+          "getObstructionDetected":   "test/garage/obstruction"
       },
-      "doorValues": [ "Open", "Closed", "Opening", "Closing", "Stopped" ]
+      "doorValues": [ "Open", "Closed", "Opening", "Closing", "Stopped" ],
+      "lockValues": [ "Unsecured", "Secured", "Jammed",  "Unknown" ]
     },
     {
       "accessory": "mqttthing",

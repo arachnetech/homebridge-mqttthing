@@ -43,9 +43,11 @@ function makeThing(log, config) {
             if (logmqtt) {
                 log("Received MQTT: " + topic + " = " + message);
             }
-            var handler = mqttDispatch[topic];
-            if (handler) {
-                handler(topic, message);
+            var handlers = mqttDispatch[topic];
+            if (handlers) {
+                for( var i = 0; i < handlers.length; i++ ) {
+                    handlers[ i ]( topic, message );
+                }
             } else {
                 log('Warning: No MQTT dispatch handler for topic [' + topic + ']');
             }
@@ -58,8 +60,14 @@ function makeThing(log, config) {
     var mqttClient = mqttInit();
 
     function mqttSubscribe(topic, handler) {
-        mqttDispatch[topic] = handler;
-        mqttClient.subscribe(topic);
+        if( mqttDispatch.hasOwnProperty( topic ) ) {
+            // new handler for existing topic
+            mqttDispatch[ topic ].push( handler );
+        } else {
+            // new topic
+            mqttDispatch[ topic ] = [ handler ];
+            mqttClient.subscribe(topic);
+        }
     }
 
     function mqttPublish(topic, message) {
@@ -639,7 +647,7 @@ function makeThing(log, config) {
                 let newState = mqttToHomekit[data];
                 if (newState !== undefined && ( eventOnly || state[property] != newState ) ) {
                     if( logmqtt ) {
-                        log( 'State is now: ' + newState );
+                        log( 'State ' + property + ' is now: ' + newState );
                     }
                     state[property] = newState;
                     service.getCharacteristic(characteristic).setValue(newState, undefined, c_mySetContext);
@@ -910,8 +918,8 @@ function makeThing(log, config) {
             characteristic_ProgrammableSwitchEvent(service);
         } else if (config.type == "securitySystem") {
             service = new Service.SecuritySystem(name);
-            characteristic_SecuritySystemCurrentState(service);
             characteristic_SecuritySystemTargetState(service);
+            characteristic_SecuritySystemCurrentState(service);
             if (config.topics.getStatusFault) {
                 characteristic_StatusFault(service);
             }
@@ -925,14 +933,14 @@ function makeThing(log, config) {
             addSensorOptionalProps = true;
         } else if( config.type == "garageDoorOpener" ) {
             service = new Service.GarageDoorOpener(name);
-            characteristic_CurrentDoorState(service);
             characteristic_TargetDoorState(service);
+            characteristic_CurrentDoorState(service);
             characteristic_ObstructionDetected(service);
-            if( config.topics.getLockCurrentState ) {
-                characteristic_LockCurrentState(service);
-            }
             if( config.topics.setLockTargetState ) {
                 characteristic_LockTargetState(service);
+            }
+            if( config.topics.getLockCurrentState ) {
+                characteristic_LockCurrentState(service);
             }
         } else if( config.type == "fan" ) {
             service = new Service.Fan(name);
