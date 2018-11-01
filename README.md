@@ -545,6 +545,9 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
 
 # Release notes
 
+Version 1.0.15
++ Allowed Garage Door and Security System target states to be modified outside of HomeKit
+
 Version 1.0.14
 + Added `turnOffAfterms` to items with an On characteristic like Switch, causing them to turn off automatically after a specified timeout (in milliseconds).
 
