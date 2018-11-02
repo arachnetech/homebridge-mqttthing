@@ -580,7 +580,7 @@ Version 1.0.16
 + Allow MQTT options to be passed directly, so that any options required can be set (not just those specifically supported by mqttthing)
 
 Version 1.0.15
-+ Allowed Garage Door and Security System target states to be modified outside of HomeKit
++ Allowed Garage Door and Security System target states to be modified outside of HomeKit (thanks, brefra)
 
 Version 1.0.14
 + Added `turnOffAfterms` to items with an On characteristic like Switch, causing them to turn off automatically after a specified timeout (in milliseconds).
