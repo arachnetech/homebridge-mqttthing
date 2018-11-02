@@ -1,6 +1,6 @@
 {
   "name": "homebridge-mqttthing",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "Homebridge plugin supporting various services over MQTT",
   "main": "index.js",
   "scripts": {

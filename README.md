@@ -31,25 +31,56 @@ The following settings apply to all device types:
 ```javascript
 {
     "accessory": "mqttthing",
-    "type": "<type of thing - supported types are described in the following sections>",
-    "name": "<name of thing>",
-    "url": "<url of MQTT server (optional)>",
-    "username": "<username for MQTT (optional)>",
-    "password": "<password for MQTT (optional)>",
-    "caption": "<label (optional)>",
-    "logMqtt": "true to enable logging of MQTT messages sent and received for this accessory",
+    "type": "lightbulb",
+    "name": "My lightbulb",
+    "url": "http://192.168.1.235:1883",
+    "username": "MQTT_username",
+    "password": "MQTT_password",
+    "mqttOptions": { keepalive: 30 },
+    "logMqtt": true,
     "topics":
     {
-        "getName": 	        "<topic to get the name>"
+        "getName": 	        "my/get/name/topic"
     },
-    "integerValue": "true to use 1|0 instead of true|false for onValue and offValue (optional)",
-    "onValue": "<value representing on (optional)>",
-    "offValue": "<value representing off (optional)>"
+    "integerValue": true
 }
 ```
 
-Homekit Boolean types like on/off use strings "true" and "false" in MQTT messages unless `integerValue: true` is configured, in which case they use to "1" and "0". Alternatively, specific values can be configured using `onValue` and `offValue` (in which case `integerValue` is ignored). Other Homekit types (integer, string, etc.) are not affected by these settings.
+### General Settings
 
+`accessory` - must always be set to the value `mqttthing` in order to use **homebridge-mqttthing**
+
+`type` - one of the supported accessory types listed below
+
+`name` - name of accessory, as displayed in HomeKit
+
+`caption` - HomeKit caption/label (optional)
+
+### MQTT Settings
+
+`url` - URL of MQTT server if not localhost port 1883 (optional)
+
+`username` - Username for MQTT server (optional)
+
+`password` - Password for MQTT server (optional)
+
+`mqttOptions` - Object containing all MQTT options passed to https://www.npmjs.com/package/mqtt#client, for MQTT configuration settings not supported above (optional). Any standard settings *not* specified in an **mqttOptions** option will be set by homebridge-mqttthing. Enable MQTT logging with **logMqtt** to check the options provided.
+
+`logMqtt` - Set to true to enable MQTT logging for this accessory (optional, defaults to false)
+
+### MQTT Topics
+
+`getName` - Topic that may be published to send HomeKit the name of the accessory (optional)
+
+### Boolean Value Settings
+
+Homekit Boolean types like on/off use strings "true" and "false" in MQTT messages unless `"integerValue": true` is configured, in which case they use to "1" and "0". Alternatively, specific values can be configured using `onValue` and `offValue` (in which case `integerValue` is ignored). Other Homekit types (integer, string, etc.) are not affected by these settings.
+
+`integerValue` - set to **true** to use the values **1** and **0** to represent Boolean values instead of the strings **"true"** and **"false"** (optional, defaults to false)
+
+`onValue` - configure a specific Boolean true or *on* value (optional)
+
+`offValue` - configure a specific Boolean false or *off* value (optional)
 
 # Supported Accessories
 
@@ -544,6 +575,9 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
 ```
 
 # Release notes
+
+Version 1.0.16
++ Allow MQTT options to be passed directly, so that any options required can be set (not just those specifically supported by mqttthing)
 
 Version 1.0.15
 + Allowed Garage Door and Security System target states to be modified outside of HomeKit

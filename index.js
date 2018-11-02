@@ -15,7 +15,12 @@ function makeThing(log, config) {
 
     function mqttInit() {
         var clientId = 'mqttthing_' + config.name.replace(/[^\x20-\x7F]/g, "") + '_' + Math.random().toString(16).substr(2, 8);
-        var options = {
+
+        // start with any configured options object
+        var options = config.mqttOptions || {};
+
+        // standard options set by mqtt-thing
+        var myOptions = {
             keepalive: 10,
             clientId: clientId,
             protocolId: 'MQTT',
@@ -34,6 +39,18 @@ function makeThing(log, config) {
             rejectUnauthorized: false
         };
 
+        // copy standard options into options unless already set by user
+        for( var opt in myOptions ) {
+            if( myOptions.hasOwnProperty( opt ) && ! options.hasOwnProperty( opt ) ) {
+                options[ opt ] = myOptions[ opt ];
+            }
+        }
+
+        if( logmqtt ) {
+            log( 'MQTT options: ' + JSON.stringify( options ) );
+        }
+
+        // create MQTT client
         var mqttClient = mqtt.connect(config.url, options);
         mqttClient.on('error', function (err) {
             log('MQTT Error: ' + err);
