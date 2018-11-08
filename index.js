@@ -77,6 +77,17 @@ function makeThing(log, config) {
     var mqttClient = mqttInit();
 
     function mqttSubscribe(topic, handler) {
+        if (typeof topic != 'string') {          
+            var extendedTopic = topic;
+            topic = extendedTopic['topic'];
+            if (extendedTopic.hasOwnProperty('apply')) {
+                var previous = handler;
+                var applyFn = Function("message", extendedTopic['apply']);
+                handler = function (topic, message) {
+                    return previous(topic, applyFn(message));
+                };
+            }
+        }    
         if( mqttDispatch.hasOwnProperty( topic ) ) {
             // new handler for existing topic
             mqttDispatch[ topic ].push( handler );
