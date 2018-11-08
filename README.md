@@ -72,6 +72,24 @@ The following settings apply to all device types:
 
 `getName` - Topic that may be published to send HomeKit the name of the accessory (optional)
 
+### Applying functions to mqtt messages
+
+If a mqtt message is not a simple value or does not match the expected syntax, it is possible to specify a javascript function that is called for the message every time it is received/published. For this, the topic string in the configuration can be replaced with an object with these properties:
+
+`topic` - Topic string
+
+`apply` - Javascript function to apply (must be a complete function body that `return`s a value). The function is called with one argument: the original message. (optional)
+
+e.g.
+```javascript
+  "topics": {
+      "getCurrentTemperature": {
+          "topic": "outdoor",
+          "apply": "return JSON.parse(message).temperature.toFixed(1);"
+      }
+  }
+```
+
 ### Boolean Value Settings
 
 Homekit Boolean types like on/off use strings "true" and "false" in MQTT messages unless `"integerValue": true` is configured, in which case they use to "1" and "0". Alternatively, specific values can be configured using `onValue` and `offValue` (in which case `integerValue` is ignored). Other Homekit types (integer, string, etc.) are not affected by these settings.
