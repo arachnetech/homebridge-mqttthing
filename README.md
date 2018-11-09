@@ -78,9 +78,9 @@ If an MQTT message is not a simple value or does not match the expected syntax, 
 
 `topic` - Topic string
 
-`apply` - Javascript function to apply (must be a complete function body that `return`s a value). The function is called with one argument: the original message. (optional)
+`apply` - Javascript function to apply (must be a complete function body that `return`s a value). The function is called with one argument: `message`, holding the original message. (optional)
 
-e.g.
+e.g. Decoding a JSON payload:
 ```javascript
   "topics": {
       "getCurrentTemperature": {
@@ -89,6 +89,19 @@ e.g.
       }
   }
 ```
+
+e.g. Scaling brightness from its internal 0-100 range to an external 0-255 range:
+```javascript
+    "getBrightness": {
+        "topic": "test/lightbulb/getBrightness",
+        "apply": "return Math.round( message / 2.55 );"
+    },
+    "setBrightness": {
+        "topic": "test/lightbulb/setBrightness",
+        "apply": "return Math.round( message * 2.55 );"
+    }
+```
+
 ### Boolean Value Settings
 
 Homekit Boolean types like on/off use strings "true" and "false" in MQTT messages unless `"integerValue": true` is configured, in which case they use to "1" and "0". Alternatively, specific values can be configured using `onValue` and `offValue` (in which case `integerValue` is ignored). Other Homekit types (integer, string, etc.) are not affected by these settings.

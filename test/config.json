@@ -16,15 +16,20 @@
       "topics": {
         "getOn": "test/lightbulb/getOn",
         "setOn": "test/lightbulb/setOn",
-        "getBrightness": "test/lightbulb/getBrightness",
-        "setBrightness": "test/lightbulb/setBrightness",
+        "getBrightness": {
+          "topic": "test/lightbulb/getBrightness",
+          "apply": "return Math.round( message / 2.55 );"
+        },
+        "setBrightness": {
+          "topic": "test/lightbulb/setBrightness",
+          "apply": "return Math.round( message * 2.55 );"
+        },
         "getHue": "test/lightbulb/getHue",
         "setHue": "test/lightbulb/setHue",
         "getSaturation": "test/lightbulb/getSaturation",
         "setSaturation": "test/lightbulb/setSaturation"
       },
-      "integerValue": true,
-      "turnOffAfterms": 5000
+      "integerValue": true
     },
     {
       "accessory": "mqttthing",
