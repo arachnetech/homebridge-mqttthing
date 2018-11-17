@@ -904,6 +904,19 @@ function makeThing(log, config) {
         integerCharacteristic(service, 'rotationSpeed', Characteristic.RotationSpeed, config.topics.setRotationSpeed, config.topics.getRotationSpeed);
     }
 
+    // Characteristic.BatteryLevel
+    function characteristic_BatteryLevel( service ) {
+        integerCharacteristic( service, 'batteryLevel', Characteristic.BatteryLevel, null, config.topics.getBatteryLevel );
+    }
+
+    // Characteristic.ChargingState
+    function characteristic_ChargingState( service ) {
+        let values = config.chargingStateValues;
+        if( ! values ) {
+            values = [ 'NOT_CHARGING', 'CHARGING', 'NOT_CHARGEABLE' ];
+        }
+        multiCharacteristic( service, 'chargingState', Characteristic.ChargingState, null, config.topics.getChargingState, values, Characteristic.ChargingState.NOT_CHARGING );
+    }
 
     // Create service
     function createServices() {
@@ -1037,6 +1050,25 @@ function makeThing(log, config) {
             if (config.topics.getStatusLowBattery) {
                 characteristic_StatusLowBattery(service);
             }
+        }
+
+        // optional battery service
+        if( config.topics.getBatteryLevel || config.topics.getChargingState || ( config.topics.getStatusLowBattery && ! addSensorOptionalProps ) ) {
+            if( ! services ) {
+                services = [ service ];
+            }
+            // also create battery service
+            let batsvc = new Service.BatteryService( name + '-battery' );
+            if( config.topics.getBatteryLevel ) {
+                characteristic_BatteryLevel( batsvc );
+            }
+            if( config.topics.getChargingState ) {
+                characteristic_ChargingState( batsvc );
+            }
+            if( config.topics.getStatusLowBattery ) {
+                characteristic_StatusLowBattery( batsvc );
+            }
+            services.push( batsvc );
         }
 
         if (service) {

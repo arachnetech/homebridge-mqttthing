@@ -41,9 +41,13 @@ The following settings apply to all device types:
     "topics":
     {
         "getName": 	        "my/get/name/topic",
-        "getOnline":        "my/get/online/topic"
+        "getOnline":        "my/get/online/topic",
+        "getBatteryLevel":  "my/get/battery-level/topic",
+        "getChargingState": "my/get/battery-charging-state/topic",
+        "getStatusLowBattery": "my/get/status-low-battery/topic"
     },
-    "integerValue": true
+    "integerValue": true,
+    "chargingStateValues": [ "NotCharging", "Charging", "NotChargeable" ]
 }
 ```
 
@@ -74,6 +78,12 @@ The following settings apply to all device types:
 `getName` - Topic that may be published to send HomeKit the name of the accessory (optional)
 
 `getOnline` - Topic that may be published to tell homebridge-mqttthing whether or not the accessory is online (optional). This is a Boolean value (see below) intended to be published as false by the MQTT Last Will and Testament (LWT) feature in order to notify homebridge-mqttthing that the accessory is offline. Accessories using this feature must also publish an online true status when available.
+
+`getBatteryLevel` - Topic that may be published by an accessory to indicate its current battery level, from 0 to 100 (optional).
+
+`getChargingState` - Topic that may be published by an accessory to indicate its charging state (optional). Default values accepted are `[ "NOT_CHARGING", "CHARGING", "NOT_CHARGEABLE" ]`. These may be changed with the `chargingStateValues` setting.
+
+`getStatusLowBattery` - Topic that may be published by an accessory to indicate whether it has a low battery (optional).
 
 ### Applying functions to MQTT messages (custom payload encoding/decoding)
 
@@ -611,6 +621,7 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
 
 Version 1.0.19
 + Changed minimum temperature for temperatureSensor to -100 degrees celsius
++ Added BatteryService supporting `getBatteryLevel`, `getChargingState` and `getStatusLowBattery` for all accessories.
 
 Version 1.0.18
 + Added `getOnline` topic to control whether an accessory should appear responsive or unresponsive

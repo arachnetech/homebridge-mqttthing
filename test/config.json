@@ -139,9 +139,13 @@
         "getStatusActive": "test/motion/active",
         "getStatusFault": "test/motion/fault",
         "getStatusTampered": "test/motion/tampered",
-        "getStatusLowBattery": "test/motion/lowBattery"
+        "getStatusLowBattery": "test/motion/lowBattery",
+        "getBatteryLevel": "test/motion/batteryLevel",
+        "getChargingState": "test/motion/chargingState"
       },
-      "integerValue": true
+      "integerValue": true,
+      "chargingStateValues": [ "NotCharging", "Charging", "NotChargeable" ],
+      "logMqtt": true
     },
     {
       "accessory": "mqttthing",
