@@ -138,6 +138,18 @@ function makeThing(log, config) {
         }
     }
 
+    function isOffline() {
+        return state.online === false;
+    }
+
+    function handleGetStateCallback( callback, value ) {
+        if( isOffline() ) {
+            callback( 'offline' );
+        } else {
+            callback( null, value );
+        }
+    }
+
     function booleanCharacteristic(service, property, characteristic, setTopic, getTopic, initialValue, mapValueFunc, turnOffAfterms) {
 
         // auto-turn-off timer
@@ -149,7 +161,7 @@ function makeThing(log, config) {
         // set up characteristic
         var charac = service.getCharacteristic(characteristic);
         charac.on('get', function (callback) {
-            callback(null, state[property]);
+            handleGetStateCallback( callback, state[ property ] );
         });
         if (setTopic) {
             charac.on('set', function (value, callback, context) {
@@ -191,6 +203,23 @@ function makeThing(log, config) {
         }
     }
 
+    function booleanState( property, getTopic, initialValue ) {
+        // default state
+        state[ property ] = ( initialValue ? true : false );
+
+        // MQTT subscription
+        if( getTopic ) {
+            mqttSubscribe( getTopic, function( topic, message ) {
+                var newState = ( message == onOffValue( true ) );
+                state[ property ] = newState;
+            } );
+        }
+    }
+
+    function state_Online() {
+        booleanState( 'online', config.topics.getOnline, true );
+    }
+
     function integerCharacteristic(service, property, characteristic, setTopic, getTopic) {
         // default state
         state[property] = 0;
@@ -198,7 +227,7 @@ function makeThing(log, config) {
         // set up characteristic
         var charac = service.getCharacteristic(characteristic);
         charac.on('get', function (callback) {
-            callback(null, state[property]);
+            handleGetStateCallback( callback, state[ property ] );
         });
         if (setTopic) {
             charac.on('set', function (value, callback, context) {
@@ -231,7 +260,7 @@ function makeThing(log, config) {
         charac.setValue( defaultValue, undefined, c_mySetContext );
 
         charac.on( 'get', function( callback ) {
-            callback( null, state[ property ] );
+            handleGetStateCallback( callback, state[ property ] );
         } );
 
         if( characteristicChanged ) {
@@ -581,7 +610,7 @@ function makeThing(log, config) {
         // set up characteristic
         var charac = service.getCharacteristic(characteristic);
         charac.on('get', function (callback) {
-            callback(null, state[property]);
+            handleGetStateCallback( callback, state[ property ] );
         });
         if (setTopic) {
             charac.on('set', function (value, callback, context) {
@@ -615,7 +644,7 @@ function makeThing(log, config) {
         // set up characteristic
         var charac = service.getCharacteristic(characteristic);
         charac.on('get', function (callback) {
-            callback(null, state[property]);
+            handleGetStateCallback( callback, state[ property ] );
         });
         if (setTopic) {
             charac.on('set', function (value, callback, context) {
@@ -654,7 +683,7 @@ function makeThing(log, config) {
         // Homekit get
         if (!eventOnly) {
             charac.on('get', function (callback) {
-                callback(null, state[property]);
+                handleGetStateCallback( callback, state[ property ] );
             });
         }
 
@@ -1009,6 +1038,10 @@ function makeThing(log, config) {
         if (service) {
             if (config.topics.getName) {
                 characteristic_Name(service);
+            }
+
+            if( config.topics.getOnline ) {
+                state_Online();
             }
         }
 

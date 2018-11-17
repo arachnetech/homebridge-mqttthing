@@ -40,7 +40,8 @@ The following settings apply to all device types:
     "logMqtt": true,
     "topics":
     {
-        "getName": 	        "my/get/name/topic"
+        "getName": 	        "my/get/name/topic",
+        "getOnline":        "my/get/online/topic"
     },
     "integerValue": true
 }
@@ -71,6 +72,8 @@ The following settings apply to all device types:
 ### MQTT Topics
 
 `getName` - Topic that may be published to send HomeKit the name of the accessory (optional)
+
+`getOnline` - Topic that may be published to tell homebridge-mqttthing whether or not the accessory is online (optional). This is a Boolean value (see below) intended to be published as false by the MQTT Last Will and Testament (LWT) feature in order to notify homebridge-mqttthing that the accessory is offline. Accessories using this feature must also publish an online true status when available.
 
 ### Applying functions to MQTT messages (custom payload encoding/decoding)
 
@@ -606,6 +609,9 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
 
 # Release notes
 
+Version 1.0.18
++ Added `getOnline` topic to control whether an accessory should appear responsive or unresponsive
+
 Version 1.0.17
 + Added ability to encode/decode MQTT payload using custom JavaScript functions (implemented by Michael Stürmer)
 
@@ -616,7 +622,7 @@ Version 1.0.15
 + Allowed Garage Door and Security System target states to be modified outside of HomeKit (thanks, brefra)
 
 Version 1.0.14
-+ Added `turnOffAfterms` to items with an On characteristic like Switch, causing them to turn off automatically after a specified timeout (in milliseconds).
++ Added `turnOffAfterms` to items with an On characteristic like Switch, causing them to turn off automatically after a specified timeout (in milliseconds)
 
 Version 1.0.13
 + Remove non-ASCII characters from MQTT client ID (thanks, twinkelm)
