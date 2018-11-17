@@ -609,6 +609,9 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
 
 # Release notes
 
+Version 1.0.19
++ Changed minimum temperature for temperatureSensor to -100 degrees celsius
+
 Version 1.0.18
 + Added `getOnline` topic to control whether an accessory should appear responsive or unresponsive
 

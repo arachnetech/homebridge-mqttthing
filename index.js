@@ -793,6 +793,10 @@ function makeThing(log, config) {
     function characteristic_CurrentTemperature(service) {
         floatCharacteristic(service, 'currentTemperature', Characteristic.CurrentTemperature,
             null, config.topics.getCurrentTemperature, 0 );
+
+        // allow negative temperatures (down to -100)
+        var characteristic = service.getCharacteristic( Characteristic.CurrentTemperature );
+        characteristic.props.minValue = -100;
     }
 
     // Characteristic.CurrentRelativeHumidity
