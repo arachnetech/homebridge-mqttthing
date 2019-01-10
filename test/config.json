@@ -31,7 +31,8 @@
         "getOnline": "test/lightbulb/getOnline"
       },
       "logMqtt": true,
-      "integerValue": true
+      "integerValue": true,
+      "onlineValue": "Online"
     },
     {
       "accessory": "mqttthing",

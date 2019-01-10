@@ -130,6 +130,14 @@ function makeThing(log, config) {
         return pubVal.toString();
     }
 
+    function onlineOfflineValue( value ) {
+        var pubVal = ( value ? config.onlineValue : config.offlineValue );
+        if( pubVal === undefined ) {
+            pubVal = onOffValue( value );
+        }
+        return pubVal;
+    }
+
     function mapValueForHomebridge(val, mapValueFunc) {
         if (mapValueFunc) {
             return mapValueFunc(val);
@@ -203,21 +211,21 @@ function makeThing(log, config) {
         }
     }
 
-    function booleanState( property, getTopic, initialValue ) {
+    function booleanState( property, getTopic, initialValue, onOffFunc ) {
         // default state
         state[ property ] = ( initialValue ? true : false );
 
         // MQTT subscription
         if( getTopic ) {
             mqttSubscribe( getTopic, function( topic, message ) {
-                var newState = ( message == onOffValue( true ) );
+                var newState = ( message == onOffFunc( true ) );
                 state[ property ] = newState;
             } );
         }
     }
 
     function state_Online() {
-        booleanState( 'online', config.topics.getOnline, true );
+        booleanState( 'online', config.topics.getOnline, true, onlineOfflineValue );
     }
 
     function integerCharacteristic(service, property, characteristic, setTopic, getTopic) {

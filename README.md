@@ -616,6 +616,9 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
 
 # Release notes
 
+Version 1.0.20
++ Added `onlineValue` configuration setting, allowing the use of a custom value to represent an online state (with `getOnline`) without the use of a custom payload decoding function.
+
 Version 1.0.19
 + Changed minimum temperature for temperatureSensor to -100 degrees celsius
 + Added BatteryService supporting `getBatteryLevel`, `getChargingState` and `getStatusLowBattery` for all accessories.
