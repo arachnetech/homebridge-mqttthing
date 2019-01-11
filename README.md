@@ -44,6 +44,7 @@ The following settings apply to all device types:
         "getStatusLowBattery": "my/get/status-low-battery/topic"
     },
     "integerValue": true,
+    "onlineValue": "Online",
     "chargingStateValues": [ "NotCharging", "Charging", "NotChargeable" ]
 }
 ```
@@ -121,6 +122,8 @@ Homekit Boolean types like on/off use strings "true" and "false" in MQTT message
 `onValue` - configure a specific Boolean true or *on* value (optional)
 
 `offValue` - configure a specific Boolean false or *off* value (optional)
+
+`onlineValue` - configure a specific value representing that an accessory is online (received through `getOnline`). If not specified, the configured *on* value will be used to represent an online state (i.e. `onValue` if configured, otherwise **1** with `integerValue: true` or **true** with `integerValue: false`).
 
 # Supported Accessories
 
