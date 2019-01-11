@@ -158,10 +158,11 @@ function makeThing(log, config) {
         }
     }
 
-    function booleanCharacteristic(service, property, characteristic, setTopic, getTopic, initialValue, mapValueFunc, turnOffAfterms) {
+    function booleanCharacteristic(service, property, characteristic, setTopic, getTopic, initialValue, mapValueFunc, turnOffAfterms, resetStateAfterms) {
 
-        // auto-turn-off timer
+        // auto-turn-off and reset-state timers
         var autoOffTimer = null;
+        var autoResetStateTimer = null;
 
         // default state
         state[property] = (initialValue ? true : false);
@@ -207,7 +208,18 @@ function makeThing(log, config) {
                     state[property] = newState;
                     service.getCharacteristic(characteristic).setValue(mapValueForHomebridge(newState, mapValueFunc), undefined, c_mySetContext);
                 }
-            });
+                // optionally reset state to OFF after a timeout
+                if( newState && resetStateAfterms ) {
+                    if( autoResetStateTimer ) {
+                        clearTimeout( autoResetStateTimer );
+                    }
+                    autoResetStateTimer = setTimeout( function() {
+                        autoResetStateTimer = null;
+                        state[ property ] = false;
+                        service.getCharacteristic(characteristic).setValue(mapValueForHomebridge(false, mapValueFunc), undefined, c_mySetContext);
+                    }, resetStateAfterms );
+                }
+            } );
         }
     }
 
@@ -761,7 +773,7 @@ function makeThing(log, config) {
 
     // Characteristic.MotionDetected
     function characteristic_MotionDetected(service) {
-        booleanCharacteristic(service, 'motionDetected', Characteristic.MotionDetected, null, config.topics.getMotionDetected);
+        booleanCharacteristic(service, 'motionDetected', Characteristic.MotionDetected, null, config.topics.getMotionDetected, null, null, null, config.turnOffAfterms);
     }
 
     // Characteristic.StatusActive

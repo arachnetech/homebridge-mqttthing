@@ -225,7 +225,8 @@ Fan rotation speed is an integer between 0 (off) and 100 (full speed).
     },
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
-    "offValue": "<value representing off (optional)>"
+    "offValue": "<value representing off (optional)>",
+    "turnOffAfterms": <milliseconds after which to turn off automatically (optional)>
 }
 ```
 
@@ -358,7 +359,8 @@ If `topics.setRGBW` is populated, a combined value is used in the format red,gre
     "onValue": "<value representing on (optional)>",
     "offValue": "<value representing off (optional)>",
     "hex": "true to format combined RGB/RGBW in hexadecimal instead of as comma-separated decimals",
-    "hexPrefix": "format combined RGB/RGBW in hexadecimal with specified prefix (typically '#') instead of as comma-separated decimals"
+    "hexPrefix": "format combined RGB/RGBW in hexadecimal with specified prefix (typically '#') instead of as comma-separated decimals",
+    "turnOffAfterms": <milliseconds after which to turn off automatically (optional)>
 }
 ```
 
@@ -467,7 +469,8 @@ An outlet can be configured as a light or as a fan in the Home app.
     },
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
-    "offValue": "<value representing off (optional)>"
+    "offValue": "<value representing off (optional)>",
+    "turnOffAfterms": <milliseconds after which to turn off automatically (optional)>
 }
 ```
 
@@ -588,7 +591,7 @@ Configuring `turnOffAfter` causes the switch to turn off automatically the speci
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
     "offValue": "<value representing off (optional)>",
-    "turnOffAfter": <milliseconds after which to turn off automatically>
+    "turnOffAfterms": <milliseconds after which to turn off automatically (optional)>
 }
 ```
 
@@ -621,6 +624,7 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
 
 Version 1.0.20
 + Added `onlineValue` configuration setting, allowing the use of a custom value to represent an online state (with `getOnline`) without the use of a custom payload decoding function.
++ Added `turnOffAfterms` support for motion sensor, allowing motion triggered by MQTT message to be self-resetting.
 
 Version 1.0.19
 + Changed minimum temperature for temperatureSensor to -100 degrees celsius

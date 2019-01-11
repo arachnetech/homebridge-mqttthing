@@ -146,7 +146,8 @@
       },
       "integerValue": true,
       "chargingStateValues": [ "NotCharging", "Charging", "NotChargeable" ],
-      "logMqtt": true
+      "logMqtt": true,
+      "turnOffAfterms": 3000
     },
     {
       "accessory": "mqttthing",
