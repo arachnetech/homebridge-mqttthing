@@ -330,7 +330,8 @@ Current relative humidity must be in the range 0 to 100 percent with no decimal 
 
 ## Leak Sensor
 
-Current relative humidity must be in the range 0 to 100 percent with no decimal places.
+Leak sensor state is exposed as a Boolean. True (or 1 with integer values) maps to `LEAK_DETECTED` 
+and False (or 0) maps to `LEAK_NOT_DETECTED`. To use different MQTT values, configure `onValue` and `offValue`.
 
 ```javascript
 {
@@ -549,7 +550,7 @@ Homebridge publishes a value to the **getCurrentState** topic to indicate the st
 
 ## Smoke Sensor
 
-Contact sensor state is exposed as a Boolean. True (or 1 with integer values) maps to `SMOKE_DETECTED` 
+Smoke sensor state is exposed as a Boolean. True (or 1 with integer values) maps to `SMOKE_DETECTED` 
 and False (or 0) maps to `SMOKE_NOT_DETECTED`. To use different MQTT values, configure `onValue` and `offValue`.
 
 ```javascript
@@ -563,7 +564,7 @@ and False (or 0) maps to `SMOKE_NOT_DETECTED`. To use different MQTT values, con
     "caption": "<label (optional)>",
     "topics":
     {
-        "getSmokeDetected":      "<topic used to provide contact sensor state>"
+        "getSmokeDetected":      "<topic used to provide smoke sensor state>"
         "getStatusActive":       "<topic used to provide 'active' status (optional)>",
         "getStatusFault":        "<topic used to provide 'fault' status (optional)>",
         "getStatusTampered":     "<topic used to provide 'tampered' status (optional)>",
