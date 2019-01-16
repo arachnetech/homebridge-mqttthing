@@ -3,8 +3,11 @@
 
 'use strict';
 
-var Service, Characteristic;
 var mqtt = require("mqtt");
+var os = require("os");
+var packagedef = require('./package.json');
+
+var Service, Characteristic;
 
 function makeThing(log, config) {
 
@@ -938,6 +941,19 @@ function makeThing(log, config) {
         multiCharacteristic( service, 'chargingState', Characteristic.ChargingState, null, config.topics.getChargingState, values, Characteristic.ChargingState.NOT_CHARGING );
     }
 
+    // Create accessory information service
+    function makeAccessoryInformationService() {
+        var informationService = new Service.AccessoryInformation();
+
+        informationService
+          .setCharacteristic(Characteristic.Manufacturer, "mqttthing")
+          .setCharacteristic(Characteristic.Model, config.type)
+          .setCharacteristic(Characteristic.SerialNumber, os.hostname() + "-" + config.name)
+          .setCharacteristic(Characteristic.FirmwareRevision, packagedef.version);
+
+        return informationService;
+    }
+
     // Create service
     function createServices() {
 
@@ -1072,11 +1088,28 @@ function makeThing(log, config) {
             }
         }
 
+        if (service) {
+            if (config.topics.getName) {
+                characteristic_Name(service);
+            }
+
+            if( config.topics.getOnline ) {
+                state_Online();
+            }
+        }
+
+        // always use services array
+        if( ! services ) {
+            if( service ) {
+                services = [ service ];
+            } else {
+                log( 'Error: No service(s) returned for ' + name );
+                return;
+            }
+        }
+
         // optional battery service
         if( config.topics.getBatteryLevel || config.topics.getChargingState || ( config.topics.getStatusLowBattery && ! addSensorOptionalProps ) ) {
-            if( ! services ) {
-                services = [ service ];
-            }
             // also create battery service
             let batsvc = new Service.BatteryService( name + '-battery' );
             if( config.topics.getBatteryLevel ) {
@@ -1091,33 +1124,10 @@ function makeThing(log, config) {
             services.push( batsvc );
         }
 
-        if (service) {
-            if (config.topics.getName) {
-                characteristic_Name(service);
-            }
+        // accessory information service
+        services.push( makeAccessoryInformationService() );
 
-            if( config.topics.getOnline ) {
-                state_Online();
-            }
-        }
-
-        var informationService = new Service.AccessoryInformation();
-        var os = require("os");
-        var hostname = os.hostname();
-
-        informationService
-          .setCharacteristic(Characteristic.Manufacturer, "mqttthing")
-          .setCharacteristic(Characteristic.Model, config.type)
-          .setCharacteristic(Characteristic.SerialNumber, hostname + "-" + config.name)
-          .setCharacteristic(Characteristic.FirmwareRevision, require('./package.json').version);
-
-        if( services ) {
-            return services;
-        } else if( service ) {
-            return [ service,  informationService];
-        } else {
-            log( 'Error: No service(s) returned for ' + name );
-        }
+        return services;
     }
 
     // The service
