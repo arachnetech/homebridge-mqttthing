@@ -77,7 +77,7 @@ function makeThing(log, config) {
     var mqttClient = mqttInit();
 
     function mqttSubscribe(topic, handler) {
-        if (typeof topic != 'string') {          
+        if (typeof topic != 'string') {
             var extendedTopic = topic;
             topic = extendedTopic.topic;
             if (extendedTopic.hasOwnProperty('apply')) {
@@ -87,7 +87,7 @@ function makeThing(log, config) {
                     return previous(intopic, applyFn(message));
                 };
             }
-        }    
+        }
         if( mqttDispatch.hasOwnProperty( topic ) ) {
             // new handler for existing topic
             mqttDispatch[ topic ].push( handler );
@@ -99,14 +99,14 @@ function makeThing(log, config) {
     }
 
     function mqttPublish(topic, message) {
-        if (typeof topic != 'string') {          
+        if (typeof topic != 'string') {
             var extendedTopic = topic;
             topic = extendedTopic.topic;
             if (extendedTopic.hasOwnProperty('apply')) {
                 var applyFn = Function("message", extendedTopic['apply']); //eslint-disable-line
                 message = applyFn(message);
             }
-        }    
+        }
         if( logmqtt ) {
             log( 'Publishing MQTT: ' + topic + ' = ' + message );
         }
@@ -1101,10 +1101,20 @@ function makeThing(log, config) {
             }
         }
 
+        var informationService = new Service.AccessoryInformation();
+        var os = require("os");
+        var hostname = os.hostname();
+
+        informationService
+          .setCharacteristic(Characteristic.Manufacturer, "mqttthing")
+          .setCharacteristic(Characteristic.Model, config.type)
+          .setCharacteristic(Characteristic.SerialNumber, hostname + "-" + this.name)
+          .setCharacteristic(Characteristic.FirmwareRevision, require('./package.json').version);
+
         if( services ) {
             return services;
         } else if( service ) {
-            return [ service ];
+            return [ service,  informationService];
         } else {
             log( 'Error: No service(s) returned for ' + name );
         }
