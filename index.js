@@ -945,11 +945,10 @@ function makeThing(log, config) {
     function makeAccessoryInformationService() {
         var informationService = new Service.AccessoryInformation();
 
-        informationService
-          .setCharacteristic(Characteristic.Manufacturer, "mqttthing")
-          .setCharacteristic(Characteristic.Model, config.type)
-          .setCharacteristic(Characteristic.SerialNumber, os.hostname() + "-" + config.name)
-          .setCharacteristic(Characteristic.FirmwareRevision, packagedef.version);
+        informationService.setCharacteristic( Characteristic.Manufacturer, config.manufacturer || "mqttthing" );
+        informationService.setCharacteristic( Characteristic.Model, config.model || config.type );
+        informationService.setCharacteristic( Characteristic.SerialNumber, config.serialNumber || ( os.hostname() + "-" + config.name ) );
+        informationService.setCharacteristic( Characteristic.FirmwareRevision, config.firmwareRevision || packagedef.version );
 
         return informationService;
     }

@@ -125,6 +125,18 @@ Homekit Boolean types like on/off use strings "true" and "false" in MQTT message
 
 `onlineValue` - configure a specific value representing that an accessory is online (received through `getOnline`). If not specified, the configured *on* value will be used to represent an online state (i.e. `onValue` if configured, otherwise **1** with `integerValue: true` or **true** with `integerValue: false`).
 
+### Accessory Information
+
+The following configuration settings may be specified if required to change information service content:
+
+`manufacturer` - sets the manufacturer name (defaults to *mqttthing*)
+
+`serialNumber` - sets the serial number (defaults to hostname and accessory name)
+
+`model` - sets the model name (defaults to the mqttthing accessory type)
+
+`firmwareRevision` - sets the firmware revision number (defaults to mqttthing version)
+
 # Supported Accessories
 
    * [Contact Sensor](#contact-sensor)
@@ -621,6 +633,9 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
 ```
 
 # Release notes
+
+Version 1.0.21
++ Added InformationService to populate manufacturer and other characteristics (thanks, NorthernMan54)
 
 Version 1.0.20
 + Added `onlineValue` configuration setting, allowing the use of a custom value to represent an online state (with `getOnline`) without the use of a custom payload decoding function.
