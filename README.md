@@ -144,6 +144,7 @@ The following configuration settings may be specified if required to change info
    * [Fan](#fan)
    * [Garage door opener](#garage-door-opener)
    * [Humidity Sensor](#humidity-sensor)
+   * [Leak Sensor](#leak-sensor)
    * [Light bulb](#light-bulb)
    * [Light Sensor](#light-sensor)
    * [Motion Sensor](#motion-sensor)
@@ -322,6 +323,23 @@ Current relative humidity must be in the range 0 to 100 percent with no decimal 
         "getStatusFault":               "<topic used to provide 'fault' status (optional)>",
         "getStatusTampered":            "<topic used to provide 'tampered' status (optional)>",
         "getStatusLowBattery":          "<topic used to provide 'low battery' status (optional)>"
+    }
+}
+```
+
+
+## Leak Sensor
+
+Current relative humidity must be in the range 0 to 100 percent with no decimal places.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "leakSensor",
+    "name": "<name of sensor>",
+    "topics":
+    {
+        "getLeakDetected":              "<topic used to provide 'leak detected' state (Boolean)>",
     }
 }
 ```
@@ -636,6 +654,7 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
 
 Version 1.0.21
 + Added InformationService to populate manufacturer and other characteristics (thanks, NorthernMan54)
++ Added Leak Sensor
 
 Version 1.0.20
 + Added `onlineValue` configuration setting, allowing the use of a custom value to represent an online state (with `getOnline`) without the use of a custom payload decoding function.

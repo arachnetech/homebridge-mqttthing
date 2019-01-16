@@ -941,6 +941,13 @@ function makeThing(log, config) {
         multiCharacteristic( service, 'chargingState', Characteristic.ChargingState, null, config.topics.getChargingState, values, Characteristic.ChargingState.NOT_CHARGING );
     }
 
+    // Characteristic.LeakDetected
+    function characteristic_LeakDetected(service) {
+        booleanCharacteristic(service, 'leakDetected', Characteristic.LeakDetected, null, config.topics.getLeakDetected, false, function (val) {
+            return val ? Characteristic.LeakDetected.LEAK_DETECTED : Characteristic.LeakDetected.LEAK_NOT_DETECTED;
+        });
+    }
+
     // Create accessory information service
     function makeAccessoryInformationService() {
         var informationService = new Service.AccessoryInformation();
@@ -1068,6 +1075,10 @@ function makeThing(log, config) {
             if( config.topics.getRotationSpeed || config.topics.setRotationSpeed ) {
                 characteristic_RotationSpeed(service);
             }
+        } else if( config.type == "leakSensor" ) { 
+            service = new Service.LeakSensor( name );
+            characteristic_LeakDetected( service );
+            addSensorOptionalProps = true;
         } else {
             log("ERROR: Unrecognized type: " + config.type);
         }

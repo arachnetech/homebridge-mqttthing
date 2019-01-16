@@ -243,6 +243,17 @@
     },
     {
       "accessory": "mqttthing",
+      "type": "leakSensor",
+      "name": "Test leak sensor",
+      "url": "http://192.168.10.35:1883",
+      "logMqtt": true,
+      "topics": {
+        "getLeakDetected": "test/leak/detected"
+      },
+      "integerValue": true
+    },
+    {
+      "accessory": "mqttthing",
       "type": "statelessProgrammableSwitch",
       "name": "Test Stateless Programmable Switch",
       "url": "http://192.168.10.35:1883",
