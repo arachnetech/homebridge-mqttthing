@@ -1108,7 +1108,7 @@ function makeThing(log, config) {
         informationService
           .setCharacteristic(Characteristic.Manufacturer, "mqttthing")
           .setCharacteristic(Characteristic.Model, config.type)
-          .setCharacteristic(Characteristic.SerialNumber, hostname + "-" + this.name)
+          .setCharacteristic(Characteristic.SerialNumber, hostname + "-" + config.name)
           .setCharacteristic(Characteristic.FirmwareRevision, require('./package.json').version);
 
         if( services ) {
