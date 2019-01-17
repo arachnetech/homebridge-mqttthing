@@ -1137,6 +1137,16 @@ function makeThing(log, config) {
         // accessory information service
         services.push( makeAccessoryInformationService() );
 
+        // start-up publishing
+        if( config.startPub ) {
+            for( let topic in config.startPub ) {
+                if( config.startPub.hasOwnProperty( topic ) ) {
+                    let msg = config.startPub[ topic ];
+                    mqttPublish( topic, msg );
+                }
+            }
+        }
+
         return services;
     }
 

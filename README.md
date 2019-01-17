@@ -35,8 +35,7 @@ The following settings apply to all device types:
     "password": "MQTT_password",
     "mqttOptions": { keepalive: 30 },
     "logMqtt": true,
-    "topics":
-    {
+    "topics": {
         "getName": 	        "my/get/name/topic",
         "getOnline":        "my/get/online/topic",
         "getBatteryLevel":  "my/get/battery-level/topic",
@@ -45,7 +44,11 @@ The following settings apply to all device types:
     },
     "integerValue": true,
     "onlineValue": "Online",
-    "chargingStateValues": [ "NotCharging", "Charging", "NotChargeable" ]
+    "chargingStateValues": [ "NotCharging", "Charging", "NotChargeable" ],
+    "startPub": {
+        "topic1": "message1",
+        "topic2": "message2"
+    }
 }
 ```
 
@@ -136,6 +139,10 @@ The following configuration settings may be specified if required to change info
 `model` - sets the model name (defaults to the mqttthing accessory type)
 
 `firmwareRevision` - sets the firmware revision number (defaults to mqttthing version)
+
+### Publishing values on start-up
+
+MQTT messages may be published on start-up, e.g. to reset accessories to a known initial state, with `startPub`. This is an object containing MQTT topics are keys, and values to be published as values.
 
 # Supported Accessories
 
@@ -652,6 +659,9 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
 ```
 
 # Release notes
+
+Version 1.0.22
++ Added `startPub` configuration setting, allowing MQTT messages to be published on start-up
 
 Version 1.0.21
 + Added InformationService to populate manufacturer and other characteristics (thanks, NorthernMan54)

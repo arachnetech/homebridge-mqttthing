@@ -32,7 +32,14 @@
       },
       "logMqtt": true,
       "integerValue": true,
-      "onlineValue": "Online"
+      "onlineValue": "Online",
+      "startPub": {
+        "test/lightbulb/setOn": "1",
+        "test/lightbulb/getOn": "1",
+        "test/lightbulb/setBrightness": "200",
+        "test/lightbulb/getBrightness": "200",
+        "test/lightbulb": "Hello world"
+      }
     },
     {
       "accessory": "mqttthing",
