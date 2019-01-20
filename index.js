@@ -974,6 +974,50 @@ function makeThing(log, config) {
         });
     }
 
+    // Characteristic.TargetPosition
+    function characteristic_TargetPosition( service ) {
+        integerCharacteristic( service, 'targetPosition', Characteristic.TargetPosition, config.topics.setTargetPosition, config.topics.getTargetPosition );
+    }
+
+    // Characteristic.CurrentPosition
+    function characteristic_CurrentPosition( service ) {
+        integerCharacteristic( service, 'currentPosition', Characteristic.CurrentPosition, null, config.topics.getCurrentPosition );
+    }
+
+    // Characteristic.PositionState
+    function characteristic_PositionState( service ) {
+        let values = config.positionStateValues;
+        if( ! values ) {
+            values = [ 'DECREASING', 'INCREASING', 'STOPPED' ];
+        }
+        multiCharacteristic( service, 'positionState', Characteristic.PositionState, null, config.topics.getPositionState, values, Characteristic.PositionState.STOPPED );
+    }
+
+    // Characteristic.HoldPosition
+    function characteristic_HoldPosition( service ) {
+        booleanCharacteristic( service, 'holdPosition', Characteristic.HoldPosition, config.topics.setHoldPosition, null, false );
+    }
+
+    // Characteristic.TargetHorizontalTiltAngle
+    function Characteristic_TargetHorizontalTiltAngle( service ) {
+        integerCharacteristic( service, 'targetHorizontalTiltAngle', Characteristic.TargetHorizontalTiltAngle, config.topics.setTargetHorizontalTiltAngle, config.topics.getTargetHorizontalTiltAngle );
+    }
+
+    // Characteristic.CurrentHorizontalTiltAngle
+    function Characteristic_CurrentHorizontalTiltAngle( service ) {
+        integerCharacteristic( service, 'currentHorizontalTiltAngle', Characteristic.CurrentHorizontalTiltAngle, null, config.topics.getCurrentHorizontalTiltAngle );
+    }
+
+    // Characteristic.TargetVerticalTiltAngle
+    function Characteristic_TargetVerticalTiltAngle( service ) {
+        integerCharacteristic( service, 'targetVerticalTiltAngle', Characteristic.TargetVerticalTiltAngle, config.topics.setTargetVerticalTiltAngle, config.topics.getTargetVerticalTiltAngle );
+    }
+
+    // Characteristic.CurrentVerticalTiltAngle
+    function Characteristic_CurrentVerticalTiltAngle( service ) {
+        integerCharacteristic( service, 'currentVerticalTiltAngle', Characteristic.CurrentVerticalTiltAngle, null, config.topics.getCurrentVerticalTiltAngle );
+    }
+    
     // Create accessory information service
     function makeAccessoryInformationService() {
         var informationService = new Service.AccessoryInformation();
@@ -1116,6 +1160,29 @@ function makeThing(log, config) {
             characteristic_Mute( service );
             if (config.topics.setVolume || config.topics.getVolume) {
                 characteristic_Volume(service);
+            }
+        } else if( config.type == "windowCovering" ) {
+            service = new Service.WindowCovering( name );
+            characteristic_CurrentPosition( service );
+            characteristic_TargetPosition( service );
+            characteristic_PositionState( service );
+            if( config.topics.setHoldPosition ) {
+                characteristic_HoldPosition( service );
+            }
+            if( config.topics.getTargetHorizontalTiltAngle || config.topics.setTargetHorizontalTiltAngle ) {
+                Characteristic_TargetHorizontalTiltAngle( service );
+            }
+            if( config.topics.getTargetVerticalTiltAngle || config.topics.setTargetVerticalTiltAngle ) {
+                Characteristic_TargetVerticalTiltAngle( service );
+            }
+            if( config.topics.getCurrentHorizontalTiltAngle ) {
+                Characteristic_CurrentHorizontalTiltAngle( service );
+            }
+            if( config.topics.getCurrentVerticalTiltAngle ) {
+                Characteristic_CurrentVerticalTiltAngle( service );
+            }
+            if( config.topics.getObstructionDetected ) {
+                characteristic_ObstructionDetected( service );
             }
         } else {
             log("ERROR: Unrecognized type: " + config.type);

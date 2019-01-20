@@ -171,6 +171,7 @@ MQTT messages may be published on start-up, e.g. to reset accessories to a known
    * [StatelessProgrammableSwitch](#statelessprogrammableswitch)
    * [Switch](#switch)
    * [Temperature Sensor](#temperature-sensor)
+   * [Window Covering (Blinds)][#window-covering)]
 
 ## Contact Sensor
 
@@ -704,10 +705,40 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
 }
 ```
 
+
+## Window Covering
+
+Window covering position state can be **DECREASING**, **INCREASING** or **STOPPED**. By default, these use values of `DECREASING`, `INCREASING`, and `STOPPED` respectively; these defaults can be changed using the **positionStateValues** setting.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "windowCovering",
+    "name": "<name of device>",
+    "topics":
+    {
+        "getCurrentPosition":           "<topic used to report current position (integer 0-100)>",
+        "setTargetPosition":            "<topic used to control target position (integer 0-100)>",
+        "getTargetPosition":            "<topic used to report target position (optional)>", 
+        "getPositionState":             "<topic used to report position state>",
+        "setHoldPosition":              "<topic used to control hold position (Boolean)>",
+        "setTargetHorizontalTiltAngle": "<topic used to control target horizontal tilt angle (-90 to 90)>",
+        "getTargetHorizontalTiltAngle": "<topic used to report target horizontal tilt angle (optional)>",
+        "getCurrentHorizontalTiltAngle": "<topic used to report current horizontal tilt angle>",
+        "setTargetVerticalTiltAngle":   "<topic used to control target vertical tilt angle (-90 to 90)>",
+        "getTargetVerticalTiltAngle":   "<topic used to report target vertical tilt angle (optional)>",
+        "getCurrentVerticalTiltAngle":   "<topic used to report current vertical tilt angle>"
+    },
+    "positionStateValues": [ "decreasing-value", "increasing-value", "stopped-value" ]
+}
+```
+
+
 # Release notes
 
 Version 1.0.24
 + Added Speaker and Microphone
++ Added Window Covering (blind)
 
 Version 1.0.23
 + Add MQTT publishing options configuration setting (`mqttPubOptions`), to allow retain flag and QoS level to be set

@@ -381,6 +381,20 @@
         "getVolume": "test/microphone/getVolume",
         "setVolume": "test/microphone/setVolume"
       }
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "windowCovering",
+      "name": "Blind",
+      "url": "http://192.168.10.35:1883",
+      "logMqtt": "true",
+      "topics": {
+        "getCurrentPosition": "test/blind/getCurrentPosition",
+        "setTargetPosition": "test/blind/setTargetPosition",
+        "getPositionState": "test/blind/getPositionState",
+        "setTargetVerticalTiltAngle": "test/blind/setTargetVerticalTiltAngle",
+        "getCurrentVerticalTiltAngle": "test/blind/getCurrentVerticalTiltAngle"
+      }
     }
   ]
 }
