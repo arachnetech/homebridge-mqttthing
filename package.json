@@ -21,8 +21,8 @@
     "homekit",
     "Siri",
     "IoT", "ESPurna", "tasmota",
-    "light", "light bulb", "switch", "outlet", "motion sensor", "occupancy sensor", "light sensor", "contact sensor", "doorbell", "smoke sensor", "security system", "humidy sensor", "temperature sensor", "garage door", 
-    "stateless programmable switch", "fan"
+    "light", "light bulb", "switch", "outlet", "motion sensor", "occupancy sensor", "light sensor", "contact sensor", "doorbell", "smoke sensor", "security system", "humidity sensor", "temperature sensor", "garage door", 
+    "stateless programmable switch", "fan", "microphone", "speaker", "window covering", "blind", "leak sensor"
   ],
   "author": "David Miller",
   "license": "Apache-2.0",
