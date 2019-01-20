@@ -355,6 +355,32 @@
         "setOn": "test/scene/name"
       },
       "onValue": "evening"
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "speaker",
+      "name": "Speaker",
+      "url": "http://192.168.10.35:1883",
+      "logMqtt": "true",
+      "topics": {
+        "getMute": "test/speaker/getMute",
+        "setMute": "test/speaker/setMute",
+        "getVolume": "test/speaker/getVolume",
+        "setVolume": "test/speaker/setVolume"
+      }
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "microphone",
+      "name": "Microphone",
+      "url": "http://192.168.10.35:1883",
+      "logMqtt": "true",
+      "topics": {
+        "getMute": "test/microphone/getMute",
+        "setMute": "test/microphone/setMute",
+        "getVolume": "test/microphone/getVolume",
+        "setVolume": "test/microphone/setVolume"
+      }
     }
   ]
 }

@@ -871,6 +871,11 @@ function makeThing(log, config) {
         floatCharacteristic(service, 'volume', Characteristic.Volume, config.topics.setVolume, config.topics.getVolume, 0);
     }
 
+    // Characteristic.Mute
+    function characteristic_Mute( service ) {
+        booleanCharacteristic( service, 'mute', Characteristic.Mute, config.topics.setMute, config.topics.getMute, false );
+    }
+
     // Characteristic.SecuritySystemCurrentState
     function characteristic_SecuritySystemCurrentState(service) {
         let values = config.currentStateValues;
@@ -1100,6 +1105,18 @@ function makeThing(log, config) {
             service = new Service.LeakSensor( name );
             characteristic_LeakDetected( service );
             addSensorOptionalProps = true;
+        } else if( config.type == "microphone" ) {
+            service = new Service.Microphone( name );
+            characteristic_Mute( service );
+            if (config.topics.setVolume || config.topics.getVolume) {
+                characteristic_Volume(service);
+            }
+        } else if( config.type == "speaker" ) {
+            service = new Service.Speaker( name );
+            characteristic_Mute( service );
+            if (config.topics.setVolume || config.topics.getVolume) {
+                characteristic_Volume(service);
+            }
         } else {
             log("ERROR: Unrecognized type: " + config.type);
         }

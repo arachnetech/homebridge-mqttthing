@@ -162,10 +162,12 @@ MQTT messages may be published on start-up, e.g. to reset accessories to a known
    * [Leak Sensor](#leak-sensor)
    * [Light bulb](#light-bulb)
    * [Light Sensor](#light-sensor)
+   * [Microphone](#microphone)
    * [Motion Sensor](#motion-sensor)
    * [Occupancy Sensor](#occupancy-sensor)
    * [Outlet](#outlet)
    * [Security System](#security-system)
+   * [Speaker](#speaker)
    * [StatelessProgrammableSwitch](#statelessprogrammableswitch)
    * [Switch](#switch)
    * [Temperature Sensor](#temperature-sensor)
@@ -439,6 +441,24 @@ Current ambient light level must be in the range 0.0001 Lux to 100000 Lux to a m
 ```
 
 
+## Microphone
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "microphone",
+    "name": "<name of sensor>",
+    "topics":
+    {
+        "getMute":              "<topic used to indicate whether microphone is muted (Boolean)>",
+        "setMute":              "<topic used to set whether microphone is muted (Boolean)>",
+        "getVolume":            "<topic used to report current volume (0-100)>",
+        "setVolume":            "<topic used to set volume (0-100)>"
+    }
+}
+```
+
+
 ## Motion Sensor
 
 ```javascript
@@ -592,6 +612,24 @@ and False (or 0) maps to `SMOKE_NOT_DETECTED`. To use different MQTT values, con
 ```
 
 
+## Speaker
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "speaker",
+    "name": "<name of sensor>",
+    "topics":
+    {
+        "getMute":              "<topic used to indicate whether speaker is muted (Boolean)>",
+        "setMute":              "<topic used to set whether speaker is muted (Boolean)>",
+        "getVolume":            "<topic used to report current volume (0-100)>",
+        "setVolume":            "<topic used to set volume (0-100)>"
+    }
+}
+```
+
+
 ## StatelessProgrammableSwitch
 
 Like a doorbell (which is based on it), the state of a stateless programmable switch can be be `SINGLE_PRESS`, `DOUBLE_PRESS` or `LONG_PRESS`. By default, these events are raised when values of `1`, `2` and `L` respectively are published to the **getSwitch** topic. However, these values may be overridden by specifying an alternative array in the **switchValues** setting.
@@ -667,6 +705,9 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
 ```
 
 # Release notes
+
+Version 1.0.24
++ Added Speaker and Microphone
 
 Version 1.0.23
 + Add MQTT publishing options configuration setting (`mqttPubOptions`), to allow retain flag and QoS level to be set
