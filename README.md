@@ -171,7 +171,7 @@ MQTT messages may be published on start-up, e.g. to reset accessories to a known
    * [StatelessProgrammableSwitch](#statelessprogrammableswitch)
    * [Switch](#switch)
    * [Temperature Sensor](#temperature-sensor)
-   * [Window Covering (Blinds)][#window-covering)]
+   * [Window Covering (Blinds)](#window-covering)
 
 ## Contact Sensor
 
