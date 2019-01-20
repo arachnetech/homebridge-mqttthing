@@ -102,12 +102,18 @@ function makeThing(log, config) {
     }
 
     function mqttPublish(topic, message) {
+        if( message === null ) {
+            return; // don't publish if message is null
+        }
         if (typeof topic != 'string') {
             var extendedTopic = topic;
             topic = extendedTopic.topic;
             if (extendedTopic.hasOwnProperty('apply')) {
                 var applyFn = Function("message", extendedTopic['apply']); //eslint-disable-line
                 message = applyFn(message);
+                if( message === null ) {
+                    return;
+                }
             }
         }
         if( logmqtt ) {
@@ -121,16 +127,22 @@ function makeThing(log, config) {
     // The states of our characteristics
     var state = {};
 
+    // Convert from boolean true/false to MQTT-published boolean value (as configured) - returns null if no offValue
     function onOffValue(value) {
-        var pubVal = (value ? config.onValue : config.offValue);
-        if (pubVal === undefined) {
-            if (config.integerValue) {
-                pubVal = value ? 1 : 0;
-            } else {
-                pubVal = value ? true : false;
-            }
+        var mqttval;
+        if( config.onValue ) {
+            // using onValue/offValue
+            mqttval = value ? config.onValue : config.offValue;
+        } else if( config.integerValue ) {
+            mqttval = value ? 1 : 0;
+        } else {
+            mqttval = value ? true : false;
         }
-        return pubVal.toString();
+        if( mqttval === undefined || mqttval === null ) {
+            return null;
+        } else {
+            return mqttval.toString();
+        }
     }
 
     function onlineOfflineValue( value ) {
@@ -206,7 +218,16 @@ function makeThing(log, config) {
         // subscribe to get topic
         if (getTopic) {
             mqttSubscribe(getTopic, function (topic, message) {
-                var newState = (message == onOffValue(true));
+                let newState = false; // assume off
+                if( message == onOffValue( true ) ) {
+                    newState = true; // received on value so on
+                } else {
+                    let offValue = onOffValue( false );
+                    if( offValue !== null && message != offValue ) {
+                        // there is a specific off value, but we've received something else - so ignore message
+                        return;
+                    }
+                }
                 if (state[property] != newState) {
                     state[property] = newState;
                     service.getCharacteristic(characteristic).setValue(mapValueForHomebridge(newState, mapValueFunc), undefined, c_mySetContext);

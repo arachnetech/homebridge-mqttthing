@@ -131,6 +131,11 @@ Homekit Boolean types like on/off use strings "true" and "false" in MQTT message
 
 `onlineValue` - configure a specific value representing that an accessory is online (received through `getOnline`). If not specified, the configured *on* value will be used to represent an online state (i.e. `onValue` if configured, otherwise **1** with `integerValue: true` or **true** with `integerValue: false`).
 
+In mqttthing versions before 1.0.23, receiving any value not matching the configured 'on value' for a Boolean characteristic turned it off. From 1.0.23, the received message must match the offValue to turn off a characteristic.
+To turn off on any value except the onValue, omit configuration of offValue.
+
+From version 1.0.23, mqttthing will not publish a message for a Boolean characteristic turning off if no offValue is configured.
+
 ### Accessory Information
 
 The following configuration settings may be specified if required to change information service content:
@@ -665,6 +670,8 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
 
 Version 1.0.23
 + Add MQTT publishing options configuration setting (`mqttPubOptions`), allow retain flag and QoS level to be set
++ If no offValue is specified, don't publish anything when a Boolean characteristic turns off
++ When receiving a Boolean value, require configured off value to turn it off
 
 Version 1.0.22
 + Added `startPub` configuration setting, allowing MQTT messages to be published on start-up

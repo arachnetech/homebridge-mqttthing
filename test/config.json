@@ -13,7 +13,7 @@
       "type": "lightbulb",
       "name": "Test lightbulb",
       "url": "http://192.168.10.35:1883",
-      "mqttPubOptions": { "retain": false },
+      "mqttPubOptions": { "retain": true },
       "topics": {
         "getOn": "test/lightbulb/getOn",
         "setOn": "test/lightbulb/setOn",
@@ -306,6 +306,55 @@
         "setRotationSpeed": "test/fan/setRotationSpeed"
       },
       "integerValue": true
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "lightbulb",
+      "name": "OnOffTest",
+      "url": "http://192.168.10.35:1883",
+      "logMqtt": "true",
+      "topics": {
+        "getOn": "test/onoff/getOn",
+        "setOn": "test/onoff/setOn"
+      },
+      "onValue": "on",
+      "offValue": "off"
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "switch",
+      "name": "Morning Scene",
+      "url": "http://192.168.10.35:1883",
+      "logMqtt": "true",
+      "topics": {
+        "getOn": "test/scene/name",
+        "setOn": "test/scene/name"
+      },
+      "onValue": "morning"
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "switch",
+      "name": "Afternoon Scene",
+      "url": "http://192.168.10.35:1883",
+      "logMqtt": "true",
+      "topics": {
+        "getOn": "test/scene/name",
+        "setOn": "test/scene/name"
+      },
+      "onValue": "afternoon"
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "switch",
+      "name": "Evening Scene",
+      "url": "http://192.168.10.35:1883",
+      "logMqtt": "true",
+      "topics": {
+        "getOn": "test/scene/name",
+        "setOn": "test/scene/name"
+      },
+      "onValue": "evening"
     }
   ]
 }
