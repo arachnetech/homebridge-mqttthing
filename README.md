@@ -669,7 +669,7 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
 # Release notes
 
 Version 1.0.23
-+ Add MQTT publishing options configuration setting (`mqttPubOptions`), allow retain flag and QoS level to be set
++ Add MQTT publishing options configuration setting (`mqttPubOptions`), to allow retain flag and QoS level to be set
 + If no offValue is specified, don't publish anything when a Boolean characteristic turns off
 + When receiving a Boolean value, require configured off value to turn it off
 
