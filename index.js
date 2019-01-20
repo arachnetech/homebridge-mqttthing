@@ -113,7 +113,7 @@ function makeThing(log, config) {
         if( logmqtt ) {
             log( 'Publishing MQTT: ' + topic + ' = ' + message );
         }
-        mqttClient.publish(topic, message.toString());
+        mqttClient.publish(topic, message.toString(), config.mqttPubOptions );
     }
 
     var c_mySetContext = '---my-set-context--';

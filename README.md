@@ -34,6 +34,7 @@ The following settings apply to all device types:
     "username": "MQTT_username",
     "password": "MQTT_password",
     "mqttOptions": { keepalive: 30 },
+    "mqttPubOptions": { retain: true },
     "logMqtt": true,
     "topics": {
         "getName": 	        "my/get/name/topic",
@@ -71,6 +72,8 @@ The following settings apply to all device types:
 `password` - Password for MQTT server (optional)
 
 `mqttOptions` - Object containing all MQTT options passed to https://www.npmjs.com/package/mqtt#client, for MQTT configuration settings not supported above (optional). Any standard settings *not* specified in an **mqttOptions** option will be set by homebridge-mqttthing. Enable MQTT logging with **logMqtt** to check the options provided.
+ 
+`mqttPubOptions` - Option containin any MQTT publishing options required. See https://www.npmjs.com/package/mqtt#publish for details.
 
 `logMqtt` - Set to true to enable MQTT logging for this accessory (optional, defaults to false)
 
@@ -659,6 +662,9 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
 ```
 
 # Release notes
+
+Version 1.0.23
++ Add MQTT publishing options configuration setting (`mqttPubOptions`), allow retain flag and QoS level to be set
 
 Version 1.0.22
 + Added `startPub` configuration setting, allowing MQTT messages to be published on start-up

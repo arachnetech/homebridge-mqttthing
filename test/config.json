@@ -13,6 +13,7 @@
       "type": "lightbulb",
       "name": "Test lightbulb",
       "url": "http://192.168.10.35:1883",
+      "mqttPubOptions": { "retain": false },
       "topics": {
         "getOn": "test/lightbulb/getOn",
         "setOn": "test/lightbulb/setOn",
@@ -130,6 +131,7 @@
       "type": "outlet",
       "name": "Test outlet",
       "url": "http://192.168.10.35:1883",
+      "mqttPubOptions": { "retain": true },
       "topics": {
         "getOn": "test/outlet/getOn",
         "setOn": "test/outlet/setOn",
