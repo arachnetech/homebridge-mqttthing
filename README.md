@@ -150,7 +150,7 @@ The following configuration settings may be specified if required to change info
 
 ### Publishing values on start-up
 
-MQTT messages may be published on start-up, e.g. to reset accessories to a known initial state, with `startPub`. This is an object containing MQTT topics are keys, and values to be published as values.
+MQTT messages may be published on start-up, e.g. to reset accessories to a known initial state, with `startPub`. This is an object containing MQTT topics as keys, and values to be published as values.
 
 # Supported Accessories
 
