@@ -154,6 +154,7 @@ MQTT messages may be published on start-up, e.g. to reset accessories to a known
 
 # Supported Accessories
 
+   * [Tested Configurations](Tested-Configurations)
    * [Contact Sensor](#contact-sensor)
    * [Doorbell](#doorbell)
    * [Fan](#fan)
@@ -172,6 +173,10 @@ MQTT messages may be published on start-up, e.g. to reset accessories to a known
    * [Switch](#switch)
    * [Temperature Sensor](#temperature-sensor)
    * [Window Covering (Blinds)](#window-covering)
+   
+## Tested Configurations
+
+Tested and working configurations for devices are available on the [Wiki](https://github.com/arachnetech/homebridge-mqttthing/wiki/Tested-Configurations).  Please add your working configurations for others.
 
 ## Contact Sensor
 
