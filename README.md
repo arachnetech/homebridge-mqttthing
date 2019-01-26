@@ -461,9 +461,9 @@ Lock target state can be **UNSECURED** or **SECURED**. By default, these use val
     "name": "<name of sensor>",
     "topics":
     {
-        "setLockTargetState":       "test/garagelock/target",
-        "getLockTargetState":       "test/garagelock/current",
-        "getLockCurrentState":      "test/garagelock/current"
+        "setLockTargetState":       "test/lock/target",
+        "getLockTargetState":       "test/lock/current",
+        "getLockCurrentState":      "test/lock/current"
     },
     "lockValues": [ "Unsecured", "Secured", "Jammed",  "Unknown" ]
 }
