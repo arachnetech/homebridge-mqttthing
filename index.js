@@ -1136,6 +1136,14 @@ function makeThing(log, config) {
             if( config.topics.getLockCurrentState ) {
                 characteristic_LockCurrentState(service);
             }
+        } else if( config.type == "lockMechanism" ) {
+            service = new Service.LockMechanism( name );
+            if( config.topics.setLockTargetState ) {
+                characteristic_LockTargetState( service );
+            }
+            if( config.topics.getLockCurrentState ) {
+                characteristic_LockCurrentState( service );
+            }
         } else if( config.type == "fan" ) {
             service = new Service.Fan(name);
             characteristic_On(service);

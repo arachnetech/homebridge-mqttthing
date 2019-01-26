@@ -282,12 +282,26 @@
           "setTargetDoorState":       "test/garage/target",
           "getTargetDoorState":       "test/garage/current",
           "getCurrentDoorState":      "test/garage/current",
-          "setLockTargetState":       "test/garagelock/target",
+          "setLockTargetState":       "test/lock/target",
           "getLockTargetState":       "test/garagelock/current",
           "getLockCurrentState":      "test/garagelock/current",
           "getObstructionDetected":   "test/garage/obstruction"
       },
       "doorValues": [ "Open", "Closed", "Opening", "Closing", "Stopped" ],
+      "lockValues": [ "Unsecured", "Secured", "Jammed",  "Unknown" ]
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "lockMechanism",
+      "name": "Test Lock",
+      "url": "http://192.168.10.35:1883",
+      "logMqtt": true,
+      "topics":
+      {
+          "setLockTargetState":       "test/lock/target",
+          "getLockTargetState":       "test/lock/current",
+          "getLockCurrentState":      "test/lock/current"
+      },
       "lockValues": [ "Unsecured", "Secured", "Jammed",  "Unknown" ]
     },
     {

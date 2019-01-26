@@ -163,6 +163,7 @@ MQTT messages may be published on start-up, e.g. to reset accessories to a known
    * [Leak Sensor](#leak-sensor)
    * [Light bulb](#light-bulb)
    * [Light Sensor](#light-sensor)
+   * [Lock Mechanism](#lock-mechanism)
    * [Microphone](#microphone)
    * [Motion Sensor](#motion-sensor)
    * [Occupancy Sensor](#occupancy-sensor)
@@ -445,6 +446,40 @@ Current ambient light level must be in the range 0.0001 Lux to 100000 Lux to a m
     "offValue": "<value representing off (optional)>"
 }
 ```
+
+
+## Lock Mechanism
+
+Lock current state can be **UNSECURED**, **SECURED**, **JAMMED** or **UNKNOWN**. By default, these use values of `U`, `S`, `J`, `?` respectively; these can be changed using the **lockValues** setting.
+
+Lock target state can be **UNSECURED** or **SECURED**. By default, these use values of `U` and `S` respectively (unless changed through **lockValues**).
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "lockMechanism",
+    "name": "<name of sensor>",
+    "topics":
+    {
+        "setLockTargetState":       "test/garagelock/target",
+        "getLockTargetState":       "test/garagelock/current",
+        "getLockCurrentState":      "test/garagelock/current"
+    },
+    "lockValues": [ "Unsecured", "Secured", "Jammed",  "Unknown" ]
+}
+```
+
+### Topics
+
+`setLockTargetState` - Topic published when the target lock state is changed in HomeKit. Values are `lockValues`.
+
+`getLockTargetState` - Topic that may be published to notify HomeKit that the target lock state has been changed externally. Values are `lockValues`. May use same topic as `getLockCurrentState` as above. Omit if all control is through HomeKit.
+
+`getLockCurrentState` - Topic published to notify HomeKit that a lock state has been achieved. Values are `lockValues`.
+
+### Values
+
+`lockValues` - Array of 4 lock values corresponding to unsecured, secured, jammed and unknown respectively. if not specified, defaults to `[ 'U', 'S', 'J', '?' ]`.
 
 
 ## Microphone
@@ -740,6 +775,9 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 
 # Release notes
+
+Version 1.0.25
++ Added Lock Mechanism
 
 Version 1.0.24
 + Added Speaker and Microphone
