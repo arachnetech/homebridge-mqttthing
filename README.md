@@ -154,7 +154,7 @@ MQTT messages may be published on start-up, e.g. to reset accessories to a known
 
 # Supported Accessories
 
-   * [Tested Configurations](Tested-Configurations)
+   * [Tested Configurations](#Tested-Configurations)
    * [Contact Sensor](#contact-sensor)
    * [Doorbell](#doorbell)
    * [Fan](#fan)
