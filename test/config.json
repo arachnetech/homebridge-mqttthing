@@ -29,6 +29,8 @@
         "setHue": "test/lightbulb/setHue",
         "getSaturation": "test/lightbulb/getSaturation",
         "setSaturation": "test/lightbulb/setSaturation",
+        "getColorTemperature": "test/lightbulb/getTemperature",
+        "setColorTemperature": "test/lightbulb/setTemperature",
         "getOnline": "test/lightbulb/getOnline"
       },
       "logMqtt": true,
@@ -89,9 +91,7 @@
       "url": "http://192.168.10.35:1883",
       "topics": {
         "getRGBW": "test/rgbwlight/rgb",
-        "setRGBW": "test/rgbwlight/rgb/set",
-        "getOn": "test/rgbwlight/on",
-        "setOn": "test/rgbwlight/on/set"
+        "setRGBW": "test/rgbwlight/rgb/set"
       },
       "logMqtt": true,
       "integerValue": true,

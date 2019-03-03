@@ -320,29 +320,38 @@ function makeThing(log, config) {
 
     function characteristics_HSVLight( service ) {
 
+        let lastpubmsg = '';
+
         function publish() {
             var bri = state.bri;
-            if( ! config.topics.setOn ) {
-                if( state.on ) {
-                    if( bri == 0 ) {
-                        bri = 100;
-                    }
-                } else {
-                    bri = 0;
-                }
+            if( ! config.topics.setOn && ! state.on ) {
+                bri = 0;
             }
             var msg = state.hue + ',' + state.sat + ',' + bri;
-            mqttPublish( config.topics.setHSV, msg );
+            if( msg != lastpubmsg ) {
+                mqttPublish( config.topics.setHSV, msg );
+                lastpubmsg = msg;
+            }
         }
 
         if( config.topics.setOn ) {
             characteristic_On( service );
         } else {
-            addCharacteristic( service, 'on', Characteristic.On, 0, publish );
+            addCharacteristic( service, 'on', Characteristic.On, 0, function() {
+                if( state.on && state.bri == 0 ) {
+                    state.bri = 100;
+                }
+                publish();
+            } );
         }
         addCharacteristic( service, 'hue', Characteristic.Hue, 0, publish );
         addCharacteristic( service, 'sat', Characteristic.Saturation, 0, publish );
-        addCharacteristic( service, 'bri', Characteristic.Brightness, 100, publish );
+        addCharacteristic( service, 'bri', Characteristic.Brightness, 100, function() {
+            if( state.bri > 0 && ! state.on ) {
+                state.on = true;
+            }
+            publish();
+        } );
 
         if( config.topics.getHSV ) {
             mqttSubscribe( config.topics.getHSV, function( topic, message ) {
@@ -495,16 +504,12 @@ function makeThing(log, config) {
             hexPrefix = '';
         }
 
+        let lastpubmsg = '';
+
         function publish() {
             var bri = state.bri;
-            if( ! config.topics.setOn ) {
-                if( state.on ) {
-                    if( bri == 0 ) {
-                        bri = 100;
-                    }
-                } else {
-                    bri = 0;
-                }
+            if( ! config.topics.setOn && ! state.on ) {
+                bri = 0;
             }
             var rgb = ScaledHSVtoRGB( state.hue, state.sat, bri );
             if( whiteSep || whiteComp ) {
@@ -535,7 +540,10 @@ function makeThing(log, config) {
                     msg += toHex( rgb.w );
                 }
             }
-            mqttPublish( setTopic, msg );
+            if( msg != lastpubmsg ) {
+                mqttPublish( setTopic, msg );
+                lastpubmsg = msg;
+            }
 
             if( whiteSep ) {
                 mqttPublish( config.topics.setWhite, rgb.w );
@@ -545,11 +553,22 @@ function makeThing(log, config) {
         if( config.topics.setOn ) {
             characteristic_On( service );
         } else {
-            addCharacteristic( service, 'on', Characteristic.On, 0, publish );
+            addCharacteristic( service, 'on', Characteristic.On, 0, function() {
+                if( state.on && state.bri == 0 ) {
+                    state.bri = 100;
+                }
+                publish();
+            } );
         }
         addCharacteristic( service, 'hue', Characteristic.Hue, 0, publish );
         addCharacteristic( service, 'sat', Characteristic.Saturation, 0, publish );
-        addCharacteristic( service, 'bri', Characteristic.Brightness, 100, publish );
+        addCharacteristic( service, 'bri', Characteristic.Brightness, 100, function() {
+            if( state.bri > 0 && ! state.on ) {
+                state.on = true;
+            }
+
+            publish();
+        } );
 
         function updateColour( red, green, blue, white ) {
 
