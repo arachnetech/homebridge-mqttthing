@@ -785,6 +785,11 @@ function makeThing(log, config) {
         integerCharacteristic(service, 'saturation', Characteristic.Saturation, config.topics.setSaturation, config.topics.getSaturation);
     }
 
+    // Characteristic.ColorTemperature
+    function characteristic_ColorTemperature( service ) {
+        integerCharacteristic( service, 'coltemp', Characteristic.ColorTemperature, config.topics.setColorTemperature, config.topics.getColorTemperature );
+    }
+
     // Characteristic.OutletInUse
     function characteristic_OutletInUse(service) {
         booleanCharacteristic(service, 'inUse', Characteristic.OutletInUse, null, config.topics.getInUse);
@@ -1083,6 +1088,9 @@ function makeThing(log, config) {
                 }
                 if (config.topics.setSaturation) {
                     characteristic_Saturation(service);
+                }
+                if( config.topics.setColorTemperature ) {
+                    characteristic_ColorTemperature( service );
                 }
             }
         } else if (config.type == "switch") {

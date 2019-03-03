@@ -116,6 +116,22 @@
     },
     {
       "accessory": "mqttthing",
+      "type": "lightbulb",
+      "name": "Test ColorTemperature Light",
+      "url": "http://192.168.10.35:1883",
+      "topics": {
+        "getOn": "test/coltemp/getOn",
+        "setOn": "test/coltemp/setOn",
+        "getBrightness": "test/coltemp/getBrightness",
+        "setBrightness": "test/coltemp/setBrightness",
+        "getColorTemperature": "test/coltemp/getTemperature",
+        "setColorTemperature": "test/coltemp/setTemperature"
+      },
+      "logMqtt": true,
+      "integerValue": true
+    },
+    {
+      "accessory": "mqttthing",
       "type": "switch",
       "name": "Test switch",
       "url": "http://192.168.10.35:1883",

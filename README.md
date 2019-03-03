@@ -460,13 +460,15 @@ If `topics.setRGBW` is populated, a combined value is used in the format red,gre
         "setRGBW":          "<in RGBW mode, topic to set comma-separated red, green, blue, white>",
         "getWhite":         "<topic to get white level (0-255)> - used with getRGB for RGBW with separately-published white level",
         "setWhite":         "<topic to set white level (0-255)> - used with setRGB for RGBW with separately-published white level",
+        "getColorTemperature": "<topic to report color temperature (optional)>",
+        "setColorTemperature": "<topic to control color temperature (optional)>"
     },
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
     "offValue": "<value representing off (optional)>",
     "hex": "true to format combined RGB/RGBW in hexadecimal instead of as comma-separated decimals",
     "hexPrefix": "format combined RGB/RGBW in hexadecimal with specified prefix (typically '#') instead of as comma-separated decimals",
-    "turnOffAfterms": <milliseconds after which to turn off automatically (optional)>
+    "turnOffAfterms": "<milliseconds after which to turn off automatically (optional)>"
 }
 ```
 
@@ -850,6 +852,9 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 
 # Release notes
+
+Version 1.0.27
++ Added ColorTemperature to Light bulb
 
 Version 1.0.26
 + Added Window

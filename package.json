@@ -1,6 +1,6 @@
 {
   "name": "homebridge-mqttthing",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "description": "Homebridge plugin supporting various services over MQTT",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
     "Siri",
     "IoT", "ESPurna", "tasmota",
     "light", "light bulb", "switch", "outlet", "motion sensor", "occupancy sensor", "light sensor", "contact sensor", "doorbell", "smoke sensor", "security system", "humidity sensor", "temperature sensor", "garage door", 
-    "stateless programmable switch", "fan", "microphone", "speaker", "window covering", "blind", "leak sensor", "lock mechanism", "lock"
+    "stateless programmable switch", "fan", "microphone", "speaker", "window covering", "blind", "leak sensor", "lock mechanism", "lock", "window", "air quality sensor", "carbondioxide sensor"
   ],
   "author": "David Miller",
   "license": "Apache-2.0",
