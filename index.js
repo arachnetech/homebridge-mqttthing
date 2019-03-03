@@ -1017,6 +1017,34 @@ function makeThing(log, config) {
     function Characteristic_CurrentVerticalTiltAngle( service ) {
         integerCharacteristic( service, 'currentVerticalTiltAngle', Characteristic.CurrentVerticalTiltAngle, null, config.topics.getCurrentVerticalTiltAngle );
     }
+
+    // Characteristic.AirQuality
+    function characteristic_AirQuality( service ) {
+        let values = config.airQualityValues;
+        if( ! values ) {
+            values = [ 'UNKNOWN', 'EXCELLENT', 'GOOD', 'FAIR', 'INFERIOR', 'POOR' ];
+        }
+        multiCharacteristic( service, 'airQuality', Characteristic.AirQuality, null, config.topics.getAirQuality, values, Characteristic.AirQuality.UNKNOWN );
+    }
+
+    // Characteristic.CarbonDioxideDetected
+    function characteristic_CarbonDioxideDetected( service ) {
+        let values = config.carbonDioxideDetectedValues;
+        if( ! values ) {
+            values = [ 'NORMAL', 'ABNORMAL' ];
+        }
+        multiCharacteristic( service, 'carbonDioxideDetected', Characteristic.CarbonDioxideDetected, null, config.topics.getCarbonDioxideDetected, values, Characteristic.CarbonDioxideDetected.CO2_LEVELS_NORMAL );
+    }
+
+    // Characteristic.CarbonDioxideLevel
+    function characteristic_CarbonDioxideLevel( service ) {
+        floatCharacteristic( service, 'carbonDioxideLevel', Characteristic.CarbonDioxideLevel, null, config.topics.getCarbonDioxideLevel, 0 );
+    }
+
+    // Characteristic.CarbonDioxideLevel
+    function characteristic_CarbonDioxidePeakLevel( service ) {
+        floatCharacteristic( service, 'carbonDioxidePeak', Characteristic.CarbonDioxidePeakLevel, null, config.topics.getCarbonDioxidePeakLevel, 0 );
+    }
     
     // Create accessory information service
     function makeAccessoryInformationService() {
@@ -1191,6 +1219,35 @@ function makeThing(log, config) {
             }
             if( config.topics.getObstructionDetected ) {
                 characteristic_ObstructionDetected( service );
+            }
+        } else if( config.type == "window" ) {
+            service = new Service.Window( name );
+            characteristic_CurrentPosition( service );
+            characteristic_TargetPosition( service );
+            characteristic_PositionState( service );
+            if( config.topics.setHoldPosition ) {
+                characteristic_HoldPosition( service );
+            }
+            if( config.topics.getObstructionDetected ) {
+                characteristic_ObstructionDetected( service );
+            }
+        } else if( config.type == "airQualitySensor" ) {
+            service = new Service.AirQualitySensor( name );
+            characteristic_AirQuality( service );
+            addSensorOptionalProps = true;
+            // todo: lots of optional charateristics...
+            if( config.topics.getCarbonDioxideLevel ) {
+                characteristic_CarbonDioxideLevel( service );
+            }
+        } else if( config.type == 'carbonDioxideSensor' ) {
+            service = new Service.CarbonDioxideSensor( name );
+            characteristic_CarbonDioxideDetected( service );
+            addSensorOptionalProps = true;
+            if( config.topics.getCarbonDioxideLevel ) {
+                characteristic_CarbonDioxideLevel( service );
+            }
+            if( config.topics.getCarbonDioxidePeakLevel ) {
+                characteristic_CarbonDioxidePeakLevel( service );
             }
         } else {
             log("ERROR: Unrecognized type: " + config.type);

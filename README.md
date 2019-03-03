@@ -155,6 +155,8 @@ MQTT messages may be published on start-up, e.g. to reset accessories to a known
 # Supported Accessories
 
    * [Tested Configurations](#Tested-Configurations)
+   * [Air Quality Sensor](#air-quality-sensor)
+   * [Carbon Dioxide Sensor](#carbon-dioxide-sensor)
    * [Contact Sensor](#contact-sensor)
    * [Doorbell](#doorbell)
    * [Fan](#fan)
@@ -173,11 +175,60 @@ MQTT messages may be published on start-up, e.g. to reset accessories to a known
    * [StatelessProgrammableSwitch](#statelessprogrammableswitch)
    * [Switch](#switch)
    * [Temperature Sensor](#temperature-sensor)
+   * [Window](#window)
    * [Window Covering (Blinds)](#window-covering)
    
 ## Tested Configurations
 
 Tested and working configurations for devices are available on the [Wiki](https://github.com/arachnetech/homebridge-mqttthing/wiki/Tested-Configurations).  Please add your working configurations for others.
+
+
+## Air Quality Sensor
+
+Air quality state can be `UNKNOWN`, `EXCELLENT`, `GOOD`, `FAIR`, `INFERIOR` or `POOR`. To use different values, specify them in **airQualityValues** in that order.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "airQualitySensor",
+    "name": "<name of device>",
+    "topics":
+    {
+        "getAirQuality":         "<topic used to report air quality",
+        "getCarbonDioxideLevel": "<topic used to report carbon dioxide level (optional)>",
+        "getStatusActive":       "<topic used to provide 'active' status (optional)>",
+        "getStatusFault":        "<topic used to provide 'fault' status (optional)>",
+        "getStatusTampered":     "<topic used to provide 'tampered' status (optional)>",
+        "getStatusLowBattery":   "<topic used to provide 'low battery' status (optional)>"
+    },
+    "airQualityValues": [ "unknown-value", "excellent-value", "good-value", "fair-value", "inferior-value", "poor-value" ]
+}
+```
+
+
+## Carbon Dioxide Sensor
+
+Carbon dioxide detected state can be `NORMAL` or `ABNORMAL`. To use different values, specify them in **carbonDioxideDetectedValues** in that order.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "airQualitySensor",
+    "name": "<name of device>",
+    "topics":
+    {
+        "getCarbonDioxideDetected":     "<topic used to report carbon dioxide detected",
+        "getCarbonDioxideLevel":        "<topic used to report carbon dioxide level (optional)>",
+        "getCarbonDioxidePeakLevel":    "<topic used to report carbon dioxide level (optional)>",
+        "getStatusActive":              "<topic used to provide 'active' status (optional)>",
+        "getStatusFault":               "<topic used to provide 'fault' status (optional)>",
+        "getStatusTampered":            "<topic used to provide 'tampered' status (optional)>",
+        "getStatusLowBattery":          "<topic used to provide 'low battery' status (optional)>"
+    },
+    "getCarbonDioxideDetected": [ "normal-value", "abnormal-value" ]
+}
+```
+
 
 ## Contact Sensor
 
@@ -746,6 +797,29 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
 ```
 
 
+## Window 
+
+Window position state can be **DECREASING**, **INCREASING** or **STOPPED**. By default, these use values of `DECREASING`, `INCREASING`, and `STOPPED` respectively; these defaults can be changed using the **positionStateValues** setting.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "window",
+    "name": "<name of device>",
+    "topics":
+    {
+        "getCurrentPosition":           "<topic used to report current position (integer 0-100)>",
+        "setTargetPosition":            "<topic used to control target position (integer 0-100)>",
+        "getTargetPosition":            "<topic used to report target position (optional)>", 
+        "getPositionState":             "<topic used to report position state>",
+        "setHoldPosition":              "<topic used to control hold position (Boolean)>",
+        "getObstructionDetected":       "<topic used to report whether an obstruction is detected (Boolean)>"
+    },
+    "positionStateValues": [ "decreasing-value", "increasing-value", "stopped-value" ]
+}
+```
+
+
 ## Window Covering
 
 Window covering position state can be **DECREASING**, **INCREASING** or **STOPPED**. By default, these use values of `DECREASING`, `INCREASING`, and `STOPPED` respectively; these defaults can be changed using the **positionStateValues** setting.
@@ -767,7 +841,8 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
         "getCurrentHorizontalTiltAngle": "<topic used to report current horizontal tilt angle>",
         "setTargetVerticalTiltAngle":   "<topic used to control target vertical tilt angle (-90 to 90)>",
         "getTargetVerticalTiltAngle":   "<topic used to report target vertical tilt angle (optional)>",
-        "getCurrentVerticalTiltAngle":   "<topic used to report current vertical tilt angle>"
+        "getCurrentVerticalTiltAngle":   "<topic used to report current vertical tilt angle>",
+        "getObstructionDetected":        "<topic used to report whether an obstruction is detected (Boolean)>"
     },
     "positionStateValues": [ "decreasing-value", "increasing-value", "stopped-value" ]
 }
@@ -775,6 +850,11 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 
 # Release notes
+
+Version 1.0.26
++ Added Window
++ Added Air Quality Sensor
++ Added Carbon Dioxide Sensor
 
 Version 1.0.25
 + Added Lock Mechanism

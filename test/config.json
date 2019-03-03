@@ -409,6 +409,38 @@
         "setTargetVerticalTiltAngle": "test/blind/setTargetVerticalTiltAngle",
         "getCurrentVerticalTiltAngle": "test/blind/getCurrentVerticalTiltAngle"
       }
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "window",
+      "name": "Window",
+      "url": "http://192.168.10.35:1883",
+      "logMqtt": "true",
+      "topics": {
+        "getCurrentPosition": "test/window/getCurrentPosition",
+        "setTargetPosition": "test/window/setTargetPosition",
+        "getPositionState": "test/window/getPositionState"
+      }
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "carbonDioxideSensor",
+      "name": "CO2",
+      "url": "http://192.168.10.35:1883",
+      "logMqtt": "true",
+      "topics": {
+        "getCarbonDioxideDetected": "test/co2/get"
+      }
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "airQualitySensor",
+      "name": "AirQuality",
+      "url": "http://192.168.10.35:1883",
+      "logMqtt": "true",
+      "topics": {
+        "getAirQuality": "test/airquality/get"
+      }
     }
   ]
 }
