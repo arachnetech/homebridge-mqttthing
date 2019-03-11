@@ -155,19 +155,27 @@ function makeThing(log, config) {
         }
     }
     
-    function registerHistoryCallback(service, historySvc, loggingEntry, characteristic) {
-        // get characteristic to be logged
-        var charac = service.getCharacteristic(characteristic);
-        // attach another set callback for this caracteristic
-        charac.on('set', function (value, callback, context) {
-            if (context === c_mySetContext) {
+    function registerHistoryCallback(historySvc, getTopic, loggingEntry) {
+        if (getTopic) {
+            mqttSubscribe(getTopic, function (topic, message) {
                 var logEntry = {};
-                logEntry['time'] = Math.floor(Date.now() / 1000);  // seconds (UTC)
-                logEntry[loggingEntry] = value;
-                historySvc.addEntry(logEntry);
-                callback();
-            }
-        });
+                logEntry.time = Math.floor(Date.now() / 1000);  // seconds (UTC)
+                switch (loggingEntry) {
+                    case 'temp':
+                    case 'humidity':
+                        logEntry[loggingEntry] = parseFloat(message);
+                        historySvc.addEntry(logEntry);
+                        break;
+                    case 'status':
+                        logEntry[loggingEntry] = parseInt(message);
+                        historySvc.addEntry(logEntry);
+                        break;
+                    default:
+                      log('Warning: Invalid loggingEntry');
+                      return;
+                }
+            });
+        }
     }
 
     // The states of our characteristics
@@ -871,9 +879,9 @@ function makeThing(log, config) {
     }
 
     // History for MotionDetected 
-    function history_MotionDetected(service, historySvc) {
+    function history_MotionDetected(service) {
         // fakegato-history loggingEntry 'status' for MotionDetected
-        registerHistoryCallback(service, historySvc, 'status', Characteristic.MotionDetected);
+        registerHistoryCallback(service, config.topics.getMotionDetected, 'status');
     }
 
     // Characteristic.StatusActive
@@ -920,9 +928,9 @@ function makeThing(log, config) {
     }
 
     // History for CurrentTemperature 
-    function history_CurrentTemperature(service, historySvc) {
+    function history_CurrentTemperature(service) {
         // fakegato-history loggingEntry 'temp' for CurrentTemperature
-        registerHistoryCallback(service, historySvc, 'temp', Characteristic.CurrentTemperature);
+        registerHistoryCallback(service, config.topics.getCurrentTemperature, 'temp');
     }
 
     // Characteristic.CurrentRelativeHumidity
@@ -932,9 +940,9 @@ function makeThing(log, config) {
     }
 
     // History for CurrentRelativeHumidity 
-    function history_CurrentRelativeHumidity(service, historySvc) {
+    function history_CurrentRelativeHumidity(service) {
         // fakegato-history loggingEntry 'humidity' for CurrentRelativeHumidity
-        registerHistoryCallback(service, historySvc, 'humidity', Characteristic.CurrentRelativeHumidity);
+        registerHistoryCallback(service, config.topics.getCurrentRelativeHumidity, 'humidity');
     }
 
     // Characteristic.ContactSensorState
@@ -1192,7 +1200,7 @@ function makeThing(log, config) {
             if (config.history) {
                 let historyOptions = new HistoryOptions(config, true);
                 let historySvc = new HistoryService('motion', {displayName:name, log:log}, historyOptions);
-                history_MotionDetected(service, historySvc);
+                history_MotionDetected(historySvc);
                 // return history service too
                 services.push( historySvc );
             }
@@ -1212,7 +1220,7 @@ function makeThing(log, config) {
             if (config.history) {
                 let historyOptions = new HistoryOptions(config);
                 let historySvc = new HistoryService('weather', {displayName:name, log:log}, historyOptions);
-                history_CurrentTemperature(service, historySvc);
+                history_CurrentTemperature(historySvc);
                 // return history service too
                 services.push( historySvc );
             }
@@ -1224,7 +1232,7 @@ function makeThing(log, config) {
             if (config.history) {
                 let historyOptions = new HistoryOptions(config);
                 let historySvc = new HistoryService('weather', {displayName:name, log:log}, historyOptions);
-                history_CurrentRelativeHumidity(service, historySvc);
+                history_CurrentRelativeHumidity(historySvc);
                 // return history service too
                 services.push( historySvc );
             }
