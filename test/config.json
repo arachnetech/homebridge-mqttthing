@@ -172,7 +172,8 @@
       "integerValue": true,
       "chargingStateValues": [ "NotCharging", "Charging", "NotChargeable" ],
       "logMqtt": true,
-      "turnOffAfterms": 3000
+      "turnOffAfterms": 3000,
+      "history": true
     },
     {
       "accessory": "mqttthing",
@@ -205,7 +206,8 @@
       "url": "http://192.168.10.35:1883",
       "topics": {
         "getCurrentTemperature": "test/temperature"
-      }
+      },
+      "history": true
     },
     {
       "accessory": "mqttthing",
@@ -214,6 +216,11 @@
       "url": "http://192.168.10.35:1883",
       "topics": {
         "getCurrentRelativeHumidity": "test/humidity"
+      },
+      "history": {
+        "size": 1000,
+        "interval": 5,
+        "autoRepeat": false
       }
     },
     {

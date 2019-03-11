@@ -6,8 +6,9 @@
 var mqtt = require("mqtt");
 var os = require("os");
 var packagedef = require('./package.json');
+var fakegatoHistory = require('fakegato-history');
 
-var Service, Characteristic;
+var Service, Characteristic, HistoryService;
 
 function makeThing(log, config) {
 
@@ -123,6 +124,51 @@ function makeThing(log, config) {
     }
 
     var c_mySetContext = '---my-set-context--';
+
+    // constructor for fakegato-history options
+    function HistoryOptions(config, isEventSensor=false) {
+        // maximum size of stored data points
+        this.size = config.history.size || 4032;
+        // data will be stored in .homebridge or path specified with homebridge -U option
+        this.storage = 'fs';
+        // history interval for averaging/repeating
+        if (config.history.interval === undefined) {
+            this.minutes = 10;
+        }
+        else if(!config.history.interval) {
+            // '0' or 'false' will disable the repeating (and averaging) interval timer
+            this.disableTimer = true;
+        }
+        else {
+            this.minutes = config.history.interval;
+        }
+        // disable repetition (if no data was received in last interval)
+        if (config.history.autoRepeat===false) {
+            if (isEventSensor) {
+                // for 'motion' type
+                this.disableTimer = true;
+            }
+            else {
+                // for 'weather' type
+                this.disableRepeatLastData = true;
+            }
+        }
+    }
+    
+    function registerHistoryCallback(service, historySvc, loggingEntry, characteristic) {
+        // get characteristic to be logged
+        var charac = service.getCharacteristic(characteristic);
+        // attach another set callback for this caracteristic
+        charac.on('set', function (value, callback, context) {
+            if (context === c_mySetContext) {
+                var logEntry = {};
+                logEntry['time'] = Math.floor(Date.now() / 1000);  // seconds (UTC)
+                logEntry[loggingEntry] = value;
+                historySvc.addEntry(logEntry);
+                callback();
+            }
+        });
+    }
 
     // The states of our characteristics
     var state = {};
@@ -824,6 +870,12 @@ function makeThing(log, config) {
         booleanCharacteristic(service, 'motionDetected', Characteristic.MotionDetected, null, config.topics.getMotionDetected, null, null, null, config.turnOffAfterms);
     }
 
+    // History for MotionDetected 
+    function history_MotionDetected(service, historySvc) {
+        // fakegato-history loggingEntry 'status' for MotionDetected
+        registerHistoryCallback(service, historySvc, 'status', Characteristic.MotionDetected);
+    }
+
     // Characteristic.StatusActive
     function characteristic_StatusActive(service) {
         booleanCharacteristic(service, 'statusActive', Characteristic.StatusActive, null, config.topics.getStatusActive, true);
@@ -867,10 +919,22 @@ function makeThing(log, config) {
         characteristic.props.minValue = -100;
     }
 
+    // History for CurrentTemperature 
+    function history_CurrentTemperature(service, historySvc) {
+        // fakegato-history loggingEntry 'temp' for CurrentTemperature
+        registerHistoryCallback(service, historySvc, 'temp', Characteristic.CurrentTemperature);
+    }
+
     // Characteristic.CurrentRelativeHumidity
     function characteristic_CurrentRelativeHumidity(service) {
         floatCharacteristic(service, 'currentRelativeHumidity', Characteristic.CurrentRelativeHumidity,
             null, config.topics.getCurrentRelativeHumidity, 0 );
+    }
+
+    // History for CurrentRelativeHumidity 
+    function history_CurrentRelativeHumidity(service, historySvc) {
+        // fakegato-history loggingEntry 'humidity' for CurrentRelativeHumidity
+        registerHistoryCallback(service, historySvc, 'humidity', Characteristic.CurrentRelativeHumidity);
     }
 
     // Characteristic.ContactSensorState
@@ -1124,6 +1188,14 @@ function makeThing(log, config) {
         } else if (config.type == "motionSensor") {
             service = new Service.MotionSensor(name);
             characteristic_MotionDetected(service);
+            services = [service];
+            if (config.history) {
+                let historyOptions = new HistoryOptions(config, true);
+                let historySvc = new HistoryService('motion', {displayName:name, log:log}, historyOptions);
+                history_MotionDetected(service, historySvc);
+                // return history service too
+                services.push( historySvc );
+            }
             addSensorOptionalProps = true;
         } else if (config.type == "occupancySensor") {
             service = new Service.OccupancySensor(name);
@@ -1136,10 +1208,26 @@ function makeThing(log, config) {
         } else if (config.type == "temperatureSensor") {
             service = new Service.TemperatureSensor(name);
             characteristic_CurrentTemperature(service);
+            services = [service];
+            if (config.history) {
+                let historyOptions = new HistoryOptions(config);
+                let historySvc = new HistoryService('weather', {displayName:name, log:log}, historyOptions);
+                history_CurrentTemperature(service, historySvc);
+                // return history service too
+                services.push( historySvc );
+            }
             addSensorOptionalProps = true;
         } else if (config.type == "humiditySensor") {
             service = new Service.HumiditySensor(name);
             characteristic_CurrentRelativeHumidity(service);
+            services = [service];
+            if (config.history) {
+                let historyOptions = new HistoryOptions(config);
+                let historySvc = new HistoryService('weather', {displayName:name, log:log}, historyOptions);
+                history_CurrentRelativeHumidity(service, historySvc);
+                // return history service too
+                services.push( historySvc );
+            }
             addSensorOptionalProps = true;
         } else if (config.type == "contactSensor") {
             service = new Service.ContactSensor(name);
@@ -1365,6 +1453,7 @@ function makeThing(log, config) {
 module.exports = function (homebridge) {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
+    HistoryService = fakegatoHistory(homebridge);
 
     homebridge.registerAccessory("homebridge-mqttthing", "mqttthing", makeThing);
 }
