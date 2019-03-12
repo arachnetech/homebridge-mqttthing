@@ -266,7 +266,7 @@ Doorbell ring switch state can be be `SINGLE_PRESS`, `DOUBLE_PRESS` or `LONG_PRE
 ```javascript
 {
     "accessory": "mqttthing",
-    "type": "contactSensor",
+    "type": "doorbell",
     "name": "<name of sensor>",
     "url": "<url of MQTT server (optional)>",
     "username": "<username for MQTT (optional)>",
