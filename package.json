@@ -31,6 +31,7 @@
   },
   "homepage": "https://github.com/arachnetech/homebridge-mqttthing#readme",
   "dependencies": {
-    "mqtt": "^2.9.0"
+    "mqtt": "^2.9.0",
+    "fakegato-history": "0.5.3"
   }
 }

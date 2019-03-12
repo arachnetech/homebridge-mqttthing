@@ -152,6 +152,30 @@ The following configuration settings may be specified if required to change info
 
 MQTT messages may be published on start-up, e.g. to reset accessories to a known initial state, with `startPub`. This is an object containing MQTT topics as keys, and values to be published as values.
 
+### History Service
+
+For some accessory types you can enable the History Service powered by [fakegato-history](https://github.com/simont77/fakegato-history). It will show up in the Eve App. (Home.app does not support it).
+
+Depending on the accessory type, fakegato-history may add extra entries every 10 minutes or may average the entries from the plugin and send data every 10 minutes.
+
+History is currently supported for:
+* Temperature Sensor
+* Humidity Sensor
+* Motion Sensor
+
+`history` - set to **true** for enabling History Service (Boolean, optional)
+
+Alternatively, you can specify `history` as an object with some properties:
+
+`size` - maximum size of stored data points (optional), default: 4032
+
+`interval` - set history interval [minutes] for averaging/repeating. 0 will disable this timer (optional), default: 10
+
+`autoRepeat` - set repetition of last value if no data was received in last interval (optional), default: true
+
+Avoid the use of "/" in characteristics of the Information Service (e.g. serial number, manufacturer, etc.), since this may cause data to not appear in the history. Note that if your Eve.app is controlling more than one accessory for each type, the serial number should be unique, otherwise Eve.app will merge the histories.
+
+
 # Supported Accessories
 
    * [Tested Configurations](#Tested-Configurations)
@@ -246,7 +270,7 @@ and False (or 0) maps to `CONTACT_DETECTED` (not triggered). To use different MQ
     "caption": "<label (optional)>",
     "topics":
     {
-        "getContactSensorState": "<topic used to provide contact sensor state>"
+        "getContactSensorState": "<topic used to provide 'contact sensor' state>",
         "getStatusActive":       "<topic used to provide 'active' status (optional)>",
         "getStatusFault":        "<topic used to provide 'fault' status (optional)>",
         "getStatusTampered":     "<topic used to provide 'tampered' status (optional)>",
@@ -398,7 +422,8 @@ Current relative humidity must be in the range 0 to 100 percent with no decimal 
         "getStatusFault":               "<topic used to provide 'fault' status (optional)>",
         "getStatusTampered":            "<topic used to provide 'tampered' status (optional)>",
         "getStatusLowBattery":          "<topic used to provide 'low battery' status (optional)>"
-    }
+    },
+    "history": "<true to enable History service for Eve App (optional)>"
 }
 ```
 
@@ -574,7 +599,8 @@ Lock target state can be **UNSECURED** or **SECURED**. By default, these use val
     },
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
-    "offValue": "<value representing off (optional)>"
+    "offValue": "<value representing off (optional)>",
+    "history": "<true to enable History service for Eve App (optional)>"
 }
 ```
 
@@ -794,7 +820,8 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
         "getStatusFault":               "<topic used to provide 'fault' status (optional)>",
         "getStatusTampered":            "<topic used to provide 'tampered' status (optional)>",
         "getStatusLowBattery":          "<topic used to provide 'low battery' status (optional)>"
-    }
+    },
+    "history": "<true to enable History service for Eve App (optional)>"
 }
 ```
 
