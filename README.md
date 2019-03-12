@@ -880,6 +880,9 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 # Release notes
 
+Version 1.0.29
++ Added history support for Eve App (only) using fakegato-history. (Thanks, tobekas!)
+
 Version 1.0.28
 + Improve behaviour of RGB, RGBW and HSV lightbulbs when not using a separate on/off topic
 
