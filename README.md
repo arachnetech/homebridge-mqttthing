@@ -220,6 +220,7 @@ Air quality state can be `UNKNOWN`, `EXCELLENT`, `GOOD`, `FAIR`, `INFERIOR` or `
     {
         "getAirQuality":         "<topic used to report air quality",
         "getCarbonDioxideLevel": "<topic used to report carbon dioxide level (optional)>",
+        "getAirQualityPPM":      "<topic used to report air quality voc in ppm (optional)",
         "getStatusActive":       "<topic used to provide 'active' status (optional)>",
         "getStatusFault":        "<topic used to provide 'fault' status (optional)>",
         "getStatusTampered":     "<topic used to provide 'tampered' status (optional)>",

@@ -7,6 +7,7 @@ var mqtt = require("mqtt");
 var os = require("os");
 var packagedef = require('./package.json');
 var fakegatoHistory = require('fakegato-history');
+var util = require('util');
 
 var Service, Characteristic, HistoryService;
 
@@ -163,6 +164,7 @@ function makeThing(log, config) {
                 switch (loggingEntry) {
                     case 'temp':
                     case 'humidity':
+                    case 'ppm':
                         logEntry[loggingEntry] = parseFloat(message);
                         historySvc.addEntry(logEntry);
                         break;
@@ -1123,6 +1125,29 @@ function makeThing(log, config) {
         multiCharacteristic( service, 'airQuality', Characteristic.AirQuality, null, config.topics.getAirQuality, values, Characteristic.AirQuality.UNKNOWN );
     }
 
+    // Characteristic.AirQualityVOC
+    function characteristic_AirQualityPPM( service ) {
+        Characteristic.EveAirQuality = function () {
+            Characteristic.call(this, 'Eve Air Quality', 'E863F10B-079E-48FF-8F27-9C2605A29F52');
+            this.setProps({
+                format: Characteristic.Formats.FLOAT,
+                unit: "ppm",
+                maxValue: 5000,
+                minValue: 0,
+                minStep: 1,
+                perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+            });
+        };
+        util.inherits(Characteristic.EveAirQuality, Characteristic);
+        floatCharacteristic( service, 'ppm', Characteristic.EveAirQuality, null, config.topics.getAirQualityPPM );
+    }
+
+    // History for Air Quality
+    function history_AirQualityPPM( service ) {
+        // fakegato-history loggingEntry 'ppm' for AirQuality
+        registerHistoryCallback( service, config.topics.getAirQualityPPM, 'ppm' );
+    }
+
     // Characteristic.CarbonDioxideDetected
     function characteristic_CarbonDioxideDetected( service ) {
         let values = config.carbonDioxideDetectedValues;
@@ -1361,6 +1386,15 @@ function makeThing(log, config) {
             // todo: lots of optional charateristics...
             if( config.topics.getCarbonDioxideLevel ) {
                 characteristic_CarbonDioxideLevel( service );
+            }
+            if ( config.history && config.topics.getAirQualityPPM ) {
+                characteristic_AirQualityPPM( service );
+                services = [service];
+                let historyOptions = new HistoryOptions(config);
+                let historySvc = new HistoryService( 'room', {displayName:name, log:log}, historyOptions );
+                history_AirQualityPPM( historySvc );
+                // return history service too
+                services.push( historySvc );
             }
         } else if( config.type == 'carbonDioxideSensor' ) {
             service = new Service.CarbonDioxideSensor( name );
