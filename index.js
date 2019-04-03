@@ -6,10 +6,14 @@
 var mqtt = require("mqtt");
 var os = require("os");
 var packagedef = require('./package.json');
+var homebridgeLib = require('homebridge-lib');
 var fakegatoHistory = require('fakegato-history');
 var util = require('util');
+var fs = require("fs");
+var path = require("path");
 
-var Service, Characteristic, HistoryService;
+var Service, Characteristic, Eve, HistoryService;
+var homebridgePath;
 
 function makeThing(log, config) {
 
@@ -127,21 +131,15 @@ function makeThing(log, config) {
     var c_mySetContext = '---my-set-context--';
 
     // constructor for fakegato-history options
-    function HistoryOptions(config, isEventSensor=false) {
+    function HistoryOptions(isEventSensor=false) {
         // maximum size of stored data points
         this.size = config.history.size || 4032;
         // data will be stored in .homebridge or path specified with homebridge -U option
         this.storage = 'fs';
-        // history interval for averaging/repeating
-        if (config.history.interval === undefined) {
-            this.minutes = 10;
-        }
-        else if(!config.history.interval) {
-            // '0' or 'false' will disable the repeating (and averaging) interval timer
+        if(config.history.autoTimer===false || config.history.mergeInterval) {
+            // disable averaging (and repeating) interval timer
+            // if mergeInterval is used, then autoTimer has to be deactivated (inconsistencies possible)
             this.disableTimer = true;
-        }
-        else {
-            this.minutes = config.history.interval;
         }
         // disable repetition (if no data was received in last interval)
         if (config.history.autoRepeat===false) {
@@ -153,30 +151,6 @@ function makeThing(log, config) {
                 // for 'weather' type
                 this.disableRepeatLastData = true;
             }
-        }
-    }
-    
-    function registerHistoryCallback(historySvc, getTopic, loggingEntry) {
-        if (getTopic) {
-            mqttSubscribe(getTopic, function (topic, message) {
-                var logEntry = {};
-                logEntry.time = Math.floor(Date.now() / 1000);  // seconds (UTC)
-                switch (loggingEntry) {
-                    case 'temp':
-                    case 'humidity':
-                    case 'ppm':
-                        logEntry[loggingEntry] = parseFloat(message);
-                        historySvc.addEntry(logEntry);
-                        break;
-                    case 'status':
-                        logEntry[loggingEntry] = parseInt(message);
-                        historySvc.addEntry(logEntry);
-                        break;
-                    default:
-                      log('Warning: Invalid loggingEntry');
-                      return;
-                }
-            });
         }
     }
 
@@ -881,9 +855,52 @@ function makeThing(log, config) {
     }
 
     // History for MotionDetected 
-    function history_MotionDetected(service) {
-        // fakegato-history loggingEntry 'status' for MotionDetected
-        registerHistoryCallback(service, config.topics.getMotionDetected, 'status');
+    function history_MotionDetected(historySvc, service) {
+        var historyMergeTimer = null;
+
+        // get characteristic to be logged
+        var charac = service.getCharacteristic(Characteristic.MotionDetected);
+        // attach another set callback for this characteristic
+        charac.on('set', function (value, callback, context) {
+            if (context === c_mySetContext) {
+                var logEntry = {
+                    time: Math.floor(Date.now() / 1000),  // seconds (UTC)
+                    status: (value ? 1 : 0)  // fakegato-history logProperty 'status' for motion sensor
+                };
+                log(value);
+                let mergeInterval = config.history.mergeInterval*60000 || 0;
+
+                if (logEntry.status) {
+                    // update Eve's Characteristic.LastActivation (will be added if it does not already exist)
+                    state['lastActivation'] = logEntry.time - historySvc.getInitialTime();
+                    service.getCharacteristic(Eve.Characteristic.LastActivation).setValue(state['lastActivation'], undefined, c_mySetContext);
+                    if (historyMergeTimer) {
+                        // reset timer -> discard off-event
+                        clearTimeout(historyMergeTimer);
+                        historyMergeTimer = null;
+                    }
+                    historySvc.addEntry(logEntry);
+                }
+                else {
+                    if (historyMergeTimer) {
+                        // reset timer
+                        clearTimeout(historyMergeTimer);
+                    }
+                    if (mergeInterval > 0) {
+                        // log off-event later (with original time),
+                        // if there is no new on-event in the given time.
+                        historyMergeTimer = setTimeout(function () {
+                            historyMergeTimer = null;
+                            historySvc.addEntry(logEntry);
+                        }, mergeInterval);
+                    }
+                    else {
+                        historySvc.addEntry(logEntry);
+                    }
+                }
+            }
+            callback();
+        });
     }
 
     // Characteristic.StatusActive
@@ -930,9 +947,21 @@ function makeThing(log, config) {
     }
 
     // History for CurrentTemperature 
-    function history_CurrentTemperature(service) {
-        // fakegato-history loggingEntry 'temp' for CurrentTemperature
-        registerHistoryCallback(service, config.topics.getCurrentTemperature, 'temp');
+    function history_CurrentTemperature(historySvc, service) {
+        if (config.topics.getCurrentTemperature) {
+            // additional MQTT subscription instead of set-callback due to correct averaging:
+            mqttSubscribe(config.topics.getCurrentTemperature, function (topic, message) {
+                var logEntry = {
+                    time: Math.floor(Date.now() / 1000),  // seconds (UTC)
+                    temp: parseFloat(message)  // fakegato-history logProperty 'temp' for temperature sensor
+                };
+                // update Eve's Characteristic.LastActivation (will be added if it does not already exist)
+                state['lastActivation'] = logEntry.time - historySvc.getInitialTime();
+                service.getCharacteristic(Eve.Characteristic.LastActivation).setValue(state['lastActivation'], undefined, c_mySetContext);
+                
+                historySvc.addEntry(logEntry);
+            });
+        }
     }
 
     // Characteristic.CurrentRelativeHumidity
@@ -941,10 +970,21 @@ function makeThing(log, config) {
             null, config.topics.getCurrentRelativeHumidity, 0 );
     }
 
-    // History for CurrentRelativeHumidity 
-    function history_CurrentRelativeHumidity(service) {
-        // fakegato-history loggingEntry 'humidity' for CurrentRelativeHumidity
-        registerHistoryCallback(service, config.topics.getCurrentRelativeHumidity, 'humidity');
+    // History for CurrentRelativeHumidity
+    function history_CurrentRelativeHumidity(historySvc, service) {
+        if (config.topics.getCurrentRelativeHumidity) {
+            mqttSubscribe(config.topics.getCurrentRelativeHumidity, function (topic, message) {
+                var logEntry = {
+                    time: Math.floor(Date.now() / 1000),  // seconds (UTC)
+                    humidity: parseFloat(message)  // fakegato-history logProperty 'humidity' for humidity sensor
+                };
+                // update Eve's Characteristic.LastActivation (will be added if it does not already exist)
+                state['lastActivation'] = logEntry.time - historySvc.getInitialTime();
+                service.getCharacteristic(Eve.Characteristic.LastActivation).setValue(state['lastActivation'], undefined, c_mySetContext);
+                
+                historySvc.addEntry(logEntry);
+            });
+        }
     }
 
     // Characteristic.ContactSensorState
@@ -953,6 +993,67 @@ function makeThing(log, config) {
             null, config.topics.getContactSensorState, false, function (val) {
                 return val ? Characteristic.ContactSensorState.CONTACT_NOT_DETECTED : Characteristic.ContactSensorState.CONTACT_DETECTED;
             });
+    }
+
+    // History for ContactSensorState 
+    function history_ContactSensorState(historySvc, service) {
+        // get characteristic to be logged
+        var charac = service.getCharacteristic(Characteristic.ContactSensorState);
+
+        // counterFile for saving 'timesOpened' and 'resetTotal'
+        const counterFile = path.join(homebridgePath, os.hostname().split(".")[0] + "_" + config.name + "_cnt_persist.json");
+        function writeCounterFile () {
+            let saveObj = {timesOpened: state['timesOpened'], resetTotal: state['resetTotal']};
+            fs.writeFile(counterFile, JSON.stringify(saveObj), 'utf8', function (err) {
+                if (err) {
+                    log('Error: cannot write file to save timesOpened');
+                }
+            });
+        };
+        // load TimesOpened counter from counterFile
+        fs.readFile(counterFile, 'utf8', function (err, data) {
+            let cnt = 0;
+            let res = Math.floor(Date.now() / 1000) - 978307200  // seconds since 01.01.2001
+            if (err) {
+                log('No data loaded for TimesOpened');
+            }
+            else {
+                cnt = JSON.parse(data).timesOpened;
+                res = JSON.parse(data).resetTotal;
+            }
+            addCharacteristic(service, 'timesOpened', Eve.Characteristic.TimesOpened, cnt);
+            addCharacteristic(historySvc, 'resetTotal', Eve.Characteristic.ResetTotal, res, function() {
+                state['timesOpened'] = 0; // reset counter
+                service.getCharacteristic(Eve.Characteristic.TimesOpened).setValue(0, undefined, c_mySetContext);
+                writeCounterFile();
+                log("Reset TimesOpened to 0");
+            });
+        });
+
+        // these ones are necessary to display history for contact sensors
+        addCharacteristic(service, 'openDuration', Eve.Characteristic.OpenDuration, 0);
+        addCharacteristic(service, 'closedDuration', Eve.Characteristic.ClosedDuration, 0);
+
+        // attach another set callback for this characteristic
+        charac.on('set', function (value, callback, context) {
+            if (context === c_mySetContext) {
+                var logEntry = {
+                    time: Math.floor(Date.now() / 1000),  // seconds (UTC)
+                    status: value  // fakegato-history logProperty 'status' for contact sensor
+                };
+                if (logEntry.status) {
+                    // update Eve's Characteristic.LastActivation (will be added if it does not already exist)
+                    state['lastActivation'] = logEntry.time - historySvc.getInitialTime();
+                    service.getCharacteristic(Eve.Characteristic.LastActivation).setValue(state['lastActivation'], undefined, c_mySetContext);
+                    // update Eve's Characteristic.TimesOpened 
+                    state['timesOpened']++;
+                    service.getCharacteristic(Eve.Characteristic.TimesOpened).setValue(state['timesOpened'], undefined, c_mySetContext);
+                    writeCounterFile();
+                }
+                historySvc.addEntry(logEntry);
+            }
+            callback();
+        });
     }
 
     // Characteristic.ProgrammableSwitchEvent
@@ -1140,13 +1241,27 @@ function makeThing(log, config) {
         };
         util.inherits(Characteristic.EveAirQuality, Characteristic);
         floatCharacteristic( service, 'ppm', Characteristic.EveAirQuality, null, config.topics.getAirQualityPPM );
+        
+        // not yet implemented in homebridge-lib (EveHomeKitTypes), but hopefully coming soon:
+        //floatCharacteristic( service, 'ppm', Eve.Characteristic.AirQualityPPM, null, config.topics.getAirQualityPPM );
     }
 
     // History for Air Quality
-    function history_AirQualityPPM( service ) {
-        // fakegato-history loggingEntry 'ppm' for AirQuality
-        registerHistoryCallback( service, config.topics.getAirQualityPPM, 'ppm' );
-    }
+    function history_AirQualityPPM( historySvc, service ) {
+        if (config.topics.getAirQualityPPM) {
+            mqttSubscribe(config.topics.getAirQualityPPM, function (topic, message) {
+                var logEntry = {
+                    time: Math.floor(Date.now() / 1000),  // seconds (UTC)
+                    ppm: parseFloat(message)  // fakegato-history logProperty 'ppm' for air quality sensor
+                };
+                // update Eve's Characteristic.LastActivation (will be added if it does not already exist)
+                state['lastActivation'] = logEntry.time - historySvc.getInitialTime();
+                service.getCharacteristic(Eve.Characteristic.LastActivation).setValue(state['lastActivation'], undefined, c_mySetContext);
+                
+                historySvc.addEntry(logEntry);
+            });
+        }
+    }    
 
     // Characteristic.CarbonDioxideDetected
     function characteristic_CarbonDioxideDetected( service ) {
@@ -1183,6 +1298,7 @@ function makeThing(log, config) {
     function createServices() {
 
         var name = config.name;
+        var svcNames = config.serviceNames || {}; // custom names for multi-service accessories
         var addSensorOptionalProps = false;
 
         var service = null; // to return a single service
@@ -1223,9 +1339,9 @@ function makeThing(log, config) {
             characteristic_MotionDetected(service);
             services = [service];
             if (config.history) {
-                let historyOptions = new HistoryOptions(config, true);
+                let historyOptions = new HistoryOptions(true);
                 let historySvc = new HistoryService('motion', {displayName:name, log:log}, historyOptions);
-                history_MotionDetected(historySvc);
+                history_MotionDetected(historySvc, service);
                 // return history service too
                 services.push( historySvc );
             }
@@ -1243,9 +1359,9 @@ function makeThing(log, config) {
             characteristic_CurrentTemperature(service);
             services = [service];
             if (config.history) {
-                let historyOptions = new HistoryOptions(config);
+                let historyOptions = new HistoryOptions();
                 let historySvc = new HistoryService('weather', {displayName:name, log:log}, historyOptions);
-                history_CurrentTemperature(historySvc);
+                history_CurrentTemperature(historySvc, service);
                 // return history service too
                 services.push( historySvc );
             }
@@ -1255,9 +1371,24 @@ function makeThing(log, config) {
             characteristic_CurrentRelativeHumidity(service);
             services = [service];
             if (config.history) {
-                let historyOptions = new HistoryOptions(config);
+                let historyOptions = new HistoryOptions();
                 let historySvc = new HistoryService('weather', {displayName:name, log:log}, historyOptions);
-                history_CurrentRelativeHumidity(historySvc);
+                history_CurrentRelativeHumidity(historySvc, service);
+                // return history service too
+                services.push( historySvc );
+            }
+            addSensorOptionalProps = true;
+        } else if (config.type == "tempHumSensor") {
+            service = new Service.TemperatureSensor(svcNames.temperature || name + "-temp");
+            characteristic_CurrentTemperature(service);
+            let humSvc = new Service.HumiditySensor(svcNames.humidity || name + "-hum");
+            characteristic_CurrentRelativeHumidity(humSvc);
+            services = [service, humSvc]
+            if (config.history) {
+                let historyOptions = new HistoryOptions();
+                let historySvc = new HistoryService('weather', {displayName:name, log:log}, historyOptions);
+                history_CurrentTemperature(historySvc, service);
+                history_CurrentRelativeHumidity(historySvc, service);
                 // return history service too
                 services.push( historySvc );
             }
@@ -1265,6 +1396,14 @@ function makeThing(log, config) {
         } else if (config.type == "contactSensor") {
             service = new Service.ContactSensor(name);
             characteristic_ContactSensorState(service);
+            services = [service];
+            if (config.history) {
+                let historyOptions = new HistoryOptions(true);
+                let historySvc = new HistoryService('door', {displayName:name, log:log}, historyOptions);
+                history_ContactSensorState(historySvc, service);
+                // return history service too
+                services.push( historySvc );
+            }
             addSensorOptionalProps = true;
         } else if (config.type == "doorbell") {
             service = new Service.Doorbell(name);
@@ -1278,7 +1417,7 @@ function makeThing(log, config) {
             services = [service];
             if( config.topics.getMotionDetected ) {
                 // also create motion sensor
-                let motionsvc = new Service.MotionSensor(name + '-motion' );
+                let motionsvc = new Service.MotionSensor(svcNames.motion || name + '-motion' );
                 characteristic_MotionDetected(motionsvc);
                 // return motion sensor too
                 services.push( motionsvc );
@@ -1392,7 +1531,7 @@ function makeThing(log, config) {
                 services = [service];
                 let historyOptions = new HistoryOptions(config);
                 let historySvc = new HistoryService( 'room', {displayName:name, log:log}, historyOptions );
-                history_AirQualityPPM( historySvc );
+                history_AirQualityPPM( historySvc, service );
                 // return history service too
                 services.push( historySvc );
             }
@@ -1495,7 +1634,9 @@ function makeThing(log, config) {
 module.exports = function (homebridge) {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
+    Eve = new homebridgeLib.EveHomeKitTypes(homebridge);
     HistoryService = fakegatoHistory(homebridge);
+    homebridgePath = homebridge.user.storagePath();
 
     homebridge.registerAccessory("homebridge-mqttthing", "mqttthing", makeThing);
 }
