@@ -867,7 +867,6 @@ function makeThing(log, config) {
                     time: Math.floor(Date.now() / 1000),  // seconds (UTC)
                     status: (value ? 1 : 0)  // fakegato-history logProperty 'status' for motion sensor
                 };
-                log(value);
                 let mergeInterval = config.history.mergeInterval*60000 || 0;
 
                 if (logEntry.status) {
