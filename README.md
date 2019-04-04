@@ -916,6 +916,10 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 # Release notes
 
+Version 1.0.30
++ Added Elgato history support for AirQuality (thanks, sieren)
++ Extended Eve history support (thanks, tokebas)
+
 Version 1.0.29
 + Added history support for Eve App (only) using fakegato-history. (Thanks, tobekas!)
 
