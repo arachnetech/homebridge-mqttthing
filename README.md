@@ -169,9 +169,11 @@ Alternatively, you can specify `history` as an object with some properties:
 
 `size` - maximum size of stored data points (optional), default: 4032
 
-`interval` - set history interval [minutes] for averaging/repeating. 0 will disable this timer (optional), default: 10
+`autoTimer` - enable/disable averaging (and repeating) 10min timer (optional), default: true
 
-`autoRepeat` - set repetition of last value if no data was received in last interval (optional), default: true
+`autoRepeat` - enable/disable repetition of last value if no data was received in last 10min interval (optional), default: true
+
+`mergeInterval` - set merge interval [minutes] for events, which are very close in time (optional, for motion sensor only, not in combination with autoTimer/autoRepeat), default: 0
 
 Avoid the use of "/" in characteristics of the Information Service (e.g. serial number, manufacturer, etc.), since this may cause data to not appear in the history. Note that if your Eve.app is controlling more than one accessory for each type, the serial number should be unique, otherwise Eve.app will merge the histories.
 
@@ -199,6 +201,7 @@ Avoid the use of "/" in characteristics of the Information Service (e.g. serial 
    * [StatelessProgrammableSwitch](#statelessprogrammableswitch)
    * [Switch](#switch)
    * [Temperature Sensor](#temperature-sensor)
+   * [Temperature-Humidity Sensor](#temperature-humidity-sensor)
    * [Window](#window)
    * [Window Covering (Blinds)](#window-covering)
    
@@ -817,6 +820,38 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
     "topics":
     {
         "getCurrentTemperature":        "<topic used to provide 'current temperature'>",
+        "getStatusActive":              "<topic used to provide 'active' status (optional)>",
+        "getStatusFault":               "<topic used to provide 'fault' status (optional)>",
+        "getStatusTampered":            "<topic used to provide 'tampered' status (optional)>",
+        "getStatusLowBattery":          "<topic used to provide 'low battery' status (optional)>"
+    },
+    "history": "<true to enable History service for Eve App (optional)>"
+}
+```
+
+
+## Temperature-Humidity Sensor
+
+Current temperature must be in the range 0 to 100 degrees Celsius to a maximum of 1dp.
+Current relative humidity must be in the range 0 to 100 percent with no decimal places.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "tempHumSensor",
+    "name": "<name of sensor>",
+    "serviceNames": {
+        "temperature": "<name for temperature service>",
+        "humidity": "<name for humidity service>"
+    },
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "caption": "<label (optional)>",
+    "topics":
+    {
+        "getCurrentTemperature":        "<topic used to provide 'current temperature'>",
+        "getCurrentRelativeHumidity":   "<topic used to provide 'current relative humidity'>",
         "getStatusActive":              "<topic used to provide 'active' status (optional)>",
         "getStatusFault":               "<topic used to provide 'fault' status (optional)>",
         "getStatusTampered":            "<topic used to provide 'tampered' status (optional)>",

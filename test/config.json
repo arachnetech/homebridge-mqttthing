@@ -219,7 +219,6 @@
       },
       "history": {
         "size": 1000,
-        "interval": 5,
         "autoRepeat": false
       }
     },
@@ -231,7 +230,8 @@
       "topics": {
         "getContactSensorState": "test/contact/state"
       },
-      "integerValue": true
+      "integerValue": true,
+      "history": true
     },
     {
       "accessory": "mqttthing",
