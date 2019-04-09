@@ -263,6 +263,8 @@ Carbon dioxide detected state can be `NORMAL` or `ABNORMAL`. To use different va
 Contact sensor state is exposed as a Boolean. True (or 1 with integer values) maps to `CONTACT_NOT_DETECTED` (sensor triggered)
 and False (or 0) maps to `CONTACT_DETECTED` (not triggered). To use different MQTT values, configure `onValue` and `offValue`.
 
+If `history` is enabled, this plugin will count the number of openings and offers the possibility to reset the counter from the Eve app.
+
 ```javascript
 {
     "accessory": "mqttthing",
@@ -282,7 +284,8 @@ and False (or 0) maps to `CONTACT_DETECTED` (not triggered). To use different MQ
     },
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
-    "offValue": "<value representing off (optional)>"
+    "offValue": "<value representing off (optional)>",
+    "history": "<true to enable History service for Eve App (optional)>"
 }
 ```
 

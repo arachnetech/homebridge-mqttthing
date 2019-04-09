@@ -144,11 +144,11 @@ function makeThing(log, config) {
         // disable repetition (if no data was received in last interval)
         if (config.history.autoRepeat===false) {
             if (isEventSensor) {
-                // for 'motion' type
+                // for 'motion' and 'door' type
                 this.disableTimer = true;
             }
             else {
-                // for 'weather' type
+                // for 'weather', 'room' and 'energy' type
                 this.disableRepeatLastData = true;
             }
         }
@@ -854,9 +854,23 @@ function makeThing(log, config) {
         booleanCharacteristic(service, 'motionDetected', Characteristic.MotionDetected, null, config.topics.getMotionDetected, null, null, null, config.turnOffAfterms);
     }
 
+    // Add Eve.Characteristic.LastActivation for History
+    function characteristic_LastActivation(historySvc, service) {
+        service.addOptionalCharacteristic(Eve.Characteristic.LastActivation); // to avoid warnings
+        // get lastActivation time from history data (check 5s later to make sure the history is loaded)
+        setTimeout( function() {
+            if (historySvc.lastEntry) {
+                let lastTime = historySvc.history[historySvc.lastEntry].time - historySvc.getInitialTime();
+                addCharacteristic(service, 'lastActivation', Eve.Characteristic.LastActivation, lastTime);
+                log.debug('lastActivation time loaded');
+            }
+        }, 5000);
+    }
+
     // History for MotionDetected 
     function history_MotionDetected(historySvc, service) {
         var historyMergeTimer = null;
+        characteristic_LastActivation(historySvc, service);
 
         // get characteristic to be logged
         var charac = service.getCharacteristic(Characteristic.MotionDetected);
@@ -872,7 +886,7 @@ function makeThing(log, config) {
                 if (logEntry.status) {
                     // update Eve's Characteristic.LastActivation (will be added if it does not already exist)
                     state['lastActivation'] = logEntry.time - historySvc.getInitialTime();
-                    service.getCharacteristic(Eve.Characteristic.LastActivation).setValue(state['lastActivation'], undefined, c_mySetContext);
+                    service.updateCharacteristic(Eve.Characteristic.LastActivation, state['lastActivation']);
                     if (historyMergeTimer) {
                         // reset timer -> discard off-event
                         clearTimeout(historyMergeTimer);
@@ -947,6 +961,7 @@ function makeThing(log, config) {
 
     // History for CurrentTemperature 
     function history_CurrentTemperature(historySvc, service) {
+        characteristic_LastActivation(historySvc, service);
         if (config.topics.getCurrentTemperature) {
             // additional MQTT subscription instead of set-callback due to correct averaging:
             mqttSubscribe(config.topics.getCurrentTemperature, function (topic, message) {
@@ -956,7 +971,7 @@ function makeThing(log, config) {
                 };
                 // update Eve's Characteristic.LastActivation (will be added if it does not already exist)
                 state['lastActivation'] = logEntry.time - historySvc.getInitialTime();
-                service.getCharacteristic(Eve.Characteristic.LastActivation).setValue(state['lastActivation'], undefined, c_mySetContext);
+                service.updateCharacteristic(Eve.Characteristic.LastActivation, state['lastActivation']);
                 
                 historySvc.addEntry(logEntry);
             });
@@ -971,7 +986,9 @@ function makeThing(log, config) {
 
     // History for CurrentRelativeHumidity
     function history_CurrentRelativeHumidity(historySvc, service) {
+        characteristic_LastActivation(historySvc, service);
         if (config.topics.getCurrentRelativeHumidity) {
+            // additional MQTT subscription instead of set-callback due to correct averaging:
             mqttSubscribe(config.topics.getCurrentRelativeHumidity, function (topic, message) {
                 var logEntry = {
                     time: Math.floor(Date.now() / 1000),  // seconds (UTC)
@@ -979,7 +996,7 @@ function makeThing(log, config) {
                 };
                 // update Eve's Characteristic.LastActivation (will be added if it does not already exist)
                 state['lastActivation'] = logEntry.time - historySvc.getInitialTime();
-                service.getCharacteristic(Eve.Characteristic.LastActivation).setValue(state['lastActivation'], undefined, c_mySetContext);
+                service.updateCharacteristic(Eve.Characteristic.LastActivation, state['lastActivation']);
                 
                 historySvc.addEntry(logEntry);
             });
@@ -996,6 +1013,8 @@ function makeThing(log, config) {
 
     // History for ContactSensorState 
     function history_ContactSensorState(historySvc, service) {
+        characteristic_LastActivation(historySvc, service);
+
         // get characteristic to be logged
         var charac = service.getCharacteristic(Characteristic.ContactSensorState);
 
@@ -1014,25 +1033,29 @@ function makeThing(log, config) {
             let cnt = 0;
             let res = Math.floor(Date.now() / 1000) - 978307200  // seconds since 01.01.2001
             if (err) {
-                log('No data loaded for TimesOpened');
+                log.debug('No data loaded for TimesOpened');
             }
             else {
                 cnt = JSON.parse(data).timesOpened;
                 res = JSON.parse(data).resetTotal;
             }
+            service.addOptionalCharacteristic(Eve.Characteristic.TimesOpened); // to avoid warnings
             addCharacteristic(service, 'timesOpened', Eve.Characteristic.TimesOpened, cnt);
+            historySvc.addOptionalCharacteristic(Eve.Characteristic.ResetTotal); // to avoid warnings
             addCharacteristic(historySvc, 'resetTotal', Eve.Characteristic.ResetTotal, res, function() {
                 state['timesOpened'] = 0; // reset counter
-                service.getCharacteristic(Eve.Characteristic.TimesOpened).setValue(0, undefined, c_mySetContext);
+                service.updateCharacteristic(Eve.Characteristic.TimesOpened, 0);
                 writeCounterFile();
                 log("Reset TimesOpened to 0");
             });
         });
 
         // these ones are necessary to display history for contact sensors
+        service.addOptionalCharacteristic(Eve.Characteristic.OpenDuration); // to avoid warnings
         addCharacteristic(service, 'openDuration', Eve.Characteristic.OpenDuration, 0);
+        service.addOptionalCharacteristic(Eve.Characteristic.ClosedDuration); // to avoid warnings
         addCharacteristic(service, 'closedDuration', Eve.Characteristic.ClosedDuration, 0);
-
+        
         // attach another set callback for this characteristic
         charac.on('set', function (value, callback, context) {
             if (context === c_mySetContext) {
@@ -1043,10 +1066,10 @@ function makeThing(log, config) {
                 if (logEntry.status) {
                     // update Eve's Characteristic.LastActivation (will be added if it does not already exist)
                     state['lastActivation'] = logEntry.time - historySvc.getInitialTime();
-                    service.getCharacteristic(Eve.Characteristic.LastActivation).setValue(state['lastActivation'], undefined, c_mySetContext);
+                    service.updateCharacteristic(Eve.Characteristic.LastActivation, state['lastActivation']);
                     // update Eve's Characteristic.TimesOpened 
                     state['timesOpened']++;
-                    service.getCharacteristic(Eve.Characteristic.TimesOpened).setValue(state['timesOpened'], undefined, c_mySetContext);
+                    service.updateCharacteristic(Eve.Characteristic.TimesOpened, state['timesOpened']);
                     writeCounterFile();
                 }
                 historySvc.addEntry(logEntry);
@@ -1225,29 +1248,17 @@ function makeThing(log, config) {
         multiCharacteristic( service, 'airQuality', Characteristic.AirQuality, null, config.topics.getAirQuality, values, Characteristic.AirQuality.UNKNOWN );
     }
 
-    // Characteristic.AirQualityVOC
+    // Eve.Characteristic.AirParticulateDensity
     function characteristic_AirQualityPPM( service ) {
-        Characteristic.EveAirQuality = function () {
-            Characteristic.call(this, 'Eve Air Quality', 'E863F10B-079E-48FF-8F27-9C2605A29F52');
-            this.setProps({
-                format: Characteristic.Formats.FLOAT,
-                unit: "ppm",
-                maxValue: 5000,
-                minValue: 0,
-                minStep: 1,
-                perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-            });
-        };
-        util.inherits(Characteristic.EveAirQuality, Characteristic);
-        floatCharacteristic( service, 'ppm', Characteristic.EveAirQuality, null, config.topics.getAirQualityPPM );
-        
-        // not yet implemented in homebridge-lib (EveHomeKitTypes), but hopefully coming soon:
-        //floatCharacteristic( service, 'ppm', Eve.Characteristic.AirQualityPPM, null, config.topics.getAirQualityPPM );
+        service.addOptionalCharacteristic(Eve.Characteristic.AirParticulateDensity); // to avoid warnings
+        floatCharacteristic( service, 'ppm', Eve.Characteristic.AirParticulateDensity, null, config.topics.getAirQualityPPM );
     }
 
     // History for Air Quality
     function history_AirQualityPPM( historySvc, service ) {
+        characteristic_LastActivation(historySvc, service);
         if (config.topics.getAirQualityPPM) {
+            // additional MQTT subscription instead of set-callback due to correct averaging:
             mqttSubscribe(config.topics.getAirQualityPPM, function (topic, message) {
                 var logEntry = {
                     time: Math.floor(Date.now() / 1000),  // seconds (UTC)
@@ -1280,6 +1291,22 @@ function makeThing(log, config) {
     function characteristic_CarbonDioxidePeakLevel( service ) {
         floatCharacteristic( service, 'carbonDioxidePeak', Characteristic.CarbonDioxidePeakLevel, null, config.topics.getCarbonDioxidePeakLevel, 0 );
     }
+
+    // add optional sensor characteristics
+    function addSensorOptionalCharacteristics(service) {
+        if (config.topics.getStatusActive) {
+            characteristic_StatusActive(service);
+        }
+        if (config.topics.getStatusFault) {
+            characteristic_StatusFault(service);
+        }
+        if (config.topics.getStatusTampered) {
+            characteristic_StatusTampered(service);
+        }
+        if (config.topics.getStatusLowBattery) {
+            characteristic_StatusLowBattery(service);
+        }
+    }
     
     // Create accessory information service
     function makeAccessoryInformationService() {
@@ -1298,7 +1325,6 @@ function makeThing(log, config) {
 
         var name = config.name;
         var svcNames = config.serviceNames || {}; // custom names for multi-service accessories
-        var addSensorOptionalProps = false;
 
         var service = null; // to return a single service
         var services = null; // if returning multiple services
@@ -1344,18 +1370,19 @@ function makeThing(log, config) {
                 // return history service too
                 services.push( historySvc );
             }
-            addSensorOptionalProps = true;
+            addSensorOptionalCharacteristics(service);
         } else if (config.type == "occupancySensor") {
             service = new Service.OccupancySensor(name);
             characteristic_OccupancyDetected(service);
-            addSensorOptionalProps = true;
+            addSensorOptionalCharacteristics(service);
         } else if (config.type == "lightSensor") {
             service = new Service.LightSensor(name);
             characteristic_CurrentAmbientLightLevel(service);
-            addSensorOptionalProps = true;
+            addSensorOptionalCharacteristics(service);
         } else if (config.type == "temperatureSensor") {
             service = new Service.TemperatureSensor(name);
             characteristic_CurrentTemperature(service);
+            addSensorOptionalCharacteristics(service);
             services = [service];
             if (config.history) {
                 let historyOptions = new HistoryOptions();
@@ -1364,10 +1391,10 @@ function makeThing(log, config) {
                 // return history service too
                 services.push( historySvc );
             }
-            addSensorOptionalProps = true;
         } else if (config.type == "humiditySensor") {
             service = new Service.HumiditySensor(name);
             characteristic_CurrentRelativeHumidity(service);
+            addSensorOptionalCharacteristics(service);
             services = [service];
             if (config.history) {
                 let historyOptions = new HistoryOptions();
@@ -1376,12 +1403,13 @@ function makeThing(log, config) {
                 // return history service too
                 services.push( historySvc );
             }
-            addSensorOptionalProps = true;
         } else if (config.type == "tempHumSensor") {
             service = new Service.TemperatureSensor(svcNames.temperature || name + "-temp");
             characteristic_CurrentTemperature(service);
+            addSensorOptionalCharacteristics(service);
             let humSvc = new Service.HumiditySensor(svcNames.humidity || name + "-hum");
             characteristic_CurrentRelativeHumidity(humSvc);
+            addSensorOptionalCharacteristics(humSvc);
             services = [service, humSvc]
             if (config.history) {
                 let historyOptions = new HistoryOptions();
@@ -1391,10 +1419,10 @@ function makeThing(log, config) {
                 // return history service too
                 services.push( historySvc );
             }
-            addSensorOptionalProps = true;
         } else if (config.type == "contactSensor") {
             service = new Service.ContactSensor(name);
             characteristic_ContactSensorState(service);
+            addSensorOptionalCharacteristics(service);
             services = [service];
             if (config.history) {
                 let historyOptions = new HistoryOptions(true);
@@ -1403,7 +1431,6 @@ function makeThing(log, config) {
                 // return history service too
                 services.push( historySvc );
             }
-            addSensorOptionalProps = true;
         } else if (config.type == "doorbell") {
             service = new Service.Doorbell(name);
             characteristic_ProgrammableSwitchEvent(service);
@@ -1438,7 +1465,7 @@ function makeThing(log, config) {
         } else if (config.type == "smokeSensor") {
             service = new Service.SmokeSensor(name);
             characteristic_SmokeDetected(service);
-            addSensorOptionalProps = true;
+            addSensorOptionalCharacteristics(service);
         } else if( config.type == "garageDoorOpener" ) {
             service = new Service.GarageDoorOpener(name);
             characteristic_TargetDoorState(service);
@@ -1470,7 +1497,7 @@ function makeThing(log, config) {
         } else if( config.type == "leakSensor" ) { 
             service = new Service.LeakSensor( name );
             characteristic_LeakDetected( service );
-            addSensorOptionalProps = true;
+            addSensorOptionalCharacteristics(service);
         } else if( config.type == "microphone" ) {
             service = new Service.Microphone( name );
             characteristic_Mute( service );
@@ -1520,7 +1547,7 @@ function makeThing(log, config) {
         } else if( config.type == "airQualitySensor" ) {
             service = new Service.AirQualitySensor( name );
             characteristic_AirQuality( service );
-            addSensorOptionalProps = true;
+            addSensorOptionalCharacteristics(service);
             // todo: lots of optional charateristics...
             if( config.topics.getCarbonDioxideLevel ) {
                 characteristic_CarbonDioxideLevel( service );
@@ -1528,7 +1555,7 @@ function makeThing(log, config) {
             if ( config.history && config.topics.getAirQualityPPM ) {
                 characteristic_AirQualityPPM( service );
                 services = [service];
-                let historyOptions = new HistoryOptions(config);
+                let historyOptions = new HistoryOptions();
                 let historySvc = new HistoryService( 'room', {displayName:name, log:log}, historyOptions );
                 history_AirQualityPPM( historySvc, service );
                 // return history service too
@@ -1537,7 +1564,7 @@ function makeThing(log, config) {
         } else if( config.type == 'carbonDioxideSensor' ) {
             service = new Service.CarbonDioxideSensor( name );
             characteristic_CarbonDioxideDetected( service );
-            addSensorOptionalProps = true;
+            addSensorOptionalCharacteristics(service);
             if( config.topics.getCarbonDioxideLevel ) {
                 characteristic_CarbonDioxideLevel( service );
             }
@@ -1546,21 +1573,6 @@ function makeThing(log, config) {
             }
         } else {
             log("ERROR: Unrecognized type: " + config.type);
-        }
-
-        if (addSensorOptionalProps) {
-            if (config.topics.getStatusActive) {
-                characteristic_StatusActive(service);
-            }
-            if (config.topics.getStatusFault) {
-                characteristic_StatusFault(service);
-            }
-            if (config.topics.getStatusTampered) {
-                characteristic_StatusTampered(service);
-            }
-            if (config.topics.getStatusLowBattery) {
-                characteristic_StatusLowBattery(service);
-            }
         }
 
         if (service) {
@@ -1584,7 +1596,8 @@ function makeThing(log, config) {
         }
 
         // optional battery service
-        if( config.topics.getBatteryLevel || config.topics.getChargingState || ( config.topics.getStatusLowBattery && ! addSensorOptionalProps ) ) {
+        if( config.topics.getBatteryLevel || config.topics.getChargingState ||
+            ( config.topics.getStatusLowBattery && ! service.testCharacteristic(Characteristic.StatusLowBattery) ) ) {
             // also create battery service
             let batsvc = new Service.BatteryService( name + '-battery' );
             if( config.topics.getBatteryLevel ) {

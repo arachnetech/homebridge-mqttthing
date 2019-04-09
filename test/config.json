@@ -173,7 +173,9 @@
       "chargingStateValues": [ "NotCharging", "Charging", "NotChargeable" ],
       "logMqtt": true,
       "turnOffAfterms": 3000,
-      "history": true
+      "history": {
+        "mergeInterval": 5
+      }
     },
     {
       "accessory": "mqttthing",
