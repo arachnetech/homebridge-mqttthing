@@ -1292,6 +1292,93 @@ function makeThing(log, config) {
         floatCharacteristic( service, 'carbonDioxidePeak', Characteristic.CarbonDioxidePeakLevel, null, config.topics.getCarbonDioxidePeakLevel, 0 );
     }
 
+    // Eve.Characteristic.CurrentConsumption (Watts)
+    function characteristic_CurrentConsumption( service ) {
+        service.addOptionalCharacteristic(Eve.Characteristic.CurrentConsumption); // to avoid warnings
+        floatCharacteristic( service, 'currentConsumption', Eve.Characteristic.CurrentConsumption, null, config.topics.getWatts, 0 );
+    }
+
+    // Eve.Characteristic.Voltage (Volts)
+    function characteristic_Voltage( service ) {
+        service.addOptionalCharacteristic(Eve.Characteristic.Voltage); // to avoid warnings
+        floatCharacteristic( service, 'voltage', Eve.Characteristic.Voltage, null, config.topics.getVolts, 0 );
+    }
+
+    // Eve.Characteristic.ElectricCurrent (Amperes)
+    function characteristic_ElectricCurrent( service ) {
+        service.addOptionalCharacteristic(Eve.Characteristic.ElectricCurrent); // to avoid warnings
+        floatCharacteristic( service, 'electricCurrent', Eve.Characteristic.ElectricCurrent, null, config.topics.getAmperes, 0 );
+    }
+
+    // Eve.Characteristic.TotalConsumption (Watts) - optional if there is an external energy counter
+    function characteristic_TotalConsumption( service ) {
+        service.addOptionalCharacteristic(Eve.Characteristic.TotalConsumption); // to avoid warnings
+        floatCharacteristic( service, 'totalConsumption', Eve.Characteristic.TotalConsumption, null, config.topics.getTotalConsumption, 0 );
+    }
+
+    // History for CurrentConsumption (Watt)
+    function history_PowerConsumption(historySvc, service) {
+        // enable plugin energy counting, if there is no getTotalConsumption topic
+        const energyCounter = config.topics.getTotalConsumption ? false : true;
+        var lastLogEntry = {time: 0, power: 0};  // for energyCounter
+        // counterFile for saving 'totalConsumption' and 'resetTotal'
+        const counterFile = path.join(homebridgePath, os.hostname().split(".")[0] + "_" + config.name + "_cnt_persist.json");
+        function writeCounterFile () {
+            let saveObj = {totalConsumption: state['totalConsumption'], resetTotal: state['resetTotal']};
+            fs.writeFile(counterFile, JSON.stringify(saveObj), 'utf8', function (err) {
+                if (err) {
+                    log('Error: cannot write file to save totalConsumption');
+                }
+            });
+        };
+
+        if (energyCounter) {
+            // load TotalConsumption counter from counterFile
+            fs.readFile(counterFile, 'utf8', function (err, data) {
+                let cnt = 0;
+                let res = Math.floor(Date.now() / 1000) - 978307200  // seconds since 01.01.2001
+                if (err) {
+                    log.debug('No data loaded for totalConsumption');
+                }
+                else {
+                    cnt = JSON.parse(data).totalConsumption;
+                    res = JSON.parse(data).resetTotal;
+                }
+                service.addOptionalCharacteristic(Eve.Characteristic.TotalConsumption); // to avoid warnings
+                addCharacteristic(service, 'totalConsumption', Eve.Characteristic.TotalConsumption, cnt);
+                historySvc.addOptionalCharacteristic(Eve.Characteristic.ResetTotal); // to avoid warnings
+                addCharacteristic(historySvc, 'resetTotal', Eve.Characteristic.ResetTotal, res, function() {
+                    state['totalConsumption'] = 0; // reset counter
+                    service.updateCharacteristic(Eve.Characteristic.TotalConsumption, 0);
+                    writeCounterFile();
+                    log("Reset TotalConsumption to 0");
+                });
+            });
+        }
+
+        if (config.topics.getWatts) {
+            // additional MQTT subscription instead of set-callback due to correct averaging:
+            mqttSubscribe(config.topics.getWatts, function (topic, message) {
+                var logEntry = {
+                    time: Math.floor(Date.now() / 1000),  // seconds (UTC)
+                    power: parseFloat(message)  // fakegato-history logProperty 'power' for energy meter
+                };
+                if (energyCounter) {
+                    // update Eve's Characteristic.TotalConsumption:
+                    if (lastLogEntry.time) {
+                        // energy counter: power * timeDifference (Ws --> kWh)
+                        state['totalConsumption'] += lastLogEntry.power * (logEntry.time - lastLogEntry.time) / 1000 / 3600;
+                    }
+                    lastLogEntry.time = logEntry.time;
+                    lastLogEntry.power = logEntry.power;
+                    service.updateCharacteristic(Eve.Characteristic.TotalConsumption, state['totalConsumption']);
+                    writeCounterFile();
+                }
+                historySvc.addEntry(logEntry);
+            });
+        }
+    }
+
     // add optional sensor characteristics
     function addSensorOptionalCharacteristics(service) {
         if (config.topics.getStatusActive) {
@@ -1358,6 +1445,26 @@ function makeThing(log, config) {
             characteristic_On(service);
             if (config.topics.getInUse) {
                 characteristic_OutletInUse(service);
+            }
+            if (config.topics.getWatts) {
+                characteristic_CurrentConsumption(service);
+            }
+            if (config.topics.getVolts) {
+                characteristic_Voltage(service);
+            }
+            if (config.topics.getAmperes) {
+                characteristic_ElectricCurrent(service);
+            }
+            if (config.topics.getTotalConsumption) {
+                characteristic_TotalConsumption(service);
+            }
+            services = [service];
+            if (config.history) {
+                let historyOptions = new HistoryOptions();
+                let historySvc = new HistoryService('energy', {displayName:name, log:log}, historyOptions);
+                history_PowerConsumption(historySvc, service);
+                // return history service too
+                services.push( historySvc );
             }
         } else if (config.type == "motionSensor") {
             service = new Service.MotionSensor(name);

@@ -151,9 +151,13 @@
       "topics": {
         "getOn": "test/outlet/getOn",
         "setOn": "test/outlet/setOn",
-        "getInUse": "test/outlet/getInUse"
+        "getInUse": "test/outlet/getInUse",
+        "getWatts": "test/outlet/getWatts",
+        "getVolts": "test/outlet/getVolts",
+        "getAmperes": "test/outlet/getAmperes"
       },
-      "integerValue": true
+      "integerValue": true,
+      "history": true
     },
     {
       "accessory": "mqttthing",

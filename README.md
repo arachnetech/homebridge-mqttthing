@@ -645,6 +645,9 @@ and False (or 0) maps to `OCCUPANCY_NOT_DETECTED` (not triggered). To use differ
 
 An outlet can be configured as a light or as a fan in the Home app.
 
+If `history` is enabled and no `getTotalConsumption` topic is defined, this plugin will count the total consumption (kWh) by itself and offers the possibility to reset the counter from the Eve app.
+The interval of `getWatts` data updates should be less then 10min and at best periodic, in order to avoid averaging errors for the history entries.
+
 ```javascript
 {
     "accessory": "mqttthing",
@@ -656,14 +659,19 @@ An outlet can be configured as a light or as a fan in the Home app.
     "caption": "<label (optional)>",
     "topics":
     {
-        "getOn":            "<topic to get the status>",
-        "setOn":            "<topic to set the status>",
-        "getInUse":         "<topic used to provide 'outlet is in use' feedback>"
+        "getOn":                "<topic to get the status>",
+        "setOn":                "<topic to set the status>",
+        "getInUse":             "<topic used to provide 'outlet is in use' feedback>",
+        "getWatts":             "<topic used to provide 'current consumption' [Watts] (optional, Eve-App-only)>",
+        "getVolts":             "<topic used to provide 'voltage' [Volts] (optional, Eve-App-only)>",
+        "getAmperes":           "<topic used to provide 'electricCurrent' [Amperes] (optional, Eve-App-only)>",
+        "getTotalConsumption":  "<topic used to provide 'totalConsumption' [kWh] (optional, Eve-App-only)>"
     },
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
     "offValue": "<value representing off (optional)>",
-    "turnOffAfterms": <milliseconds after which to turn off automatically (optional)>
+    "turnOffAfterms": "<milliseconds after which to turn off automatically (optional)>",
+    "history": "<true to enable History service for Eve App (optional)>"
 }
 ```
 
