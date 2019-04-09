@@ -59,6 +59,6 @@
   "dependencies": {
     "mqtt": "^2.9.0",
     "fakegato-history": "0.5.3",
-    "homebridge-lib": "~4.0.10"
+    "homebridge-lib": "~4.0.11"
   }
 }
