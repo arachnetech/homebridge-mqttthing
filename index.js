@@ -884,7 +884,7 @@ function makeThing(log, config) {
                 let mergeInterval = config.history.mergeInterval*60000 || 0;
 
                 if (logEntry.status) {
-                    // update Eve's Characteristic.LastActivation (will be added if it does not already exist)
+                    // update Eve's Characteristic.LastActivation
                     state['lastActivation'] = logEntry.time - historySvc.getInitialTime();
                     service.updateCharacteristic(Eve.Characteristic.LastActivation, state['lastActivation']);
                     if (historyMergeTimer) {
@@ -969,7 +969,7 @@ function makeThing(log, config) {
                     time: Math.floor(Date.now() / 1000),  // seconds (UTC)
                     temp: parseFloat(message)  // fakegato-history logProperty 'temp' for temperature sensor
                 };
-                // update Eve's Characteristic.LastActivation (will be added if it does not already exist)
+                // update Eve's Characteristic.LastActivation
                 state['lastActivation'] = logEntry.time - historySvc.getInitialTime();
                 service.updateCharacteristic(Eve.Characteristic.LastActivation, state['lastActivation']);
                 
@@ -994,7 +994,7 @@ function makeThing(log, config) {
                     time: Math.floor(Date.now() / 1000),  // seconds (UTC)
                     humidity: parseFloat(message)  // fakegato-history logProperty 'humidity' for humidity sensor
                 };
-                // update Eve's Characteristic.LastActivation (will be added if it does not already exist)
+                // update Eve's Characteristic.LastActivation
                 state['lastActivation'] = logEntry.time - historySvc.getInitialTime();
                 service.updateCharacteristic(Eve.Characteristic.LastActivation, state['lastActivation']);
                 
@@ -1048,33 +1048,33 @@ function makeThing(log, config) {
                 writeCounterFile();
                 log("Reset TimesOpened to 0");
             });
-        });
 
-        // these ones are necessary to display history for contact sensors
-        service.addOptionalCharacteristic(Eve.Characteristic.OpenDuration); // to avoid warnings
-        addCharacteristic(service, 'openDuration', Eve.Characteristic.OpenDuration, 0);
-        service.addOptionalCharacteristic(Eve.Characteristic.ClosedDuration); // to avoid warnings
-        addCharacteristic(service, 'closedDuration', Eve.Characteristic.ClosedDuration, 0);
-        
-        // attach another set callback for this characteristic
-        charac.on('set', function (value, callback, context) {
-            if (context === c_mySetContext) {
-                var logEntry = {
-                    time: Math.floor(Date.now() / 1000),  // seconds (UTC)
-                    status: value  // fakegato-history logProperty 'status' for contact sensor
-                };
-                if (logEntry.status) {
-                    // update Eve's Characteristic.LastActivation (will be added if it does not already exist)
-                    state['lastActivation'] = logEntry.time - historySvc.getInitialTime();
-                    service.updateCharacteristic(Eve.Characteristic.LastActivation, state['lastActivation']);
-                    // update Eve's Characteristic.TimesOpened 
-                    state['timesOpened']++;
-                    service.updateCharacteristic(Eve.Characteristic.TimesOpened, state['timesOpened']);
-                    writeCounterFile();
+            // these ones are necessary to display history for contact sensors
+            service.addOptionalCharacteristic(Eve.Characteristic.OpenDuration); // to avoid warnings
+            addCharacteristic(service, 'openDuration', Eve.Characteristic.OpenDuration, 0);
+            service.addOptionalCharacteristic(Eve.Characteristic.ClosedDuration); // to avoid warnings
+            addCharacteristic(service, 'closedDuration', Eve.Characteristic.ClosedDuration, 0);
+            
+            // attach another set callback for this characteristic
+            charac.on('set', function (value, callback, context) {
+                if (context === c_mySetContext) {
+                    var logEntry = {
+                        time: Math.floor(Date.now() / 1000),  // seconds (UTC)
+                        status: value  // fakegato-history logProperty 'status' for contact sensor
+                    };
+                    if (logEntry.status) {
+                        // update Eve's Characteristic.LastActivation
+                        state['lastActivation'] = logEntry.time - historySvc.getInitialTime();
+                        service.updateCharacteristic(Eve.Characteristic.LastActivation, state['lastActivation']);
+                        // update Eve's Characteristic.TimesOpened 
+                        state['timesOpened']++;
+                        service.updateCharacteristic(Eve.Characteristic.TimesOpened, state['timesOpened']);
+                        writeCounterFile();
+                    }
+                    historySvc.addEntry(logEntry);
                 }
-                historySvc.addEntry(logEntry);
-            }
-            callback();
+                callback();
+            });
         });
     }
 
@@ -1264,7 +1264,7 @@ function makeThing(log, config) {
                     time: Math.floor(Date.now() / 1000),  // seconds (UTC)
                     ppm: parseFloat(message)  // fakegato-history logProperty 'ppm' for air quality sensor
                 };
-                // update Eve's Characteristic.LastActivation (will be added if it does not already exist)
+                // update Eve's Characteristic.LastActivation
                 state['lastActivation'] = logEntry.time - historySvc.getInitialTime();
                 service.getCharacteristic(Eve.Characteristic.LastActivation).setValue(state['lastActivation'], undefined, c_mySetContext);
                 
@@ -1353,28 +1353,28 @@ function makeThing(log, config) {
                     writeCounterFile();
                     log("Reset TotalConsumption to 0");
                 });
-            });
-        }
 
-        if (config.topics.getWatts) {
-            // additional MQTT subscription instead of set-callback due to correct averaging:
-            mqttSubscribe(config.topics.getWatts, function (topic, message) {
-                var logEntry = {
-                    time: Math.floor(Date.now() / 1000),  // seconds (UTC)
-                    power: parseFloat(message)  // fakegato-history logProperty 'power' for energy meter
-                };
-                if (energyCounter) {
-                    // update Eve's Characteristic.TotalConsumption:
-                    if (lastLogEntry.time) {
-                        // energy counter: power * timeDifference (Ws --> kWh)
-                        state['totalConsumption'] += lastLogEntry.power * (logEntry.time - lastLogEntry.time) / 1000 / 3600;
-                    }
-                    lastLogEntry.time = logEntry.time;
-                    lastLogEntry.power = logEntry.power;
-                    service.updateCharacteristic(Eve.Characteristic.TotalConsumption, state['totalConsumption']);
-                    writeCounterFile();
+                if (config.topics.getWatts) {
+                    // additional MQTT subscription instead of set-callback due to correct averaging:
+                    mqttSubscribe(config.topics.getWatts, function (topic, message) {
+                        var logEntry = {
+                            time: Math.floor(Date.now() / 1000),  // seconds (UTC)
+                            power: parseFloat(message)  // fakegato-history logProperty 'power' for energy meter
+                        };
+                        if (energyCounter) {
+                            // update Eve's Characteristic.TotalConsumption:
+                            if (lastLogEntry.time) {
+                                // energy counter: power * timeDifference (Ws --> kWh)
+                                state['totalConsumption'] += lastLogEntry.power * (logEntry.time - lastLogEntry.time) / 1000 / 3600;
+                            }
+                            lastLogEntry.time = logEntry.time;
+                            lastLogEntry.power = logEntry.power;
+                            service.updateCharacteristic(Eve.Characteristic.TotalConsumption, state['totalConsumption']);
+                            writeCounterFile();
+                        }
+                        historySvc.addEntry(logEntry);
+                    });
                 }
-                historySvc.addEntry(logEntry);
             });
         }
     }
