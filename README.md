@@ -929,6 +929,7 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 Version 1.0.31
 + Added Eve history support for outlet power consumption (thanks, tokebas)
++ Wrap exception handling around 'apply' functions (used for encoding/decoding MQTT messages), so that errors don't crash Homebridge and messages that can't be decoded are skipped
 
 Version 1.0.30
 + Added Elgato history support for AirQuality (thanks, sieren)
