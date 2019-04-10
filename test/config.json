@@ -77,8 +77,8 @@
       "topics": {
         "getRGB": "test/rgblight/rgb",
         "setRGB": "test/rgblight/rgb/set",
-        "getOn": "test/rgblight/on",
-        "setOn": "test/rgblight/on/set"
+        "getOn": { "topic": "test/rgblight/on", "apply": "return JSON.parse( message ).state.power;" },
+        "setOn": { "topic": "test/rgblight/on/set", "apply": "return JSON.stringify( { state: { power: message }, version: 1 } );" }
       },
       "logMqtt": true,
       "integerValue": true,

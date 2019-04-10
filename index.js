@@ -95,7 +95,16 @@ function makeThing(log, config) {
                 var previous = handler;
                 var applyFn = Function("message", extendedTopic['apply']); //eslint-disable-line
                 handler = function (intopic, message) {
-                    return previous(intopic, applyFn(message));
+                    let decoded;
+                    try {
+                        decoded = applyFn( message );
+                    } catch( ex ) {
+                        log( 'Decode function apply( message) { ' + extendedTopic.apply + ' } failed for topic ' + topic + ' with message ' + message + ' - ' + ex );
+                    }
+                    if( decoded !== undefined ) {
+                        return previous( intopic, decoded );
+                    }
+                    return previous(intopic, decoded);
                 };
             }
         }
@@ -118,7 +127,12 @@ function makeThing(log, config) {
             topic = extendedTopic.topic;
             if (extendedTopic.hasOwnProperty('apply')) {
                 var applyFn = Function("message", extendedTopic['apply']); //eslint-disable-line
-                message = applyFn(message);
+                try {
+                    message = applyFn(message);
+                } catch( ex ) {
+                    log( 'Encode function apply( message ) { ' + extendedTopic.apply + ' } failed for topic ' + topic + ' with message ' + message + ' - ' + ex );
+                    message = null; // stop publish
+                }
                 if( message === null ) {
                     return;
                 }
