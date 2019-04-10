@@ -1,6 +1,9 @@
 // MQTT Thing Accessory plugin for Homebridge
 // A Homebridge plugin for serveral services, based on homebrige-mqtt-switch and homebridge-mqttlightbulb
 
+/* eslint-disable object-property-newline */
+/* eslint-disable no-plusplus */
+
 'use strict';
 
 var mqtt = require("mqtt");
@@ -8,7 +11,6 @@ var os = require("os");
 var packagedef = require('./package.json');
 var homebridgeLib = require('homebridge-lib');
 var fakegatoHistory = require('fakegato-history');
-var util = require('util');
 var fs = require("fs");
 var path = require("path");
 
@@ -146,8 +148,7 @@ function makeThing(log, config) {
             if (isEventSensor) {
                 // for 'motion' and 'door' type
                 this.disableTimer = true;
-            }
-            else {
+            } else {
                 // for 'weather', 'room' and 'energy' type
                 this.disableRepeatLastData = true;
             }
@@ -885,16 +886,15 @@ function makeThing(log, config) {
 
                 if (logEntry.status) {
                     // update Eve's Characteristic.LastActivation
-                    state['lastActivation'] = logEntry.time - historySvc.getInitialTime();
-                    service.updateCharacteristic(Eve.Characteristic.LastActivation, state['lastActivation']);
+                    state.lastActivation = logEntry.time - historySvc.getInitialTime();
+                    service.updateCharacteristic(Eve.Characteristic.LastActivation, state.lastActivation);
                     if (historyMergeTimer) {
                         // reset timer -> discard off-event
                         clearTimeout(historyMergeTimer);
                         historyMergeTimer = null;
                     }
                     historySvc.addEntry(logEntry);
-                }
-                else {
+                } else {
                     if (historyMergeTimer) {
                         // reset timer
                         clearTimeout(historyMergeTimer);
@@ -906,8 +906,7 @@ function makeThing(log, config) {
                             historyMergeTimer = null;
                             historySvc.addEntry(logEntry);
                         }, mergeInterval);
-                    }
-                    else {
+                    } else {
                         historySvc.addEntry(logEntry);
                     }
                 }
@@ -970,8 +969,8 @@ function makeThing(log, config) {
                     temp: parseFloat(message)  // fakegato-history logProperty 'temp' for temperature sensor
                 };
                 // update Eve's Characteristic.LastActivation
-                state['lastActivation'] = logEntry.time - historySvc.getInitialTime();
-                service.updateCharacteristic(Eve.Characteristic.LastActivation, state['lastActivation']);
+                state.lastActivation = logEntry.time - historySvc.getInitialTime();
+                service.updateCharacteristic(Eve.Characteristic.LastActivation, state.lastActivation);
                 
                 historySvc.addEntry(logEntry);
             });
@@ -995,8 +994,8 @@ function makeThing(log, config) {
                     humidity: parseFloat(message)  // fakegato-history logProperty 'humidity' for humidity sensor
                 };
                 // update Eve's Characteristic.LastActivation
-                state['lastActivation'] = logEntry.time - historySvc.getInitialTime();
-                service.updateCharacteristic(Eve.Characteristic.LastActivation, state['lastActivation']);
+                state.lastActivation = logEntry.time - historySvc.getInitialTime();
+                service.updateCharacteristic(Eve.Characteristic.LastActivation, state.lastActivation);
                 
                 historySvc.addEntry(logEntry);
             });
@@ -1021,21 +1020,20 @@ function makeThing(log, config) {
         // counterFile for saving 'timesOpened' and 'resetTotal'
         const counterFile = path.join(homebridgePath, os.hostname().split(".")[0] + "_" + config.name + "_cnt_persist.json");
         function writeCounterFile () {
-            let saveObj = {timesOpened: state['timesOpened'], resetTotal: state['resetTotal']};
+            let saveObj = {timesOpened: state.timesOpened, resetTotal: state.resetTotal};
             fs.writeFile(counterFile, JSON.stringify(saveObj), 'utf8', function (err) {
                 if (err) {
                     log('Error: cannot write file to save timesOpened');
                 }
             });
-        };
+        }
         // load TimesOpened counter from counterFile
         fs.readFile(counterFile, 'utf8', function (err, data) {
             let cnt = 0;
             let res = Math.floor(Date.now() / 1000) - 978307200  // seconds since 01.01.2001
             if (err) {
                 log.debug('No data loaded for TimesOpened');
-            }
-            else {
+            } else {
                 cnt = JSON.parse(data).timesOpened;
                 res = JSON.parse(data).resetTotal;
             }
@@ -1043,7 +1041,7 @@ function makeThing(log, config) {
             addCharacteristic(service, 'timesOpened', Eve.Characteristic.TimesOpened, cnt);
             historySvc.addOptionalCharacteristic(Eve.Characteristic.ResetTotal); // to avoid warnings
             addCharacteristic(historySvc, 'resetTotal', Eve.Characteristic.ResetTotal, res, function() {
-                state['timesOpened'] = 0; // reset counter
+                state.timesOpened = 0; // reset counter
                 service.updateCharacteristic(Eve.Characteristic.TimesOpened, 0);
                 writeCounterFile();
                 log("Reset TimesOpened to 0");
@@ -1064,11 +1062,11 @@ function makeThing(log, config) {
                     };
                     if (logEntry.status) {
                         // update Eve's Characteristic.LastActivation
-                        state['lastActivation'] = logEntry.time - historySvc.getInitialTime();
-                        service.updateCharacteristic(Eve.Characteristic.LastActivation, state['lastActivation']);
+                        state.lastActivation = logEntry.time - historySvc.getInitialTime();
+                        service.updateCharacteristic(Eve.Characteristic.LastActivation, state.lastActivation);
                         // update Eve's Characteristic.TimesOpened 
-                        state['timesOpened']++;
-                        service.updateCharacteristic(Eve.Characteristic.TimesOpened, state['timesOpened']);
+                        state.timesOpened++;
+                        service.updateCharacteristic(Eve.Characteristic.TimesOpened, state.timesOpened);
                         writeCounterFile();
                     }
                     historySvc.addEntry(logEntry);
@@ -1265,8 +1263,8 @@ function makeThing(log, config) {
                     ppm: parseFloat(message)  // fakegato-history logProperty 'ppm' for air quality sensor
                 };
                 // update Eve's Characteristic.LastActivation
-                state['lastActivation'] = logEntry.time - historySvc.getInitialTime();
-                service.getCharacteristic(Eve.Characteristic.LastActivation).setValue(state['lastActivation'], undefined, c_mySetContext);
+                state.lastActivation = logEntry.time - historySvc.getInitialTime();
+                service.getCharacteristic(Eve.Characteristic.LastActivation).setValue(state.lastActivation, undefined, c_mySetContext);
                 
                 historySvc.addEntry(logEntry);
             });
@@ -1324,13 +1322,13 @@ function makeThing(log, config) {
         // counterFile for saving 'totalConsumption' and 'resetTotal'
         const counterFile = path.join(homebridgePath, os.hostname().split(".")[0] + "_" + config.name + "_cnt_persist.json");
         function writeCounterFile () {
-            let saveObj = {totalConsumption: state['totalConsumption'], resetTotal: state['resetTotal']};
+            let saveObj = {totalConsumption: state.totalConsumption, resetTotal: state.resetTotal};
             fs.writeFile(counterFile, JSON.stringify(saveObj), 'utf8', function (err) {
                 if (err) {
                     log('Error: cannot write file to save totalConsumption');
                 }
             });
-        };
+        }
 
         if (energyCounter) {
             // load TotalConsumption counter from counterFile
@@ -1339,8 +1337,7 @@ function makeThing(log, config) {
                 let res = Math.floor(Date.now() / 1000) - 978307200  // seconds since 01.01.2001
                 if (err) {
                     log.debug('No data loaded for totalConsumption');
-                }
-                else {
+                } else {
                     cnt = JSON.parse(data).totalConsumption;
                     res = JSON.parse(data).resetTotal;
                 }
@@ -1348,7 +1345,7 @@ function makeThing(log, config) {
                 addCharacteristic(service, 'totalConsumption', Eve.Characteristic.TotalConsumption, cnt);
                 historySvc.addOptionalCharacteristic(Eve.Characteristic.ResetTotal); // to avoid warnings
                 addCharacteristic(historySvc, 'resetTotal', Eve.Characteristic.ResetTotal, res, function() {
-                    state['totalConsumption'] = 0; // reset counter
+                    state.totalConsumption = 0; // reset counter
                     service.updateCharacteristic(Eve.Characteristic.TotalConsumption, 0);
                     writeCounterFile();
                     log("Reset TotalConsumption to 0");
@@ -1365,11 +1362,11 @@ function makeThing(log, config) {
                             // update Eve's Characteristic.TotalConsumption:
                             if (lastLogEntry.time) {
                                 // energy counter: power * timeDifference (Ws --> kWh)
-                                state['totalConsumption'] += lastLogEntry.power * (logEntry.time - lastLogEntry.time) / 1000 / 3600;
+                                state.totalConsumption += lastLogEntry.power * (logEntry.time - lastLogEntry.time) / 1000 / 3600;
                             }
                             lastLogEntry.time = logEntry.time;
                             lastLogEntry.power = logEntry.power;
-                            service.updateCharacteristic(Eve.Characteristic.TotalConsumption, state['totalConsumption']);
+                            service.updateCharacteristic(Eve.Characteristic.TotalConsumption, state.totalConsumption);
                             writeCounterFile();
                         }
                         historySvc.addEntry(logEntry);
@@ -1461,7 +1458,7 @@ function makeThing(log, config) {
             services = [service];
             if (config.history) {
                 let historyOptions = new HistoryOptions();
-                let historySvc = new HistoryService('energy', {displayName:name, log:log}, historyOptions);
+                let historySvc = new HistoryService('energy', {displayName: name, log: log}, historyOptions);
                 history_PowerConsumption(historySvc, service);
                 // return history service too
                 services.push( historySvc );
@@ -1472,7 +1469,7 @@ function makeThing(log, config) {
             services = [service];
             if (config.history) {
                 let historyOptions = new HistoryOptions(true);
-                let historySvc = new HistoryService('motion', {displayName:name, log:log}, historyOptions);
+                let historySvc = new HistoryService('motion', {displayName: name, log: log}, historyOptions);
                 history_MotionDetected(historySvc, service);
                 // return history service too
                 services.push( historySvc );
@@ -1493,7 +1490,7 @@ function makeThing(log, config) {
             services = [service];
             if (config.history) {
                 let historyOptions = new HistoryOptions();
-                let historySvc = new HistoryService('weather', {displayName:name, log:log}, historyOptions);
+                let historySvc = new HistoryService('weather', {displayName: name, log: log}, historyOptions);
                 history_CurrentTemperature(historySvc, service);
                 // return history service too
                 services.push( historySvc );
@@ -1505,7 +1502,7 @@ function makeThing(log, config) {
             services = [service];
             if (config.history) {
                 let historyOptions = new HistoryOptions();
-                let historySvc = new HistoryService('weather', {displayName:name, log:log}, historyOptions);
+                let historySvc = new HistoryService('weather', {displayName: name, log: log}, historyOptions);
                 history_CurrentRelativeHumidity(historySvc, service);
                 // return history service too
                 services.push( historySvc );
@@ -1520,7 +1517,7 @@ function makeThing(log, config) {
             services = [service, humSvc]
             if (config.history) {
                 let historyOptions = new HistoryOptions();
-                let historySvc = new HistoryService('weather', {displayName:name, log:log}, historyOptions);
+                let historySvc = new HistoryService('weather', {displayName: name, log: log}, historyOptions);
                 history_CurrentTemperature(historySvc, service);
                 history_CurrentRelativeHumidity(historySvc, service);
                 // return history service too
@@ -1533,7 +1530,7 @@ function makeThing(log, config) {
             services = [service];
             if (config.history) {
                 let historyOptions = new HistoryOptions(true);
-                let historySvc = new HistoryService('door', {displayName:name, log:log}, historyOptions);
+                let historySvc = new HistoryService('door', {displayName: name, log: log}, historyOptions);
                 history_ContactSensorState(historySvc, service);
                 // return history service too
                 services.push( historySvc );
@@ -1663,7 +1660,7 @@ function makeThing(log, config) {
                 characteristic_AirQualityPPM( service );
                 services = [service];
                 let historyOptions = new HistoryOptions();
-                let historySvc = new HistoryService( 'room', {displayName:name, log:log}, historyOptions );
+                let historySvc = new HistoryService( 'room', {displayName: name, log: log}, historyOptions );
                 history_AirQualityPPM( historySvc, service );
                 // return history service too
                 services.push( historySvc );
