@@ -927,6 +927,9 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 # Release notes
 
+Version 1.0.31
++ Added Eve history support for outlet power consumption (thanks, tokebas)
+
 Version 1.0.30
 + Added Elgato history support for AirQuality (thanks, sieren)
 + Extended Eve history support (thanks, tokebas)
