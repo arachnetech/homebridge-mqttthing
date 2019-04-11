@@ -470,7 +470,15 @@
       "logMqtt": "true",
       "topics": {
         "getAirQuality": "test/airquality/get",
-        "getAirQualityPPM": "test/airqualityppm/get"
+        "getAirQualityPPM": "test/airqualityppm/get",
+        "getPM10Density": "test/airquality/pm10",
+        "getPM2_5Density": "test/airquality/pm2_5",
+        "getOzoneDensity": "test/airquality/ozone",
+        "getSulphurDioxideDensity": "test/airquality/so2",
+        "getNitrogenDioxideDensity": "test/airquality/no2",
+        "getVOCDensity": "test/airquality/voc",
+        "getCarbonMonoxideLevel": "test/airquality/co",
+        "getCarbonDioxideLevel": "test/airquality/co2"
       },
       "history": true
     }

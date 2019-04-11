@@ -1260,6 +1260,41 @@ function makeThing(log, config) {
         multiCharacteristic( service, 'airQuality', Characteristic.AirQuality, null, config.topics.getAirQuality, values, Characteristic.AirQuality.UNKNOWN );
     }
 
+    // Characteristic.PM10Density
+    function characteristic_PM10Density( service ) {
+        floatCharacteristic( service, 'pm10density', Characteristic.PM10Density, null, config.topics.getPM10Density, Characteristic.PM10Density.UNKNOWN );
+    }
+
+    // Characteristic.PM2_5Density
+    function characteristic_PM2_5Density( service ) {
+        floatCharacteristic( service, 'pm2_5density', Characteristic.PM2_5Density, null, config.topics.getPM2_5Density, Characteristic.PM2_5Density.UNKNOWN );
+    }
+
+    // Characteristic.OzoneDensity
+    function characteristic_OzoneDensity( service ) {
+        floatCharacteristic( service, 'Ozonedensity', Characteristic.OzoneDensity, null, config.topics.getOzoneDensity );
+    }
+
+    // Characteristic.NitrogenDioxideDensity
+    function characteristic_NitrogenDioxideDensity( service ) {
+        floatCharacteristic( service, 'NitrogenDioxidedensity', Characteristic.NitrogenDioxideDensity, null, config.topics.getNitrogenDioxideDensity );
+    }
+    
+    // Characteristic.SulphurDioxideDensity
+    function characteristic_SulphurDioxideDensity( service ) {
+        floatCharacteristic( service, 'SulphurDioxidedensity', Characteristic.SulphurDioxideDensity, null, config.topics.getSulphurDioxideDensity );
+    }
+
+    // Characteristic.VOCDensity
+    function characteristic_VOCDensity( service ) {
+        floatCharacteristic( service, 'VOCdensity', Characteristic.VOCDensity, null, config.topics.getVOCDensity );
+    }
+
+    // Characteristic.CarbonMonoxideDensity
+    function characteristic_CarbonMonoxideLevel( service ) {
+        floatCharacteristic( service, 'CarbonMonoxideLevel', Characteristic.CarbonMonoxideLevel, null, config.topics.getCarbonMonoxideLevel );
+    }
+   
     // Eve.Characteristic.AirParticulateDensity
     function characteristic_AirQualityPPM( service ) {
         service.addOptionalCharacteristic(Eve.Characteristic.AirParticulateDensity); // to avoid warnings
@@ -1670,7 +1705,29 @@ function makeThing(log, config) {
             if( config.topics.getCarbonDioxideLevel ) {
                 characteristic_CarbonDioxideLevel( service );
             }
-            if ( config.history && config.topics.getAirQualityPPM ) {
+            if( config.topics.getPM10Density ) {
+                characteristic_PM10Density( service );
+            }
+            if( config.topics.getPM2_5Density ) {
+                characteristic_PM2_5Density( service );
+            }
+            if( config.topics.getOzoneDensity ) {
+                characteristic_OzoneDensity( service );
+            }
+            if( config.topics.getNitrogenDioxideDensity ) {
+                characteristic_NitrogenDioxideDensity( service );
+            }
+            if( config.topics.getSulphurDioxideDensity ) {
+                characteristic_SulphurDioxideDensity( service );
+            }
+            if( config.topics.getVOCDensity ) {
+                characteristic_VOCDensity( service );
+            }
+            if( config.topics.getCarbonMonoxideLevel ) {
+                characteristic_CarbonMonoxideLevel( service );
+            }
+           
+            if( config.history && config.topics.getAirQualityPPM ) {
                 characteristic_AirQualityPPM( service );
                 services = [service];
                 let historyOptions = new HistoryOptions();

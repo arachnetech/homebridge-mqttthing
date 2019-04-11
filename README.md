@@ -223,7 +223,14 @@ Air quality state can be `UNKNOWN`, `EXCELLENT`, `GOOD`, `FAIR`, `INFERIOR` or `
     {
         "getAirQuality":         "<topic used to report air quality",
         "getCarbonDioxideLevel": "<topic used to report carbon dioxide level (optional)>",
-        "getAirQualityPPM":      "<topic used to report air quality voc in ppm (optional)",
+        "getPM10Density":        "<topic used to report PM10 Density (optional)>",
+        "getPM2_5Density":       "<topic used to report PM2.5 Density (optional)>",
+        "getOzoneDensity":       "<topic used to report Ozone Density (optional)>",
+        "getNitrogenDioxideDensity": "<topic used to report NitrogenDioxide Density (optional)>",
+        "getSulphurDioxideDensity": "<topic used to report Sulphur Dioxide Density (optional)>",
+        "getVOCDensity":         "<topic used to report VOC Density (optional)>",
+        "getCarbonMonoxideLevel": "<topic used to report Carbon Monoxide level (optional)>",
+        "getAirQualityPPM":      "<topic used to report air quality voc in ppm (optional)>",
         "getStatusActive":       "<topic used to provide 'active' status (optional)>",
         "getStatusFault":        "<topic used to provide 'fault' status (optional)>",
         "getStatusTampered":     "<topic used to provide 'tampered' status (optional)>",
@@ -933,6 +940,12 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 
 # Release notes
+
+Version 1.0.33
++ Added optional air quality sensor characteristics
+
+Version 1.0.32
++ Added resetStateAfterms option for contact sensor, leak sensor and smoke sensor
 
 Version 1.0.31
 + Added Eve history support for outlet power consumption (thanks, tokebas)
