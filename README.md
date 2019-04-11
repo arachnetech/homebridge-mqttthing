@@ -285,6 +285,7 @@ If `history` is enabled, this plugin will count the number of openings and offer
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
     "offValue": "<value representing off (optional)>",
+    "resetStateAfterms": "<milliseconds after which to reset state automatically (optional)>",
     "history": "<true to enable History service for Eve App (optional)>"
 }
 ```
@@ -345,7 +346,7 @@ Fan rotation speed is an integer between 0 (off) and 100 (full speed).
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
     "offValue": "<value representing off (optional)>",
-    "turnOffAfterms": <milliseconds after which to turn off automatically (optional)>
+    "turnOffAfterms": "<milliseconds after which to turn off automatically (optional)>"
 }
 ```
 
@@ -448,7 +449,8 @@ and False (or 0) maps to `LEAK_NOT_DETECTED`. To use different MQTT values, conf
     "topics":
     {
         "getLeakDetected":              "<topic used to provide 'leak detected' state (Boolean)>",
-    }
+    },
+    "resetStateAfterms": "<milliseconds after which to reset state automatically (optional)>"
 }
 ```
 
@@ -607,6 +609,7 @@ Lock target state can be **UNSECURED** or **SECURED**. By default, these use val
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
     "offValue": "<value representing off (optional)>",
+    "turnOffAfterms": "<milliseconds after which to reset motion sensor state automatically (optional) - allowing a motion sensor just to publish its onValue>",
     "history": "<true to enable History service for Eve App (optional)>"
 }
 ```
@@ -742,7 +745,8 @@ and False (or 0) maps to `SMOKE_NOT_DETECTED`. To use different MQTT values, con
     },
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
-    "offValue": "<value representing off (optional)>"
+    "offValue": "<value representing off (optional)>",
+    "resetStateAfterms": "<milliseconds after which to reset state automatically (optional)>"
 }
 ```
 
@@ -791,7 +795,9 @@ Like a doorbell (which is based on it), the state of a stateless programmable sw
 
 On/off switch.
 
-Configuring `turnOffAfter` causes the switch to turn off automatically the specified number of milliseconds after it is turned on.
+Configuring `turnOffAfter` causes the switch to turn off automatically the specified number of milliseconds after it is turned on by homekit.
+
+Configuring `resetStateAfterms` causes the switch state as reported through the `getOn` topic to be reset to off after the specified number of milliseconds. Use when there is no `setOn` topic.
 
 ```javascript
 {
@@ -810,7 +816,8 @@ Configuring `turnOffAfter` causes the switch to turn off automatically the speci
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
     "offValue": "<value representing off (optional)>",
-    "turnOffAfterms": <milliseconds after which to turn off automatically (optional)>
+    "turnOffAfterms": <milliseconds after which to turn off automatically (optional)>,
+    "resetStateAfterms": "<milliseconds after which to reset state automatically (optional)>"
 }
 ```
 

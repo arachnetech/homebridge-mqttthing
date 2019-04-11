@@ -288,7 +288,8 @@
       "topics": {
         "getLeakDetected": "test/leak/detected"
       },
-      "integerValue": true
+      "integerValue": true,
+      "resetStateAfterms": 5000
     },
     {
       "accessory": "mqttthing",

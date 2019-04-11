@@ -831,7 +831,7 @@ function makeThing(log, config) {
 
     // Characteristic.On
     function characteristic_On(service) {
-        booleanCharacteristic(service, 'on', Characteristic.On, config.topics.setOn, config.topics.getOn, null, null, config.turnOffAfterms);
+        booleanCharacteristic(service, 'on', Characteristic.On, config.topics.setOn, config.topics.getOn, null, null, config.turnOffAfterms, config.resetStateAfterms);
     }
 
     // Characteristic.Brightness
@@ -1021,7 +1021,7 @@ function makeThing(log, config) {
         booleanCharacteristic(service, 'contactSensor', Characteristic.ContactSensorState,
             null, config.topics.getContactSensorState, false, function (val) {
                 return val ? Characteristic.ContactSensorState.CONTACT_NOT_DETECTED : Characteristic.ContactSensorState.CONTACT_DETECTED;
-            });
+            }, undefined, config.resetStateAfterms);
     }
 
     // History for ContactSensorState 
@@ -1132,7 +1132,7 @@ function makeThing(log, config) {
         booleanCharacteristic(service, 'smokeDetected', Characteristic.SmokeDetected,
             null, config.topics.getSmokeDetected, false, function (val) {
                 return val ? Characteristic.SmokeDetected.SMOKE_DETECTED : Characteristic.SmokeDetected.SMOKE_NOT_DETECTED;
-            });
+            }, undefined, config.resetStateAfterms);
     }
 
     // Characteristic.CurrentDoorState
@@ -1204,7 +1204,7 @@ function makeThing(log, config) {
     function characteristic_LeakDetected(service) {
         booleanCharacteristic(service, 'leakDetected', Characteristic.LeakDetected, null, config.topics.getLeakDetected, false, function (val) {
             return val ? Characteristic.LeakDetected.LEAK_DETECTED : Characteristic.LeakDetected.LEAK_NOT_DETECTED;
-        });
+        }, undefined, config.resetStateAfterms );
     }
 
     // Characteristic.TargetPosition
