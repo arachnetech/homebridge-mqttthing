@@ -104,7 +104,6 @@ function makeThing(log, config) {
                     if( decoded !== undefined ) {
                         return previous( intopic, decoded );
                     }
-                    return previous(intopic, decoded);
                 };
             }
         }
