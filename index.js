@@ -888,43 +888,40 @@ function makeThing(log, config) {
 
         // get characteristic to be logged
         var charac = service.getCharacteristic(Characteristic.MotionDetected);
-        // attach another set callback for this characteristic
-        charac.on('set', function (value, callback, context) {
-            if (context === c_mySetContext) {
-                var logEntry = {
-                    time: Math.floor(Date.now() / 1000),  // seconds (UTC)
-                    status: (value ? 1 : 0)  // fakegato-history logProperty 'status' for motion sensor
-                };
-                let mergeInterval = config.history.mergeInterval*60000 || 0;
+        // attach change callback for this characteristic
+        charac.on('change', function (obj) {
+            var logEntry = {
+                time: Math.floor(Date.now() / 1000),  // seconds (UTC)
+                status: (obj.newValue ? 1 : 0)  // fakegato-history logProperty 'status' for motion sensor
+            };
+            let mergeInterval = config.history.mergeInterval*60000 || 0;
 
-                if (logEntry.status) {
-                    // update Eve's Characteristic.LastActivation
-                    state.lastActivation = logEntry.time - historySvc.getInitialTime();
-                    service.updateCharacteristic(Eve.Characteristic.LastActivation, state.lastActivation);
-                    if (historyMergeTimer) {
-                        // reset timer -> discard off-event
-                        clearTimeout(historyMergeTimer);
+            if (logEntry.status) {
+                // update Eve's Characteristic.LastActivation
+                state.lastActivation = logEntry.time - historySvc.getInitialTime();
+                service.updateCharacteristic(Eve.Characteristic.LastActivation, state.lastActivation);
+                if (historyMergeTimer) {
+                    // reset timer -> discard off-event
+                    clearTimeout(historyMergeTimer);
+                    historyMergeTimer = null;
+                }
+                historySvc.addEntry(logEntry);
+            } else {
+                if (historyMergeTimer) {
+                    // reset timer
+                    clearTimeout(historyMergeTimer);
+                }
+                if (mergeInterval > 0) {
+                    // log off-event later (with original time),
+                    // if there is no new on-event in the given time.
+                    historyMergeTimer = setTimeout(function () {
                         historyMergeTimer = null;
-                    }
-                    historySvc.addEntry(logEntry);
-                } else {
-                    if (historyMergeTimer) {
-                        // reset timer
-                        clearTimeout(historyMergeTimer);
-                    }
-                    if (mergeInterval > 0) {
-                        // log off-event later (with original time),
-                        // if there is no new on-event in the given time.
-                        historyMergeTimer = setTimeout(function () {
-                            historyMergeTimer = null;
-                            historySvc.addEntry(logEntry);
-                        }, mergeInterval);
-                    } else {
                         historySvc.addEntry(logEntry);
-                    }
+                    }, mergeInterval);
+                } else {
+                    historySvc.addEntry(logEntry);
                 }
             }
-            callback();
         });
     }
 
@@ -971,9 +968,8 @@ function makeThing(log, config) {
         characteristic.props.minValue = -100;
     }
 
-    // History for CurrentTemperature 
-    function history_CurrentTemperature(historySvc, service) {
-        characteristic_LastActivation(historySvc, service);
+    // History for CurrentTemperature (Eve-only)
+    function history_CurrentTemperature(historySvc) {
         if (config.topics.getCurrentTemperature) {
             // additional MQTT subscription instead of set-callback due to correct averaging:
             mqttSubscribe(config.topics.getCurrentTemperature, function (topic, message) {
@@ -981,10 +977,6 @@ function makeThing(log, config) {
                     time: Math.floor(Date.now() / 1000),  // seconds (UTC)
                     temp: parseFloat(message)  // fakegato-history logProperty 'temp' for temperature sensor
                 };
-                // update Eve's Characteristic.LastActivation
-                state.lastActivation = logEntry.time - historySvc.getInitialTime();
-                service.updateCharacteristic(Eve.Characteristic.LastActivation, state.lastActivation);
-                
                 historySvc.addEntry(logEntry);
             });
         }
@@ -996,23 +988,81 @@ function makeThing(log, config) {
             null, config.topics.getCurrentRelativeHumidity, 0 );
     }
 
-    // History for CurrentRelativeHumidity
-    function history_CurrentRelativeHumidity(historySvc, service) {
-        characteristic_LastActivation(historySvc, service);
+    // History for CurrentRelativeHumidity (Eve-only)
+    function history_CurrentRelativeHumidity(historySvc) {
         if (config.topics.getCurrentRelativeHumidity) {
             // additional MQTT subscription instead of set-callback due to correct averaging:
             mqttSubscribe(config.topics.getCurrentRelativeHumidity, function (topic, message) {
                 var logEntry = {
                     time: Math.floor(Date.now() / 1000),  // seconds (UTC)
                     humidity: parseFloat(message)  // fakegato-history logProperty 'humidity' for humidity sensor
-                };
-                // update Eve's Characteristic.LastActivation
-                state.lastActivation = logEntry.time - historySvc.getInitialTime();
-                service.updateCharacteristic(Eve.Characteristic.LastActivation, state.lastActivation);
-                
+                };                
                 historySvc.addEntry(logEntry);
             });
         }
+    }
+
+    // Characteristic.characteristic_AirPressure (Eve-only)
+    function characteristic_AirPressure(service) {
+        floatCharacteristic(service, 'airPressure', Eve.Characteristic.AirPressure, null, config.topics.getAirPressure, 0 );
+        // set characteristic Elevation for air pressure calibration (not used yet with MQTT)
+        service.updateCharacteristic(Eve.Characteristic.Elevation, 100);
+    }
+
+    // History for AirPressure (Eve-only)
+    function history_AirPressure(historySvc) {
+        if (config.topics.getAirPressure) {
+            // additional MQTT subscription instead of set-callback due to correct averaging:
+            mqttSubscribe(config.topics.getAirPressure, function (topic, message) {
+                var logEntry = {
+                    time: Math.floor(Date.now() / 1000),  // seconds (UTC)
+                    pressure: parseFloat(message)  // fakegato-history logProperty 'pressure' for air pressure sensor
+                };
+                historySvc.addEntry(logEntry);
+            });
+        }
+    }
+
+    // Characteristic.WeatherCondition (Eve-only)
+    function characteristic_WeatherCondition(service) {
+        service.addOptionalCharacteristic(Eve.Characteristic.WeatherCondition); // to avoid warnings
+        stringCharacteristic(service, 'weatherCondition', Eve.Characteristic.WeatherCondition, null, config.topics.getWeatherCondition, '-' );
+    }
+
+    // Characteristic.Rain1h (Eve-only)
+    function characteristic_Rain1h(service) {
+        service.addOptionalCharacteristic(Eve.Characteristic.Rain1h); // to avoid warnings
+        integerCharacteristic(service, 'rain1h', Eve.Characteristic.Rain1h, null, config.topics.getRain1h);
+    }
+
+    // Characteristic.Rain24h (Eve-only)
+    function characteristic_Rain24h(service) {
+        service.addOptionalCharacteristic(Eve.Characteristic.Rain24h); // to avoid warnings
+        integerCharacteristic(service, 'rain24h', Eve.Characteristic.Rain24h, null, config.topics.getRain24h);
+    }
+
+    // Characteristic.UVIndex (Eve-only)
+    function characteristic_UVIndex(service) {
+        service.addOptionalCharacteristic(Eve.Characteristic.UVIndex); // to avoid warnings
+        integerCharacteristic(service, 'uvIndex', Eve.Characteristic.UVIndex, null, config.topics.getUVIndex);
+    }
+
+    // Characteristic.Visibility (Eve-only)
+    function characteristic_Visibility(service) {
+        service.addOptionalCharacteristic(Eve.Characteristic.Visibility); // to avoid warnings
+        integerCharacteristic(service, 'visibility', Eve.Characteristic.Visibility, null, config.topics.getVisibility);
+    }
+
+    // Characteristic.WindDirection (Eve-only)
+    function characteristic_WindDirection(service) {
+        service.addOptionalCharacteristic(Eve.Characteristic.WindDirection); // to avoid warnings
+        stringCharacteristic(service, 'windDirection', Eve.Characteristic.WindDirection, null, config.topics.getWindDirection, '-');
+    }
+
+    // Characteristic.WindSpeed (Eve-only)
+    function characteristic_WindSpeed(service) {
+        service.addOptionalCharacteristic(Eve.Characteristic.WindSpeed); // to avoid warnings
+        floatCharacteristic(service, 'windSpeed', Eve.Characteristic.WindSpeed, null, config.topics.getWindSpeed, 0);
     }
 
     // Characteristic.ContactSensorState
@@ -1023,7 +1073,7 @@ function makeThing(log, config) {
             }, undefined, config.resetStateAfterms);
     }
 
-    // History for ContactSensorState 
+    // History for ContactSensorState (Eve-only)
     function history_ContactSensorState(historySvc, service) {
         characteristic_LastActivation(historySvc, service);
 
@@ -1066,25 +1116,22 @@ function makeThing(log, config) {
             service.addOptionalCharacteristic(Eve.Characteristic.ClosedDuration); // to avoid warnings
             addCharacteristic(service, 'closedDuration', Eve.Characteristic.ClosedDuration, 0);
             
-            // attach another set callback for this characteristic
-            charac.on('set', function (value, callback, context) {
-                if (context === c_mySetContext) {
-                    var logEntry = {
-                        time: Math.floor(Date.now() / 1000),  // seconds (UTC)
-                        status: value  // fakegato-history logProperty 'status' for contact sensor
-                    };
-                    if (logEntry.status) {
-                        // update Eve's Characteristic.LastActivation
-                        state.lastActivation = logEntry.time - historySvc.getInitialTime();
-                        service.updateCharacteristic(Eve.Characteristic.LastActivation, state.lastActivation);
-                        // update Eve's Characteristic.TimesOpened 
-                        state.timesOpened++;
-                        service.updateCharacteristic(Eve.Characteristic.TimesOpened, state.timesOpened);
-                        writeCounterFile();
-                    }
-                    historySvc.addEntry(logEntry);
+            // attach change callback for this characteristic
+            charac.on('change', function (obj) {
+                var logEntry = {
+                    time: Math.floor(Date.now() / 1000),  // seconds (UTC)
+                    status: obj.newValue  // fakegato-history logProperty 'status' for contact sensor
+                };
+                if (logEntry.status) {
+                    // update Eve's Characteristic.LastActivation
+                    state.lastActivation = logEntry.time - historySvc.getInitialTime();
+                    service.updateCharacteristic(Eve.Characteristic.LastActivation, state.lastActivation);
+                    // update Eve's Characteristic.TimesOpened 
+                    state.timesOpened++;
+                    service.updateCharacteristic(Eve.Characteristic.TimesOpened, state.timesOpened);
+                    writeCounterFile();
                 }
-                callback();
+                historySvc.addEntry(logEntry);
             });
         });
     }
@@ -1294,15 +1341,14 @@ function makeThing(log, config) {
         floatCharacteristic( service, 'CarbonMonoxideLevel', Characteristic.CarbonMonoxideLevel, null, config.topics.getCarbonMonoxideLevel );
     }
    
-    // Eve.Characteristic.AirParticulateDensity
+    // Eve.Characteristic.AirParticulateDensity (Eve-only)
     function characteristic_AirQualityPPM( service ) {
         service.addOptionalCharacteristic(Eve.Characteristic.AirParticulateDensity); // to avoid warnings
         floatCharacteristic( service, 'ppm', Eve.Characteristic.AirParticulateDensity, null, config.topics.getAirQualityPPM );
     }
 
-    // History for Air Quality
-    function history_AirQualityPPM( historySvc, service ) {
-        characteristic_LastActivation(historySvc, service);
+    // History for Air Quality (Eve-only)
+    function history_AirQualityPPM( historySvc ) {
         if (config.topics.getAirQualityPPM) {
             // additional MQTT subscription instead of set-callback due to correct averaging:
             mqttSubscribe(config.topics.getAirQualityPPM, function (topic, message) {
@@ -1310,10 +1356,6 @@ function makeThing(log, config) {
                     time: Math.floor(Date.now() / 1000),  // seconds (UTC)
                     ppm: parseFloat(message)  // fakegato-history logProperty 'ppm' for air quality sensor
                 };
-                // update Eve's Characteristic.LastActivation
-                state.lastActivation = logEntry.time - historySvc.getInitialTime();
-                service.getCharacteristic(Eve.Characteristic.LastActivation).setValue(state.lastActivation, undefined, c_mySetContext);
-                
                 historySvc.addEntry(logEntry);
             });
         }
@@ -1338,31 +1380,31 @@ function makeThing(log, config) {
         floatCharacteristic( service, 'carbonDioxidePeak', Characteristic.CarbonDioxidePeakLevel, null, config.topics.getCarbonDioxidePeakLevel, 0 );
     }
 
-    // Eve.Characteristic.CurrentConsumption (Watts)
+    // Eve.Characteristic.CurrentConsumption [Watts] (Eve-only)
     function characteristic_CurrentConsumption( service ) {
         service.addOptionalCharacteristic(Eve.Characteristic.CurrentConsumption); // to avoid warnings
         floatCharacteristic( service, 'currentConsumption', Eve.Characteristic.CurrentConsumption, null, config.topics.getWatts, 0 );
     }
 
-    // Eve.Characteristic.Voltage (Volts)
+    // Eve.Characteristic.Voltage [Volts] (Eve-only)
     function characteristic_Voltage( service ) {
         service.addOptionalCharacteristic(Eve.Characteristic.Voltage); // to avoid warnings
         floatCharacteristic( service, 'voltage', Eve.Characteristic.Voltage, null, config.topics.getVolts, 0 );
     }
 
-    // Eve.Characteristic.ElectricCurrent (Amperes)
+    // Eve.Characteristic.ElectricCurrent [Amperes] (Eve-only)
     function characteristic_ElectricCurrent( service ) {
         service.addOptionalCharacteristic(Eve.Characteristic.ElectricCurrent); // to avoid warnings
         floatCharacteristic( service, 'electricCurrent', Eve.Characteristic.ElectricCurrent, null, config.topics.getAmperes, 0 );
     }
 
-    // Eve.Characteristic.TotalConsumption (Watts) - optional if there is an external energy counter
+    // Eve.Characteristic.TotalConsumption [kWh] (Eve-only) - optional if there is an external energy counter 
     function characteristic_TotalConsumption( service ) {
         service.addOptionalCharacteristic(Eve.Characteristic.TotalConsumption); // to avoid warnings
         floatCharacteristic( service, 'totalConsumption', Eve.Characteristic.TotalConsumption, null, config.topics.getTotalConsumption, 0 );
     }
 
-    // History for CurrentConsumption (Watt)
+    // History for PowerConsumption (Eve-only)
     function history_PowerConsumption(historySvc, service) {
         // enable plugin energy counting, if there is no getTotalConsumption topic
         const energyCounter = config.topics.getTotalConsumption ? false : true;
@@ -1539,7 +1581,7 @@ function makeThing(log, config) {
             if (config.history) {
                 let historyOptions = new HistoryOptions();
                 let historySvc = new HistoryService('weather', {displayName: name, log: log}, historyOptions);
-                history_CurrentTemperature(historySvc, service);
+                history_CurrentTemperature(historySvc);
                 // return history service too
                 services.push( historySvc );
             }
@@ -1551,24 +1593,79 @@ function makeThing(log, config) {
             if (config.history) {
                 let historyOptions = new HistoryOptions();
                 let historySvc = new HistoryService('weather', {displayName: name, log: log}, historyOptions);
-                history_CurrentRelativeHumidity(historySvc, service);
+                history_CurrentRelativeHumidity(historySvc);
                 // return history service too
                 services.push( historySvc );
             }
-        } else if (config.type == "tempHumSensor") {
-            service = new Service.TemperatureSensor(svcNames.temperature || name + "-temp");
-            characteristic_CurrentTemperature(service);
+        } else if (config.type == "airPressureSensor") {
+            service = new Eve.Service.AirPressureSensor(name);
+            characteristic_AirPressure(service);
             addSensorOptionalCharacteristics(service);
-            let humSvc = new Service.HumiditySensor(svcNames.humidity || name + "-hum");
-            characteristic_CurrentRelativeHumidity(humSvc);
-            addSensorOptionalCharacteristics(humSvc);
-            services = [service, humSvc]
+            services = [service];
             if (config.history) {
                 let historyOptions = new HistoryOptions();
                 let historySvc = new HistoryService('weather', {displayName: name, log: log}, historyOptions);
-                history_CurrentTemperature(historySvc, service);
-                history_CurrentRelativeHumidity(historySvc, service);
+                history_AirPressure(historySvc);
                 // return history service too
+                services.push( historySvc );
+            }
+        } else if (config.type == "weatherStation") {
+            service = new Service.TemperatureSensor( svcNames.temperature || name + " Temperature");
+            characteristic_CurrentTemperature( service );
+            addSensorOptionalCharacteristics( service );
+            services = [service];
+            if( config.topics.getCurrentRelativeHumidity ) {
+                let humSvc = new Service.HumiditySensor( svcNames.humidity || name + " Humidity" );
+                characteristic_CurrentRelativeHumidity( humSvc );
+                addSensorOptionalCharacteristics( humSvc );
+                services.push( humSvc );
+            }
+            if( config.topics.getAirPressure ) {
+                let presSvc = new Eve.Service.AirPressureSensor( svcNames.airPressure || name + " AirPressure" );
+                characteristic_AirPressure( presSvc );
+                addSensorOptionalCharacteristics( presSvc );
+                services.push( presSvc );
+            }
+            // custom service UUID for optional Eve characteristics
+            let weatherSvc = new Service( svcNames.weather || name + " Weather", "D92D5391-92AF-4824-AF4A-356F25F25EA1");
+            let addWeatherSvc = false;
+            if( config.topics.getWeatherCondition ) {
+                characteristic_WeatherCondition( weatherSvc );
+                addWeatherSvc = true;
+            }
+            if( config.topics.getRain1h ) {
+                characteristic_Rain1h( weatherSvc );
+                addWeatherSvc = true;
+            }
+            if( config.topics.getRain24h ) {
+                characteristic_Rain24h( weatherSvc );
+                addWeatherSvc = true;
+            }
+            if( config.topics.getUVIndex ) {
+                characteristic_UVIndex( weatherSvc );
+                addWeatherSvc = true;
+            }
+            if( config.topics.getVisibility ) {
+                characteristic_Visibility( weatherSvc );
+                addWeatherSvc = true;
+            }
+            if( config.topics.getWindDirection ) {
+                characteristic_WindDirection( weatherSvc );
+                addWeatherSvc = true;
+            }
+            if( config.topics.getWindSpeed ) {
+                characteristic_WindSpeed( weatherSvc );
+                addWeatherSvc = true;
+            }
+            if ( addWeatherSvc ) {
+                services.push( weatherSvc );
+            }
+            if (config.history) {
+                let historyOptions = new HistoryOptions();
+                let historySvc = new HistoryService('weather', {displayName: name, log: log}, historyOptions);
+                history_CurrentTemperature( historySvc );
+                history_CurrentRelativeHumidity( historySvc );
+                history_AirPressure( historySvc );
                 services.push( historySvc );
             }
         } else if (config.type == "contactSensor") {
@@ -1697,10 +1794,9 @@ function makeThing(log, config) {
                 characteristic_ObstructionDetected( service );
             }
         } else if( config.type == "airQualitySensor" ) {
-            service = new Service.AirQualitySensor( name );
+            service = new Service.AirQualitySensor( svcNames.airQuality || name );
             characteristic_AirQuality( service );
-            addSensorOptionalCharacteristics(service);
-            // todo: lots of optional charateristics...
+            addSensorOptionalCharacteristics( service );
             if( config.topics.getCarbonDioxideLevel ) {
                 characteristic_CarbonDioxideLevel( service );
             }
@@ -1725,14 +1821,28 @@ function makeThing(log, config) {
             if( config.topics.getCarbonMonoxideLevel ) {
                 characteristic_CarbonMonoxideLevel( service );
             }
-           
-            if( config.history && config.topics.getAirQualityPPM ) {
-                characteristic_AirQualityPPM( service );
-                services = [service];
+            services = [service];
+            if( config.topics.getCurrentTemperature ) {
+                let tempSvc = new Service.TemperatureSensor( svcNames.temperature || name + "-Temperature" );
+                characteristic_CurrentTemperature( tempSvc );
+                addSensorOptionalCharacteristics( tempSvc );
+                services.push( tempSvc );
+            }
+            if( config.topics.getCurrentRelativeHumidity ) {
+                let humSvc = new Service.HumiditySensor( svcNames.humidity || name + "-Humidity" );
+                characteristic_CurrentRelativeHumidity( humSvc );
+                addSensorOptionalCharacteristics( humSvc );
+                services.push( humSvc );
+            }
+            if (config.history) {
                 let historyOptions = new HistoryOptions();
                 let historySvc = new HistoryService( 'room', {displayName: name, log: log}, historyOptions );
-                history_AirQualityPPM( historySvc, service );
-                // return history service too
+                if( config.topics.getAirQualityPPM ) {
+                    characteristic_AirQualityPPM( service );
+                }
+                history_AirQualityPPM( historySvc );
+                history_CurrentTemperature( historySvc );
+                history_CurrentRelativeHumidity( historySvc );
                 services.push( historySvc );
             }
         } else if( config.type == 'carbonDioxideSensor' ) {
