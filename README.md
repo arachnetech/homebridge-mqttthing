@@ -161,7 +161,11 @@ Depending on the accessory type, fakegato-history may add extra entries every 10
 History is currently supported for:
 * Temperature Sensor
 * Humidity Sensor
+* Air Pressure Sensor
+* Air Quality Sensor
 * Motion Sensor
+* Contact Sensor
+* Outlet (power consumption)
 
 `history` - set to **true** for enabling History Service (Boolean, optional)
 
@@ -181,6 +185,7 @@ Avoid the use of "/" in characteristics of the Information Service (e.g. serial 
 # Supported Accessories
 
    * [Tested Configurations](#Tested-Configurations)
+   * [Air Pressure Sensor](#air-pressure-sensor)
    * [Air Quality Sensor](#air-quality-sensor)
    * [Carbon Dioxide Sensor](#carbon-dioxide-sensor)
    * [Contact Sensor](#contact-sensor)
@@ -201,7 +206,7 @@ Avoid the use of "/" in characteristics of the Information Service (e.g. serial 
    * [StatelessProgrammableSwitch](#statelessprogrammableswitch)
    * [Switch](#switch)
    * [Temperature Sensor](#temperature-sensor)
-   * [Temperature-Humidity Sensor](#temperature-humidity-sensor)
+   * [Weather Station](#weather-station)
    * [Window](#window)
    * [Window Covering (Blinds)](#window-covering)
    
@@ -210,33 +215,70 @@ Avoid the use of "/" in characteristics of the Information Service (e.g. serial 
 Tested and working configurations for devices are available on the [Wiki](https://github.com/arachnetech/homebridge-mqttthing/wiki/Tested-Configurations).  Please add your working configurations for others.
 
 
+## Air Pressure Sensor
+
+Air Pressure must be in the range 700 to 1100 hPa.
+
+*Air Pressure Sensor is only supported in Eve-App*
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "airPressureSensor",
+    "name": "<name of sensor>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "caption": "<label (optional)>",
+    "topics":
+    {
+        "getAirPressure":        "<topic used to provide 'air pressure'>",
+        "getStatusActive":       "<topic used to provide 'active' status (optional)>",
+        "getStatusFault":        "<topic used to provide 'fault' status (optional)>",
+        "getStatusTampered":     "<topic used to provide 'tampered' status (optional)>",
+        "getStatusLowBattery":   "<topic used to provide 'low battery' status (optional)>"
+    },
+    "history": "<true to enable History service for Eve App (optional)>"
+}
+```
+
+
 ## Air Quality Sensor
 
 Air quality state can be `UNKNOWN`, `EXCELLENT`, `GOOD`, `FAIR`, `INFERIOR` or `POOR`. To use different values, specify them in **airQualityValues** in that order.
+
+For Air Quality History (in the Eve-App) you have to use `getAirQualityPPM`.
 
 ```javascript
 {
     "accessory": "mqttthing",
     "type": "airQualitySensor",
     "name": "<name of device>",
+    "serviceNames": {
+        "temperature": "<name for temperature service (optional)>",
+        "humidity":    "<name for humidity service (optional)>"
+    },
     "topics":
     {
-        "getAirQuality":         "<topic used to report air quality",
-        "getCarbonDioxideLevel": "<topic used to report carbon dioxide level (optional)>",
-        "getPM10Density":        "<topic used to report PM10 Density (optional)>",
-        "getPM2_5Density":       "<topic used to report PM2.5 Density (optional)>",
-        "getOzoneDensity":       "<topic used to report Ozone Density (optional)>",
-        "getNitrogenDioxideDensity": "<topic used to report NitrogenDioxide Density (optional)>",
-        "getSulphurDioxideDensity": "<topic used to report Sulphur Dioxide Density (optional)>",
-        "getVOCDensity":         "<topic used to report VOC Density (optional)>",
-        "getCarbonMonoxideLevel": "<topic used to report Carbon Monoxide level (optional)>",
-        "getAirQualityPPM":      "<topic used to report air quality voc in ppm (optional)>",
-        "getStatusActive":       "<topic used to provide 'active' status (optional)>",
-        "getStatusFault":        "<topic used to provide 'fault' status (optional)>",
-        "getStatusTampered":     "<topic used to provide 'tampered' status (optional)>",
-        "getStatusLowBattery":   "<topic used to provide 'low battery' status (optional)>"
+        "getAirQuality":              "<topic used to report air quality",
+        "getCarbonDioxideLevel":      "<topic used to report carbon dioxide level (optional)>",
+        "getPM10Density":             "<topic used to report PM10 Density (optional)>",
+        "getPM2_5Density":            "<topic used to report PM2.5 Density (optional)>",
+        "getOzoneDensity":            "<topic used to report Ozone Density (optional)>",
+        "getNitrogenDioxideDensity":  "<topic used to report NitrogenDioxide Density (optional)>",
+        "getSulphurDioxideDensity":   "<topic used to report Sulphur Dioxide Density (optional)>",
+        "getVOCDensity":              "<topic used to report VOC Density (optional)>",
+        "getCarbonMonoxideLevel":     "<topic used to report Carbon Monoxide level (optional)>",
+        "getAirQualityPPM":           "<topic used to report air quality voc in ppm (optional, Eve-only)>",
+        "getStatusActive":            "<topic used to provide 'active' status (optional)>",
+        "getStatusFault":             "<topic used to provide 'fault' status (optional)>",
+        "getStatusTampered":          "<topic used to provide 'tampered' status (optional)>",
+        "getStatusLowBattery":        "<topic used to provide 'low battery' status (optional)>",
+        "getCurrentTemperature":      "<topic used to provide 'current temperature' (optional)>",
+        "getCurrentRelativeHumidity": "<topic used to provide 'current relative humidity' (optional)>"
     },
-    "airQualityValues": [ "unknown-value", "excellent-value", "good-value", "fair-value", "inferior-value", "poor-value" ]
+    "airQualityValues": [ "unknown-value", "excellent-value", "good-value", "fair-value", "inferior-value", "poor-value" ],
+    "history": "<true to enable History service for Eve App (optional)>"
 }
 ```
 
@@ -855,19 +897,28 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
 ```
 
 
-## Temperature-Humidity Sensor
+## Weather Station
 
 Current temperature must be in the range 0 to 100 degrees Celsius to a maximum of 1dp.
+
 Current relative humidity must be in the range 0 to 100 percent with no decimal places.
+
+Air Pressure must be in the range 700 to 1100 hPa.
+
+*Air Pressure and the special weather characteristics (rain, wind, ...) are only supported in Eve-App*
+
+Weather condition and wind direction are custom string values.
 
 ```javascript
 {
     "accessory": "mqttthing",
-    "type": "tempHumSensor",
+    "type": "weatherStation",
     "name": "<name of sensor>",
     "serviceNames": {
-        "temperature": "<name for temperature service>",
-        "humidity": "<name for humidity service>"
+        "temperature": "<name for temperature service (optional)>",
+        "humidity":    "<name for humidity service (optional)>",
+        "airPressure": "<name for air pressure service (optional)>",
+        "weather":     "<name for weather service (optional)>"
     },
     "url": "<url of MQTT server (optional)>",
     "username": "<username for MQTT (optional)>",
@@ -876,7 +927,15 @@ Current relative humidity must be in the range 0 to 100 percent with no decimal 
     "topics":
     {
         "getCurrentTemperature":        "<topic used to provide 'current temperature'>",
-        "getCurrentRelativeHumidity":   "<topic used to provide 'current relative humidity'>",
+        "getCurrentRelativeHumidity":   "<topic used to provide 'current relative humidity (optional)'>",
+        "getAirPressure":               "<topic used to provide 'air pressure' (optional, Eve-only)>",
+        "getWeatherCondition":          "<topic used to provide 'weather condition' (optional, Eve-only)>",
+        "getRain1h":                    "<topic used to provide 'rain [mm] in last 1h' (optional, Eve-only)>",
+        "getRain24h":                   "<topic used to provide 'rain [mm] in last 24h' (optional, Eve-only)>",
+        "getUVIndex":                   "<topic used to provide 'UV index' (optional, Eve-only)>",
+        "getVisibility":                "<topic used to provide 'visibility [km]' (optional, Eve-only)>",
+        "getWindDirection":             "<topic used to provide 'wind direction' (optional, Eve-only)>",
+        "getWindSpeed":                 "<topic used to provide 'wind speed [km/h]' (optional, Eve-only)>",
         "getStatusActive":              "<topic used to provide 'active' status (optional)>",
         "getStatusFault":               "<topic used to provide 'fault' status (optional)>",
         "getStatusTampered":            "<topic used to provide 'tampered' status (optional)>",

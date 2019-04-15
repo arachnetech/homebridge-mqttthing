@@ -230,6 +230,41 @@
     },
     {
       "accessory": "mqttthing",
+      "type": "airPressureSensor",
+      "name": "Test air pressure sensor",
+      "url": "http://192.168.10.35:1883",
+      "topics": {
+        "getAirPressure": "test/airpressure"
+      },
+      "history": true
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "weatherStation",
+      "name": "Test weather station",
+      "serviceNames" : {
+        "temperature": "WS-Temperature",
+        "humidity": "WS-Humidity",
+        "airPressure": "WS-AirPressure",
+        "weather": "WS-WeatherData"
+      },
+      "url": "mqtt://192.168.179.5:1883",
+      "topics": {
+          "getCurrentTemperature": "test/weather/temperature",
+          "getCurrentRelativeHumidity": "test/weather/humidity",
+          "getAirPressure": "test/weather/airpressure",
+          "getWeatherCondition": "test/weather/condition",
+          "getRain1h": "test/weather/rain1",
+          "getRain24h": "test/weather/rain24",
+          "getUVIndex": "test/weather/uv",
+          "getVisibility": "test/weather/visibility",
+          "getWindDirection": "test/weather/winddirection",
+          "getWindSpeed": "test/weather/windspeed"              
+      },
+      "history": false
+    },
+    {
+      "accessory": "mqttthing",
       "type": "contactSensor",
       "name": "Test contact sensor",
       "url": "http://192.168.10.35:1883",
@@ -478,7 +513,9 @@
         "getNitrogenDioxideDensity": "test/airquality/no2",
         "getVOCDensity": "test/airquality/voc",
         "getCarbonMonoxideLevel": "test/airquality/co",
-        "getCarbonDioxideLevel": "test/airquality/co2"
+        "getCarbonDioxideLevel": "test/airquality/co2",
+        "getCurrentTemperature": "test/airquality/temperature",
+        "getCurrentRelativeHumidity": "test/airquality/humidity"
       },
       "history": true
     }
