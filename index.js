@@ -873,10 +873,13 @@ function makeThing(log, config) {
         service.addOptionalCharacteristic(Eve.Characteristic.LastActivation); // to avoid warnings
         // get lastActivation time from history data (check 5s later to make sure the history is loaded)
         setTimeout( function() {
-            if (historySvc.lastEntry) {
-                let lastTime = historySvc.history[historySvc.lastEntry].time - historySvc.getInitialTime();
-                addCharacteristic(service, 'lastActivation', Eve.Characteristic.LastActivation, lastTime);
-                log.debug('lastActivation time loaded');
+            if (historySvc.lastEntry && historySvc.memorySize) {
+                let entry = historySvc.history[historySvc.lastEntry % historySvc.memorySize];
+                if(entry && entry.hasOwnProperty('time')) {
+                    let lastTime = entry.time - historySvc.getInitialTime();
+                    addCharacteristic(service, 'lastActivation', Eve.Characteristic.LastActivation, lastTime);
+                    log.debug('lastActivation time loaded');
+                }
             }
         }, 5000);
     }
