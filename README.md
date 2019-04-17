@@ -1000,6 +1000,11 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 # Release notes
 
+Version 1.0.34
++ Added Air Pressure Sensor (thanks, tokebas)
++ Added Weather Station with custom Eve characteristics (thanks, tobekas)
++ Fakegato-History fix
+
 Version 1.0.33
 + Added optional air quality sensor characteristics
 
