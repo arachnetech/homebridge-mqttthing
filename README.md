@@ -206,6 +206,7 @@ Avoid the use of "/" in characteristics of the Information Service (e.g. serial 
    * [StatelessProgrammableSwitch](#statelessprogrammableswitch)
    * [Switch](#switch)
    * [Temperature Sensor](#temperature-sensor)
+   * [Valve (Sprinkler, Shower, Faucet)](#valve)
    * [Weather Station](#weather-station)
    * [Window](#window)
    * [Window Covering (Blinds)](#window-covering)
@@ -865,7 +866,7 @@ Configuring `resetStateAfterms` causes the switch state as reported through the 
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
     "offValue": "<value representing off (optional)>",
-    "turnOffAfterms": <milliseconds after which to turn off automatically (optional)>,
+    "turnOffAfterms": "<milliseconds after which to turn off automatically (optional)>",
     "resetStateAfterms": "<milliseconds after which to reset state automatically (optional)>"
 }
 ```
@@ -893,6 +894,45 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
         "getStatusLowBattery":          "<topic used to provide 'low battery' status (optional)>"
     },
     "history": "<true to enable History service for Eve App (optional)>"
+}
+```
+
+
+## Valve
+
+`ValveTyp` can be `"sprinkler"`, `"shower"` or `"faucet"`.
+
+With the `setDuration`/`getDuration` you can set the standard duration at the valve. In this case the valve itself is responsible for switching off after this time. The remaining time is shown in HomeKit even if no `getRemainingDuration` is configured. `getRemainingDuration` can be used to update the remaining time. Using the set duration value to turn off the valve automatically by this plugin is not supported yet.
+
+Configuring `turnOffAfterms` causes the valve to turn off automatically the specified number of milliseconds after it is turned on by homekit. It can be used instead of `setDuration`/`getDuration`. 
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "valve",
+    "valveType": "<valve type>",
+    "name": "<name of valve>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "caption": "<label (optional)>",
+    "topics":
+    {
+        "setActive":            "<topic to set the target status>",
+        "getActive":            "<topic to get the target status>",
+        "getInUse":             "<topic to get the current status>",
+        "setDuration":          "<topic used to set default duration (seconds) (optional)>",
+        "getDuration":          "<topic used to get default duration (seconds) (optional)>",
+        "getRemainingDuration": "<topic used to get remaining duration (seconds) (optional)>",
+        "getStatusActive":      "<topic used to provide 'active' status (optional)>",
+        "getStatusFault":       "<topic used to provide 'fault' status (optional)>",
+        "getStatusTampered":    "<topic used to provide 'tampered' status (optional)>",
+        "getStatusLowBattery":  "<topic used to provide 'low battery' status (optional)>"
+    },
+    "integerValue":     "<true to use 1|0 instead of true|false default onValue and offValue>",
+    "onValue":          "<value representing on (optional)>",
+    "offValue":         "<value representing off (optional)>",
+    "turnOffAfterms":   "<milliseconds after which to turn off automatically (optional)>"
 }
 ```
 

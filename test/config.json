@@ -518,6 +518,22 @@
         "getCurrentRelativeHumidity": "test/airquality/humidity"
       },
       "history": true
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "valve",
+      "valveType": "sprinkler",
+      "name": "Sprinkler",
+      "url": "mqtt://192.168.179.5:1883",
+      "topics": {
+          "getActive": "test/sprinkler/getActive",
+          "setActive": "test/sprinkler/setActive",
+          "getInUse": "test/sprinkler/getInUse",
+          "getDuration": "test/sprinkler/getDuration",
+          "setDuration": "test/sprinkler/setDuration",
+          "getRemainingDuration": "test/sprinkler/getRemainingDuration"
+      },
+      "integerValue": true
     }
   ]
 }

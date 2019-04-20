@@ -308,9 +308,9 @@ function makeThing(log, config) {
         booleanState( 'online', config.topics.getOnline, true, onlineOfflineValue );
     }
 
-    function integerCharacteristic(service, property, characteristic, setTopic, getTopic) {
+    function integerCharacteristic(service, property, characteristic, setTopic, getTopic, initialValue) {
         // default state
-        state[property] = 0;
+        state[property] = initialValue || 0;
 
         // set up characteristic
         var charac = service.getCharacteristic(characteristic);
@@ -325,6 +325,9 @@ function makeThing(log, config) {
                 }
                 callback();
             });
+        }
+        if (initialValue) {
+            charac.setValue(initialValue, undefined, c_mySetContext);
         }
 
         // subscribe to get topic
@@ -1469,6 +1472,80 @@ function makeThing(log, config) {
         }
     }
 
+    // Characteristic.Active
+    function characteristic_Active( service ) {
+        booleanCharacteristic(service, 'active', Characteristic.Active, config.topics.setActive, config.topics.getActive, false, function (val) {
+            return val ? Characteristic.Active.ACTIVE : Characteristic.Active.INACTIVE;
+        }, config.turnOffAfterms);
+    }
+
+    // Characteristic.InUse
+    function characteristic_InUse( service ) {
+        booleanCharacteristic(service, 'inUse', Characteristic.InUse, null, config.topics.getInUse, false, function (val) {
+            return val ? Characteristic.InUse.IN_USE : Characteristic.InUse.NOT_IN_USE;
+        });
+    }
+
+    // Characteristic.SetDuration
+    function characteristic_SetDuration( service ) {
+        integerCharacteristic(service, 'setDuration', Characteristic.SetDuration, config.topics.setDuration, config.topics.getDuration, 10*60);
+    }
+
+    // Characteristic.RemainingDuration
+    function characteristic_RemainingDuration( service ) {
+        // Instead of saving the remaining duration, the time of the expected end is stored.
+        // This makes it easier to respond to following GET queries from HomeKit.
+        state.durationEndTime = Math.floor(Date.now() / 1000);
+
+        function getRemainingDuration() {
+            let remainingDuration = state.durationEndTime - Math.floor(Date.now() / 1000);
+            return (state.inUse && remainingDuration > 0) ? remainingDuration : 0;
+        }
+
+        // set up characteristic
+        var charac = service.addCharacteristic(Characteristic.RemainingDuration);
+        charac.on('get', function (callback) {
+            handleGetStateCallback( callback, getRemainingDuration() );
+        });
+
+        // update durationEndTime once when 'Active' changes to ACTIVE
+        if (service.testCharacteristic(Characteristic.SetDuration)) {
+            service.getCharacteristic(Characteristic.Active).on('change', function (obj) {
+                if ( obj.newValue == Characteristic.Active.ACTIVE ) {
+                    state.durationEndTime = Math.floor(Date.now() / 1000) + state.setDuration;
+                }
+                charac.updateValue( getRemainingDuration() );
+            });
+        } else if (config.turnOffAfterms) {
+            service.getCharacteristic(Characteristic.Active).on('change', function (obj) {
+                if ( obj.newValue == Characteristic.Active.ACTIVE ) {
+                    state.durationEndTime = Math.floor((Date.now() + config.turnOffAfterms) / 1000);
+                }
+                charac.updateValue( getRemainingDuration() );
+            });
+        }
+
+        // update durationEndTime once when 'SetDuration' changes (if 'SetDuration' exists)
+        if (service.testCharacteristic(Characteristic.SetDuration)) {
+            service.getCharacteristic(Characteristic.SetDuration).on('change', function (obj) {
+                // extend or shorten duration
+                let maxEndTime = Math.floor(Date.now() / 1000) + obj.newValue;
+                let newEndTime = state.durationEndTime + (obj.newValue - obj.oldValue);
+                state.durationEndTime = (newEndTime < maxEndTime) ? newEndTime : maxEndTime;
+                charac.updateValue( getRemainingDuration() );
+            });
+        }
+
+        // subscribe to get topic
+        if (config.topics.getRemainingDuration) {
+            mqttSubscribe(config.topics.getRemainingDuration, function (topic, message) {
+                let remainingDuration = parseInt(message);
+                state.durationEndTime = Math.floor(Date.now() / 1000) + remainingDuration;
+                charac.updateValue(remainingDuration);
+            });
+        }
+    }
+
     // add optional sensor characteristics
     function addSensorOptionalCharacteristics(service) {
         if (config.topics.getStatusActive) {
@@ -1858,6 +1935,26 @@ function makeThing(log, config) {
             if( config.topics.getCarbonDioxidePeakLevel ) {
                 characteristic_CarbonDioxidePeakLevel( service );
             }
+        } else if( config.type == 'valve' ) {
+            service = new Service.Valve( name );
+            if (config.valveType === 'sprinkler') {
+                service.setCharacteristic(Characteristic.ValveType, Characteristic.ValveType.IRRIGATION);
+            } else if (config.valveType === 'shower') {
+                service.setCharacteristic(Characteristic.ValveType, Characteristic.ValveType.SHOWER_HEAD);
+            } else if (config.valveType === 'faucet') {
+                service.setCharacteristic(Characteristic.ValveType, Characteristic.ValveType.WATER_FAUCET);
+            } else {
+                service.setCharacteristic(Characteristic.ValveType, Characteristic.ValveType.GENERIC_VALVE);
+            }
+            characteristic_Active( service );
+            characteristic_InUse( service );
+            if ( config.topics.getDuration ) {
+                characteristic_SetDuration( service );
+                characteristic_RemainingDuration( service );
+            } else if ( config.topics.getRemainingDuration || config.turnOffAfterms ) {
+                characteristic_RemainingDuration( service );
+            }
+            addSensorOptionalCharacteristics( service );
         } else {
             log("ERROR: Unrecognized type: " + config.type);
         }
