@@ -1040,6 +1040,9 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 # Release notes
 
+Version 1.0.36
++ Fix to Valve remaining duration
+
 Version 1.0.35
 + Added Valve (for Sprinkler, Shower and Faucet) - thanks, tokebas
 

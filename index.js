@@ -1499,7 +1499,7 @@ function makeThing(log, config) {
 
         function getRemainingDuration() {
             let remainingDuration = state.durationEndTime - Math.floor(Date.now() / 1000);
-            return (state.inUse && remainingDuration > 0) ? remainingDuration : 0;
+            return (state.active && remainingDuration > 0) ? remainingDuration : 0;
         }
 
         // set up characteristic
