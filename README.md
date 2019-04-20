@@ -900,7 +900,7 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
 
 ## Valve
 
-`ValveTyp` can be `"sprinkler"`, `"shower"` or `"faucet"`.
+`valveType` can be `"sprinkler"`, `"shower"` or `"faucet"`.
 
 With the `setDuration`/`getDuration` you can set the standard duration at the valve. In this case the valve itself is responsible for switching off after this time. The remaining time is shown in HomeKit even if no `getRemainingDuration` is configured. `getRemainingDuration` can be used to update the remaining time. Using the set duration value to turn off the valve automatically by this plugin is not supported yet.
 
@@ -1039,6 +1039,9 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 
 # Release notes
+
+Version 1.0.35
++ Added Valve (for Sprinkler, Shower and Faucet) - thanks, tokebas
 
 Version 1.0.34
 + Added Air Pressure Sensor (thanks, tokebas)

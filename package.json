@@ -1,6 +1,6 @@
 {
   "name": "homebridge-mqttthing",
-  "version": "1.0.34",
+  "version": "1.0.35",
   "description": "Homebridge plugin supporting various services over MQTT",
   "main": "index.js",
   "scripts": {
@@ -48,7 +48,13 @@
     "lock",
     "window",
     "air quality sensor",
-    "carbondioxide sensor"
+    "carbondioxide sensor",
+    "air pressure sensor",
+    "weather station",
+    "valve",
+    "sprinkler",
+    "shower",
+    "faucet"
   ],
   "author": "David Miller",
   "license": "Apache-2.0",
