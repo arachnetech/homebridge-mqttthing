@@ -117,6 +117,17 @@
     {
       "accessory": "mqttthing",
       "type": "lightbulb",
+      "name": "Test RGBWW Light",
+      "url": "http://192.168.10.35:1883",
+      "topics": {
+        "getRGBWW": "test/rgbwwlight/rgb",
+        "setRGBWW": "test/rgbwwlight/rgb/set"
+      },
+      "logMqtt": true
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "lightbulb",
       "name": "Test ColorTemperature Light",
       "url": "http://192.168.10.35:1883",
       "topics": {

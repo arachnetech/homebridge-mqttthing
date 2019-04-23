@@ -520,17 +520,100 @@ function makeThing(log, config) {
         return s.substr( s.length - 2 );
     }
 
+    function decodeRGBCommaSeparatedString( rgb ) {
+        if( rgb ) {
+            var comps =  ('' + rgb ).split( ',' );
+            if( comps.length == 3 ) {
+                return {r: comps[ 0 ], g: comps[ 1 ], b: comps[ 2 ]};
+            }
+        }
+    }
+
+    function calcWhiteFactor( rgbin, white ) {
+        // scale rgb value to full brightness as comparing colours
+        let compmax = Math.max( rgbin.r, rgbin.g, rgbin.b );
+        if( compmax < 1 ) {
+            return 0;
+        }
+        let rgbsc = 255 / compmax;
+        let rgb = {r: rgbin.r * rgbsc, g: rgbin.g * rgbsc, b: rgbin.b * rgbsc};
+        // calculate factors
+        var rf = 1, gf = 1, bf = 1;
+        if( white.r < 255 ) {
+            rf = ( 255 - rgb.r ) / ( 255 - white.r ) / rgbsc;
+        }
+        if( white.g < 255 ) {
+            gf = ( 255 - rgb.g ) / ( 255 - white.g ) / rgbsc;
+        }
+        if( white.b < 255 ) {
+            bf = ( 255 - rgb.b ) / ( 255 - white.b ) / rgbsc;
+        }
+
+        return Math.min( Math.max( 0, Math.min( rf, gf, bf ) ), 1 );
+    }
+
+    function calcWhiteFactor2( rgbin, white ) {
+        // scale rgb value to full brightness as comparing colours
+        let compmax = Math.max( rgbin.r, rgbin.g, rgbin.b );
+        if( compmax < 1 ) {
+            return 0;
+        }
+        let rgbsc = 255 / compmax;
+        let rgb = {r: rgbin.r * rgbsc, g: rgbin.g * rgbsc, b: rgbin.b * rgbsc};
+        // calculate factors
+        let wmin = Math.min( white.r, white.g, white.b );
+        let cmin = Math.min( rgb.r, rgb.g, rgb.b );
+        var rf = 1, gf = 1, bf = 1;
+        if( white.r > wmin ) {
+            rf = ( rgb.r - cmin ) / ( white.r - wmin ) / rgbsc;
+        }
+        if( white.g > wmin ) {
+            gf = ( rgb.g - cmin ) / ( white.g - wmin ) / rgbsc;
+        }
+        if( white.b > wmin ) {
+            bf = ( rgb.b - cmin ) / ( white.b - wmin ) / rgbsc;
+        }
+
+        return Math.min( Math.max( 0, Math.min( rf, gf, bf ) ), 1 );
+    }
+
+    function calcWhiteFactor3( rgb, white ) {
+        let rf = 1, gf = 1, bf = 1;
+        if( white.r < 255 ) {
+            rf = rgb.r / white.r;
+        }
+        if( white.g < 255 ) {
+            gf = rgb.g / white.g;
+        }
+        if( white.b < 255 ) {
+            bf = rgb.b / white.b;
+        }
+        return Math.min( Math.max( 0, Math.min( rf, gf, bf ) ), 1 );
+    }
+
     function characteristics_RGBLight( service ) {
+
+        var warmWhiteRGB, coldWhiteRGB;
 
         state.red = 0;
         state.green = 0;
         state.blue = 0;
         state.white = 0;
+        state.warmWhite = 0;
+        state.coldWhite = 0;
 
         var setTopic, getTopic, numComponents;
+        var wwcwComps = false;
         var whiteComp = false;
         var whiteSep = false;
-        if( config.topics.setRGBW ) {
+        if( config.topics.setRGBWW ) {
+            setTopic = config.topics.setRGBWW;
+            getTopic = config.topics.getRGBWW;
+            wwcwComps = true;
+            numComponents = 5;
+            warmWhiteRGB = decodeRGBCommaSeparatedString( config.warmWhite ) || {r: 255, g: 158, b: 61};
+            coldWhiteRGB = decodeRGBCommaSeparatedString( config.coldWhite ) || {r: 204, g: 219, b: 255};
+        } else if( config.topics.setRGBW ) {
             setTopic = config.topics.setRGBW;
             getTopic = config.topics.getRGBW;
             whiteComp = true;
@@ -559,9 +642,45 @@ function makeThing(log, config) {
                 bri = 0;
             }
             var rgb = ScaledHSVtoRGB( state.hue, state.sat, bri );
-            if( whiteSep || whiteComp ) {
+
+            if( wwcwComps ) {
+                console.log( rgb );
+                // calculate warm-white and cold-white factors (0-1 indicating proportion of warm/cold white in colour)
+                let warmFactor = calcWhiteFactor( rgb, warmWhiteRGB );
+                let coldFactor = calcWhiteFactor( rgb, coldWhiteRGB );
+                console.log( "wf: " + warmFactor );
+                console.log( "cf: " + coldFactor );
+                // sum must be below 1
+                let whiteFactor = warmFactor + coldFactor;
+                if( whiteFactor > 1 ) {
+                    warmFactor = warmFactor / whiteFactor;
+                    coldFactor = coldFactor / whiteFactor;
+                    whiteFactor = 1;
+                }
+                // manipulate RGB values
+                rgb.ww = Math.floor(warmFactor * 255);
+                rgb.cw = Math.floor(coldFactor * 255);
+                console.log( "ww: " + rgb.ww );
+                console.log( "cw: " + rgb.cw );
+                /*rgb.r = Math.floor( rgb.r * ( 1 - whiteFactor ) );
+                rgb.g = Math.floor( rgb.g * ( 1 - whiteFactor ) );
+                rgb.b = Math.floor( rgb.b * ( 1 - whiteFactor ) );*/
+                rgb.r = Math.max( 0, Math.floor( rgb.r - warmFactor * warmWhiteRGB.r - coldFactor * coldWhiteRGB.r ) );
+                rgb.g = Math.max( 0, Math.floor( rgb.g - warmFactor * warmWhiteRGB.g - coldFactor * coldWhiteRGB.g ) );
+                rgb.b = Math.max( 0, Math.floor( rgb.b - warmFactor * warmWhiteRGB.b - coldFactor * coldWhiteRGB.b ) );
+                // any remaining pure white level can be replaced with a mixture of cold and warm white
+                let min = Math.min( rgb.r, rgb.g, rgb.b, 255 - rgb.ww, 255 - rgb.cw );
+                rgb.ww += Math.floor( min / 2 );
+                rgb.cw += Math.floor( min / 2 );
+                rgb.r -= min;
+                rgb.g -= min;
+                rgb.b -= min;
+                // store white state
+                state.warmWhite = rgb.ww;
+                state.coldWhite = rgb.cw;
+            } else if( whiteSep || whiteComp ) {
                 // remove common component from red, green and blue to white
-                var min = Math.min( rgb.r, rgb.g, rgb.b );
+                let min = Math.min( rgb.r, rgb.g, rgb.b );
                 rgb.w = min;
                 rgb.r -= min;
                 rgb.g -= min;
@@ -579,12 +698,16 @@ function makeThing(log, config) {
                 msg = rgb.r + ',' + rgb.g + ',' + rgb.b;
                 if( whiteComp ) {
                     msg += ',' + rgb.w;
+                } else if( wwcwComps ) {
+                    msg += ',' + rgb.ww + ',' + rgb.cw;
                 }
             } else {
                 // hex
                 msg = hexPrefix + toHex( rgb.r ) + toHex( rgb.g ) + toHex( rgb.b );
                 if( whiteComp ) {
                     msg += toHex( rgb.w );
+                } else if( wwcwComps ) {
+                    msg += toHex( rgb.ww ) + toHex( rgb.cw );
                 }
             }
             if( msg != lastpubmsg ) {
@@ -617,7 +740,14 @@ function makeThing(log, config) {
             publish();
         } );
 
-        function updateColour( red, green, blue, white ) {
+        function updateColour( red, green, blue, white, warmWhite, coldWhite ) {
+
+            // add warm white/cold white in
+            if( wwcwComps ) {
+                red += Math.floor( warmWhiteRGB.r * warmWhite / 255 ) + Math.floor( coldWhiteRGB.r * coldWhite / 255 );
+                green += Math.floor( warmWhiteRGB.g * warmWhite / 255 ) + Math.floor( coldWhiteRGB.g * coldWhite / 255 );
+                blue += Math.floor( warmWhiteRGB.b * warmWhite / 255 ) + Math.floor( coldWhiteRGB.b * coldWhite / 255 );
+            }
 
             // add any white component to red, green and blue
             red = Math.min( red + white, 255 );
@@ -661,7 +791,7 @@ function makeThing(log, config) {
         if( getTopic ) {
             mqttSubscribe( getTopic, function( topic, message ) {
                 var ok = false;
-                var red, green, blue, white;
+                var red, green, blue, white, warmWhite, coldWhite;
                 if( hexPrefix == null ) {
                     // comma-separated decimal
                     var comps =  ('' + message ).split( ',' );
@@ -671,6 +801,9 @@ function makeThing(log, config) {
                         blue = parseInt( comps[ 2 ] );
                         if( whiteComp ) {
                             white = parseInt( comps[ 3 ] );
+                        } else if( wwcwComps ) {
+                            warmWhite = parseInt( comps[ 3 ] );
+                            coldWhite = parseInt( comps[ 4 ] );
                         }
                         ok = true;
                     }
@@ -684,6 +817,9 @@ function makeThing(log, config) {
                             blue = parseInt( message.substr( hexPrefix.length + 4, 2 ), 16 );
                             if( whiteComp ) {
                                 white = parseInt( message.substr( hexPrefix.length + 6, 2 ), 16 );
+                            } else if( wwcwComps ) {
+                                warmWhite = parseInt( message.substr( hexPrefix.length + 6, 2 ), 16 );
+                                coldWhite = parseInt( message.substr( hexPrefix.length + 8, 2 ), 16 );
                             }
                             ok = true;
                         }
@@ -696,6 +832,10 @@ function makeThing(log, config) {
                     if( whiteComp ) {
                         state.white = white;
                         updateColour( red, green, blue, white );
+                    } else if( wwcwComps ) {
+                        state.warmWhite = warmWhite;
+                        state.coldWhite = coldWhite;
+                        updateColour( red, green, blue, 0, warmWhite, coldWhite );
                     } else if( whiteSep ) {
                         updateColour( red, green, blue, state.white );
                     } else {
@@ -1587,7 +1727,7 @@ function makeThing(log, config) {
             service = new Service.Lightbulb(name);
             if( config.topics.setHSV ) {
                 characteristics_HSVLight(service);
-            } else if( config.topics.setRGB || config.topics.setRGBW ) {
+            } else if( config.topics.setRGB || config.topics.setRGBW || config.topics.setRGBWW ) {
                 characteristics_RGBLight(service);
             } else {
                 characteristic_On(service);

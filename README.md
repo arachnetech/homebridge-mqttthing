@@ -542,6 +542,8 @@ If `topics.setRGBW` is populated, a combined value is used in the format red,gre
         "setRGB":           "<in RGB mode, topic to set comma-separated red, green, blue>",
         "getRGBW":          "<in RGBW mode, topic to get comma-separated red, green, blue, white>",
         "setRGBW":          "<in RGBW mode, topic to set comma-separated red, green, blue, white>",
+        "getRGBWW":         "<in RWGWW mode, topic to get comma-separated red, green, blue, warm_white, cold_white>",
+        "setRGBWW":         "<in RWGWW mode, topic to set comma-separated red, green, blue, warm_white, cold_white>",
         "getWhite":         "<topic to get white level (0-255)> - used with getRGB for RGBW with separately-published white level",
         "setWhite":         "<topic to set white level (0-255)> - used with setRGB for RGBW with separately-published white level",
         "getColorTemperature": "<topic to report color temperature (optional)>",
@@ -552,7 +554,9 @@ If `topics.setRGBW` is populated, a combined value is used in the format red,gre
     "offValue": "<value representing off (optional)>",
     "hex": "true to format combined RGB/RGBW in hexadecimal instead of as comma-separated decimals",
     "hexPrefix": "format combined RGB/RGBW in hexadecimal with specified prefix (typically '#') instead of as comma-separated decimals",
-    "turnOffAfterms": "<milliseconds after which to turn off automatically (optional)>"
+    "turnOffAfterms": "<milliseconds after which to turn off automatically (optional)>",
+    "warmWhite": "in RGBWW mode, RGB value of warm white in format red,green,blue (optional)",
+    "coldWhite": "in RGBWW mode, RGB value of cold white in format red,green,blue (optional)"
 }
 ```
 
