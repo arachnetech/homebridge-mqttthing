@@ -529,7 +529,7 @@ function makeThing(log, config) {
         }
     }
 
-    function calcWhiteFactor( rgbin, white ) {
+    function calcWhiteFactor1( rgbin, white ) {
         // scale rgb value to full brightness as comparing colours
         let compmax = Math.max( rgbin.r, rgbin.g, rgbin.b );
         if( compmax < 1 ) {
@@ -577,18 +577,18 @@ function makeThing(log, config) {
         return Math.min( Math.max( 0, Math.min( rf, gf, bf ) ), 1 );
     }
 
-    function calcWhiteFactor3( rgb, white ) {
+    function calcWhiteFactor( rgb, white ) {
         let rf = 1, gf = 1, bf = 1;
-        if( white.r < 255 ) {
+        if( white.r > 0 ) {
             rf = rgb.r / white.r;
         }
-        if( white.g < 255 ) {
+        if( white.g > 0 ) {
             gf = rgb.g / white.g;
         }
-        if( white.b < 255 ) {
+        if( white.b > 0 ) {
             bf = rgb.b / white.b;
         }
-        return Math.min( Math.max( 0, Math.min( rf, gf, bf ) ), 1 );
+        return Math.min( Math.max( 0, Math.min( rf, gf, bf, calcWhiteFactor2( rgb, white ) ) ), 1 );
     }
 
     function characteristics_RGBLight( service ) {

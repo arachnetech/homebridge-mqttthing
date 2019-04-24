@@ -515,7 +515,9 @@ If `topics.setHSV` is populated, a combined value is used and any individual bri
 
 If `topics.setRGB` is populated, a combined value is used in the format red,green,blue (ranging from 0-255). On/off may be sent with `setOn`; brightness, hue and saturation topics are ignored. If `topics.setWhite` is also populated, the white level is extracted and sent separately to the combined RGB value.
 
-If `topics.setRGBW` is populated, a combined value is used in the format red,green,blue,white (ranging from 0-255). On/off may be set with `setOn`; brightness, hue and saturation topics are ignored.
+If `topics.setRGBW` is populated, a combined value is used in the format red,green,blue,white (ranging from 0-255). The minimum of red, green and blue is subtracted from all three colour channels and sent to the white channel instead. On/off may be set with `setOn` (otherwise "0,0,0,0" indicates off); brightness, hue, saturation and temperature topics are ignored.
+
+If `topics.setRGBWW` is populated, a combined value is used in the format red,green,blue,warm_white,cold_white (each component ranging from 0-255). Warm and cold white components are set based on the colour values published by Homekit from the _Temperature_ control, and after warm and cold white are extracted any remaining white level in the RGB values is sent equally to both white channels. The RGB values used for warm white and cold white extraction can be configured with `warmWhite` and `coldWhite`, allowing calibration to RGBWW LED colours. (Homekit's warm white and cold white colours are used by default.) On/off may be set with `setOn` (otherwise "0,0,0,0,0" indicates off); brightness, hue, saturation and temperature topics are ignored. (Homekit's behaviour when a coloured (hue/saturation-supporting) light also attempts to support temperature can be unpredictable - so the RGBWW implementation does not use Homekit colour temperature.)
 
 ```javascript
 {
@@ -1046,6 +1048,7 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 Version 1.0.36
 + Fix to Valve remaining duration
++ Added experimental support for RGBWWCW lights (red, green, blue, warm_white and cold_white channels)
 
 Version 1.0.35
 + Added Valve (for Sprinkler, Shower and Faucet) - thanks, tokebas
