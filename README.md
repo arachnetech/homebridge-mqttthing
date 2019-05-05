@@ -206,6 +206,7 @@ Avoid the use of "/" in characteristics of the Information Service (e.g. serial 
    * [StatelessProgrammableSwitch](#statelessprogrammableswitch)
    * [Switch](#switch)
    * [Temperature Sensor](#temperature-sensor)
+   * [Thermostat](#thermostat)
    * [Valve (Sprinkler, Shower, Faucet)](#valve)
    * [Weather Station](#weather-station)
    * [Window](#window)
@@ -904,6 +905,44 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
 ```
 
 
+## Thermostat
+
+Current heating/cooling state can be **OFF**, **HEAT** or **COOL**. Target heating/cooling state can be **OFF**, **HEAT**, **COOL** or **AUTO**. To use different values, specify an array of strings in `heatingCoolingStateValues`.
+
+Temperature display units can be **CELSIUS** or **FARENHEIT**. To use different values, specify an array of strings in `temperatureDisplayUnitsValues`.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "thermostat",
+    "name": "<name of device>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "topics":
+    {
+        "getCurrentHeatingCoolingState":  "<topic used to report 'current heating/cooling state'>",
+        "setTargetHeatingCoolingState":   "<topic used to control 'target heating/cooling state'>",
+        "getTargetHeatingCoolingState":   "<topic used to report 'target heating/cooling state'>",
+        "getCurrentTemperature":          "<topic used to report 'current temperature'>",
+        "setTargetTemperature":           "<topic used to control 'target temperature'>",
+        "getTargetTemperature":           "<topic used to report 'target temperature'>",
+        "setTemperatureDisplayUnits":     "<topic used to control 'temperature display units'>",
+        "getTemperatureDisplayUnits":     "<topic used to report 'temperature display units'>",
+        "getCurrentRelativeHumidity":     "<topic used to report 'current relative humidity' (optional)>",
+        "setTargetRelativeHumidity":      "<topic used to control 'target relative humidity' (optional)>",
+        "getTargetRelativeHumidity":      "<topic used to report 'target relative humidity' (optional)>",
+        "setCoolingThresholdTemperature": "<topic used to control 'cooling threshold temperature' (optional)>",
+        "getCoolingThresholdTemperature": "<topic used to report 'cooling threshold temperature' (optional)>",
+        "setHeatingThresholdTemperature": "<topic used to control 'heating threshold temperature' (optional)>",
+        "getHeatingThresholdTemperature": "<topic used to report 'heating threshold temperature' (optional)>"
+    },
+    "heatingCoolingStateValues": "<array of values to be used to represent Off, Heat, Cool and Auto respectively (optional)>",
+    "temperatureDisplayUnitsValues": "<array of values to be used to represent Celsius and Farenheit respectively (optional)>"
+}
+```
+
+
 ## Valve
 
 `valveType` can be `"sprinkler"`, `"shower"` or `"faucet"`.
@@ -1045,6 +1084,9 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 
 # Release notes
+
+Version 1.0.37
++ Added Thermostat
 
 Version 1.0.36
 + Fix to Valve remaining duration

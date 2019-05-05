@@ -1128,10 +1128,34 @@ function makeThing(log, config) {
         }
     }
 
+    // Characteristic.TargetTemperature
+    function characteristic_TargetTemperature( service ) {
+        floatCharacteristic( service, 'targetTemperature', Characteristic.TargetTemperature,
+            config.topics.setTargetTemperature, config.topics.getTargetTemperature, 0 );
+    }
+
+    // Characteristic.CoolingThresholdTemperature
+    function characteristic_CoolingThresholdTemperature( service ) {
+        floatCharacteristic( service, 'coolingThresholdTemperature', Characteristic.CoolingThresholdTemperature,
+            config.topics.setCoolingThresholdTemperature, config.topics.getCoolingThresholdTemperature, 25 );
+    }
+
+    // Characteristic.HeatingThresholdTemperature
+    function characteristic_HeatingThresholdTemperature( service ) {
+        floatCharacteristic( service, 'heatingThresholdTemperature', Characteristic.HeatingThresholdTemperature,
+            config.topics.setHeatingThresholdTemperature, config.topics.getHeatingThresholdTemperature, 20 );
+    }
+    
     // Characteristic.CurrentRelativeHumidity
     function characteristic_CurrentRelativeHumidity(service) {
         floatCharacteristic(service, 'currentRelativeHumidity', Characteristic.CurrentRelativeHumidity,
             null, config.topics.getCurrentRelativeHumidity, 0 );
+    }
+
+    // Characteristic.TargetRelativeHumidity
+    function characteristic_TargetRelativeHumidity( service ) {
+        floatCharacteristic( service, 'targetRelativeHumidity', Characteristic.TargetRelativeHumitity,
+            config.topics.setTargetRelativeHumidity, config.toipcs.getTargetRelativeHumidity, 0 );
     }
 
     // History for CurrentRelativeHumidity (Eve-only)
@@ -1524,6 +1548,35 @@ function makeThing(log, config) {
     // Characteristic.CarbonDioxideLevel
     function characteristic_CarbonDioxidePeakLevel( service ) {
         floatCharacteristic( service, 'carbonDioxidePeak', Characteristic.CarbonDioxidePeakLevel, null, config.topics.getCarbonDioxidePeakLevel, 0 );
+    }
+
+    // Characteristic.CurrentHeatingCoolingState
+    function characteristic_CurrentHeatingCoolingState( service ) {
+        let values = config.heatingCoolingStateValues;
+        if( ! values ) {
+            values = [ 'OFF', 'HEAT', 'COOL' ];
+        }
+        multiCharacteristic( service, 'currentHeatingCoolingState', Characteristic.CurrentHeatingCoolingState, null, config.topics.getCurrentHeatingCoolingState, values, Characteristic.CurrentHeatingCoolingState.OFF );
+    }
+
+    // Characteristic.CurrentHeatingCoolingState
+    function characteristic_TargetHeatingCoolingState( service ) {
+        let values = config.heatingCoolingStateValues;
+        if( ! values ) {
+            values = [ 'OFF', 'HEAT', 'COOL', 'AUTO' ];
+        }
+        multiCharacteristic( service, 'targetHeatingCoolingState', Characteristic.TargetHeatingCoolingState, config.topics.setTargetHeatingCoolingState, config.topics.getTargetHeatingCoolingState, values, Characteristic.TargetHeatingCoolingState.OFF );
+    }
+
+    // Characteristic.TemperatureDisplayUnits
+    function characteristic_TemperatureDisplayUnits( service ) {
+        let values = config.temperatureDisplayUnitsValues;
+        if( ! values ) {
+            values = [ 'CELSIUS', 'FARENHEIT' ];
+        }
+        multiCharacteristic( service, 'temperatureDisplayUnits', Characteristic.TemperatureDisplayUnits, 
+            config.topics.setTemperatureDisplayUnits, config.topics.getTemperatureDisplayUnits, values,
+            Characteristic.TemperatureDisplayUnits.CELSIUS );
     }
 
     // Eve.Characteristic.CurrentConsumption [Watts] (Eve-only)
@@ -2095,6 +2148,25 @@ function makeThing(log, config) {
                 characteristic_RemainingDuration( service );
             }
             addSensorOptionalCharacteristics( service );
+        } else if( config.type == 'thermostat' ) {
+            service = new Service.Thermostat( name );
+            characteristic_CurrentHeatingCoolingState( service );
+            characteristic_TargetHeatingCoolingState( service );
+            characteristic_CurrentTemperature( service );
+            characteristic_TargetTemperature( service );
+            characteristic_TemperatureDisplayUnits( service );
+            if( config.topics.getCurrentRelativeHumidity ) {
+                characteristic_CurrentRelativeHumidity( service );
+            }
+            if( config.topics.getTargetRelativeHumidity || config.topics.setTargetRelativeHumidity ) {
+                characteristic_TargetRelativeHumidity( service );
+            }
+            if( config.topics.getCoolingThresholdTemperature || config.topics.setCoolingThresholdTemperature ) {
+                characteristic_CoolingThresholdTemperature( service );
+            }
+            if( config.topics.getHeatingThresholdTemperature || config.topics.setHeatingThresholdTemperature ) {
+                characteristic_HeatingThresholdTemperature( service );
+            }
         } else {
             log("ERROR: Unrecognized type: " + config.type);
         }

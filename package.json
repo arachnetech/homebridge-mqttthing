@@ -1,6 +1,6 @@
 {
   "name": "homebridge-mqttthing",
-  "version": "1.0.36",
+  "version": "1.0.37",
   "description": "Homebridge plugin supporting various services over MQTT",
   "main": "index.js",
   "scripts": {
@@ -54,7 +54,8 @@
     "valve",
     "sprinkler",
     "shower",
-    "faucet"
+    "faucet",
+    "thermostat"
   ],
   "author": "David Miller",
   "license": "Apache-2.0",

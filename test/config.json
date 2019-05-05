@@ -535,7 +535,7 @@
       "type": "valve",
       "valveType": "sprinkler",
       "name": "Sprinkler",
-      "url": "mqtt://192.168.179.5:1883",
+      "url": "http://192.168.10.35:1883",
       "topics": {
           "getActive": "test/sprinkler/getActive",
           "setActive": "test/sprinkler/setActive",
@@ -545,6 +545,24 @@
           "getRemainingDuration": "test/sprinkler/getRemainingDuration"
       },
       "integerValue": true
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "thermostat",
+      "name": "Thermostat",
+      "url": "http://192.168.10.35:1883",
+      "logMqtt": "true",
+      "topics": {
+        "getCurrentHeatingCoolingState": "test/thermostat/getCurrentState",
+        "setCurrentHeatingCoolingState": "test/thermostat/setCurrentState",
+        "getTargetHeatingCoolingState": "test/thermostat/getTargetState",
+        "setTargetHeatingCoolingState": "test/thermostat/setTargetState",
+        "getCurrentTemperature": "test/thermostat/getCurrentTemperature",
+        "setTargetTemperature": "test/thermostat/setTargetTemperature",
+        "getTargetTemperature": "test/thermostat/getTargetTemperature",
+        "setTemperatureDisplayUnits": "test/thermostat/setTemperatureDisplayUnits",
+        "getTemperatureDisplayUnits": "test/thermostat/getTemperatureDisplayUnits"
+      }
     }
   ]
 }
