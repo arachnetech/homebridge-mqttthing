@@ -911,6 +911,8 @@ Current heating/cooling state can be **OFF**, **HEAT** or **COOL**. Target heati
 
 Temperature display units can be **CELSIUS** or **FARENHEIT**. To use different values, specify an array of strings in `temperatureDisplayUnitsValues`.
 
+`minTemperature` and `maxTemperature` may optionally be used to change the minimum and maximum target temperatures that can be set from Homekit (defaulting to 10 and 38 respectively).
+
 ```javascript
 {
     "accessory": "mqttthing",
@@ -938,7 +940,9 @@ Temperature display units can be **CELSIUS** or **FARENHEIT**. To use different 
         "getHeatingThresholdTemperature": "<topic used to report 'heating threshold temperature' (optional)>"
     },
     "heatingCoolingStateValues": "<array of values to be used to represent Off, Heat, Cool and Auto respectively (optional)>",
-    "temperatureDisplayUnitsValues": "<array of values to be used to represent Celsius and Farenheit respectively (optional)>"
+    "temperatureDisplayUnitsValues": "<array of values to be used to represent Celsius and Farenheit respectively (optional)>",
+    "minTemperature": minimum_target_temperature,
+    "maxTemperature": maximum_taret_temperature
 }
 ```
 
@@ -1084,6 +1088,9 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 
 # Release notes
+
+Version 1.0.38
++ Thermostat: Allow minimum and maximum target temperature to be configured
 
 Version 1.0.37
 + Added Thermostat

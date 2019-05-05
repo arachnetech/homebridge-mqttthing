@@ -1132,6 +1132,17 @@ function makeThing(log, config) {
     function characteristic_TargetTemperature( service ) {
         floatCharacteristic( service, 'targetTemperature', Characteristic.TargetTemperature,
             config.topics.setTargetTemperature, config.topics.getTargetTemperature, 0 );
+
+        // custom min/max
+        if( config.minTemperature !== undefined || config.maxTemperature !== undefined ) {
+            var characteristic = service.getCharacteristic( Characteristic.TargetTemperature );
+            if( config.minTemperature !== undefined ) {
+                characteristic.props.minValue = config.minTemperature;
+            }
+            if( config.maxTemperature !== undefined ) {
+                characteristic.props.maxValue = config.maxTemperature;
+            }
+        }
     }
 
     // Characteristic.CoolingThresholdTemperature
