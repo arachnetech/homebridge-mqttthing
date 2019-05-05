@@ -291,7 +291,7 @@ Carbon dioxide detected state can be `NORMAL` or `ABNORMAL`. To use different va
 ```javascript
 {
     "accessory": "mqttthing",
-    "type": "airQualitySensor",
+    "type": "carbonDioxideSensor",
     "name": "<name of device>",
     "topics":
     {
@@ -303,7 +303,7 @@ Carbon dioxide detected state can be `NORMAL` or `ABNORMAL`. To use different va
         "getStatusTampered":            "<topic used to provide 'tampered' status (optional)>",
         "getStatusLowBattery":          "<topic used to provide 'low battery' status (optional)>"
     },
-    "getCarbonDioxideDetected": [ "normal-value", "abnormal-value" ]
+    "carbonDioxideDetectedValues": [ "normal-value", "abnormal-value" ]
 }
 ```
 
