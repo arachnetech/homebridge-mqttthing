@@ -118,8 +118,8 @@ function makeThing(log, config) {
     }
 
     function mqttPublish(topic, message) {
-        if( message === null ) {
-            return; // don't publish if message is null
+        if( message === null || topic === undefined) {
+            return; // don't publish if message is null or topic is undefined
         }
         if (typeof topic != 'string') {
             var extendedTopic = topic;
@@ -1692,7 +1692,13 @@ function makeThing(log, config) {
 
     // Characteristic.SetDuration
     function characteristic_SetDuration( service ) {
-        integerCharacteristic(service, 'setDuration', Characteristic.SetDuration, config.topics.setDuration, config.topics.getDuration, 10*60);
+        if ( !config.topics.setDuration ) { 
+            addCharacteristic(service, 'setDuration', Characteristic.SetDuration, 10*60, function(){
+                log.debug('set SetDuration to ' + state.setDuration + 's.');
+            });
+        } else {
+            integerCharacteristic(service, 'setDuration', Characteristic.SetDuration, config.topics.setDuration, config.topics.getDuration, 10*60);
+        }
     }
 
     // Characteristic.RemainingDuration
@@ -1711,16 +1717,43 @@ function makeThing(log, config) {
         charac.on('get', function (callback) {
             handleGetStateCallback( callback, getRemainingDuration() );
         });
+        var characActive = service.getCharacteristic(Characteristic.Active);
+
+        // duration timer function
+        var durationTimer = null;
+        function timerFunc() {
+            durationTimer = null;
+            state.active = false;
+            mqttPublish( config.topics.setActive, onOffValue( false ) );
+            characActive.updateValue( Characteristic.Active.INACTIVE );
+        }
 
         // update durationEndTime once when 'Active' changes to ACTIVE
         if (service.testCharacteristic(Characteristic.SetDuration)) {
-            service.getCharacteristic(Characteristic.Active).on('change', function (obj) {
-                if ( obj.newValue == Characteristic.Active.ACTIVE ) {
-                    state.durationEndTime = Math.floor(Date.now() / 1000) + state.setDuration;
-                }
-                charac.updateValue( getRemainingDuration() );
-            });
+            if (config.durationTimer) {
+                // add durationTimer (turn off timer)
+                characActive.on('change', function (obj) {
+                    if ( obj.newValue == Characteristic.Active.ACTIVE ) {
+                        state.durationEndTime = Math.floor(Date.now() / 1000) + state.setDuration;
+                        durationTimer = setTimeout( timerFunc, state.setDuration * 1000 );
+                    } else {
+                        if( durationTimer ) {
+                            clearTimeout( durationTimer );
+                        }
+                    }
+                    charac.updateValue( getRemainingDuration() );    
+                });
+            } else {
+                // device will handle the timer by itfelf
+                characActive.on('change', function (obj) {
+                    if ( obj.newValue == Characteristic.Active.ACTIVE ) {
+                        state.durationEndTime = Math.floor(Date.now() / 1000) + state.setDuration;
+                    }
+                    charac.updateValue( getRemainingDuration() );
+                });
+            }
         } else if (config.turnOffAfterms) {
+            // no SetDuration Characteristic configured, but turnOffAfterms
             service.getCharacteristic(Characteristic.Active).on('change', function (obj) {
                 if ( obj.newValue == Characteristic.Active.ACTIVE ) {
                     state.durationEndTime = Math.floor((Date.now() + config.turnOffAfterms) / 1000);
@@ -1737,16 +1770,39 @@ function makeThing(log, config) {
                 let newEndTime = state.durationEndTime + (obj.newValue - obj.oldValue);
                 state.durationEndTime = (newEndTime < maxEndTime) ? newEndTime : maxEndTime;
                 charac.updateValue( getRemainingDuration() );
+                if( durationTimer ) {
+                    // update timer
+                    clearTimeout( durationTimer );
+                    durationTimer = setTimeout( timerFunc, getRemainingDuration() * 1000 );
+                }
             });
         }
 
-        // subscribe to get topic
+        // subscribe to get topic, update remainingDuration
         if (config.topics.getRemainingDuration) {
             mqttSubscribe(config.topics.getRemainingDuration, function (topic, message) {
                 let remainingDuration = parseInt(message);
                 state.durationEndTime = Math.floor(Date.now() / 1000) + remainingDuration;
-                charac.updateValue(remainingDuration);
+                charac.updateValue( remainingDuration );
+                if( durationTimer ) {
+                    // update timer
+                    clearTimeout( durationTimer );
+                    durationTimer = setTimeout( timerFunc, remainingDuration * 1000 );
+                }
             });
+        }
+    }
+
+    // Characteristic.ValveType
+    function characteristic_ValveType( service ) {
+        if (config.valveType === 'sprinkler') {
+            service.setCharacteristic(Characteristic.ValveType, Characteristic.ValveType.IRRIGATION);
+        } else if (config.valveType === 'shower') {
+            service.setCharacteristic(Characteristic.ValveType, Characteristic.ValveType.SHOWER_HEAD);
+        } else if (config.valveType === 'faucet') {
+            service.setCharacteristic(Characteristic.ValveType, Characteristic.ValveType.WATER_FAUCET);
+        } else {
+            service.setCharacteristic(Characteristic.ValveType, Characteristic.ValveType.GENERIC_VALVE);
         }
     }
 
@@ -2141,18 +2197,10 @@ function makeThing(log, config) {
             }
         } else if( config.type == 'valve' ) {
             service = new Service.Valve( name );
-            if (config.valveType === 'sprinkler') {
-                service.setCharacteristic(Characteristic.ValveType, Characteristic.ValveType.IRRIGATION);
-            } else if (config.valveType === 'shower') {
-                service.setCharacteristic(Characteristic.ValveType, Characteristic.ValveType.SHOWER_HEAD);
-            } else if (config.valveType === 'faucet') {
-                service.setCharacteristic(Characteristic.ValveType, Characteristic.ValveType.WATER_FAUCET);
-            } else {
-                service.setCharacteristic(Characteristic.ValveType, Characteristic.ValveType.GENERIC_VALVE);
-            }
+            characteristic_ValveType ( service );
             characteristic_Active( service );
             characteristic_InUse( service );
-            if ( config.topics.getDuration ) {
+            if ( config.topics.setDuration || config.durationTimer ) {
                 characteristic_SetDuration( service );
                 characteristic_RemainingDuration( service );
             } else if ( config.topics.getRemainingDuration || config.turnOffAfterms ) {

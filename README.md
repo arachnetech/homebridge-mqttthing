@@ -951,9 +951,11 @@ Temperature display units can be **CELSIUS** or **FARENHEIT**. To use different 
 
 `valveType` can be `"sprinkler"`, `"shower"` or `"faucet"`.
 
-With the `setDuration`/`getDuration` you can set the standard duration at the valve. In this case the valve itself is responsible for switching off after this time. The remaining time is shown in HomeKit even if no `getRemainingDuration` is configured. `getRemainingDuration` can be used to update the remaining time. Using the set duration value to turn off the valve automatically by this plugin is not supported yet.
+If `durationTimer` is set to **true**, this plugin will provide additional characteristics to set the standard duration for the valve and will stop the water flow after this time.
 
-Configuring `turnOffAfterms` causes the valve to turn off automatically the specified number of milliseconds after it is turned on by homekit. It can be used instead of `setDuration`/`getDuration`. 
+If the device itself provides duration timing via MQTT or if you want to query or set the duration via MQTT, you can make use of `setDuration`/`getDuration`. The remaining time is shown in HomeKit even if no `getRemainingDuration` is configured. `getRemainingDuration` can be used to update the remaining time, if the duration is changed at the device itself in some way.
+
+Configuring `turnOffAfterms` causes the valve to turn off automatically the specified (fixed!) number of milliseconds after it is turned on by homekit. It can be used instead of `durationTimer` or `setDuration`/`getDuration`. 
 
 ```javascript
 {
@@ -970,9 +972,9 @@ Configuring `turnOffAfterms` causes the valve to turn off automatically the spec
         "setActive":            "<topic to set the target status>",
         "getActive":            "<topic to get the target status>",
         "getInUse":             "<topic to get the current status>",
-        "setDuration":          "<topic used to set default duration (seconds) (optional)>",
-        "getDuration":          "<topic used to get default duration (seconds) (optional)>",
-        "getRemainingDuration": "<topic used to get remaining duration (seconds) (optional)>",
+        "setDuration":          "<topic used to set default duration (seconds) (optional, with external timer)>",
+        "getDuration":          "<topic used to get default duration (seconds) (optional, with external timer)>",
+        "getRemainingDuration": "<topic used to get remaining duration (seconds) (optional, with external timer)>",
         "getStatusActive":      "<topic used to provide 'active' status (optional)>",
         "getStatusFault":       "<topic used to provide 'fault' status (optional)>",
         "getStatusTampered":    "<topic used to provide 'tampered' status (optional)>",
@@ -981,7 +983,8 @@ Configuring `turnOffAfterms` causes the valve to turn off automatically the spec
     "integerValue":     "<true to use 1|0 instead of true|false default onValue and offValue>",
     "onValue":          "<value representing on (optional)>",
     "offValue":         "<value representing off (optional)>",
-    "turnOffAfterms":   "<milliseconds after which to turn off automatically (optional)>"
+    "durationTimer":    "<true to enable duration timer (optional, recommended)>",
+    "turnOffAfterms":   "<milliseconds after which to turn off automatically (optional, fix duration)>"
 }
 ```
 
