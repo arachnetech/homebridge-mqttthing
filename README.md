@@ -1092,6 +1092,9 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 # Release notes
 
+Version 1.0.39
++ Valve: Added duration timer (thanks, tokebas)
+
 Version 1.0.38
 + Thermostat: Allow minimum and maximum target temperature to be configured
 
