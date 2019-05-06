@@ -544,7 +544,8 @@
           "setDuration": "test/sprinkler/setDuration",
           "getRemainingDuration": "test/sprinkler/getRemainingDuration"
       },
-      "integerValue": true
+      "integerValue": true,
+      "durationTimer": true
     },
     {
       "accessory": "mqttthing",
