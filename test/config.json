@@ -565,7 +565,8 @@
         "getTemperatureDisplayUnits": "test/thermostat/getTemperatureDisplayUnits"
       },
       "minTemperature": 5,
-      "maxTemperature": 27.5
+      "maxTemperature": 27.5,
+      "restrictHeatingCoolingState": [ 0, 1 ]
     }
   ]
 }

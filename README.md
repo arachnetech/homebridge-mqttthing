@@ -909,9 +909,14 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
 
 Current heating/cooling state can be **OFF**, **HEAT** or **COOL**. Target heating/cooling state can be **OFF**, **HEAT**, **COOL** or **AUTO**. To use different values, specify an array of strings in `heatingCoolingStateValues`.
 
-Temperature display units can be **CELSIUS** or **FARENHEIT**. To use different values, specify an array of strings in `temperatureDisplayUnitsValues`.
+Temperature display units can be **CELSIUS** or **FAHRENHEIT**. To use different values, specify an array of strings in `temperatureDisplayUnitsValues`.
 
 `minTemperature` and `maxTemperature` may optionally be used to change the minimum and maximum target temperatures that can be set from Homekit (defaulting to 10 and 38 respectively).
+
+Configure `restrictHeatingCoolingState` to an array of integers to restrict the target heating/cooling states made available by Homekit, where 0 represents OFF, 1 HEAT, 2 COOL and 3 AUTO, for example:
+
+   * `"restrictHeatingCoolingState": [0, 1, 2]` - for OFF, HEAT and COOL (but no AUTO)
+   * `"restrictHeatingCoolingState": [0, 1]` - for OFF or HEAT only
 
 ```javascript
 {
@@ -940,9 +945,10 @@ Temperature display units can be **CELSIUS** or **FARENHEIT**. To use different 
         "getHeatingThresholdTemperature": "<topic used to report 'heating threshold temperature' (optional)>"
     },
     "heatingCoolingStateValues": "<array of values to be used to represent Off, Heat, Cool and Auto respectively (optional)>",
-    "temperatureDisplayUnitsValues": "<array of values to be used to represent Celsius and Farenheit respectively (optional)>",
+    "temperatureDisplayUnitsValues": "<array of values to be used to represent Celsius and Fahrenheit respectively (optional)>",
     "minTemperature": minimum_target_temperature,
-    "maxTemperature": maximum_taret_temperature
+    "maxTemperature": maximum_taret_temperature,
+    "restrictHeatingCoolingState": "<array of allowed values - see notes above (optional)>"
 }
 ```
 
@@ -1091,6 +1097,9 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 
 # Release notes
+
+Version 1.0.40
++ Thermostat: Allow target heating/cooling states to be restricted
 
 Version 1.0.39
 + Valve: Added duration timer (thanks, tokebas)

@@ -1577,13 +1577,17 @@ function makeThing(log, config) {
             values = [ 'OFF', 'HEAT', 'COOL', 'AUTO' ];
         }
         multiCharacteristic( service, 'targetHeatingCoolingState', Characteristic.TargetHeatingCoolingState, config.topics.setTargetHeatingCoolingState, config.topics.getTargetHeatingCoolingState, values, Characteristic.TargetHeatingCoolingState.OFF );
+        if( config.restrictHeatingCoolingState ) {
+            let characteristic = service.getCharacteristic( Characteristic.TargetHeatingCoolingState );
+            characteristic.props.validValues = config.restrictHeatingCoolingState;
+        }
     }
 
     // Characteristic.TemperatureDisplayUnits
     function characteristic_TemperatureDisplayUnits( service ) {
         let values = config.temperatureDisplayUnitsValues;
         if( ! values ) {
-            values = [ 'CELSIUS', 'FARENHEIT' ];
+            values = [ 'CELSIUS', 'FAHRENHEIT' ];
         }
         multiCharacteristic( service, 'temperatureDisplayUnits', Characteristic.TemperatureDisplayUnits, 
             config.topics.setTemperatureDisplayUnits, config.topics.getTemperatureDisplayUnits, values,
