@@ -853,6 +853,83 @@ function makeThing(log, config) {
         }
     }
 
+    function characteristics_WhiteLight( service ) {
+        state.white = 0;
+        var hexPrefix = null;
+        if( config.hexPrefix ) {
+            hexPrefix = config.hexPrefix;
+        } else if( config.hex ) {
+            hexPrefix = '';
+        }
+
+        function publish() {
+            var bri = state.bri;
+            if( ! state.on ) {
+                bri = 0;
+            }
+            var white = Math.min( Math.ceil( bri * 2.55 ), 255 );
+            var msg;
+            if( hexPrefix == null ) {
+                msg = white;
+            } else {
+                msg = hexPrefix + toHex( white );
+            }
+            mqttPublish( config.topics.setWhite, msg );
+        }
+
+        addCharacteristic( service, 'on', Characteristic.On, 0, function() {
+            if( state.on && state.bri == 0 ) {
+                state.bri = 100;
+            }
+            publish();
+        } );
+
+        addCharacteristic( service, 'bri', Characteristic.Brightness, 100, function() {
+            if( state.bri > 0 && ! state.on ) {
+                state.on = true;
+            }
+
+            publish();
+        } );
+
+        if( config.topics.getWhite ) {
+            mqttSubscribe( config.topics.getWhite, function( topic, message ) {
+                var ok = false;
+                var white;
+                if( hexPrefix == null ) {
+                    var comps = ('' + message ).split( ',' );
+                    if( comps.length == 1 ) {
+                        white = parseInt( comps[ 0 ] );
+                        ok = true;
+                    }
+                } else {
+                     // hex
+                     if( message.length == hexPrefix.length + 2 ) {
+                         message = '' + message;
+                         if( message.substr( 0, hexPrefix.length ) == hexPrefix ) {
+                            white = parseInt( message.substr( hexPrefix.length, 2 ), 16 );
+                            ok = true;
+                        }
+                     }
+                }
+                if( ok ) {
+                    let bri = Math.min( Math.floor( white / 2.55 ), 100 );
+                    var on = bri > 0 ? 1 : 0;
+
+                    if( on != state.on ) {
+                        state.on = on;
+                        service.getCharacteristic( Characteristic.On ).setValue( on, undefined, c_mySetContext );
+                    }
+
+                    if( bri != state.bri ) {
+                        state.bri = bri;
+                        service.getCharacteristic( Characteristic.Brightness ).setValue( bri, undefined, c_mySetContext );
+                    }
+                }
+            } );
+        }
+    }
+
     function floatCharacteristic(service, property, characteristic, setTopic, getTopic, initialValue) {
         // default state
         state[property] = initialValue;
@@ -1853,6 +1930,8 @@ function makeThing(log, config) {
                 characteristics_HSVLight(service);
             } else if( config.topics.setRGB || config.topics.setRGBW || config.topics.setRGBWW ) {
                 characteristics_RGBLight(service);
+            } else if( config.topics.setWhite ) {
+                characteristics_WhiteLight( service );
             } else {
                 characteristic_On(service);
                 if (config.topics.setBrightness) {

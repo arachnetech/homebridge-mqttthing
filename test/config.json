@@ -128,6 +128,17 @@
     {
       "accessory": "mqttthing",
       "type": "lightbulb",
+      "name": "Test White Light",
+      "url": "http://192.168.10.35:1883",
+      "topics": {
+        "getWhite": "test/whitelight/white",
+        "setWhite": "test/whitelight/white/set"
+      },
+      "logMqtt": true
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "lightbulb",
       "name": "Test ColorTemperature Light",
       "url": "http://192.168.10.35:1883",
       "topics": {
