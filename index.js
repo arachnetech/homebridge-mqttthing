@@ -171,11 +171,11 @@ function makeThing(log, config) {
     // The states of our characteristics
     var state = {};
 
-    function makeConfirmedPublisher( setTopic, getTopic ) {
+    function makeConfirmedPublisher( setTopic, getTopic, makeConfirmed ) {
 
         // if confirmation isn't being used, just return a simple publishing function
-        if( ! config.confirmationPeriodms || ! getTopic ) {
-            // no confirmation
+        if( ! config.confirmationPeriodms || ! getTopic || ! makeConfirmed ) {
+            // no confirmation - return generic publishing function
             return function( message ) {
                 mqttPublish( setTopic, message );
             }
@@ -287,14 +287,7 @@ function makeThing(log, config) {
 
     function booleanCharacteristic(service, property, characteristic, setTopic, getTopic, initialValue, mapValueFunc, turnOffAfterms, resetStateAfterms, enableConfirmation) {
 
-        var publish;
-        if( enableConfirmation ) {
-            publish = makeConfirmedPublisher( setTopic, getTopic );
-        } else {
-            publish = function( message ) {
-                mqttPublish( setTopic, message );
-            }
-        }
+        var publish = makeConfirmedPublisher( setTopic, getTopic, enableConfirmation );
 
         // auto-turn-off and reset-state timers
         var autoOffTimer = null;
@@ -606,7 +599,7 @@ function makeThing(log, config) {
         }
     }
 
-    function calcWhiteFactor1( rgbin, white ) {
+    /*function calcWhiteFactor1( rgbin, white ) {
         // scale rgb value to full brightness as comparing colours
         let compmax = Math.max( rgbin.r, rgbin.g, rgbin.b );
         if( compmax < 1 ) {
@@ -627,7 +620,7 @@ function makeThing(log, config) {
         }
 
         return Math.min( Math.max( 0, Math.min( rf, gf, bf ) ), 1 );
-    }
+    }*/
 
     function calcWhiteFactor2( rgbin, white ) {
         // scale rgb value to full brightness as comparing colours
@@ -721,12 +714,12 @@ function makeThing(log, config) {
             var rgb = ScaledHSVtoRGB( state.hue, state.sat, bri );
 
             if( wwcwComps ) {
-                console.log( rgb );
+                //console.log( rgb );
                 // calculate warm-white and cold-white factors (0-1 indicating proportion of warm/cold white in colour)
                 let warmFactor = calcWhiteFactor( rgb, warmWhiteRGB );
                 let coldFactor = calcWhiteFactor( rgb, coldWhiteRGB );
-                console.log( "wf: " + warmFactor );
-                console.log( "cf: " + coldFactor );
+                //console.log( "wf: " + warmFactor );
+                //console.log( "cf: " + coldFactor );
                 // sum must be below 1
                 let whiteFactor = warmFactor + coldFactor;
                 if( whiteFactor > 1 ) {
@@ -737,8 +730,8 @@ function makeThing(log, config) {
                 // manipulate RGB values
                 rgb.ww = Math.floor(warmFactor * 255);
                 rgb.cw = Math.floor(coldFactor * 255);
-                console.log( "ww: " + rgb.ww );
-                console.log( "cw: " + rgb.cw );
+                //console.log( "ww: " + rgb.ww );
+                //console.log( "cw: " + rgb.cw );
                 /*rgb.r = Math.floor( rgb.r * ( 1 - whiteFactor ) );
                 rgb.g = Math.floor( rgb.g * ( 1 - whiteFactor ) );
                 rgb.b = Math.floor( rgb.b * ( 1 - whiteFactor ) );*/
@@ -1851,7 +1844,7 @@ function makeThing(log, config) {
     // Characteristic.SetDuration
     function characteristic_SetDuration( service ) {
         if ( !config.topics.setDuration ) { 
-            addCharacteristic(service, 'setDuration', Characteristic.SetDuration, 10*60, function(){
+            addCharacteristic(service, 'setDuration', Characteristic.SetDuration, 10*60, function() {
                 log.debug('set SetDuration to ' + state.setDuration + 's.');
             });
         } else {
@@ -2372,7 +2365,7 @@ function makeThing(log, config) {
             }
         } else if( config.type == 'valve' ) {
             service = new Service.Valve( name );
-            characteristic_ValveType ( service );
+            characteristic_ValveType( service );
             characteristic_Active( service );
             characteristic_InUse( service );
             if ( config.topics.setDuration || config.durationTimer ) {
@@ -2424,7 +2417,7 @@ function makeThing(log, config) {
                 config.inputs.forEach( function( input, index ) {
                     let inputName = input.name || 'Input ' + inputId;
                     let inputId = index + 1;
-                    let inputSvc = new Service.InputSource( inputName , inputId );
+                    let inputSvc = new Service.InputSource( inputName, inputId );
                     inputSvc.isHiddenService = true;  // not sure if necessary
                     service.addLinkedService(inputSvc);  // inputSvc must be linked to main service
                     inputSvc.setCharacteristic(Characteristic.Identifier, inputId);

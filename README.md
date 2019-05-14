@@ -1157,7 +1157,8 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 # Release notes
 
 Version 1.0.42
-+ Add publishing confirmation (`setOn` message must be echoed to `getOn` topic to confirm that it has been processed by the accessory), with automatic republishing
++ Added publishing confirmation (`setOn` message must be echoed to `getOn` topic to confirm that it has been processed by the accessory), with automatic republishing
++ Added Television (thanks, tobekas)
 
 Version 1.0.41
 + Light: Add option to control dimmable white light through integer in range 0-255, so that one channel of an RGB or RGBW controller can be used more easily for a white light
@@ -1166,7 +1167,7 @@ Version 1.0.40
 + Thermostat: Allow target heating/cooling states to be restricted
 
 Version 1.0.39
-+ Valve: Added duration timer (thanks, tokebas)
++ Valve: Added duration timer (thanks, tobekas)
 
 Version 1.0.38
 + Thermostat: Allow minimum and maximum target temperature to be configured
@@ -1179,10 +1180,10 @@ Version 1.0.36
 + Added experimental support for RGBWWCW lights (red, green, blue, warm_white and cold_white channels)
 
 Version 1.0.35
-+ Added Valve (for Sprinkler, Shower and Faucet) - thanks, tokebas
++ Added Valve (for Sprinkler, Shower and Faucet) - thanks, tobekas
 
 Version 1.0.34
-+ Added Air Pressure Sensor (thanks, tokebas)
++ Added Air Pressure Sensor (thanks, tobekas)
 + Added Weather Station with custom Eve characteristics (thanks, tobekas)
 + Fakegato-History fix
 
@@ -1193,12 +1194,12 @@ Version 1.0.32
 + Added resetStateAfterms option for contact sensor, leak sensor and smoke sensor
 
 Version 1.0.31
-+ Added Eve history support for outlet power consumption (thanks, tokebas)
++ Added Eve history support for outlet power consumption (thanks, tobekas)
 + Wrap exception handling around 'apply' functions (used for encoding/decoding MQTT messages), so that errors don't crash Homebridge and messages that can't be decoded are skipped
 
 Version 1.0.30
 + Added Elgato history support for AirQuality (thanks, sieren)
-+ Extended Eve history support (thanks, tokebas)
++ Extended Eve history support (thanks, tobekas)
 
 Version 1.0.29
 + Added history support for Eve App (only) using fakegato-history. (Thanks, tobekas!)

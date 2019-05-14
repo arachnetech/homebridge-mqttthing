@@ -9,7 +9,6 @@ module.exports = {
     },
     "rules": {
         "accessor-pairs": "error",
-        "array-bracket-newline": "error",
         "array-bracket-spacing": "off",
         "array-callback-return": "error",
         "array-element-newline": "off",
@@ -137,7 +136,6 @@ module.exports = {
         "no-multi-str": "error",
         "no-multiple-empty-lines": "error",
         "no-native-reassign": "error",
-        "no-negated-condition": "error",
         "no-negated-in-lhs": "error",
         "no-nested-ternary": "error",
         "no-new": "error",
@@ -201,10 +199,6 @@ module.exports = {
         "object-shorthand": "off",
         "one-var": "off",
         "one-var-declaration-per-line": "off",
-        "operator-assignment": [
-            "error",
-            "always"
-        ],
         "operator-linebreak": "error",
         "padded-blocks": "off",
         "padding-line-between-statements": "error",
