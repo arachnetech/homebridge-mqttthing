@@ -1887,6 +1887,21 @@ function makeThing(log, config) {
         }
     }
 
+    // Characteristic.ActiveIdentifier
+    function characteristic_ActiveIdentifier( service, values ) {
+        multiCharacteristic( service, 'activeIdentifier', Characteristic.ActiveIdentifier, config.topics.setActiveInput, config.topics.getActiveInput, values, 0 );
+    }
+
+    // Characteristic.RemoteKey
+    function characteristic_RemoteKey( service ) {
+        let values = config.remoteKeyValues;
+        if( ! values ) {
+            values = [ 'REWIND', 'FAST_FORWARD', 'NEXT_TRACK', 'PREVIOUS_TRACK', 'UP', 'DOWN', 'LEFT', 'RIGHT', 
+                'SELECT', 'BACK', 'EXIT', 'PLAY_PAUSE', '12', '13', '14', 'INFO' ];
+        }
+        multiCharacteristic( service, 'remoteKey', Characteristic.RemoteKey, config.topics.setRemoteKey, undefined, values, null, true );
+    }
+
     // add optional sensor characteristics
     function addSensorOptionalCharacteristics(service) {
         if (config.topics.getStatusActive) {
@@ -2308,6 +2323,50 @@ function makeThing(log, config) {
             }
             if( config.topics.getHeatingThresholdTemperature || config.topics.setHeatingThresholdTemperature ) {
                 characteristic_HeatingThresholdTemperature( service );
+            }
+        } else if( config.type == 'television' ) {
+            service = new Service.Television( name );
+            service.isPrimaryService = true;
+            characteristic_Active( service );
+            service.setCharacteristic(Characteristic.ActiveIdentifier, 0);
+            service.setCharacteristic(Characteristic.ConfiguredName, name);
+            service.setCharacteristic(Characteristic.SleepDiscoveryMode, Characteristic.SleepDiscoveryMode.ALWAYS_DISCOVERABLE);
+            // service.setCharacteristic(Characteristic.Brightness, XXX);  // no impact?
+            // service.setCharacteristic(Characteristic.ClosedCaptions, XXX);  // no impact?
+            // service.setCharacteristic(Characteristic.CurrentMediaState, XXX);  // no impact?
+            // service.setCharacteristic(Characteristic.TargetMediaState, XXX);  // no impact?
+            // service.setCharacteristic(Characteristic.PictureMode, XXX);  // no impact?
+            // service.addCharacteristic(Characteristic.PowerModeSelection);  // this would add a button in TV settings
+            characteristic_RemoteKey( service );
+
+            services = [ service ];
+
+            if (config.inputs) {
+                var inputValues = [ 'NONE' ];   // MQTT values for ActiveIdentifier
+                var displayOrderTlvArray = [];  // for specific order instead of default alphabetical ordering
+                config.inputs.forEach( function( input, index ) {
+                    let inputName = input.name || 'Input ' + inputId;
+                    let inputId = index + 1;
+                    let inputSvc = new Service.InputSource( inputName , inputId );
+                    inputSvc.isHiddenService = true;  // not sure if necessary
+                    service.addLinkedService(inputSvc);  // inputSvc must be linked to main service
+                    inputSvc.setCharacteristic(Characteristic.Identifier, inputId);
+                    inputSvc.setCharacteristic(Characteristic.ConfiguredName, inputName);
+                    inputSvc.setCharacteristic(Characteristic.IsConfigured, Characteristic.IsConfigured.CONFIGURED);  // necessary for input to appear
+                    inputSvc.setCharacteristic(Characteristic.InputDeviceType, Characteristic.InputDeviceType.OTHER); // no impact?
+                    inputSvc.setCharacteristic(Characteristic.InputSourceType, Characteristic.InputSourceType.OTHER); // no impact?
+                    var visibilityStateProperty = 'input' + inputId + '-visible';
+                    addCharacteristic(inputSvc, visibilityStateProperty, Characteristic.TargetVisibilityState, Characteristic.TargetVisibilityState.SHOWN, function() {
+                        // change CurrentVisibilityState when TargetVisibilityState changes
+                        inputSvc.setCharacteristic(Characteristic.CurrentVisibilityState, state[visibilityStateProperty]);
+                    });
+                    inputValues.push(input.value || inputId);
+                    displayOrderTlvArray.push(1, 1, inputId);  // type = 1 ("Identifier"), length = 1 Byte, Identifier value
+                    services.push(inputSvc);
+                });
+                characteristic_ActiveIdentifier( service, inputValues );  // for selecting inputs
+                var displayOrderTlv = new Buffer.from(displayOrderTlvArray).toString('base64');
+                service.setCharacteristic(Characteristic.DisplayOrder, displayOrderTlv);
             }
         } else {
             log("ERROR: Unrecognized type: " + config.type);
