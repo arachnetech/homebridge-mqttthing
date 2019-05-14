@@ -205,6 +205,7 @@ Avoid the use of "/" in characteristics of the Information Service (e.g. serial 
    * [Speaker](#speaker)
    * [StatelessProgrammableSwitch](#statelessprogrammableswitch)
    * [Switch](#switch)
+   * [Television](#television)
    * [Temperature Sensor](#temperature-sensor)
    * [Thermostat](#thermostat)
    * [Valve (Sprinkler, Shower, Faucet)](#valve)
@@ -877,6 +878,47 @@ Configuring `resetStateAfterms` causes the switch state as reported through the 
     "offValue": "<value representing off (optional)>",
     "turnOffAfterms": "<milliseconds after which to turn off automatically (optional)>",
     "resetStateAfterms": "<milliseconds after which to reset state automatically (optional)>"
+}
+```
+
+
+## Television
+
+Different input sources (Live TV, HDMI1, HDMI2, ...) can be defined within the array `inputs` (optional). If this is not used, `setActiveInput` and `getActiveInput` have no effect.
+
+To send remote key commands (`setRemoteKey`), you can use the remote control within the (iOS) control center.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "television",
+    "name": "<name of TV>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "caption": "<label (optional)>",
+    "topics":
+    {
+        "setActive":            "<topic to set the status>",
+        "getActive":            "<topic to get the status>",
+        "setActiveInput":       "<topic to set the active input source (optional)>",
+        "getActiveInput":       "<topic to get the active input source (optional)>",
+        "setRemoteKey":         "<topic for publishing remote key actions (optional)>"
+    },
+    "inputs": [
+        {
+            "name":     "<name for first input source>",
+            "value":    "<MQTT value for first input source>"
+        },
+        {
+            "name":     "<name for second input source>",
+            "value":    "<MQTT value for second input source>"
+        },
+        ...
+    ],
+    "integerValue":     "<true to use 1|0 instead of true|false default onValue and offValue>",
+    "onValue":          "<value representing on (optional)>",
+    "offValue":         "<value representing off (optional)>",
 }
 ```
 

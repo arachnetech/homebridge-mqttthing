@@ -578,6 +578,43 @@
       "minTemperature": 5,
       "maxTemperature": 27.5,
       "restrictHeatingCoolingState": [ 0, 1 ]
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "television",
+      "name": "Television",
+      "url": "http://192.168.10.35:1883",
+      "topics": {
+        "setActive": "test/television/setActive",
+        "getActive": "test/television/getActive",
+        "setActiveInput": "test/television/setActiveInput",
+        "getActiveInput": "test/television/getActiveInput",
+        "setRemoteKey": "test/television/setRemoteKey"
+      },
+      "inputs": [
+        {
+          "name": "Live TV",
+          "value": "TV"
+        },
+        {
+          "name": "HDMI 1",
+          "value": "HDMI1"
+        },
+        {
+          "name": "HDMI 2",
+          "value": "HDMI2"
+        },
+        {
+          "name": "HDMI 3",
+          "value": "HDMI3"
+        },
+        {
+          "name": "Amazon Prime Video",
+          "value": "AMAZON"
+        }
+      ],
+      "logMqtt": true,
+      "integerValue": true
     }
   ]
 }
