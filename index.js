@@ -1023,8 +1023,8 @@ function makeThing(log, config) {
                     if (mqttVal !== undefined) {
                         mqttPublish(setTopic, mqttVal);
                     }
-                    callback();
                 }
+                callback();
             });
         }
 
@@ -1647,7 +1647,7 @@ function makeThing(log, config) {
         multiCharacteristic( service, 'currentHeatingCoolingState', Characteristic.CurrentHeatingCoolingState, null, config.topics.getCurrentHeatingCoolingState, values, Characteristic.CurrentHeatingCoolingState.OFF );
     }
 
-    // Characteristic.CurrentHeatingCoolingState
+    // Characteristic.TargetHeatingCoolingState
     function characteristic_TargetHeatingCoolingState( service ) {
         let values = config.heatingCoolingStateValues;
         if( ! values ) {
