@@ -49,7 +49,9 @@ The following settings apply to all device types:
     "startPub": {
         "topic1": "message1",
         "topic2": "message2"
-    }
+    },
+    "confirmationPeriodms": 1000,
+    "retryLimit": 5
 }
 ```
 
@@ -181,6 +183,11 @@ Alternatively, you can specify `history` as an object with some properties:
 
 Avoid the use of "/" in characteristics of the Information Service (e.g. serial number, manufacturer, etc.), since this may cause data to not appear in the history. Note that if your Eve.app is controlling more than one accessory for each type, the serial number should be unique, otherwise Eve.app will merge the histories.
 
+### Confirmation
+
+Some accessories support confirmation for some of their 'set' topics. When enabled by configuring `confirmationPeriodms`, the accessory *must* echo anything sent to appropriate `setX` subject(s) to the corresponding `getX` subject(s). Where homebridge-mqttthing doesn't see a confirmation within the configured configuration period (specified in milliseconds), it will publish the set message again. Messages will be republished up to 3 times by default, but this can be changed by also specifying `retryLimit`.
+
+Accessories supporting message confirmation list the topics supporting message confirmation below.
 
 # Supported Accessories
 
@@ -376,6 +383,8 @@ Fan rotation direction is 0 for clockwise or 1 for anticlockwise.
 
 Fan rotation speed is an integer between 0 (off) and 100 (full speed).
 
+Set `confirmationPeriodms` to enable publishing confirmation for `setOn`/`getOn`. The accessory must echo messages it receives through the `setOn` subject to the `getOn` subject, otherwise homebridge-mqttthing will mark it as unresponsive and republish on the `setOn` subject.
+
 ```javascript
 {
     "accessory": "mqttthing",
@@ -400,7 +409,6 @@ Fan rotation speed is an integer between 0 (off) and 100 (full speed).
     "turnOffAfterms": "<milliseconds after which to turn off automatically (optional)>"
 }
 ```
-
 
 ## Garage Door Opener
 
@@ -521,6 +529,8 @@ Configuring `topics.setWhite` without `topics.setRGB` will give a dimmable white
 If `topics.setRGBW` is populated, a combined value is used in the format red,green,blue,white (ranging from 0-255). The minimum of red, green and blue is subtracted from all three colour channels and sent to the white channel instead. On/off may be set with `setOn` (otherwise "0,0,0,0" indicates off); brightness, hue, saturation and temperature topics are ignored.
 
 If `topics.setRGBWW` is populated, a combined value is used in the format red,green,blue,warm_white,cold_white (each component ranging from 0-255). Warm and cold white components are set based on the colour values published by Homekit from the _Temperature_ control, and after warm and cold white are extracted any remaining white level in the RGB values is sent equally to both white channels. The RGB values used for warm white and cold white extraction can be configured with `warmWhite` and `coldWhite`, allowing calibration to RGBWW LED colours. (Homekit's warm white and cold white colours are used by default.) On/off may be set with `setOn` (otherwise "0,0,0,0,0" indicates off); brightness, hue, saturation and temperature topics are ignored. (Homekit's behaviour when a coloured (hue/saturation-supporting) light also attempts to support temperature can be unpredictable - so the RGBWW implementation does not use Homekit colour temperature.)
+
+Set `confirmationPeriodms` to enable publishing confirmation for `setOn`/`getOn`. The accessory must echo messages it receives through the `setOn` subject to the `getOn` subject, otherwise homebridge-mqttthing will mark it as unresponsive and republish on the `setOn` subject.
 
 ```javascript
 {
@@ -710,6 +720,8 @@ An outlet can be configured as a light or as a fan in the Home app.
 If `history` is enabled and no `getTotalConsumption` topic is defined, this plugin will count the total consumption (kWh) by itself and offers the possibility to reset the counter from the Eve app.
 The interval of `getWatts` data updates should be less then 10min and at best periodic, in order to avoid averaging errors for the history entries.
 
+Set `confirmationPeriodms` to enable publishing confirmation for `setOn`/`getOn`. The accessory must echo messages it receives through the `setOn` subject to the `getOn` subject, otherwise homebridge-mqttthing will mark it as unresponsive and republish on the `setOn` subject.
+
 ```javascript
 {
     "accessory": "mqttthing",
@@ -857,6 +869,8 @@ On/off switch.
 Configuring `turnOffAfter` causes the switch to turn off automatically the specified number of milliseconds after it is turned on by homekit.
 
 Configuring `resetStateAfterms` causes the switch state as reported through the `getOn` topic to be reset to off after the specified number of milliseconds. Use when there is no `setOn` topic.
+
+Set `confirmationPeriodms` to enable publishing confirmation for `setOn`/`getOn`. The accessory must echo messages it receives through the `setOn` subject to the `getOn` subject, otherwise homebridge-mqttthing will mark it as unresponsive and republish on the `setOn` subject.
 
 ```javascript
 {
@@ -1099,6 +1113,9 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 
 # Release notes
+
+Version 1.0.42
++ Add publishing confirmation (`setOn` message must be echoed to `getOn` topic to confirm that it has been processed by the accessory), with automatic republishing
 
 Version 1.0.41
 + Light: Add option to control dimmable white light through integer in range 0-255, so that one channel of an RGB or RGBW controller can be used more easily for a white light

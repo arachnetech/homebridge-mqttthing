@@ -171,6 +171,74 @@ function makeThing(log, config) {
     // The states of our characteristics
     var state = {};
 
+    function makeConfirmedPublisher( setTopic, getTopic ) {
+
+        // if confirmation isn't being used, just return a simple publishing function
+        if( ! config.confirmationPeriodms || ! getTopic ) {
+            // no confirmation
+            return function( message ) {
+                mqttPublish( setTopic, message );
+            }
+        }
+
+        var timer = null;
+        var expected = null;
+        var indicatedOffline = false;
+        var retriesRemaining = 0;
+
+        // subscribe to our get topic
+        mqttSubscribe( getTopic, function( topic, message ) {
+            if( message == expected && timer ) {
+                clearTimeout( timer );
+                timer = null;
+                if( indicatedOffline ) {
+                    state.online = true;
+                    indicatedOffline = false;
+                }
+            }
+        } );
+
+        // return enhanced publishing function
+        return function( message ) {
+            // clear any existing confirmation timer
+            if( timer ) {
+                clearTimeout( timer );
+                timer = null;
+            }
+
+            // confirmation timeout function
+            function confirmationTimeout() {
+                // confirmation period has expired
+                timer = null;
+                // indicate offline (unless accessory is publishing this explicitly)
+                if( ! config.topics.getOnline && ! indicatedOffline ) {
+                    state.online = false;
+                    indicatedOffline = true;
+                }
+
+                // retry
+                if( retriesRemaining > 0 ) {
+                    --retriesRemaining;
+                    publish();
+                }
+            }
+
+            function publish() {
+                // set confirmation timer
+                timer = setTimeout( confirmationTimeout, config.confirmationPeriodms );
+
+                // publish
+                mqttPublish( setTopic, message );
+            }
+
+            // initialise retry counter
+            retriesRemaining = ( config.retryLimit === undefined ) ? 3 : config.retryLimit;
+
+            // initial publish
+            publish();
+        };
+    }
+
     // Convert from boolean true/false to MQTT-published boolean value (as configured) - returns null if no offValue
     function onOffValue(value) {
         var mqttval;
@@ -217,7 +285,16 @@ function makeThing(log, config) {
         }
     }
 
-    function booleanCharacteristic(service, property, characteristic, setTopic, getTopic, initialValue, mapValueFunc, turnOffAfterms, resetStateAfterms) {
+    function booleanCharacteristic(service, property, characteristic, setTopic, getTopic, initialValue, mapValueFunc, turnOffAfterms, resetStateAfterms, enableConfirmation) {
+
+        var publish;
+        if( enableConfirmation ) {
+            publish = makeConfirmedPublisher( setTopic, getTopic );
+        } else {
+            publish = function( message ) {
+                mqttPublish( setTopic, message );
+            }
+        }
 
         // auto-turn-off and reset-state timers
         var autoOffTimer = null;
@@ -235,7 +312,7 @@ function makeThing(log, config) {
             charac.on('set', function (value, callback, context) {
                 if (context !== c_mySetContext) {
                     state[property] = value;
-                    mqttPublish(setTopic, onOffValue(value));
+                    publish( onOffValue( value ) );
                 }
                 callback();
 
@@ -248,7 +325,7 @@ function makeThing(log, config) {
                         autoOffTimer = null;
 
                         state[property] = false;
-                        mqttPublish( setTopic, onOffValue( false ) );
+                        publish( onOffValue( false ) );
                         service.getCharacteristic(characteristic).setValue(mapValueForHomebridge(false, mapValueFunc), undefined, c_mySetContext);
 
                     }, turnOffAfterms );
@@ -1050,7 +1127,7 @@ function makeThing(log, config) {
 
     // Characteristic.On
     function characteristic_On(service) {
-        booleanCharacteristic(service, 'on', Characteristic.On, config.topics.setOn, config.topics.getOn, null, null, config.turnOffAfterms, config.resetStateAfterms);
+        booleanCharacteristic(service, 'on', Characteristic.On, config.topics.setOn, config.topics.getOn, null, null, config.turnOffAfterms, config.resetStateAfterms, true);
     }
 
     // Characteristic.Brightness
