@@ -220,6 +220,8 @@ function makeThing(log, config) {
                 if( retriesRemaining > 0 ) {
                     --retriesRemaining;
                     publish();
+                } else {
+                    log( 'Unresponsive - no confirmation message received on ' + getTopic + ". Expecting [" + expected + "]." );
                 }
             }
 
@@ -228,6 +230,7 @@ function makeThing(log, config) {
                 timer = setTimeout( confirmationTimeout, config.confirmationPeriodms );
 
                 // publish
+                expected = message;
                 mqttPublish( setTopic, message );
             }
 
