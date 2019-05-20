@@ -1159,6 +1159,7 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 Version 1.0.42
 + Added publishing confirmation (`setOn` message must be echoed to `getOn` topic to confirm that it has been processed by the accessory), with automatic republishing
 + Added Television (thanks, tobekas)
++ Fix to characteristics with multiple states (thanks, tobekas)
 
 Version 1.0.41
 + Light: Add option to control dimmable white light through integer in range 0-255, so that one channel of an RGB or RGBW controller can be used more easily for a white light
