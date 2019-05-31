@@ -154,6 +154,36 @@
     },
     {
       "accessory": "mqttthing",
+      "type": "lightbulb",
+      "name": "Test Dimmable Light",
+      "url": "http://192.168.10.35:1883",
+      "topics": {
+        "getOn": "test/dimmable/setOn",
+        "setOn": "test/dimmable/setOn",
+        "getBrightness": "test/dimmable/getBrightness",
+        "setBrightness": "test/dimmable/setBrightness"
+      },
+      "logMqtt": true,
+      "onValue": "DIMMABLE",
+      "offValue": "OFF",
+      "otherValueOff": true
+    },
+    {
+      "accessory": "mqttthing",
+      "type": "lightbulb",
+      "name": "Alternative Light Mode",
+      "url": "http://192.168.10.35:1883",
+      "topics": {
+        "getOn": "test/dimmable/setOn",
+        "setOn": "test/dimmable/setOn"
+      },
+      "logMqtt": true,
+      "onValue": "ALTMODE",
+      "offValue": "OFF",
+      "otherValueOff": true
+    },
+    {
+      "accessory": "mqttthing",
       "type": "switch",
       "name": "Test switch",
       "url": "http://192.168.10.35:1883",
