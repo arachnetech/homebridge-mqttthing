@@ -131,6 +131,8 @@ Homekit Boolean types like on/off use strings "true" and "false" in MQTT message
 
 `offValue` - configure a specific Boolean false or *off* value (optional)
 
+When `onValue` and `offValue` are configured, by default any other value received on the _get_ topic will be ignored. To treat unrecognized received values as off, set `otherValueOff: true`.
+
 `onlineValue` - configure a specific value representing that an accessory is online (received through `getOnline`). If not specified, the configured *on* value will be used to represent an online state (i.e. `onValue` if configured, otherwise **1** with `integerValue: true` or **true** with `integerValue: false`).
 
 In mqttthing versions before 1.0.23, receiving any value not matching the configured 'on value' for a Boolean characteristic turned it off. From 1.0.23, the received message must match the offValue to turn off a characteristic.
@@ -1155,6 +1157,9 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 
 # Release notes
+
+Version 1.0.43
++ Added option to treat unrecognized received on/off values as off when an explicit off value is configured
 
 Version 1.0.42
 + Added publishing confirmation (`setOn` message must be echoed to `getOn` topic to confirm that it has been processed by the accessory), with automatic republishing

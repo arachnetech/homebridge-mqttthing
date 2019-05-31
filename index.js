@@ -340,7 +340,7 @@ function makeThing(log, config) {
                     newState = true; // received on value so on
                 } else {
                     let offValue = onOffValue( false );
-                    if( offValue !== null && message != offValue ) {
+                    if( offValue !== null && message != offValue && ! config.otherValueOff ) {
                         // there is a specific off value, but we've received something else - so ignore message
                         return;
                     }
