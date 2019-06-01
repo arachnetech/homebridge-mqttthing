@@ -1502,6 +1502,10 @@ function makeThing(log, config) {
             values = ['SA', 'AA', 'NA', 'D'];
         }
         multiCharacteristic(service, 'sectar', Characteristic.SecuritySystemTargetState, config.topics.setTargetState, config.topics.getTargetState, values, Characteristic.SecuritySystemTargetState.DISARM);
+        if( config.restrictTargetState ) {
+            let characteristic = service.getCharacteristic( Characteristic.SecuritySystemTargetState );
+            characteristic.props.validValues = config.restrictTargetState;
+        }
     }
 
     // Characteristic.SmokeDetected

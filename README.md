@@ -761,6 +761,10 @@ Security System target state can be **STAY_ARM**, **AWAY_ARM**, **NIGHT_ARM** or
 
 Homebridge publishes a value to the **getCurrentState** topic to indicate the state that the HomeKit users wishes the alarm to be in. The alarm system must echo this state back to the **setCurrentState** topic to confirm that it has set the alarm state appropriately. The alarm system may also publish the ALARM_TRIGGERED value (`T` by default) to the **setCurrentState** topic in order to indicate that the alarm has been triggered. If the alarm system publishes any other states to the **setCurrentState** topic, HomeKit will wait for it to return to the user's target state; in other words, only the HomeKit user can control the arming state of the alarm, not the alarm system itself.
 
+Configure `restrictTargetState` to an array of integers to restrict the target states made available by Homekit, where 0 represents STAY_ARM, 1 AWAY_ARM, 2 NIGHT_ARM and 3 DISARM, for example:
+
+   * `"restrictTargetState": [0, 1, 3]` - for STAY_ARM, AWAY_ARM and DISARM (but no NIGHT_ARM)
+
 ```javascript
 {
     "accessory": "mqttthing",
@@ -771,12 +775,13 @@ Homebridge publishes a value to the **getCurrentState** topic to indicate the st
     "password": "<password for MQTT (optional)>",
     "caption": "<label (optional)>",
     "topics": {
-    "setTargetState": "test/security/target",
-    "getTargetState": "test/security/current",
-    "getCurrentState": "test/security/current"
+        "setTargetState": "test/security/target",
+        "getTargetState": "test/security/current",
+        "getCurrentState": "test/security/current"
     },
     "targetStateValues": [ "StayArm", "AwayArm", "NightArm", "Disarmed" ],
-    "currentStateValues": [ "StayArm", "AwayArm", "NightArm", "Disarmed", "Triggered" ]
+    "currentStateValues": [ "StayArm", "AwayArm", "NightArm", "Disarmed", "Triggered" ],
+    "restrictTargetState": [ 1, 3 ]
 }
 ```
 
@@ -1160,6 +1165,7 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 Version 1.0.43
 + Added option to treat unrecognized received on/off values as off when an explicit off value is configured
++ Security System: Allow target states to be restricted
 
 Version 1.0.42
 + Added publishing confirmation (`setOn` message must be echoed to `getOn` topic to confirm that it has been processed by the accessory), with automatic republishing

@@ -355,7 +355,8 @@
         "getCurrentState": "test/security/current"
       },
       "targetStateValues": [ "StayArm", "AwayArm", "NightArm", "Disarmed" ],
-      "currentStateValues": [ "StayArm", "AwayArm", "NightArm", "Disarmed", "Triggered" ]
+      "currentStateValues": [ "StayArm", "AwayArm", "NightArm", "Disarmed", "Triggered" ],
+      "restrictTargetState": [ 1, 2, 3 ]
     },
     {
       "accessory": "mqttthing",
