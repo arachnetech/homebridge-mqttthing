@@ -201,6 +201,7 @@ Accessories supporting message confirmation list the topics supporting message c
    * [Doorbell](#doorbell)
    * [Fan](#fan)
    * [Garage door opener](#garage-door-opener)
+   * [Heater Cooler](#heater-cooler)
    * [Humidity Sensor](#humidity-sensor)
    * [Leak Sensor](#leak-sensor)
    * [Light bulb](#light-bulb)
@@ -470,6 +471,11 @@ Lock target state can be **UNSECURED** or **SECURED**. By default, these use val
 `lockValues` - Array of 4 lock values corresponding to unsecured, secured, jammed and unknown respectively. if not specified, defaults to `[ 'U', 'S', 'J', '?' ]`.
 
 `integerValue` - Set to true to use values 1 and 0 instead of "true" and "false" respectively for obstruction detected value.
+
+
+## Heater Cooler
+
+
 
 
 ## Humidity Sensor

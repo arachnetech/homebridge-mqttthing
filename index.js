@@ -1737,6 +1737,42 @@ function makeThing(log, config) {
         }
     }
 
+    // Characteristic.CurrentHeaterCoolerState
+    function characteristic_CurrentHeaterCoolerState( service ) {
+        let values = config.currentHeaterCoolerValues;
+        if( ! values ) {
+            values = [ 'INACTIVE', 'IDLE', 'HEATING', 'COOLING' ];
+        }
+        multiCharacteristic( service, 'currentHeaterCoolerState', Characteristic.CurrentHeaterCoolerState, null, config.topics.getCurrentHeaterCoolerState, values, Characteristic.CurrentHeaterCoolerState.INACTIVE );
+    }
+
+    // Characteristic.TargetHeaterCoolerState
+    function characteristic_TargetHeaterCoolerState( service ) {
+        let values = config.targetHeaterCoolerValues;
+        if( ! values ) {
+            values = [ 'AUTO', 'HEAT', 'COOL' ];
+        }
+        multiCharacteristic( service, 'targetHeaterCoolerState', Characteristic.TargetHeaterCoolerState, config.topics.setTargetHeaterCoolerState, config.topics.getTargetHeaterCoolerState, values, Characteristic.TargetHeaterCoolerState.AUTO );
+    }
+
+    // Characteristic.LockPhysicalControls
+    function characteristic_LockPhysicalControls( service ) {
+        let values = config.lockPhysicalControlsValues;
+        if( ! values ) {
+            values = [ 'DISABLED', 'ENABLED' ];
+        }
+        multiCharacteristic( service, 'lockPhysicalControls', Characteristic.LockPhysicalControls, config.topics.setLockPhysicalControls, config.topics.getLockPhysicalControls, values, Characteristic.LockPhysicalControls.CONTROL_LOCK_DISABLED );
+    }
+
+    // Characteristic.SwingMode
+    function characteristic_SwingMode( service ) {
+        let values = config.swingModeValues;
+        if( ! values ) {
+            values = [ 'DISABLED', 'ENABLED' ];
+        }
+        multiCharacteristic( service, 'swingMode', Characteristic.SwingMode, config.topics.setSwingMode, config.topics.getSwingMode, values, Characteristic.SwingMode.DISABLED );
+    }
+
     // Characteristic.TemperatureDisplayUnits
     function characteristic_TemperatureDisplayUnits( service ) {
         let values = config.temperatureDisplayUnitsValues;
@@ -2400,6 +2436,30 @@ function makeThing(log, config) {
             }
             if( config.topics.getHeatingThresholdTemperature || config.topics.setHeatingThresholdTemperature ) {
                 characteristic_HeatingThresholdTemperature( service );
+            }
+        } else if( config.type == "heaterCooler" ) {
+            service = new Service.HeaterCooler( name );
+            characteristic_Active( service );
+            characteristic_CurrentHeaterCoolerState( service );
+            characteristic_TargetHeaterCoolerState( service );
+            characteristic_CurrentTemperature( service );
+            if( config.topics.setLockPhysicalControls || config.topics.getLockPhysicalControls ) {
+                characteristic_LockPhysicalControls( service );
+            }
+            if( config.topics.getSwingMode || config.topics.setSwingMode ) {
+                characteristic_SwingMode( service );
+            }
+            if( config.topics.getCoolingThresholdTemperature || config.topics.setCoolingThresholdTemperature ) {
+                characteristic_CoolingThresholdTemperature( service );
+            }
+            if( config.topics.getHeatingThresholdTemperature || config.topics.setHeatingThresholdTemperature ) {
+                characteristic_HeatingThresholdTemperature( service );
+            }
+            if( config.topics.getTemperatureDisplayUnits || config.topics.setTemperatureDisplayUnits ) {
+                characteristic_TemperatureDisplayUnits( service );
+            }
+            if( config.topics.getRotationSpeed || config.topics.setRotationSpeed ) {
+                characteristic_RotationSpeed(service);
             }
         } else if( config.type == 'television' ) {
             service = new Service.Television( name );
