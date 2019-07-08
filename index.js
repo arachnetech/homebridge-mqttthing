@@ -1278,14 +1278,9 @@ function makeThing(log, config) {
         }
     }
 
-    // Characteristic.TargetTemperature
-    function characteristic_TargetTemperature( service ) {
-        floatCharacteristic( service, 'targetTemperature', Characteristic.TargetTemperature,
-            config.topics.setTargetTemperature, config.topics.getTargetTemperature, 0 );
-
-        // custom min/max
+    function tempRange( service, theCharacteristic ) {
         if( config.minTemperature !== undefined || config.maxTemperature !== undefined ) {
-            var characteristic = service.getCharacteristic( Characteristic.TargetTemperature );
+            var characteristic = service.getCharacteristic( theCharacteristic );
             if( config.minTemperature !== undefined ) {
                 characteristic.props.minValue = config.minTemperature;
             }
@@ -1295,16 +1290,29 @@ function makeThing(log, config) {
         }
     }
 
+    // Characteristic.TargetTemperature
+    function characteristic_TargetTemperature( service ) {
+        floatCharacteristic( service, 'targetTemperature', Characteristic.TargetTemperature,
+            config.topics.setTargetTemperature, config.topics.getTargetTemperature, 0 );
+
+        // custom min/max
+        tempRange( service, Characteristic.TargetTemperature );
+    }
+
     // Characteristic.CoolingThresholdTemperature
     function characteristic_CoolingThresholdTemperature( service ) {
         floatCharacteristic( service, 'coolingThresholdTemperature', Characteristic.CoolingThresholdTemperature,
             config.topics.setCoolingThresholdTemperature, config.topics.getCoolingThresholdTemperature, 25 );
+
+        tempRange( service, Characteristic.CoolingThresholdTemperature );
     }
 
     // Characteristic.HeatingThresholdTemperature
     function characteristic_HeatingThresholdTemperature( service ) {
         floatCharacteristic( service, 'heatingThresholdTemperature', Characteristic.HeatingThresholdTemperature,
             config.topics.setHeatingThresholdTemperature, config.topics.getHeatingThresholdTemperature, 20 );
+
+        tempRange( service, Characteristic.HeatingThresholdTemperature );
     }
     
     // Characteristic.CurrentRelativeHumidity
@@ -1753,6 +1761,10 @@ function makeThing(log, config) {
             values = [ 'AUTO', 'HEAT', 'COOL' ];
         }
         multiCharacteristic( service, 'targetHeaterCoolerState', Characteristic.TargetHeaterCoolerState, config.topics.setTargetHeaterCoolerState, config.topics.getTargetHeaterCoolerState, values, Characteristic.TargetHeaterCoolerState.AUTO );
+        if( config.restrictHeaterCoolerState ) {
+            let characteristic = service.getCharacteristic( Characteristic.TargetHeaterCoolerState );
+            characteristic.props.validValues = config.restrictHeaterCoolerState;
+        }
     }
 
     // Characteristic.LockPhysicalControls

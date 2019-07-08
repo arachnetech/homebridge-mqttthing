@@ -614,6 +614,23 @@
     },
     {
       "accessory": "mqttthing",
+      "type": "heaterCooler",
+      "name": "HeaterCooler",
+      "url": "http://192.168.10.35:1883",
+      "logMqtt": true,
+      "topics": {
+        "getCurrentHeaterCoolerState": "test/heatcool/getCurrentHeaterCoolerState",
+        "setTargetHeaterCoolerState": "test/heatcool/setCurrentHeaterCoolerState",
+        "getCurrentTemperature": "test/heatcool/getCurrentTemperature",
+        "setCoolingThresholdTemperature": "test/heatcool/setCoolingThresholdTemperature",
+        "setHeatingThresholdTemperature": "test/heatcool/setHeatingThresholdTemperature",
+        "setRotationMode": "test/heatcool/setRotationMode",
+        "setSwingMode": "test/heatcool/setSwingMode",
+        "setRotationSpeed": "test/heatcool/setRotationSpeed"
+      }
+    },
+    {
+      "accessory": "mqttthing",
       "type": "television",
       "name": "Television",
       "url": "http://192.168.10.35:1883",
