@@ -55,7 +55,8 @@
     "sprinkler",
     "shower",
     "faucet",
-    "thermostat"
+    "thermostat",
+    "heater cooler"
   ],
   "author": "David Miller",
   "license": "Apache-2.0",

@@ -1225,6 +1225,9 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 # Release notes
 
+Version 1.0.44
++ Added HeaterCooler
+
 Version 1.0.43
 + Added option to treat unrecognized received on/off values as off when an explicit off value is configured
 + Security System: Allow target states to be restricted
