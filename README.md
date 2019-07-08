@@ -475,7 +475,7 @@ Lock target state can be **UNSECURED** or **SECURED**. By default, these use val
 
 ## Heater Cooler
 
-Current heater/cooler state can be **INACIVE**, **IDLE**, **HEATING** or **COOLING**. To use different values, specify an array of strings in **currentHeaterCoolerValues**.
+Current heater/cooler state can be **INACTIVE**, **IDLE**, **HEATING** or **COOLING**. To use different values, specify an array of strings in **currentHeaterCoolerValues**.
 
 Target heater/cooler state can be **AUTO**, **HEAT** or **COOL**. To use different values, specify an array of strings in **targetHeaterCoolerValues**.
 
