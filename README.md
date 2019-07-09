@@ -487,7 +487,7 @@ Temperature display units can be **CELSIUS** or **FAHRENHEIT**. To use different
 
 `minTemperature` and `maxTemperature` may optionally be used to change the minimum and maximum heating and cooling target temperatures that can be set from Homekit.
 
-Configure `restrictHeaterCoolerState` to an array of integers to restrict the target heating/cooling states made available by Homekit, where 0 represents OFF, 1 HEAT, 2 COOL and 3 AUTO, for example:
+Configure `restrictHeaterCoolerState` to an array of integers to restrict the target heating/cooling states made available by Homekit, where 0 represents AUTO, 1 HEAT and 2 COOL, for example:
 
    * `"restrictHeaterCoolerState": [0, 1]` - for AUTO or HEAT (but no COOL).
    * `"restrictHeaterCoolerState": [1, 2]` - for HEAT or COOL (but no AUTO).
@@ -504,6 +504,8 @@ Configure cooling threshold temperature unless target heater/cooler states exclu
     "password": "<password for MQTT (optional)>",
     "logMqtt": true | false,
     "topics": {
+        "setActive":                        "<topic used to control 'active' state>",
+        "getActive":                        "<topic used to report 'active' state>",
         "getCurrentHeaterCoolerState":      "<topic used to report 'current heater/cooler state'>",
         "setTargetHeaterCoolerState":       "<topic used to control 'target heater/cooler state'>",
         "getTargetHeaterCoolerState":       "<topic used to report 'target heater/cooler state'>",

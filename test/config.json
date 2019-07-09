@@ -619,6 +619,7 @@
       "url": "http://192.168.10.35:1883",
       "logMqtt": true,
       "topics": {
+        "setActive": "test/heatcool/setActive",
         "getCurrentHeaterCoolerState": "test/heatcool/getCurrentHeaterCoolerState",
         "setTargetHeaterCoolerState": "test/heatcool/setCurrentHeaterCoolerState",
         "getCurrentTemperature": "test/heatcool/getCurrentTemperature",
