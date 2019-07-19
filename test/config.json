@@ -620,6 +620,7 @@
       "logMqtt": true,
       "topics": {
         "setActive": "test/heatcool/setActive",
+        "getActive": "test/heatcool/getActive",
         "getCurrentHeaterCoolerState": "test/heatcool/getCurrentHeaterCoolerState",
         "setTargetHeaterCoolerState": "test/heatcool/setCurrentHeaterCoolerState",
         "getCurrentTemperature": "test/heatcool/getCurrentTemperature",
@@ -627,7 +628,8 @@
         "setHeatingThresholdTemperature": "test/heatcool/setHeatingThresholdTemperature",
         "setRotationMode": "test/heatcool/setRotationMode",
         "setSwingMode": "test/heatcool/setSwingMode",
-        "setRotationSpeed": "test/heatcool/setRotationSpeed"
+        "setRotationSpeed": { "topic": "test/heatcool/setRotationSpeed", 
+            "apply": "return [ 'off', 'min', 'low', 'medium', 'high', 'max' ][ Math.floor( message / 20 ) ];" }
       }
     },
     {
