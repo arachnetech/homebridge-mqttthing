@@ -1904,6 +1904,17 @@ function makeThing(log, config) {
             });
         } else {
             integerCharacteristic(service, 'setDuration', Characteristic.SetDuration, config.topics.setDuration, config.topics.getDuration, 10*60);
+
+            // minimum/maximum duration
+            if( config.minDuration !== undefined || config.maxDuration !== undefined ) {
+                var charac = service.getCharacteristic( Characteristic.SetDuration );
+                if( config.minDuration !== undefined ) {
+                    charac.props.minValue = config.minDuration;
+                }
+                if( config.maxDuration !== undefined ) {
+                    charac.props.maxValue = config.maxDuration;
+                }
+            }
         }
     }
 

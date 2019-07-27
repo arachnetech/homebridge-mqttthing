@@ -1090,6 +1090,8 @@ If `durationTimer` is set to **true**, this plugin will provide additional chara
 
 If the device itself provides duration timing via MQTT or if you want to query or set the duration via MQTT, you can make use of `setDuration`/`getDuration`. The remaining time is shown in HomeKit even if no `getRemainingDuration` is configured. `getRemainingDuration` can be used to update the remaining time, if the duration is changed at the device itself in some way.
 
+The default run time defaults to between 5 minutes and 1 hour (in 5 minute increments). This can be changed with `minDuration` and `maxDuration`. Note however that the Home App in iOS 12 doesn't like to show durations below 5 minutes. (This appears to have been improved in the iOS 13 Beta.)
+
 Configuring `turnOffAfterms` causes the valve to turn off automatically the specified (fixed!) number of milliseconds after it is turned on by homekit. It can be used instead of `durationTimer` or `setDuration`/`getDuration`. 
 
 ```javascript
@@ -1119,7 +1121,9 @@ Configuring `turnOffAfterms` causes the valve to turn off automatically the spec
     "onValue":          "<value representing on (optional)>",
     "offValue":         "<value representing off (optional)>",
     "durationTimer":    "<true to enable duration timer (optional, recommended)>",
-    "turnOffAfterms":   "<milliseconds after which to turn off automatically (optional, fix duration)>"
+    "turnOffAfterms":   "<milliseconds after which to turn off automatically (optional, fix duration)>",
+    "minDuration":      "<minimum duration (in seconds)>",
+    "maxDuration":      "<maximum duration (in seconds)>"
 }
 ```
 
@@ -1226,6 +1230,9 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 
 # Release notes
+
+Version 1.0.44
++ Allow changing of default run time (duration) range for valve
 
 Version 1.0.44
 + Added HeaterCooler

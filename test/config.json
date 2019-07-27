@@ -589,7 +589,8 @@
           "getRemainingDuration": "test/sprinkler/getRemainingDuration"
       },
       "integerValue": true,
-      "durationTimer": true
+      "durationTimer": true,
+      "maxDuration": 180
     },
     {
       "accessory": "mqttthing",
