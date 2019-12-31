@@ -58,7 +58,12 @@ function makeThing(log, config) {
         }
 
         if( logmqtt ) {
-            log( 'MQTT options: ' + JSON.stringify( options ) );
+            log( 'MQTT options: ' + JSON.stringify( options, function( k, v ) {
+                if( k == "password" ) {
+                    return undefined; // filter out
+                }
+                return v;
+            } ) );
         }
 
         // create MQTT client

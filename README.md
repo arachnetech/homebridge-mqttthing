@@ -1231,7 +1231,10 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 # Release notes
 
-Version 1.0.44
+Version 1.0.46
++ Suppress logging of MQTT password (issue #150)
+
+Version 1.0.45
 + Allow changing of default run time (duration) range for valve
 
 Version 1.0.44
