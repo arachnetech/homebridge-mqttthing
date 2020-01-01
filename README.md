@@ -1231,6 +1231,9 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 # Release notes
 
+Version 1.0.47
++ Fix: latest homebridge-lib (introduced in last build) appears incompatible with our references to Eve.Characteristic (e.g. Eve.Characteristic.CurrentConsumption)
+
 Version 1.0.46
 + Suppress logging of MQTT password (issue #150)
 
