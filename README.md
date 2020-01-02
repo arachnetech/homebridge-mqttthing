@@ -33,8 +33,8 @@ The following settings apply to all device types:
     "url": "http://192.168.1.235:1883",
     "username": "MQTT_username",
     "password": "MQTT_password",
-    "mqttOptions": { keepalive: 30 },
-    "mqttPubOptions": { retain: true },
+    "mqttOptions": { "keepalive": 30 },
+    "mqttPubOptions": { "retain": true },
     "logMqtt": true,
     "topics": {
         "getName": 	        "my/get/name/topic",
