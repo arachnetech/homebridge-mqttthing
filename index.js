@@ -1166,16 +1166,16 @@ function makeThing(log, config) {
         booleanCharacteristic(service, 'motionDetected', Characteristic.MotionDetected, null, config.topics.getMotionDetected, null, null, null, config.turnOffAfterms);
     }
 
-    // Add Eve.Characteristic.LastActivation for History
+    // Add Eve.Characteristics.LastActivation for History
     function characteristic_LastActivation(historySvc, service) {
-        service.addOptionalCharacteristic(Eve.Characteristic.LastActivation); // to avoid warnings
+        service.addOptionalCharacteristic(Eve.Characteristics.LastActivation); // to avoid warnings
         // get lastActivation time from history data (check 5s later to make sure the history is loaded)
         setTimeout( function() {
             if (historySvc.lastEntry && historySvc.memorySize) {
                 let entry = historySvc.history[historySvc.lastEntry % historySvc.memorySize];
                 if(entry && entry.hasOwnProperty('time')) {
                     let lastTime = entry.time - historySvc.getInitialTime();
-                    addCharacteristic(service, 'lastActivation', Eve.Characteristic.LastActivation, lastTime);
+                    addCharacteristic(service, 'lastActivation', Eve.Characteristics.LastActivation, lastTime);
                     log.debug('lastActivation time loaded');
                 }
             }
@@ -1200,7 +1200,7 @@ function makeThing(log, config) {
             if (logEntry.status) {
                 // update Eve's Characteristic.LastActivation
                 state.lastActivation = logEntry.time - historySvc.getInitialTime();
-                service.updateCharacteristic(Eve.Characteristic.LastActivation, state.lastActivation);
+                service.updateCharacteristic(Eve.Characteristics.LastActivation, state.lastActivation);
                 if (historyMergeTimer) {
                     // reset timer -> discard off-event
                     clearTimeout(historyMergeTimer);
@@ -1348,9 +1348,9 @@ function makeThing(log, config) {
 
     // Characteristic.characteristic_AirPressure (Eve-only)
     function characteristic_AirPressure(service) {
-        floatCharacteristic(service, 'airPressure', Eve.Characteristic.AirPressure, null, config.topics.getAirPressure, 0 );
+        floatCharacteristic(service, 'airPressure', Eve.Characteristics.AirPressure, null, config.topics.getAirPressure, 0 );
         // set characteristic Elevation for air pressure calibration (not used yet with MQTT)
-        service.updateCharacteristic(Eve.Characteristic.Elevation, 100);
+        service.updateCharacteristic(Eve.Characteristics.Elevation, 100);
     }
 
     // History for AirPressure (Eve-only)
@@ -1369,44 +1369,44 @@ function makeThing(log, config) {
 
     // Characteristic.WeatherCondition (Eve-only)
     function characteristic_WeatherCondition(service) {
-        service.addOptionalCharacteristic(Eve.Characteristic.WeatherCondition); // to avoid warnings
-        stringCharacteristic(service, 'weatherCondition', Eve.Characteristic.WeatherCondition, null, config.topics.getWeatherCondition, '-' );
+        service.addOptionalCharacteristic(Eve.Characteristics.WeatherCondition); // to avoid warnings
+        stringCharacteristic(service, 'weatherCondition', Eve.Characteristics.WeatherCondition, null, config.topics.getWeatherCondition, '-' );
     }
 
     // Characteristic.Rain1h (Eve-only)
     function characteristic_Rain1h(service) {
-        service.addOptionalCharacteristic(Eve.Characteristic.Rain1h); // to avoid warnings
-        integerCharacteristic(service, 'rain1h', Eve.Characteristic.Rain1h, null, config.topics.getRain1h);
+        service.addOptionalCharacteristic(Eve.Characteristics.Rain1h); // to avoid warnings
+        integerCharacteristic(service, 'rain1h', Eve.Characteristics.Rain1h, null, config.topics.getRain1h);
     }
 
     // Characteristic.Rain24h (Eve-only)
     function characteristic_Rain24h(service) {
-        service.addOptionalCharacteristic(Eve.Characteristic.Rain24h); // to avoid warnings
-        integerCharacteristic(service, 'rain24h', Eve.Characteristic.Rain24h, null, config.topics.getRain24h);
+        service.addOptionalCharacteristic(Eve.Characteristics.Rain24h); // to avoid warnings
+        integerCharacteristic(service, 'rain24h', Eve.Characteristics.Rain24h, null, config.topics.getRain24h);
     }
 
     // Characteristic.UVIndex (Eve-only)
     function characteristic_UVIndex(service) {
-        service.addOptionalCharacteristic(Eve.Characteristic.UVIndex); // to avoid warnings
-        integerCharacteristic(service, 'uvIndex', Eve.Characteristic.UVIndex, null, config.topics.getUVIndex);
+        service.addOptionalCharacteristic(Eve.Characteristics.UVIndex); // to avoid warnings
+        integerCharacteristic(service, 'uvIndex', Eve.Characteristics.UVIndex, null, config.topics.getUVIndex);
     }
 
     // Characteristic.Visibility (Eve-only)
     function characteristic_Visibility(service) {
-        service.addOptionalCharacteristic(Eve.Characteristic.Visibility); // to avoid warnings
-        integerCharacteristic(service, 'visibility', Eve.Characteristic.Visibility, null, config.topics.getVisibility);
+        service.addOptionalCharacteristic(Eve.Characteristics.Visibility); // to avoid warnings
+        integerCharacteristic(service, 'visibility', Eve.Characteristics.Visibility, null, config.topics.getVisibility);
     }
 
     // Characteristic.WindDirection (Eve-only)
     function characteristic_WindDirection(service) {
-        service.addOptionalCharacteristic(Eve.Characteristic.WindDirection); // to avoid warnings
-        stringCharacteristic(service, 'windDirection', Eve.Characteristic.WindDirection, null, config.topics.getWindDirection, '-');
+        service.addOptionalCharacteristic(Eve.Characteristics.WindDirection); // to avoid warnings
+        stringCharacteristic(service, 'windDirection', Eve.Characteristics.WindDirection, null, config.topics.getWindDirection, '-');
     }
 
     // Characteristic.WindSpeed (Eve-only)
     function characteristic_WindSpeed(service) {
-        service.addOptionalCharacteristic(Eve.Characteristic.WindSpeed); // to avoid warnings
-        floatCharacteristic(service, 'windSpeed', Eve.Characteristic.WindSpeed, null, config.topics.getWindSpeed, 0);
+        service.addOptionalCharacteristic(Eve.Characteristics.WindSpeed); // to avoid warnings
+        floatCharacteristic(service, 'windSpeed', Eve.Characteristics.WindSpeed, null, config.topics.getWindSpeed, 0);
     }
 
     // Characteristic.ContactSensorState
@@ -1444,21 +1444,21 @@ function makeThing(log, config) {
                 cnt = JSON.parse(data).timesOpened;
                 res = JSON.parse(data).resetTotal;
             }
-            service.addOptionalCharacteristic(Eve.Characteristic.TimesOpened); // to avoid warnings
-            addCharacteristic(service, 'timesOpened', Eve.Characteristic.TimesOpened, cnt);
-            historySvc.addOptionalCharacteristic(Eve.Characteristic.ResetTotal); // to avoid warnings
-            addCharacteristic(historySvc, 'resetTotal', Eve.Characteristic.ResetTotal, res, function() {
+            service.addOptionalCharacteristic(Eve.Characteristics.TimesOpened); // to avoid warnings
+            addCharacteristic(service, 'timesOpened', Eve.Characteristics.TimesOpened, cnt);
+            historySvc.addOptionalCharacteristic(Eve.Characteristics.ResetTotal); // to avoid warnings
+            addCharacteristic(historySvc, 'resetTotal', Eve.Characteristics.ResetTotal, res, function() {
                 state.timesOpened = 0; // reset counter
-                service.updateCharacteristic(Eve.Characteristic.TimesOpened, 0);
+                service.updateCharacteristic(Eve.Characteristics.TimesOpened, 0);
                 writeCounterFile();
                 log("Reset TimesOpened to 0");
             });
 
             // these ones are necessary to display history for contact sensors
-            service.addOptionalCharacteristic(Eve.Characteristic.OpenDuration); // to avoid warnings
-            addCharacteristic(service, 'openDuration', Eve.Characteristic.OpenDuration, 0);
-            service.addOptionalCharacteristic(Eve.Characteristic.ClosedDuration); // to avoid warnings
-            addCharacteristic(service, 'closedDuration', Eve.Characteristic.ClosedDuration, 0);
+            service.addOptionalCharacteristic(Eve.Characteristics.OpenDuration); // to avoid warnings
+            addCharacteristic(service, 'openDuration', Eve.Characteristics.OpenDuration, 0);
+            service.addOptionalCharacteristic(Eve.Characteristics.ClosedDuration); // to avoid warnings
+            addCharacteristic(service, 'closedDuration', Eve.Characteristics.ClosedDuration, 0);
             
             // attach change callback for this characteristic
             charac.on('change', function (obj) {
@@ -1469,10 +1469,10 @@ function makeThing(log, config) {
                 if (logEntry.status) {
                     // update Eve's Characteristic.LastActivation
                     state.lastActivation = logEntry.time - historySvc.getInitialTime();
-                    service.updateCharacteristic(Eve.Characteristic.LastActivation, state.lastActivation);
+                    service.updateCharacteristic(Eve.Characteristics.LastActivation, state.lastActivation);
                     // update Eve's Characteristic.TimesOpened 
                     state.timesOpened++;
-                    service.updateCharacteristic(Eve.Characteristic.TimesOpened, state.timesOpened);
+                    service.updateCharacteristic(Eve.Characteristics.TimesOpened, state.timesOpened);
                     writeCounterFile();
                 }
                 historySvc.addEntry(logEntry);
@@ -1689,10 +1689,10 @@ function makeThing(log, config) {
         floatCharacteristic( service, 'CarbonMonoxideLevel', Characteristic.CarbonMonoxideLevel, null, config.topics.getCarbonMonoxideLevel );
     }
    
-    // Eve.Characteristic.AirParticulateDensity (Eve-only)
+    // Eve.Characteristics.AirParticulateDensity (Eve-only)
     function characteristic_AirQualityPPM( service ) {
-        service.addOptionalCharacteristic(Eve.Characteristic.AirParticulateDensity); // to avoid warnings
-        floatCharacteristic( service, 'ppm', Eve.Characteristic.AirParticulateDensity, null, config.topics.getAirQualityPPM );
+        service.addOptionalCharacteristic(Eve.Characteristics.AirParticulateDensity); // to avoid warnings
+        floatCharacteristic( service, 'ppm', Eve.Characteristics.AirParticulateDensity, null, config.topics.getAirQualityPPM );
     }
 
     // History for Air Quality (Eve-only)
@@ -1801,28 +1801,28 @@ function makeThing(log, config) {
             Characteristic.TemperatureDisplayUnits.CELSIUS );
     }
 
-    // Eve.Characteristic.CurrentConsumption [Watts] (Eve-only)
+    // Eve.Characteristics.CurrentConsumption [Watts] (Eve-only)
     function characteristic_CurrentConsumption( service ) {
-        service.addOptionalCharacteristic(Eve.Characteristic.CurrentConsumption); // to avoid warnings
-        floatCharacteristic( service, 'currentConsumption', Eve.Characteristic.CurrentConsumption, null, config.topics.getWatts, 0 );
+        service.addOptionalCharacteristic(Eve.Characteristics.CurrentConsumption); // to avoid warnings
+        floatCharacteristic( service, 'currentConsumption', Eve.Characteristics.CurrentConsumption, null, config.topics.getWatts, 0 );
     }
 
-    // Eve.Characteristic.Voltage [Volts] (Eve-only)
+    // Eve.Characteristics.Voltage [Volts] (Eve-only)
     function characteristic_Voltage( service ) {
-        service.addOptionalCharacteristic(Eve.Characteristic.Voltage); // to avoid warnings
-        floatCharacteristic( service, 'voltage', Eve.Characteristic.Voltage, null, config.topics.getVolts, 0 );
+        service.addOptionalCharacteristic(Eve.Characteristics.Voltage); // to avoid warnings
+        floatCharacteristic( service, 'voltage', Eve.Characteristics.Voltage, null, config.topics.getVolts, 0 );
     }
 
-    // Eve.Characteristic.ElectricCurrent [Amperes] (Eve-only)
+    // Eve.Characteristics.ElectricCurrent [Amperes] (Eve-only)
     function characteristic_ElectricCurrent( service ) {
-        service.addOptionalCharacteristic(Eve.Characteristic.ElectricCurrent); // to avoid warnings
-        floatCharacteristic( service, 'electricCurrent', Eve.Characteristic.ElectricCurrent, null, config.topics.getAmperes, 0 );
+        service.addOptionalCharacteristic(Eve.Characteristics.ElectricCurrent); // to avoid warnings
+        floatCharacteristic( service, 'electricCurrent', Eve.Characteristics.ElectricCurrent, null, config.topics.getAmperes, 0 );
     }
 
-    // Eve.Characteristic.TotalConsumption [kWh] (Eve-only) - optional if there is an external energy counter 
+    // Eve.Characteristics.TotalConsumption [kWh] (Eve-only) - optional if there is an external energy counter 
     function characteristic_TotalConsumption( service ) {
-        service.addOptionalCharacteristic(Eve.Characteristic.TotalConsumption); // to avoid warnings
-        floatCharacteristic( service, 'totalConsumption', Eve.Characteristic.TotalConsumption, null, config.topics.getTotalConsumption, 0 );
+        service.addOptionalCharacteristic(Eve.Characteristics.TotalConsumption); // to avoid warnings
+        floatCharacteristic( service, 'totalConsumption', Eve.Characteristics.TotalConsumption, null, config.topics.getTotalConsumption, 0 );
     }
 
     // History for PowerConsumption (Eve-only)
@@ -1852,12 +1852,12 @@ function makeThing(log, config) {
                     cnt = JSON.parse(data).totalConsumption;
                     res = JSON.parse(data).resetTotal;
                 }
-                service.addOptionalCharacteristic(Eve.Characteristic.TotalConsumption); // to avoid warnings
-                addCharacteristic(service, 'totalConsumption', Eve.Characteristic.TotalConsumption, cnt);
-                historySvc.addOptionalCharacteristic(Eve.Characteristic.ResetTotal); // to avoid warnings
-                addCharacteristic(historySvc, 'resetTotal', Eve.Characteristic.ResetTotal, res, function() {
+                service.addOptionalCharacteristic(Eve.Characteristics.TotalConsumption); // to avoid warnings
+                addCharacteristic(service, 'totalConsumption', Eve.Characteristics.TotalConsumption, cnt);
+                historySvc.addOptionalCharacteristic(Eve.Characteristics.ResetTotal); // to avoid warnings
+                addCharacteristic(historySvc, 'resetTotal', Eve.Characteristics.ResetTotal, res, function() {
                     state.totalConsumption = 0; // reset counter
-                    service.updateCharacteristic(Eve.Characteristic.TotalConsumption, 0);
+                    service.updateCharacteristic(Eve.Characteristics.TotalConsumption, 0);
                     writeCounterFile();
                     log("Reset TotalConsumption to 0");
                 });
@@ -1877,7 +1877,7 @@ function makeThing(log, config) {
                             }
                             lastLogEntry.time = logEntry.time;
                             lastLogEntry.power = logEntry.power;
-                            service.updateCharacteristic(Eve.Characteristic.TotalConsumption, state.totalConsumption);
+                            service.updateCharacteristic(Eve.Characteristics.TotalConsumption, state.totalConsumption);
                             writeCounterFile();
                         }
                         historySvc.addEntry(logEntry);
@@ -2177,7 +2177,7 @@ function makeThing(log, config) {
                 services.push( historySvc );
             }
         } else if (config.type == "airPressureSensor") {
-            service = new Eve.Service.AirPressureSensor(name);
+            service = new Eve.Services.AirPressureSensor(name);
             characteristic_AirPressure(service);
             addSensorOptionalCharacteristics(service);
             services = [service];
@@ -2200,7 +2200,7 @@ function makeThing(log, config) {
                 services.push( humSvc );
             }
             if( config.topics.getAirPressure ) {
-                let presSvc = new Eve.Service.AirPressureSensor( svcNames.airPressure || name + " AirPressure" );
+                let presSvc = new Eve.Services.AirPressureSensor( svcNames.airPressure || name + " AirPressure" );
                 characteristic_AirPressure( presSvc );
                 addSensorOptionalCharacteristics( presSvc );
                 services.push( presSvc );
