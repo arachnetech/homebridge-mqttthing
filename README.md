@@ -481,7 +481,7 @@ Target heater/cooler state can be **AUTO**, **HEAT** or **COOL**. To use differe
 
 Lock physical controls state may be **DISABLED** or **ENABLED**. To use different values, specify an array of strings in **lockPhysicalControlsValues**.
 
-Swimg mode state may be **DISABLED** or **ENABLED**. To use different values, specify an array of strings in **swingModeValues**.
+Swing mode state may be **DISABLED** or **ENABLED**. To use different values, specify an array of strings in **swingModeValues**.
 
 Temperature display units can be **CELSIUS** or **FAHRENHEIT**. To use different values, specify an array of strings in `temperatureDisplayUnitsValues`.
 
