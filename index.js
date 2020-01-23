@@ -1487,6 +1487,10 @@ function makeThing(log, config) {
             values = ['1', '2', 'L']; // 1 means SINGLE_PRESS, 2 means DOUBLE_PRESS, L means LONG_PRESS
         }
         multiCharacteristic(service, 'progswitch', Characteristic.ProgrammableSwitchEvent, null, config.topics.getSwitch, values, null, true);
+        if( config.restrictSwitchValues ) {
+            let characteristic = service.getCharacteristic( Characteristic.ProgrammableSwitchEvent );
+            characteristic.props.validValues = config.restrictSwitchValues;
+        }
     }
 
     // Characteristic.Volume
