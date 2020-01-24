@@ -389,7 +389,8 @@
       "logMqtt": true,
       "topics": {
         "getSwitch": "test/spswitch/state"
-      }
+      },
+      "restrictSwitchValues": [ 0, 1 ]
     },
     {
       "accessory": "mqttthing",
