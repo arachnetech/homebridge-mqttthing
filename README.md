@@ -916,6 +916,11 @@ and False (or 0) maps to `SMOKE_NOT_DETECTED`. To use different MQTT values, con
 
 Like a doorbell (which is based on it), the state of a stateless programmable switch can be be `SINGLE_PRESS`, `DOUBLE_PRESS` or `LONG_PRESS`. By default, these events are raised when values of `1`, `2` and `L` respectively are published to the **getSwitch** topic. However, these values may be overridden by specifying an alternative array in the **switchValues** setting.
 
+The states can be restricted to a subset of these three values available in HomeKit by the **restrictSwitchValues** setting, where 0 represents `SINGLE_PRESS`, 1 `DOUBLE_PRESS`, and 2 `LONG_PRESS`, for example:
+
+   * `"restrictSwitchValues": [0, 2]` - for `SINGLE_PRESS` and `LONG_PRESS`, (but no `DOUBLE_PRESS`)
+
+
 ```javascript
 {
     "accessory": "mqttthing",
@@ -930,6 +935,7 @@ Like a doorbell (which is based on it), the state of a stateless programmable sw
         "getSwitch":            "<topic used to provide switch state>"
     },
     "switchValues": "<array of 3 switch values corresponding to single-press, double-press and long-press respectively (optional)>"
+    "restrictSwitchValues": [ 0, 1 ] // optional
 }
 ```
 
