@@ -1237,6 +1237,9 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 # Release notes
 
+Version 1.0.49
++ Stateless Programmable Switch: added option to restrict available switch values - thanks, Jacob Nite
+
 Version 1.0.48
 + Upgrade to latest homebridge-lib (4.4.10 or later)
 
