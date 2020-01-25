@@ -1270,6 +1270,9 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 # Release notes
 
+Version 1.0.50
++ Stateless Programmable Switch: allow multiple buttons under a single switch - thanks, Jacob Nite
+
 Version 1.0.49
 + Stateless Programmable Switch: added option to restrict available switch values - thanks, Jacob Nite
 
