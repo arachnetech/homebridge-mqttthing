@@ -1481,15 +1481,15 @@ function makeThing(log, config) {
     }
 
     // Characteristic.ProgrammableSwitchEvent
-    function characteristic_ProgrammableSwitchEvent(service) {
-        let values = config.switchValues;
+    function characteristic_ProgrammableSwitchEvent(service, getTopic, switchValues, restrictSwitchValues) {
+        let values = switchValues;
         if (!values) {
             values = ['1', '2', 'L']; // 1 means SINGLE_PRESS, 2 means DOUBLE_PRESS, L means LONG_PRESS
         }
-        multiCharacteristic(service, 'progswitch', Characteristic.ProgrammableSwitchEvent, null, config.topics.getSwitch, values, null, true);
-        if( config.restrictSwitchValues ) {
+        multiCharacteristic(service, 'progswitch', Characteristic.ProgrammableSwitchEvent, null, getTopic, values, null, true);
+        if( restrictSwitchValues ) {
             let characteristic = service.getCharacteristic( Characteristic.ProgrammableSwitchEvent );
-            characteristic.props.validValues = config.restrictSwitchValues;
+            characteristic.props.validValues = restrictSwitchValues;
         }
     }
 
@@ -1803,6 +1803,22 @@ function makeThing(log, config) {
         multiCharacteristic( service, 'temperatureDisplayUnits', Characteristic.TemperatureDisplayUnits, 
             config.topics.setTemperatureDisplayUnits, config.topics.getTemperatureDisplayUnits, values,
             Characteristic.TemperatureDisplayUnits.CELSIUS );
+    }
+
+    // Characteristic.ServiceLabelIndex
+    function characteristic_ServiceLabelIndex( service, index ) {
+        service.setCharacteristic(Characteristic.ServiceLabelIndex, index);
+    }
+
+    // Characteristic.ServiceLabelNamespace
+    function characteristic_ServiceLabelNamespace( service ) {
+        if (config.labelType === 'dots') {
+            service.setCharacteristic(Characteristic.ServiceLabelNamespace, Characteristic.ServiceLabelNamespace.DOTS);
+        } else if (config.labelType === 'numerals') {
+            service.setCharacteristic(Characteristic.ServiceLabelNamespace, Characteristic.ServiceLabelNamespace.ARABIC_NUMERALS);
+        } else {
+            service.setCharacteristic(Characteristic.ServiceLabelNamespace, Characteristic.ServiceLabelNamespace.DOTS);
+        }
     }
 
     // Eve.Characteristics.CurrentConsumption [Watts] (Eve-only)
@@ -2265,7 +2281,7 @@ function makeThing(log, config) {
             }
         } else if (config.type == "doorbell") {
             service = new Service.Doorbell(name);
-            characteristic_ProgrammableSwitchEvent(service);
+            characteristic_ProgrammableSwitchEvent(service, config.topics.getSwitch, config.switchValues, config.restrictSwitchValues);
             if (config.topics.setBrightness || config.topics.getBrightness) {
                 characteristic_Brightness(service);
             }
@@ -2281,8 +2297,40 @@ function makeThing(log, config) {
                 services.push( motionsvc );
             }
         } else if( config.type == "statelessProgrammableSwitch" ) {
-            service = new Service.StatelessProgrammableSwitch( name );
-            characteristic_ProgrammableSwitchEvent(service);
+            if (Array.isArray(config.topics.getSwitch)) {
+                service = new Service.ServiceLabel(name);
+                characteristic_ServiceLabelNamespace( service );
+                services = [service]
+                var i = 0;
+                for (i = 0; i < config.topics.getSwitch.length; i++) {
+                    let buttonTopic = config.topics.getSwitch[i]
+                    let switchValues = config.switchValues
+                    if (Array.isArray(config.switchValues[0])) {
+                        if (config.switchValues.length > i) {
+                            switchValues = config.switchValues[i]
+                        } else {
+                            // If array is not long enough, just use the first entry
+                            switchValues = config.switchValues[0]
+                        }
+                    }
+                    let restrictSwitchValues = config.restrictSwitchValues
+                    if (Array.isArray(config.restrictSwitchValues[0])) {
+                        if (config.restrictSwitchValues.length > i) {
+                            restrictSwitchValues = config.restrictSwitchValues[i]
+                        } else {
+                            // If array is not long enough, just use the first entry
+                            restrictSwitchValues = config.restrictSwitchValues[0]
+                        }
+                    }
+                    let buttonSvc = new Service.StatelessProgrammableSwitch( name + "_" + i, i + 1 );
+                    characteristic_ProgrammableSwitchEvent(buttonSvc, buttonTopic, switchValues, restrictSwitchValues);
+                    characteristic_ServiceLabelIndex( buttonSvc, i + 1 );
+                    services.push(buttonSvc)
+                }
+            } else {
+                service = new Service.StatelessProgrammableSwitch( name );
+                characteristic_ProgrammableSwitchEvent(service, config.topics.getSwitch, config.switchValues, config.restrictSwitchValues);
+            }
         } else if (config.type == "securitySystem") {
             service = new Service.SecuritySystem(name);
             characteristic_SecuritySystemTargetState(service);

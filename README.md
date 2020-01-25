@@ -920,6 +920,11 @@ The states can be restricted to a subset of these three values available in Home
 
    * `"restrictSwitchValues": [0, 2]` - for `SINGLE_PRESS` and `LONG_PRESS`, (but no `DOUBLE_PRESS`)
 
+Additionally, multiple buttons (each potentially with a single, double, and long press action) may be added to a single statelessProgrammableSwitch. This is accomplished by setting the **getSwitch** topic to an array of topics. The number of elements in this array equals the number of buttons on the switch. For example:
+
+* `"getSwitch": ["<button topic 1>", "<button topic 2>", "<button topic 3>"]` - for a 3 button switch
+
+The **switchValues** and **restrictSwitchValues** options also support an array of values such that each switch may different switch values and different allowed button press sequences. A single array of values (like that used for a single) will result in that value being applied to all buttons.
 
 ```javascript
 {
@@ -936,6 +941,34 @@ The states can be restricted to a subset of these three values available in Home
     },
     "switchValues": "<array of 3 switch values corresponding to single-press, double-press and long-press respectively (optional)>"
     "restrictSwitchValues": [ 0, 1 ] // optional
+}
+
+// Multi-button switch
+{
+    "accessory": "mqttthing",
+    "type": "statelessProgrammableSwitch",
+    "name": "<name of sensor>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "caption": "<label (optional)>",
+    "topics":
+    {
+        "getSwitch":
+            [
+                "<topic used to provide switch 1 state>",
+                "<topic used to provide switch 2 state>",
+                "<topic used to provide switch 3 state>"
+            ]           
+    },
+    "switchValues":
+        [
+            "<array of 3 switch values corresponding to single-press, double-press and long-press respectively for switch 1 (optional)>"
+            "<array of 3 switch values corresponding to single-press, double-press and long-press respectively for switch 2 (optional)>"
+            "<array of 3 switch values corresponding to single-press, double-press and long-press respectively for switch 3 (optional)>"
+        ]
+    "switchValues": "<array of 3 switch values corresponding to single-press, double-press and long-press respectively (optional)>"
+    "restrictSwitchValues": [ 0, 2 ] // optional and applied to all buttons
 }
 ```
 
