@@ -394,6 +394,16 @@
     },
     {
       "accessory": "mqttthing",
+      "type": "statelessProgrammableSwitch",
+      "name": "Multi-switch",
+      "url": "http://192.168.10.35:1883",
+      "logMqtt": true,
+      "topics": {
+        "getSwitch": [ "test/mspswitch/1", "test/mspswitch/2", "test/mspswitch/3" ]
+      }
+    },
+    {
+      "accessory": "mqttthing",
       "type": "garageDoorOpener",
       "name": "Test Garage Door",
       "url": "http://192.168.10.35:1883",

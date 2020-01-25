@@ -2303,23 +2303,27 @@ function makeThing(log, config) {
                 services = [service]
                 var i = 0;
                 for (i = 0; i < config.topics.getSwitch.length; i++) {
-                    let buttonTopic = config.topics.getSwitch[i]
-                    let switchValues = config.switchValues
-                    if (Array.isArray(config.switchValues[0])) {
-                        if (config.switchValues.length > i) {
-                            switchValues = config.switchValues[i]
-                        } else {
-                            // If array is not long enough, just use the first entry
-                            switchValues = config.switchValues[0]
+                    let buttonTopic = config.topics.getSwitch[i];
+                    let switchValues = config.switchValues;
+                    if( switchValues ) {
+                        if (Array.isArray(config.switchValues[0])) {
+                            if (config.switchValues.length > i) {
+                                switchValues = config.switchValues[i];
+                            } else {
+                                // If array is not long enough, just use the first entry
+                                switchValues = config.switchValues[0];
+                            }
                         }
                     }
-                    let restrictSwitchValues = config.restrictSwitchValues
-                    if (Array.isArray(config.restrictSwitchValues[0])) {
-                        if (config.restrictSwitchValues.length > i) {
-                            restrictSwitchValues = config.restrictSwitchValues[i]
-                        } else {
-                            // If array is not long enough, just use the first entry
-                            restrictSwitchValues = config.restrictSwitchValues[0]
+                    let restrictSwitchValues = config.restrictSwitchValues;
+                    if( restrictSwitchValues ) {
+                        if (Array.isArray(config.restrictSwitchValues[0])) {
+                            if (config.restrictSwitchValues.length > i) {
+                                restrictSwitchValues = config.restrictSwitchValues[i];
+                            } else {
+                                // If array is not long enough, just use the first entry
+                                restrictSwitchValues = config.restrictSwitchValues[0];
+                            }
                         }
                     }
                     let buttonSvc = new Service.StatelessProgrammableSwitch( name + "_" + i, i + 1 );
