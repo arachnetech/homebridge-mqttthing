@@ -5,3 +5,6 @@ package-lock.json
 test/accessories/cachedAccessories
 test/persist/AccessoryInfo.*.json
 test/persist/IdentifierCache.*.json
+test/.uix-dashboard.json
+test/.uix-secrets
+test/auth.json

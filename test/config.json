@@ -6,7 +6,12 @@
     "pin": "323-32-223"
   },
   "description": "This is an example configuration file. You can use this as a template for creating your own configuration file.",
-  "platforms": [],
+  "platforms": [{
+    "platform": "config",
+    "name": "Config",
+    "port": 8080,
+    "sudo": false
+  }],
   "accessories": [
     {
       "accessory": "mqttthing",
