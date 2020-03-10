@@ -1,170 +1,170 @@
 {
-  "pluginAlias": "mqttthing",
-  "pluginType": "accessory",
-  "schema": {
-    "type": "object",
-    "properties": {
-        "type": {
-            "type": "string",
-            "title": "Type",
-            "description": "One of the supported accessory types listed below.",
-            "placeholder": "lightbulb",
-        },
-        "name": {
-            "type": "string",
-            "minLength": 1,
-            "required": true,
-            "title": "Name",
-            "description": "Name of accessory, as displayed in HomeKit.",
-            "placeholder": "My lightbulb"
-        },
-        "url": {
-            "type": "string",
-            "title": "Url",
-            "description": "An explanation about the purpose of this instance.",
-            "default": "",
-            "examples": [
-                "http://192.168.1.235:1883"
-            ]
-        },
-        "username": {
-            "type": "string",
-            "required": false,
-            "title": "Username",
-            "description": "This is your MQTT username.",
-            "placeholder": "MQTT_username"
-        },
-        "password": {
-            "type": "string",
-            "required": false,
-            "title": "Password",
-            "description": "This is your MQTT password.",
-            "placeholder": "MQTT_password"
-        },
-        "mqttOptions": {
-            "type": "object",
-            "title": "MQTT Options",
-            "description": "An explanation about the purpose of this instance.",
-            "properties": {
-                "keepalive": {
-                    "type": "integer",
-                    "title": "Keep Alive",
-                    "description": "An explanation about the purpose of this instance.",
-                    "placeholder": 0,
-                }
-            }
-        },
-        "mqttPubOptions": {
-            "type": "object",
-            "title": "MQTT Publish Options",
-            "description": "An explanation about the purpose of this instance.",
-            "properties": {
-                "retain": {
-                    "type": "boolean",
-                    "title": "Retain",
-                    "description": "An explanation about the purpose of this instance."
-                }
-            }
-        },
-        "logMqtt": {
-            "type": "boolean",
-            "readOnly": false,
-            "writeOnly": false,
-            "title": "Log MQTT",
-            "description": "An explanation about the purpose of this instance."
-        },
-        "topics": {
-            "type": "object",
-            "title": "The Topics Schema",
-            "description": "An explanation about the purpose of this instance.",
-            "properties": {
-                "getName": {
-                    "type": "string",
-                    "title": "Get Name",
-                    "description": "An explanation about the purpose of this instance.",
-                    "placeholder": "my/get/name/topic"
-                },
-                "getOnline": {
-                    "type": "string",
-                    "title": "Get Online",
-                    "description": "An explanation about the purpose of this instance.",
-                    "placeholder": "my/get/online/topic"
-                },
-                "getBatteryLevel": {
-                    "type": "string",
-                    "title": "Get Battery Level",
-                    "description": "An explanation about the purpose of this instance.",
-                    "placeholder": "my/get/battery-level/topic"
-                },
-                "getChargingState": {
-                    "type": "string",
-                    "title": "Get Charging State",
-                    "description": "An explanation about the purpose of this instance.",
-                    "placeholder": "my/get/battery-charging-state/topic"
-                },
-                "getStatusLowBattery": {
-                    "type": "string",
-                    "title": "Get Status Low Battery",
-                    "description": "An explanation about the purpose of this instance.",
-                    "placeholder": "my/get/status-low-battery/topic"
-                }
-            }
-        },
-        "integerValue": {
-            "type": "boolean",
-            "title": "The Integervalue Schema",
-            "description": "An explanation about the purpose of this instance."
-        },
-        "onlineValue": {
-            "type": "string",
-            "title": "Online Value",
-            "description": "An explanation about the purpose of this instance.",
-            "default": "",
-            "examples": [
-                "Online"
-            ]
-        },
-        "chargingStateValues": {
-            "type": "array",
-            "minContains": 1,
-            "title": "Charging State Values",
-            "description": "An explanation about the purpose of this instance."
-            "items": {
-                "type": "string",
-                "title": "Items",
-                "description": "An explanation about the purpose of this instance.",
-                "placeholder": "NotCharging, Charging, or NotChargeable"
-            }
-        },
-        "startPub": {
-            "type": "object",
-            "title": "Start Pub",
-            "description": "An explanation about the purpose of this instance.",
-            "properties": {
-                "topic1": {
-                    "type": "string",
-                    "title": "Topic1",
-                    "description": "An explanation about the purpose of this instance."
-                },
-                "topic2": {
-                    "type": "string",
-                    "title": "Topic2",
-                    "description": "An explanation about the purpose of this instance."
-                }
-            }
-        },
-        "confirmationPeriodms": {
-            "type": "integer",
-            "title": "Confirmationperiodms",
-            "description": "An explanation about the purpose of this instance.",
-            "placeholder": 1000
-        },
-        "retryLimit": {
-            "type": "integer",
-            "title": "Retry Limit",
-            "description": "An explanation about the purpose of this instance.",
-            "placeholder": 0
-        }
+    "pluginAlias": "mqttthing",
+    "pluginType": "accessory",
+    "schema": {
+      "type": "object",
+      "properties": {
+          "type": {
+              "type": "string",
+              "title": "Type",
+              "description": "One of the supported accessory types listed below.",
+              "placeholder": "lightbulb"
+          },
+          "name": {
+              "type": "string",
+              "minLength": 1,
+              "required": true,
+              "title": "Name",
+              "description": "Name of accessory, as displayed in HomeKit.",
+              "placeholder": "My lightbulb"
+          },
+          "url": {
+              "type": "string",
+              "title": "Url",
+              "description": "An explanation about the purpose of this instance.",
+              "default": "",
+              "examples": [
+                  "http://192.168.1.235:1883"
+              ]
+          },
+          "username": {
+              "type": "string",
+              "required": false,
+              "title": "Username",
+              "description": "This is your MQTT username.",
+              "placeholder": "MQTT_username"
+          },
+          "password": {
+              "type": "string",
+              "required": false,
+              "title": "Password",
+              "description": "This is your MQTT password.",
+              "placeholder": "MQTT_password"
+          },
+          "mqttOptions": {
+              "type": "object",
+              "title": "MQTT Options",
+              "description": "An explanation about the purpose of this instance.",
+              "properties": {
+                  "keepalive": {
+                      "type": "integer",
+                      "title": "Keep Alive",
+                      "description": "An explanation about the purpose of this instance.",
+                      "placeholder": 0
+                  }
+              }
+          },
+          "mqttPubOptions": {
+              "type": "object",
+              "title": "MQTT Publish Options",
+              "description": "An explanation about the purpose of this instance.",
+              "properties": {
+                  "retain": {
+                      "type": "boolean",
+                      "title": "Retain",
+                      "description": "An explanation about the purpose of this instance."
+                  }
+              }
+          },
+          "logMqtt": {
+              "type": "boolean",
+              "readOnly": false,
+              "writeOnly": false,
+              "title": "Log MQTT",
+              "description": "An explanation about the purpose of this instance."
+          },
+          "topics": {
+              "type": "object",
+              "title": "The Topics Schema",
+              "description": "An explanation about the purpose of this instance.",
+              "properties": {
+                  "getName": {
+                      "type": "string",
+                      "title": "Get Name",
+                      "description": "An explanation about the purpose of this instance.",
+                      "placeholder": "my/get/name/topic"
+                  },
+                  "getOnline": {
+                      "type": "string",
+                      "title": "Get Online",
+                      "description": "An explanation about the purpose of this instance.",
+                      "placeholder": "my/get/online/topic"
+                  },
+                  "getBatteryLevel": {
+                      "type": "string",
+                      "title": "Get Battery Level",
+                      "description": "An explanation about the purpose of this instance.",
+                      "placeholder": "my/get/battery-level/topic"
+                  },
+                  "getChargingState": {
+                      "type": "string",
+                      "title": "Get Charging State",
+                      "description": "An explanation about the purpose of this instance.",
+                      "placeholder": "my/get/battery-charging-state/topic"
+                  },
+                  "getStatusLowBattery": {
+                      "type": "string",
+                      "title": "Get Status Low Battery",
+                      "description": "An explanation about the purpose of this instance.",
+                      "placeholder": "my/get/status-low-battery/topic"
+                  }
+              }
+          },
+          "integerValue": {
+              "type": "boolean",
+              "title": "The Integervalue Schema",
+              "description": "An explanation about the purpose of this instance."
+          },
+          "onlineValue": {
+              "type": "string",
+              "title": "Online Value",
+              "description": "An explanation about the purpose of this instance.",
+              "default": "",
+              "examples": [
+                  "Online"
+              ]
+          },
+          "chargingStateValues": {
+              "type": "array",
+              "minContains": 1,
+              "title": "Charging State Values",
+              "description": "An explanation about the purpose of this instance.",
+              "items": {
+                  "type": "string",
+                  "title": "Items",
+                  "description": "An explanation about the purpose of this instance.",
+                  "placeholder": "NotCharging, Charging, or NotChargeable"
+              }
+          },
+          "startPub": {
+              "type": "object",
+              "title": "Start Pub",
+              "description": "An explanation about the purpose of this instance.",
+              "properties": {
+                  "topic1": {
+                      "type": "string",
+                      "title": "Topic1",
+                      "description": "An explanation about the purpose of this instance."
+                  },
+                  "topic2": {
+                      "type": "string",
+                      "title": "Topic2",
+                      "description": "An explanation about the purpose of this instance."
+                  }
+              }
+          },
+          "confirmationPeriodms": {
+              "type": "integer",
+              "title": "Confirmationperiodms",
+              "description": "An explanation about the purpose of this instance.",
+              "placeholder": 1000
+          },
+          "retryLimit": {
+              "type": "integer",
+              "title": "Retry Limit",
+              "description": "An explanation about the purpose of this instance.",
+              "placeholder": 0
+          }
+      }
     }
   }
-}
