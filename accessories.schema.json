@@ -1,0 +1,102 @@
+{
+    "plugin_alias": "homebridge-mqttthing",
+    "schemas": [{
+        "title": "Light bulb (on/off)",
+        "type": "object",
+        "properties": {
+            "accessory": {
+                "title": "Accessory",
+                "type": "string",
+                "const": "mqttthing",
+                "readOnly": true
+            },
+            "type": {
+                "title": "Accessory",
+                "type": "string",
+                "const": "lightbulb",
+                "readOnly": true
+            },
+            "name": {
+                "title": "Name",
+                "type": "string",
+                "default": "My light bulb",
+                "required": true
+            },
+            "url": {
+                "title": "MQTT server URL",
+                "type": "string",
+                "required": false
+            },
+            "username": {
+                "title": "MQTT server username",
+                "type": "string",
+                "required": false
+            },
+            "password": {
+                "title": "MQTT server password",
+                "type": "string",
+                "required": false
+            },
+            "topics": {
+                "title": "MQTT topics",
+                "type": "object",
+                "properties": {
+                    "getOn": {
+                        "title": "Status topic on which Homebridge receives on/off state",
+                        "type": "string"
+                    },
+                    "setOn": {
+                        "title": "Command topic on which Homebridge sends on/off state",
+                        "type": "string"
+                    }
+                }
+            },
+            "onValue": {
+                "title": "Value used to represent 'on'",
+                "type": "string",
+                "default": "true",
+                "required": true
+            },
+            "offValue": {
+                "title": "Value used to represent 'off'",
+                "type": "string",
+                "default": "false",
+                "required": true
+            }
+        }
+    }, {
+        "title": "Accessory 2",
+        "type": "object",
+        "properties": {
+            "accessory": {
+                "title": "Accessory",
+                "type": "string",
+                "const": "mqttthing",
+                "readOnly": true
+            },
+            "name": {
+                "title": "Name",
+                "type": "string",
+                "default": "Roborock Vacuum 2",
+                "required": true
+            }
+        }
+    }, {
+        "title": "Accessory 3",
+        "type": "object",
+        "properties": {
+            "accessory": {
+                "title": "Accessory",
+                "type": "string",
+                "const": "mqttthing",
+                "readOnly": true
+            },
+            "name": {
+                "title": "Name",
+                "type": "string",
+                "default": "Roborock Vacuum 3",
+                "required": true
+            }
+        }
+    }]
+}
