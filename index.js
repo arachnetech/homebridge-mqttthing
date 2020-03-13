@@ -1535,7 +1535,7 @@ function makeThing(log, config) {
 
     // Characteristic.CurrentDoorState
     function characteristic_CurrentDoorState(service) {
-        let values = config.doorValues;
+        let values = config.doorCurrentValues || config.doorValues;
         if (!values) {
             values = ['O', 'C', 'o', 'c', 'S'];
         }
@@ -1544,7 +1544,7 @@ function makeThing(log, config) {
 
     // Characteristic.TargetDoorState
     function characteristic_TargetDoorState(service) {
-        let values = config.doorValues;
+        let values = config.doorTargetValues || config.doorValues;
         if (!values) {
             values = ['O', 'C'];
         }

@@ -416,9 +416,11 @@ Set `confirmationPeriodms` to enable publishing confirmation for `setOn`/`getOn`
 
 ## Garage Door Opener
 
-Garage door opener current door state can be **OPEN**, **CLOSED**, **OPENING**, **CLOSING**, **STOPPED**. By default, these use values of `O`, `C`, `o`, `c` and `S` respectively; these defaults can be changed using the **doorValues** setting.
+Garage door opener *current* door state can be **OPEN**, **CLOSED**, **OPENING**, **CLOSING**, **STOPPED**. By default, these use values of `O`, `C`, `o`, `c` and `S` respectively; these defaults can be changed using the **doorCurrentValues** setting.
 
-Garage door opener target state can be **OPEN** or **CLOSED**. By default, values of `O` and `C` are used respectively (unless changed through **doorValues**).
+Garage door opener *target* state can be **OPEN** or **CLOSED**. By default, values of `O` and `C` are used respectively (unless changed through **doorTargetValues**).
+
+If the *current* and *target* state values are the same (but non-default), these can be changed together by using the **doorValues** setting.
 
 Lock current state can be **UNSECURED**, **SECURED**, **JAMMED** or **UNKNOWN**. By default, these use values of `U`, `S`, `J`, `?` respectively; these can be changed using the **lockValues** setting.
 
@@ -443,7 +445,8 @@ Lock target state can be **UNSECURED** or **SECURED**. By default, these use val
         "getLockCurrentState":      "test/garagelock/current",
         "getObstructionDetected":   "test/garage/obstruction"
     },
-    "doorValues": [ "Open", "Closed", "Opening", "Closing", "Stopped" ],
+    "doorCurrentValues": [ "Open", "Closed", "Opening", "Closing", "Stopped" ],
+    "doorTargetValues": ["open", "close"],
     "lockValues": [ "Unsecured", "Secured", "Jammed",  "Unknown" ]
 }
 ```
@@ -467,6 +470,10 @@ Lock target state can be **UNSECURED** or **SECURED**. By default, these use val
 ### Values
 
 `doorValues` - Array of 5 door values corresponding to open, closed, opening, closing and stopped respectively. If not specified, defaults to `[ 'O', 'C', 'o', 'c', 'S' ]`.
+
+`doorCurrentValues` - Array of 5 door values corresponding to open, closed, opening, closing and stopped respectively. If not specified, defaults to `[ 'O', 'C', 'o', 'c', 'S' ]`.
+
+`doorTargetValues` - Array of 2 door values corresponding to the door *target* values of open or closed, respectively. If not specified, defaults to `[ 'O', 'C' ]`.
 
 `lockValues` - Array of 4 lock values corresponding to unsecured, secured, jammed and unknown respectively. if not specified, defaults to `[ 'U', 'S', 'J', '?' ]`.
 
