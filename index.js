@@ -247,9 +247,10 @@ function makeThing(log, config) {
         };
     }
 
-    // Convert from boolean true/false to MQTT-published boolean value (as configured) - returns null if no offValue
-    function onOffValue(value) {
-        var mqttval;
+    //! Determine appropriate on/off value for Boolean property (not forced to string) for MQTT publishing.
+    //! Returns null if no offValue.
+    function getOnOffPubValue( value ) {
+        let mqttval;
         if( config.onValue ) {
             // using onValue/offValue
             mqttval = value ? config.onValue : config.offValue;
@@ -261,16 +262,57 @@ function makeThing(log, config) {
         if( mqttval === undefined || mqttval === null ) {
             return null;
         } else {
-            return mqttval.toString();
+            return mqttval;
         }
     }
 
-    function onlineOfflineValue( value ) {
+    //! Test whether a value represents 'on'
+    function isRecvValueOn( mqttval ) {
+        let onval = getOnOffPubValue( true );
+        return mqttval === onval || mqttval == ( onval + '' );
+    }
+
+    //! Test whether a value represents 'off'
+    function isRecvValueOff( mqttval ) {
+        let offval = getOnOffPubValue( false );
+        
+        if( offval === null ) {
+            // there is no off value
+            return false;
+        }
+
+        if( mqttval === offval || mqttval == ( offval + '' ) ) {
+            // off value match - it's definitely off
+            return true;
+        }
+
+        if( config.otherValueOff ) {
+            if( ! isRecvValueOn( mqttval ) ) {
+                // it's not the on value and we consider any other value to be off
+                return true;
+            }
+        }
+
+        // not off
+        return false;
+    }
+
+    function getOnlineOfflinePubValue( value ) {
         var pubVal = ( value ? config.onlineValue : config.offlineValue );
         if( pubVal === undefined ) {
-            pubVal = onOffValue( value );
+            pubVal = getOnOffPubValue( value );
         }
         return pubVal;
+    }
+
+    function isRecvValueOnline( mqttval ) {
+        let onval = getOnlineOfflinePubValue( true );
+        return mqttval === onval || mqttval == ( onval + '' );
+    }
+
+    function isRecvValueOffline( mqttval ) {
+        let offval = getOnlineOfflinePubValue( false );
+        return mqttval === offval || mqttval == ( offval + '' );
     }
 
     function mapValueForHomebridge(val, mapValueFunc) {
@@ -313,7 +355,7 @@ function makeThing(log, config) {
             charac.on('set', function (value, callback, context) {
                 if (context !== c_mySetContext) {
                     state[property] = value;
-                    publish( onOffValue( value ) );
+                    publish( getOnOffPubValue( value ) );
                 }
                 callback();
 
@@ -326,7 +368,7 @@ function makeThing(log, config) {
                         autoOffTimer = null;
 
                         state[property] = false;
-                        publish( onOffValue( false ) );
+                        publish( getOnOffPubValue( false ) );
                         service.getCharacteristic(characteristic).setValue(mapValueForHomebridge(false, mapValueFunc), undefined, c_mySetContext);
 
                     }, turnOffAfterms );
@@ -340,16 +382,15 @@ function makeThing(log, config) {
         // subscribe to get topic
         if (getTopic) {
             mqttSubscribe(getTopic, function (topic, message) {
+                // determine whether this is an on or off value
                 let newState = false; // assume off
-                if( message == onOffValue( true ) ) {
+                if( isRecvValueOn( message ) ) {
                     newState = true; // received on value so on
-                } else {
-                    let offValue = onOffValue( false );
-                    if( offValue !== null && message != offValue && ! config.otherValueOff ) {
-                        // there is a specific off value, but we've received something else - so ignore message
-                        return;
-                    }
+                } else if ( ! isRecvValueOff( message ) ) {
+                    // received value NOT acceptable as 'off' so ignore message
+                    return;
                 }
+                // if it changed, set characteristic
                 if (state[property] != newState) {
                     state[property] = newState;
                     service.getCharacteristic(characteristic).setValue(mapValueForHomebridge(newState, mapValueFunc), undefined, c_mySetContext);
@@ -369,21 +410,24 @@ function makeThing(log, config) {
         }
     }
 
-    function booleanState( property, getTopic, initialValue, onOffFunc ) {
+    function booleanState( property, getTopic, initialValue, isOnFunc, isOffFunc ) {
         // default state
         state[ property ] = ( initialValue ? true : false );
 
         // MQTT subscription
         if( getTopic ) {
             mqttSubscribe( getTopic, function( topic, message ) {
-                var newState = ( message == onOffFunc( true ) );
-                state[ property ] = newState;
+                if( isOnFunc( message ) ) {
+                    state[ property ] = true;
+                } else if( isOffFunc( message ) ) {
+                    state[ property ] = false;
+                }
             } );
         }
     }
 
     function state_Online() {
-        booleanState( 'online', config.topics.getOnline, true, onlineOfflineValue );
+        booleanState( 'online', config.topics.getOnline, true, isRecvValueOnline, isRecvValueOffline );
     }
 
     function integerCharacteristic(service, property, characteristic, setTopic, getTopic, initialValue) {
@@ -1966,7 +2010,7 @@ function makeThing(log, config) {
         function timerFunc() {
             durationTimer = null;
             state.active = false;
-            mqttPublish( config.topics.setActive, onOffValue( false ) );
+            mqttPublish( config.topics.setActive, getOnOffPubValue( false ) );
             characActive.updateValue( Characteristic.Active.INACTIVE );
         }
 
@@ -1986,7 +2030,7 @@ function makeThing(log, config) {
                     charac.updateValue( getRemainingDuration() );    
                 });
             } else {
-                // device will handle the timer by itfelf
+                // device will handle the timer by itself
                 characActive.on('change', function (obj) {
                     if ( obj.newValue == Characteristic.Active.ACTIVE ) {
                         state.durationEndTime = Math.floor(Date.now() / 1000) + state.setDuration;

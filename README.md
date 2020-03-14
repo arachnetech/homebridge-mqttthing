@@ -1,10 +1,18 @@
 # homebridge-mqttthing
 Homebridge plugin supporting various services over MQTT, originally based on homebrige-mqttswitch and homebridge-mqttlightbulb
 
+---
+
    * [Installation](#installation)
    * [Configuration](#configuration)
    * [Supported Accessories](#supported-accessories)
    * [Release notes](#release-notes)
+
+## Compatibility with previous versions
+
+**From version 1.1.x, raw JavaScript values for Boolean properties are passed to MQTT apply functions.** This may change published message formats, e.g. when apply functions are used to build JSON strings.
+
+For full details of changes please see the [Release notes](#release-notes) section.
 
 # Installation
 Follow the instructions in [homebridge](https://www.npmjs.com/package/homebridge) for the homebridge server installation.
@@ -1276,6 +1284,11 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 
 # Release notes
+
+Version 1.1.1
++ Changed Boolean value handling to support bare JavaScript Booleans returned from incoming MQTT apply() functions (`"true" != true` but both are now accepted).
++ Boolean property values passed to outgoing MQTT apply() functions are no-longer converted to strings first (for consistency with the change above). This allows easier publishing of JSON containing correctly typed values, but **may change outgoing message format with existing configurations in some situations**.
++ Added option to configure garage door target values independently of current values - thanks, Charles Powell
 
 Version 1.0.50
 + Stateless Programmable Switch: allow multiple buttons under a single switch - thanks, Jacob Nite

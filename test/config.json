@@ -86,7 +86,7 @@
         "setOn": { "topic": "test/rgblight/on/set", "apply": "return JSON.stringify( { state: { power: message }, version: 1 } );" }
       },
       "logMqtt": true,
-      "integerValue": true,
+      "integerValue": false,
       "hex": true
     },
     {
