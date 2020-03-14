@@ -24,7 +24,7 @@ function makeThing(log, config) {
     //
 
     // Initialize MQTT client
-    const ctx = { log, config };
+    let ctx = { log, config };
     mqttlib.init( ctx );
 
     // MQTT Subscribe

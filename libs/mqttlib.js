@@ -5,14 +5,14 @@
 
 var mqtt = require("mqtt");
 
-
 var mqttlib = new function() {
 
-    // MQTT message dispatch
-    var mqttDispatch = {}; // map of topic to function( topic, message ) to handle
-
     //! Initialise MQTT. Requires context ( { log, config } ).
+    //! Context populated with mqttClient and mqttDispatch.
     this.init = function( ctx ) {
+        // MQTT message dispatch
+        let mqttDispatch = ctx.mqttDispatch = {}; // map of topic to function( topic, message ) to handle
+        
         let { config, log } = ctx;
         let logmqtt = config.logMqtt;
         var clientId = 'mqttthing_' + config.name.replace(/[^\x20-\x7F]/g, "") + '_' + Math.random().toString(16).substr(2, 8);
@@ -84,7 +84,7 @@ var mqttlib = new function() {
 
     // Subscribe
     this.subscribe = function( ctx, topic, handler ) {
-        let { log, mqttClient } = ctx;
+        let { mqttDispatch, log, mqttClient } = ctx;
         if( ! mqttClient ) {
             log( 'ERROR: Call mqttlib.init() before mqttlib.subscribe()' );
             return;
