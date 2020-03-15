@@ -142,12 +142,12 @@ module.exports = {
         "no-octal-escape": "error",
         "no-param-reassign": "off",
         "no-path-concat": "error",
-        "no-plusplus": [
+        /*"no-plusplus": [
             "error",
             {
                 "allowForLoopAfterthoughts": true
             }
-        ],
+        ],*/
         "no-process-env": "error",
         "no-process-exit": "error",
         "no-proto": "error",

@@ -63,77 +63,10 @@ function makeThing(log, config) {
     }
 
     // The states of our characteristics
-    var state = {};
+    var state = ctx.state = {};
 
     function makeConfirmedPublisher( setTopic, getTopic, makeConfirmed ) {
-
-        // if confirmation isn't being used, just return a simple publishing function
-        if( ! config.confirmationPeriodms || ! getTopic || ! makeConfirmed ) {
-            // no confirmation - return generic publishing function
-            return function( message ) {
-                mqttPublish( setTopic, message );
-            }
-        }
-
-        var timer = null;
-        var expected = null;
-        var indicatedOffline = false;
-        var retriesRemaining = 0;
-
-        // subscribe to our get topic
-        mqttSubscribe( getTopic, function( topic, message ) {
-            if( message == expected && timer ) {
-                clearTimeout( timer );
-                timer = null;
-                if( indicatedOffline ) {
-                    state.online = true;
-                    indicatedOffline = false;
-                }
-            }
-        } );
-
-        // return enhanced publishing function
-        return function( message ) {
-            // clear any existing confirmation timer
-            if( timer ) {
-                clearTimeout( timer );
-                timer = null;
-            }
-
-            // confirmation timeout function
-            function confirmationTimeout() {
-                // confirmation period has expired
-                timer = null;
-                // indicate offline (unless accessory is publishing this explicitly)
-                if( ! config.topics.getOnline && ! indicatedOffline ) {
-                    state.online = false;
-                    indicatedOffline = true;
-                }
-
-                // retry
-                if( retriesRemaining > 0 ) {
-                    --retriesRemaining;
-                    publish();
-                } else {
-                    log( 'Unresponsive - no confirmation message received on ' + getTopic + ". Expecting [" + expected + "]." );
-                }
-            }
-
-            function publish() {
-                // set confirmation timer
-                timer = setTimeout( confirmationTimeout, config.confirmationPeriodms );
-
-                // publish
-                expected = message;
-                mqttPublish( setTopic, message );
-            }
-
-            // initialise retry counter
-            retriesRemaining = ( config.retryLimit === undefined ) ? 3 : config.retryLimit;
-
-            // initial publish
-            publish();
-        };
+        return mqttlib.makeConfirmedPublisher( ctx, setTopic, getTopic, makeConfirmed );
     }
 
     //! Determine appropriate on/off value for Boolean property (not forced to string) for MQTT publishing.
