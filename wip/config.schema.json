@@ -2,169 +2,1586 @@
     "pluginAlias": "mqttthing",
     "pluginType": "accessory",
     "schema": {
-      "type": "object",
-      "properties": {
-          "type": {
-              "type": "string",
-              "title": "Type",
-              "description": "One of the supported accessory types listed below.",
-              "placeholder": "lightbulb"
-          },
-          "name": {
-              "type": "string",
-              "minLength": 1,
-              "required": true,
-              "title": "Name",
-              "description": "Name of accessory, as displayed in HomeKit.",
-              "placeholder": "My lightbulb"
-          },
-          "url": {
-              "type": "string",
-              "title": "Url",
-              "description": "An explanation about the purpose of this instance.",
-              "default": "",
-              "examples": [
-                  "http://192.168.1.235:1883"
-              ]
-          },
-          "username": {
-              "type": "string",
-              "required": false,
-              "title": "Username",
-              "description": "This is your MQTT username.",
-              "placeholder": "MQTT_username"
-          },
-          "password": {
-              "type": "string",
-              "required": false,
-              "title": "Password",
-              "description": "This is your MQTT password.",
-              "placeholder": "MQTT_password"
-          },
-          "mqttOptions": {
-              "type": "object",
-              "title": "MQTT Options",
-              "description": "An explanation about the purpose of this instance.",
-              "properties": {
-                  "keepalive": {
-                      "type": "integer",
-                      "title": "Keep Alive",
-                      "description": "An explanation about the purpose of this instance.",
-                      "placeholder": 0
-                  }
-              }
-          },
-          "mqttPubOptions": {
-              "type": "object",
-              "title": "MQTT Publish Options",
-              "description": "An explanation about the purpose of this instance.",
-              "properties": {
-                  "retain": {
-                      "type": "boolean",
-                      "title": "Retain",
-                      "description": "An explanation about the purpose of this instance."
-                  }
-              }
-          },
-          "logMqtt": {
-              "type": "boolean",
-              "readOnly": false,
-              "writeOnly": false,
-              "title": "Log MQTT",
-              "description": "An explanation about the purpose of this instance."
-          },
-          "topics": {
-              "type": "object",
-              "title": "The Topics Schema",
-              "description": "An explanation about the purpose of this instance.",
-              "properties": {
-                  "getName": {
-                      "type": "string",
-                      "title": "Get Name",
-                      "description": "An explanation about the purpose of this instance.",
-                      "placeholder": "my/get/name/topic"
-                  },
-                  "getOnline": {
-                      "type": "string",
-                      "title": "Get Online",
-                      "description": "An explanation about the purpose of this instance.",
-                      "placeholder": "my/get/online/topic"
-                  },
-                  "getBatteryLevel": {
-                      "type": "string",
-                      "title": "Get Battery Level",
-                      "description": "An explanation about the purpose of this instance.",
-                      "placeholder": "my/get/battery-level/topic"
-                  },
-                  "getChargingState": {
-                      "type": "string",
-                      "title": "Get Charging State",
-                      "description": "An explanation about the purpose of this instance.",
-                      "placeholder": "my/get/battery-charging-state/topic"
-                  },
-                  "getStatusLowBattery": {
-                      "type": "string",
-                      "title": "Get Status Low Battery",
-                      "description": "An explanation about the purpose of this instance.",
-                      "placeholder": "my/get/status-low-battery/topic"
-                  }
-              }
-          },
-          "integerValue": {
-              "type": "boolean",
-              "title": "The Integervalue Schema",
-              "description": "An explanation about the purpose of this instance."
-          },
-          "onlineValue": {
-              "type": "string",
-              "title": "Online Value",
-              "description": "An explanation about the purpose of this instance.",
-              "default": "",
-              "examples": [
-                  "Online"
-              ]
-          },
-          "chargingStateValues": {
-              "type": "array",
-              "minContains": 1,
-              "title": "Charging State Values",
-              "description": "An explanation about the purpose of this instance.",
-              "items": {
-                  "type": "string",
-                  "title": "Items",
-                  "description": "An explanation about the purpose of this instance.",
-                  "placeholder": "NotCharging, Charging, or NotChargeable"
-              }
-          },
-          "startPub": {
-              "type": "object",
-              "title": "Start Pub",
-              "description": "An explanation about the purpose of this instance.",
-              "properties": {
-                  "topic1": {
-                      "type": "string",
-                      "title": "Topic1",
-                      "description": "An explanation about the purpose of this instance."
-                  },
-                  "topic2": {
-                      "type": "string",
-                      "title": "Topic2",
-                      "description": "An explanation about the purpose of this instance."
-                  }
-              }
-          },
-          "confirmationPeriodms": {
-              "type": "integer",
-              "title": "Confirmationperiodms",
-              "description": "An explanation about the purpose of this instance.",
-              "placeholder": 1000
-          },
-          "retryLimit": {
-              "type": "integer",
-              "title": "Retry Limit",
-              "description": "An explanation about the purpose of this instance.",
-              "placeholder": 0
-          }
-      }
-    }
-  }
+        "type": "object",
+        "properties": {
+            "type": {
+                "type": "string",
+                "title": "Type",
+                "description": "Select the accessory type.",
+                "placeholder": "lightbulb",
+                "oneOf": [
+                    {
+                        "title": "Air Pressure Sensor",
+                        "enum": [
+                            "airPressureSensor"
+                        ]
+                    },
+                    {
+                        "title": "Air Quality Sensor",
+                        "enum": [
+                            "airQualitySensor"
+                        ]
+                    },
+                    {
+                        "title": "Carbon Dioxide Sensor",
+                        "enum": [
+                            "carbonDioxideSensor"
+                        ]
+                    },
+                    {
+                        "title": "Contact Sensor",
+                        "enum": [
+                            "contactSensor"
+                        ]
+                    },
+                    {
+                        "title": "Doorbell",
+                        "enum": [
+                            "doorbell"
+                        ]
+                    },
+                    {
+                        "title": "Fan",
+                        "enum": [
+                            "fan"
+                        ]
+                    },
+                    {
+                        "title": "Garage door opener",
+                        "enum": [
+                            "garageDoorOpener"
+                        ]
+                    },
+                    {
+                        "title": "Heater Cooler",
+                        "enum": [
+                            "heaterCooler"
+                        ]
+                    },
+                    {
+                        "title": "Humidity Sensor",
+                        "enum": [
+                            "humiditySensor"
+                        ]
+                    },
+                    {
+                        "title": "Leak Sensor",
+                        "enum": [
+                            "leakSensor"
+                        ]
+                    },
+                    {
+                        "title": "Light bulb",
+                        "enum": [
+                            "lightbulb"
+                        ]
+                    },
+                    {
+                        "title": "Light Sensor",
+                        "enum": [
+                            "lightSensor"
+                        ]
+                    },
+                    {
+                        "title": "Lock Mechanism",
+                        "enum": [
+                            "lockMechanism"
+                        ]
+                    },
+                    {
+                        "title": "Microphone",
+                        "enum": [
+                            "microphone"
+                        ]
+                    },
+                    {
+                        "title": "Motion Sensor",
+                        "enum": [
+                            "motionSensor"
+                        ]
+                    },
+                    {
+                        "title": "Occupancy Sensor",
+                        "enum": [
+                            "occupancySensor"
+                        ]
+                    },
+                    {
+                        "title": "Outlet",
+                        "enum": [
+                            "outlet"
+                        ]
+                    },
+                    {
+                        "title": "Security System",
+                        "enum": [
+                            "securitySystem"
+                        ]
+                    },
+                    {
+                        "title": "Smoke Sensor",
+                        "enum": [
+                            "smokeSensor"
+                        ]
+                    },
+                    {
+                        "title": "Speaker",
+                        "enum": [
+                            "speaker"
+                        ]
+                    },
+                    {
+                        "title": "StatelessProgrammableSwitch",
+                        "enum": [
+                            "statelessProgrammableSwitch"
+                        ]
+                    },
+                    {
+                        "title": "Switch",
+                        "enum": [
+                            "switch"
+                        ]
+                    },
+                    {
+                        "title": "Television",
+                        "enum": [
+                            "television"
+                        ]
+                    },
+                    {
+                        "title": "Temperature Sensor",
+                        "enum": [
+                            "temperatureSensor"
+                        ]
+                    },
+                    {
+                        "title": "Thermostat",
+                        "enum": [
+                            "thermostat"
+                        ]
+                    },
+                    {
+                        "title": "Valve",
+                        "enum": [
+                            "valve"
+                        ]
+                    },
+                    {
+                        "title": "Weather Station",
+                        "enum": [
+                            "weatherStation"
+                        ]
+                    },
+                    {
+                        "title": "Window",
+                        "enum": [
+                            "window"
+                        ]
+                    },
+                    {
+                        "title": "Window Covering",
+                        "enum": [
+                            "windowCovering"
+                        ]
+                    }
+                ]
+            },
+            "name": {
+                "type": "string",
+                "minLength": 1,
+                "required": true,
+                "title": "Name",
+                "description": "Name of accessory, as displayed in HomeKit."
+            },
+            "url": {
+                "type": "string",
+                "title": "URL",
+                "description": "URL of MQTT server if not localhost port 1883 (optional)",
+                "placeholder": "http://localhost:1883"
+            },
+            "username": {
+                "type": "string",
+                "required": false,
+                "title": "Username",
+                "description": "Username for MQTT server (optional)"
+            },
+            "password": {
+                "type": "string",
+                "required": false,
+                "title": "Password",
+                "description": "Password for MQTT server (optional)"
+            },
+            "mqttOptions": {
+                "type": "object",
+                "title": "MQTT Options",
+                "description": "An explanation about the purpose of this instance.",
+                "properties": {
+                    "keepalive": {
+                        "type": "integer",
+                        "title": "Keep Alive",
+                        "description": "An explanation about the purpose of this instance.",
+                        "placeholder": 0
+                    }
+                }
+            },
+            "mqttPubOptions": {
+                "type": "object",
+                "title": "MQTT Publish Options",
+                "description": "An explanation about the purpose of this instance.",
+                "properties": {
+                    "retain": {
+                        "type": "boolean",
+                        "title": "Retain",
+                        "description": "An explanation about the purpose of this instance."
+                    }
+                }
+            },
+            "logMqtt": {
+                "type": "boolean",
+                "readOnly": false,
+                "writeOnly": false,
+                "title": "Log MQTT",
+                "description": "Set to true to enable MQTT logging for this accessory (optional, defaults to false)"
+            },
+            "topics": {
+                "type": "object",
+                "title": "Topics",
+                "properties": {
+                    "getOnline": {
+                        "type": "string",
+                        "description": "topic used to provide 'online'"
+                    },
+                    "getAirPressure": {
+                        "type": "string",
+                        "description": "topic used to provide 'air pressure'",
+                        "condition": {
+                            "functionBody": "return ['airPressureSensor','airPressureSensor','weatherStation'].includes(model.type);"
+                        }
+                    },
+                    "getSwitch": {
+                        "type": "string",
+                        "description": "topic used to provide switch state",
+                        "condition": {
+                            "functionBody": "return ['doorbell','statelessProgrammableSwitch'].includes(model.type);"
+                        }
+                    },
+                    "getRotationMode": {
+                        "type": "string",
+                        "description": "topic used to report 'rotation mode'",
+                        "condition": {
+                            "functionBody": "return ['heaterCooler'].includes(model.type);"
+                        }
+                    },
+                    "setRotationMode": {
+                        "type": "string",
+                        "description": "topic used to set 'rotation mode'",
+                        "condition": {
+                            "functionBody": "return ['heaterCooler'].includes(model.type);"
+                        }
+                    },
+                    "getHSV": {
+                        "type": "string",
+                        "description": "in HSV mode, topic to get comma-separated hue, saturation and value",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "setHSV": {
+                        "type": "string",
+                        "description": "in HSV mode, topic to set comma-separated hue, saturation and value",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "getRGB": {
+                        "type": "string",
+                        "description": "in RGB mode, topic to get comma-separated hue, saturation and value",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "setRGB": {
+                        "type": "string",
+                        "description": "in RGB mode, topic to set comma-separated hue, saturation and value",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "getRGBW": {
+                        "type": "string",
+                        "description": "in RGBW mode, topic to get comma-separated hue, saturation and value",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "setRGBW": {
+                        "type": "string",
+                        "description": "in RGBW mode, topic to set comma-separated hue, saturation and value",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "getRGBWW": {
+                        "type": "string",
+                        "description": "in RGBWW mode, topic to get comma-separated hue, saturation and value",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "setRGBWW": {
+                        "type": "string",
+                        "description": "in RGBWW mode, topic to set comma-separated hue, saturation and value",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "getWhite": {
+                        "type": "string",
+                        "description": "topic to get white level (0-255)> - used with getRGB for RGBW with separately-published white level",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "setWhite": {
+                        "type": "string",
+                        "description": "topic to set white level (0-255)> - used with getRGB for RGBW with separately-published white level",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "getWatts": {
+                        "type": "string",
+                        "description": "topic used to provide 'current consumption' [Watts] (optional, Eve-App-only)",
+                        "condition": {
+                            "functionBody": "return ['outlet'].includes(model.type);"
+                        }
+                    },
+                    "getVolts": {
+                        "type": "string",
+                        "description": "topic used to provide 'voltage' [Volts] (optional, Eve-App-only)",
+                        "condition": {
+                            "functionBody": "return ['outlet'].includes(model.type);"
+                        }
+                    },
+                    "getAmperes": {
+                        "type": "string",
+                        "description": "Topic used to provide 'electricCurrent' [Amperes] (optional, Eve-App-only)",
+                        "condition": {
+                            "functionBody": "return ['outlet'].includes(model.type);"
+                        }
+                    },
+                    "getTotalConsumption": {
+                        "type": "string",
+                        "description": "Topic used to provide 'electricCurrent' [Amperes] (optional, Eve-App-only)",
+                        "condition": {
+                            "functionBody": "return ['outlet'].includes(model.type);"
+                        }
+                    },
+                    "setTargetState": {
+                        "type": "string",
+                        "description": "Topic published when the target alarm state is changed in HomeKit.",
+                        "condition": {
+                            "functionBody": "return ['securitySystem'].includes(model.type);"
+                        }
+                    },
+                    "getTargetState": {
+                        "type": "string",
+                        "description": "Topic that may be published to notify HomeKit that the target alarm state has been changed externally.",
+                        "condition": {
+                            "functionBody": "return ['securitySystem'].includes(model.type);"
+                        }
+                    },
+                    "getCurrentState": {
+                        "type": "string",
+                        "description": "Topic published to notify HomeKit that an alarm state has been achieved. HomeKit will expect current state to end up matching target state.",
+                        "condition": {
+                            "functionBody": "return ['securitySystem'].includes(model.type);"
+                        }
+                    },
+                    "setActiveInput": {
+                        "type": "string",
+                        "description": "Topic to set the active input source (optional).",
+                        "condition": {
+                            "functionBody": "return ['television'].includes(model.type);"
+                        }
+                    },
+                    "getActiveInput": {
+                        "type": "string",
+                        "description": "topic to get the active input source (optional).",
+                        "condition": {
+                            "functionBody": "return ['television'].includes(model.type);"
+                        }
+                    },
+                    "getWeatherCondition": {
+                        "type": "string",
+                        "description": "topic used to provide 'weather condition' (optional, Eve-only)",
+                        "condition": {
+                            "functionBody": "return ['weatherStation'].includes(model.type);"
+                        }
+                    },
+                    "getRain1h": {
+                        "type": "string",
+                        "title": "Get Rain 1H",
+                        "description": "topic used to provide 'rain [mm] in last 1h' (optional, Eve-only)",
+                        "condition": {
+                            "functionBody": "return ['weatherStation'].includes(model.type);"
+                        }
+                    },
+                    "getRain24h": {
+                        "type": "string",
+                        "title": "Get Rain 24H",
+                        "description": "topic used to provide 'rain [mm] in last 24h' (optional, Eve-only)",
+                        "condition": {
+                            "functionBody": "return ['weatherStation'].includes(model.type);"
+                        }
+                    },
+                    "getUVIndex": {
+                        "type": "string",
+                        "title": "Get UV Index",
+                        "description": "topic used to provide 'UV index' (optional, Eve-only)",
+                        "condition": {
+                            "functionBody": "return ['weatherStation'].includes(model.type);"
+                        }
+                    },
+                    "getVisibility": {
+                        "type": "string",
+                        "description": "topic used to provide 'visibility [km]' (optional, Eve-only)",
+                        "condition": {
+                            "functionBody": "return ['weatherStation'].includes(model.type);"
+                        }
+                    },
+                    "getWindDirection": {
+                        "type": "string",
+                        "description": "topic used to provide 'wind direction' (optional, Eve-only)",
+                        "condition": {
+                            "functionBody": "return ['weatherStation'].includes(model.type);"
+                        }
+                    },
+                    "getWindSpeed": {
+                        "type": "string",
+                        "description": "topic used to provide 'wind speed [km/h]' (optional, Eve-only)",
+                        "condition": {
+                            "functionBody": "return ['weatherStation'].includes(model.type);"
+                        }
+                    },
+                    "getActive": {
+                        "type": "string",
+                        "description": "topic used to provide 'active'",
+                        "condition": {
+                            "functionBody": "return ['airPurifier','fanv2','faucet','heaterCooler','humidifierDehumidifier','irrigationSystem','valve','cameraEventRecordingManagement','television','televisionSpeaker','targetControl'].includes(model.type);"
+                        }
+                    },
+                    "setActive": {
+                        "type": "string",
+                        "description": "topic used to provide 'active'",
+                        "condition": {
+                            "functionBody": "return ['airPurifier','fanv2','faucet','heaterCooler','humidifierDehumidifier','irrigationSystem','valve','cameraEventRecordingManagement','television','televisionSpeaker','targetControl'].includes(model.type);"
+                        }
+                    },
+                    "getAirQuality": {
+                        "type": "string",
+                        "description": "topic used to provide 'air quality'",
+                        "condition": {
+                            "functionBody": "return ['airQualitySensor'].includes(model.type);"
+                        }
+                    },
+                    "getAirQualityPPM": {
+                        "type": "string",
+                        "description": "topic used to provide 'air quality voc in ppm' (Eve-only)",
+                        "condition": {
+                            "functionBody": "return ['airQualitySensor'].includes(model.type);"
+                        }
+                    },
+                    "setDuration": {
+                        "type": "string",
+                        "description": "topic used to set default duration (seconds) (optional, with external timer)",
+                        "condition": {
+                            "functionBody": "return ['valve'].includes(model.type);"
+                        }
+                    },
+                    "getDuration": {
+                        "type": "string",
+                        "description": "topic used to get default duration (seconds) (optional, with external timer)",
+                        "condition": {
+                            "functionBody": "return ['valve'].includes(model.type);"
+                        }
+                    },
+                    "getBatteryLevel": {
+                        "type": "string",
+                        "description": "topic used to provide 'battery level'",
+                        "condition": {
+                            "functionBody": "return ['batteryService'].includes(model.type);"
+                        }
+                    },
+                    "getBrightness": {
+                        "type": "string",
+                        "description": "topic used to provide 'brightness'",
+                        "condition": {
+                            "functionBody": "return ['doorbell','lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "setBrightness": {
+                        "type": "string",
+                        "description": "topic used to provide 'brightness'",
+                        "condition": {
+                            "functionBody": "return ['doorbell','lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "getCarbonDioxideDetected": {
+                        "type": "string",
+                        "description": "topic used to provide 'carbon dioxide detected'",
+                        "condition": {
+                            "functionBody": "return ['carbonDioxideSensor'].includes(model.type);"
+                        }
+                    },
+                    "getCarbonDioxideLevel": {
+                        "type": "string",
+                        "description": "topic used to provide 'carbon dioxide level'",
+                        "condition": {
+                            "functionBody": "return ['airQualitySensor','carbonDioxideSensor'].includes(model.type);"
+                        }
+                    },
+                    "getCarbonDioxidePeakLevel": {
+                        "type": "string",
+                        "description": "topic used to provide 'carbon dioxide peak level'",
+                        "condition": {
+                            "functionBody": "return ['carbonDioxideSensor'].includes(model.type);"
+                        }
+                    },
+                    "getCarbonMonoxideDetected": {
+                        "type": "string",
+                        "description": "topic used to provide 'carbon monoxide detected'",
+                        "condition": {
+                            "functionBody": "return ['carbonMonoxideSensor'].includes(model.type);"
+                        }
+                    },
+                    "getCarbonMonoxideLevel": {
+                        "type": "string",
+                        "description": "topic used to provide 'carbon monoxide level'",
+                        "condition": {
+                            "functionBody": "return ['airQualitySensor','carbonMonoxideSensor'].includes(model.type);"
+                        }
+                    },
+                    "setCarbonMonoxideLevel": {
+                        "type": "string",
+                        "description": "topic used to provide 'carbon monoxide level'",
+                        "condition": {
+                            "functionBody": "return ['carbonMonoxideSensor'].includes(model.type);"
+                        }
+                    },
+                    "getCarbonMonoxidePeakLevel": {
+                        "type": "string",
+                        "description": "topic used to provide 'carbon monoxide peak level'",
+                        "condition": {
+                            "functionBody": "return ['carbonMonoxideSensor'].includes(model.type);"
+                        }
+                    },
+                    "setCarbonMonoxidePeakLevel": {
+                        "type": "string",
+                        "description": "topic used to provide 'carbon monoxide peak level'",
+                        "condition": {
+                            "functionBody": "return ['carbonMonoxideSensor'].includes(model.type);"
+                        }
+                    },
+                    "getChargingState": {
+                        "type": "string",
+                        "description": "topic used to provide 'charging state'",
+                        "condition": {
+                            "functionBody": "return ['batteryService'].includes(model.type);"
+                        }
+                    },
+                    "getColorTemperature": {
+                        "type": "string",
+                        "description": "topic used to provide 'color temperature'",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "setColorTemperature": {
+                        "type": "string",
+                        "description": "topic used to provide 'color temperature'",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "getContactSensorState": {
+                        "type": "string",
+                        "description": "topic used to provide 'contact sensor state'",
+                        "condition": {
+                            "functionBody": "return ['contactSensor'].includes(model.type);"
+                        }
+                    },
+                    "getCoolingThresholdTemperature": {
+                        "type": "string",
+                        "description": "topic used to provide 'cooling threshold temperature'",
+                        "condition": {
+                            "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
+                        }
+                    },
+                    "setCoolingThresholdTemperature": {
+                        "type": "string",
+                        "description": "topic used to provide 'cooling threshold temperature'",
+                        "condition": {
+                            "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
+                        }
+                    },
+                    "getCurrentAmbientLightLevel": {
+                        "type": "string",
+                        "description": "topic used to provide 'current ambient light level'",
+                        "condition": {
+                            "functionBody": "return ['lightSensor'].includes(model.type);"
+                        }
+                    },
+                    "getCurrentDoorState": {
+                        "type": "string",
+                        "description": "topic used to provide 'current door state'",
+                        "condition": {
+                            "functionBody": "return ['garageDoorOpener','lockManagement'].includes(model.type);"
+                        }
+                    },
+                    "getCurrentHeaterCoolerState": {
+                        "type": "string",
+                        "description": "topic used to provide 'current heater cooler state'",
+                        "condition": {
+                            "functionBody": "return ['heaterCooler'].includes(model.type);"
+                        }
+                    },
+                    "getCurrentHeatingCoolingState": {
+                        "type": "string",
+                        "description": "topic used to provide 'current heating cooling state'",
+                        "condition": {
+                            "functionBody": "return ['thermostat'].includes(model.type);"
+                        }
+                    },
+                    "getCurrentHorizontalTiltAngle": {
+                        "type": "string",
+                        "description": "topic used to provide 'current horizontal tilt angle'",
+                        "condition": {
+                            "functionBody": "return ['windowCovering','cameraControl'].includes(model.type);"
+                        }
+                    },
+                    "getCurrentPosition": {
+                        "type": "string",
+                        "description": "topic used to provide 'current position'",
+                        "condition": {
+                            "functionBody": "return ['door','window','windowCovering'].includes(model.type);"
+                        }
+                    },
+                    "getCurrentRelativeHumidity": {
+                        "type": "string",
+                        "description": "topic used to provide 'current relative humidity'",
+                        "condition": {
+                            "functionBody": "return ['airQualitySensor','humidifierDehumidifier','humiditySensor','thermostat','weatherStation'].includes(model.type);"
+                        }
+                    },
+                    "getCurrentTemperature": {
+                        "type": "string",
+                        "description": "topic used to provide 'current temperature'",
+                        "condition": {
+                            "functionBody": "return ['airQualitySensor','heaterCooler','temperatureSensor','thermostat','weatherStation'].includes(model.type);"
+                        }
+                    },
+                    "getCurrentVerticalTiltAngle": {
+                        "type": "string",
+                        "description": "topic used to provide 'current vertical tilt angle'",
+                        "condition": {
+                            "functionBody": "return ['windowCovering','cameraControl'].includes(model.type);"
+                        }
+                    },
+                    "getHeatingThresholdTemperature": {
+                        "type": "string",
+                        "description": "topic used to provide 'heating threshold temperature'",
+                        "condition": {
+                            "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
+                        }
+                    },
+                    "setHeatingThresholdTemperature": {
+                        "type": "string",
+                        "description": "topic used to provide 'heating threshold temperature'",
+                        "condition": {
+                            "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
+                        }
+                    },
+                    "setHoldPosition": {
+                        "type": "string",
+                        "description": "topic used to provide 'hold position'",
+                        "condition": {
+                            "functionBody": "return ['door','window','windowCovering'].includes(model.type);"
+                        }
+                    },
+                    "getHue": {
+                        "type": "string",
+                        "description": "topic used to provide 'hue'",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "setHue": {
+                        "type": "string",
+                        "description": "topic used to provide 'hue'",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "getInUse": {
+                        "type": "string",
+                        "description": "topic used to provide 'in use'",
+                        "condition": {
+                            "functionBody": "return ['outlet','irrigationSystem','valve'].includes(model.type);"
+                        }
+                    },
+                    "getLeakDetected": {
+                        "type": "string",
+                        "description": "topic used to provide 'leak detected'",
+                        "condition": {
+                            "functionBody": "return ['leakSensor'].includes(model.type);"
+                        }
+                    },
+                    "getLockCurrentState": {
+                        "type": "string",
+                        "description": "topic used to provide 'lock current state'",
+                        "condition": {
+                            "functionBody": "return ['garageDoorOpener','lockMechanism'].includes(model.type);"
+                        }
+                    },
+                    "getLockTargetState": {
+                        "type": "string",
+                        "description": "topic used to provide 'lock target state'",
+                        "condition": {
+                            "functionBody": "return ['garageDoorOpener','lockMechanism'].includes(model.type);"
+                        }
+                    },
+                    "setLockTargetState": {
+                        "type": "string",
+                        "description": "topic used to provide 'lock target state'",
+                        "condition": {
+                            "functionBody": "return ['garageDoorOpener','lockMechanism'].includes(model.type);"
+                        }
+                    },
+                    "getMotionDetected": {
+                        "type": "string",
+                        "description": "topic used to provide 'motion detected'",
+                        "condition": {
+                            "functionBody": "return ['doorbell','lockManagement','motionSensor'].includes(model.type);"
+                        }
+                    },
+                    "getMute": {
+                        "type": "string",
+                        "description": "topic used to provide 'mute'",
+                        "condition": {
+                            "functionBody": "return ['microphone','speaker','televisionSpeaker'].includes(model.type);"
+                        }
+                    },
+                    "setMute": {
+                        "type": "string",
+                        "description": "topic used to provide 'mute'",
+                        "condition": {
+                            "functionBody": "return ['microphone','speaker','televisionSpeaker'].includes(model.type);"
+                        }
+                    },
+                    "getName": {
+                        "type": "string",
+                        "description": "topic used to provide 'name'"
+                    },
+                    "getNitrogenDioxideDensity": {
+                        "type": "string",
+                        "description": "topic used to provide 'nitrogen dioxide density'",
+                        "condition": {
+                            "functionBody": "return ['airQualitySensor'].includes(model.type);"
+                        }
+                    },
+                    "getObstructionDetected": {
+                        "type": "string",
+                        "description": "topic used to provide 'obstruction detected'",
+                        "condition": {
+                            "functionBody": "return ['door','garageDoorOpener','window','windowCovering'].includes(model.type);"
+                        }
+                    },
+                    "getOccupancyDetected": {
+                        "type": "string",
+                        "description": "topic used to provide 'occupancy detected'",
+                        "condition": {
+                            "functionBody": "return ['occupancySensor'].includes(model.type);"
+                        }
+                    },
+                    "getOn": {
+                        "type": "string",
+                        "description": "topic used to provide 'on'",
+                        "condition": {
+                            "functionBody": "return ['fan','lightbulb','outlet','switch','cameraControl'].includes(model.type);"
+                        }
+                    },
+                    "setOn": {
+                        "type": "string",
+                        "description": "topic used to provide 'on'",
+                        "condition": {
+                            "functionBody": "return ['fan','lightbulb','outlet','switch','cameraControl'].includes(model.type);"
+                        }
+                    },
+                    "getOzoneDensity": {
+                        "type": "string",
+                        "description": "topic used to provide 'ozone density'",
+                        "condition": {
+                            "functionBody": "return ['airQualitySensor'].includes(model.type);"
+                        }
+                    },
+                    "getPM10Density": {
+                        "type": "string",
+                        "title": "Get PM10 Density",
+                        "description": "topic used to provide 'PM10 Density'",
+                        "condition": {
+                            "functionBody": "return ['airQualitySensor'].includes(model.type);"
+                        }
+                    },
+                    "getPM2_5Density": {
+                        "type": "string",
+                        "title": "Get PM2.5 Density",
+                        "description": "topic used to provide 'PM2.5 Density'",
+                        "condition": {
+                            "functionBody": "return ['airQualitySensor'].includes(model.type);"
+                        }
+                    },
+                    "getPositionState": {
+                        "type": "string",
+                        "description": "topic used to provide 'position state'",
+                        "condition": {
+                            "functionBody": "return ['door','window','windowCovering'].includes(model.type);"
+                        }
+                    },
+                    "getRemainingDuration": {
+                        "type": "string",
+                        "description": "topic used to provide 'remaining duration'",
+                        "condition": {
+                            "functionBody": "return ['irrigationSystem','valve'].includes(model.type);"
+                        }
+                    },
+                    "getRotationDirection": {
+                        "type": "string",
+                        "description": "topic used to provide 'rotation direction'",
+                        "condition": {
+                            "functionBody": "return ['fan','fanv2'].includes(model.type);"
+                        }
+                    },
+                    "setRotationDirection": {
+                        "type": "string",
+                        "description": "topic used to provide 'rotation direction'",
+                        "condition": {
+                            "functionBody": "return ['fan','fanv2'].includes(model.type);"
+                        }
+                    },
+                    "getRotationSpeed": {
+                        "type": "string",
+                        "description": "topic used to provide 'rotation speed'",
+                        "condition": {
+                            "functionBody": "return ['airPurifier','fan','fanv2','heaterCooler','humidifierDehumidifier'].includes(model.type);"
+                        }
+                    },
+                    "setRotationSpeed": {
+                        "type": "string",
+                        "description": "topic used to provide 'rotation speed'",
+                        "condition": {
+                            "functionBody": "return ['airPurifier','fan','fanv2','heaterCooler','humidifierDehumidifier'].includes(model.type);"
+                        }
+                    },
+                    "getSaturation": {
+                        "type": "string",
+                        "description": "topic used to provide 'saturation'",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "setSaturation": {
+                        "type": "string",
+                        "description": "topic used to provide 'saturation'",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "getSmokeDetected": {
+                        "type": "string",
+                        "description": "topic used to provide 'smoke detected'",
+                        "condition": {
+                            "functionBody": "return ['smokeSensor'].includes(model.type);"
+                        }
+                    },
+                    "getStatusActive": {
+                        "type": "string",
+                        "description": "topic used to provide 'status active'",
+                        "condition": {
+                            "functionBody": "return ['airPressureSensor','airPressureSensor', 'airQualitySensor','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
+                        }
+                    },
+                    "getStatusFault": {
+                        "type": "string",
+                        "description": "topic used to provide 'status fault'",
+                        "condition": {
+                            "functionBody": "return ['airPressureSensor','airPressureSensor', 'airQualitySensor','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','faucet','humiditySensor','irrigationSystem','leakSensor','lightSensor','motionSensor','occupancySensor','securitySystem','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
+                        }
+                    },
+                    "getStatusLowBattery": {
+                        "type": "string",
+                        "description": "topic used to provide 'status low battery'",
+                        "condition": {
+                            "functionBody": "return ['airPressureSensor','airPressureSensor','airQualitySensor','batteryService','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
+                        }
+                    },
+                    "getStatusTampered": {
+                        "type": "string",
+                        "description": "topic used to provide 'status tampered'",
+                        "condition": {
+                            "functionBody": "return ['airPressureSensor','airQualitySensor','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','securitySystem','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
+                        }
+                    },
+                    "getSulphurDioxideDensity": {
+                        "type": "string",
+                        "description": "topic used to provide 'sulphur dioxide density'",
+                        "condition": {
+                            "functionBody": "return ['airQualitySensor'].includes(model.type);"
+                        }
+                    },
+                    "getSwingMode": {
+                        "type": "string",
+                        "description": "topic used to provide 'swing mode'",
+                        "condition": {
+                            "functionBody": "return ['airPurifier','fanv2','heaterCooler','humidifierDehumidifier','slat'].includes(model.type);"
+                        }
+                    },
+                    "setSwingMode": {
+                        "type": "string",
+                        "description": "topic used to provide 'swing mode'",
+                        "condition": {
+                            "functionBody": "return ['airPurifier','fanv2','heaterCooler','humidifierDehumidifier','slat'].includes(model.type);"
+                        }
+                    },
+                    "getTargetDoorState": {
+                        "type": "string",
+                        "description": "topic used to provide 'target door state'",
+                        "condition": {
+                            "functionBody": "return ['garageDoorOpener'].includes(model.type);"
+                        }
+                    },
+                    "setTargetDoorState": {
+                        "type": "string",
+                        "description": "topic used to provide 'target door state'",
+                        "condition": {
+                            "functionBody": "return ['garageDoorOpener'].includes(model.type);"
+                        }
+                    },
+                    "getTargetHeaterCoolerState": {
+                        "type": "string",
+                        "description": "topic used to provide 'target heater cooler state'",
+                        "condition": {
+                            "functionBody": "return ['heaterCooler'].includes(model.type);"
+                        }
+                    },
+                    "setTargetHeaterCoolerState": {
+                        "type": "string",
+                        "description": "topic used to provide 'target heater cooler state'",
+                        "condition": {
+                            "functionBody": "return ['heaterCooler'].includes(model.type);"
+                        }
+                    },
+                    "getTargetHeatingCoolingState": {
+                        "type": "string",
+                        "description": "topic used to provide 'target heating cooling state'",
+                        "condition": {
+                            "functionBody": "return ['thermostat'].includes(model.type);"
+                        }
+                    },
+                    "setTargetHeatingCoolingState": {
+                        "type": "string",
+                        "description": "topic used to provide 'target heating cooling state'",
+                        "condition": {
+                            "functionBody": "return ['thermostat'].includes(model.type);"
+                        }
+                    },
+                    "getTargetHorizontalTiltAngle": {
+                        "type": "string",
+                        "description": "topic used to provide 'target horizontal tilt angle'",
+                        "condition": {
+                            "functionBody": "return ['windowCovering','cameraControl'].includes(model.type);"
+                        }
+                    },
+                    "setTargetHorizontalTiltAngle": {
+                        "type": "string",
+                        "description": "topic used to provide 'target horizontal tilt angle'",
+                        "condition": {
+                            "functionBody": "return ['windowCovering','cameraControl'].includes(model.type);"
+                        }
+                    },
+                    "getTargetPosition": {
+                        "type": "string",
+                        "description": "topic used to provide 'target position'",
+                        "condition": {
+                            "functionBody": "return ['door','window','windowCovering'].includes(model.type);"
+                        }
+                    },
+                    "setTargetPosition": {
+                        "type": "string",
+                        "description": "topic used to provide 'target position'",
+                        "condition": {
+                            "functionBody": "return ['door','window','windowCovering'].includes(model.type);"
+                        }
+                    },
+                    "getTargetRelativeHumidity": {
+                        "type": "string",
+                        "description": "topic used to provide 'target relative humidity'",
+                        "condition": {
+                            "functionBody": "return ['thermostat'].includes(model.type);"
+                        }
+                    },
+                    "setTargetRelativeHumidity": {
+                        "type": "string",
+                        "description": "topic used to provide 'target relative humidity'",
+                        "condition": {
+                            "functionBody": "return ['thermostat'].includes(model.type);"
+                        }
+                    },
+                    "getTargetTemperature": {
+                        "type": "string",
+                        "description": "topic used to provide 'target temperature'",
+                        "condition": {
+                            "functionBody": "return ['thermostat'].includes(model.type);"
+                        }
+                    },
+                    "setTargetTemperature": {
+                        "type": "string",
+                        "description": "topic used to provide 'target temperature'",
+                        "condition": {
+                            "functionBody": "return ['thermostat'].includes(model.type);"
+                        }
+                    },
+                    "getTargetVerticalTiltAngle": {
+                        "type": "string",
+                        "description": "topic used to provide 'target vertical tilt angle'",
+                        "condition": {
+                            "functionBody": "return ['windowCovering','cameraControl'].includes(model.type);"
+                        }
+                    },
+                    "setTargetVerticalTiltAngle": {
+                        "type": "string",
+                        "description": "topic used to provide 'target vertical tilt angle'",
+                        "condition": {
+                            "functionBody": "return ['windowCovering','cameraControl'].includes(model.type);"
+                        }
+                    },
+                    "getTemperatureDisplayUnits": {
+                        "type": "string",
+                        "description": "topic used to provide 'temperature display units'",
+                        "condition": {
+                            "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
+                        }
+                    },
+                    "setTemperatureDisplayUnits": {
+                        "type": "string",
+                        "description": "topic used to provide 'temperature display units'",
+                        "condition": {
+                            "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
+                        }
+                    },
+                    "getVOCDensity": {
+                        "type": "string",
+                        "title": "Get VOC Density",
+                        "description": "topic used to provide 'voc density'",
+                        "condition": {
+                            "functionBody": "return ['airQualitySensor'].includes(model.type);"
+                        }
+                    },
+                    "getVolume": {
+                        "type": "string",
+                        "description": "topic used to provide 'volume'",
+                        "condition": {
+                            "functionBody": "return ['doorbell','microphone','speaker','televisionSpeaker'].includes(model.type);"
+                        }
+                    },
+                    "setVolume": {
+                        "type": "string",
+                        "description": "topic used to provide 'volume'",
+                        "condition": {
+                            "functionBody": "return ['doorbell','microphone','speaker','televisionSpeaker'].includes(model.type);"
+                        }
+                    },
+                    "setRemoteKey": {
+                        "type": "string",
+                        "description": "topic used to provide 'remote key'",
+                        "condition": {
+                            "functionBody": "return ['television'].includes(model.type);"
+                        }
+                    }
+                }
+            },
+            "onlineValue": {
+                "type": "string",
+                "title": "Online Value",
+                "description": "An explanation about the purpose of this instance.",
+                "default": "",
+                "examples": [
+                    "Online"
+                ]
+            },
+            "chargingStateValues": {
+                "type": "array",
+                "minContains": 1,
+                "title": "Charging State Values",
+                "description": "An explanation about the purpose of this instance.",
+                "items": {
+                    "type": "string",
+                    "title": "Items",
+                    "description": "An explanation about the purpose of this instance.",
+                    "placeholder": "NotCharging, Charging, or NotChargeable"
+                }
+            },
+            "confirmationPeriodms": {
+                "type": "integer",
+                "title": "Confirmationperiodms",
+                "description": "An explanation about the purpose of this instance.",
+                "placeholder": 1000
+            },
+            "integerValue": {
+                "type": "boolean",
+                "title": "Use 1|0 instead of true|false default onValue and offValue",
+                "description": "An explanation about the purpose of this instance.",
+                "condition": {
+                    "functionBody": "return ['contactSensor','fan','lightbulb','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
+                }
+            },
+            "onValue": {
+                "type": "string",
+                "description": "value representing on (optional)",
+                "condition": {
+                    "functionBody": "return ['contactSensor','fan','lightbulb','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
+                }
+            },
+            "offValue": {
+                "type": "string",
+                "description": "value representing off (optional)",
+                "condition": {
+                    "functionBody": "return ['contactSensor','fan','lightbulb','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
+                }
+            },
+            "retryLimit": {
+                "type": "integer",
+                "title": "Retry Limit",
+                "description": "An explanation about the purpose of this instance.",
+                "placeholder": 0
+            },
+            "history": {
+                "type": "boolean",
+                "title": "Enable History service for Eve App (optional)",
+                "condition": {
+                    "functionBody": "return ['airPressureSensor','contactSensor','humiditySensor','motionSensor','outlet','temperatureSensor','weatherStation'].includes(model.type);"
+                }
+            },
+            "airQualityValues": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "carbonDioxideDetectedValues": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "resetStateAfterms": {
+                "type": "integer",
+                "title": "Reset After",
+                "description": "milliseconds after which to reset state automatically (optional)",
+                "condition": {
+                    "functionBody": "return ['contactSensor','leakSensor','smokeSensor','switch'].includes(model.type);"
+                }
+            },
+            "switchValues": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "restrictSwitchValues": {
+                "type": "array",
+                "items": {
+                    "type": "integer"
+                }
+            },
+            "turnOffAfterms": {
+                "type": "integer",
+                "title": "Turn Off After",
+                "description": "milliseconds after which to turn off automatically (optional)",
+                "condition": {
+                    "functionBody": "return ['fan','lightbulb','motionSensor','outlet','switch','valve'].includes(model.type);"
+                }
+            },
+            "doorCurrentValues": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "doorTargetValues": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "lockValues": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "targetHeaterCoolerValues": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "lockPhysicalControlsValues": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "swingModeValues": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "temperatureDisplayUnitsValues": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "heatingCoolingStateValues": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "minTemperature": {
+                "type": "number",
+                "title": "Minimum Target Temperature",
+                "condition": {
+                    "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
+                }
+            },
+            "maxTemperature": {
+                "type": "number",
+                "title": "Maximum Target Temperature",
+                "condition": {
+                    "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
+                }
+            },
+            "restrictHeaterCoolerState": {
+                "type": "array",
+                "items": {
+                    "type": "integer"
+                }
+            },
+            "restrictHeatingCoolingState": {
+                "type": "array",
+                "items": {
+                    "type": "integer"
+                }
+            },
+            "hex": {
+                "type": "boolean",
+                "title": "Format combined RGB/RGBW in hexadecimal instead of as comma-separated decimals.",
+                "condition": {
+                    "functionBody": "return ['lightbulb'].includes(model.type);"
+                }
+            },
+            "hexPrefix": {
+                "type": "string",
+                "description": "Format combined RGB/RGBW in hexadecimal with specified prefix (typically '#') instead of as comma-separated decimals.",
+                "condition": {
+                    "functionBody": "return ['lightbulb'].includes(model.type);"
+                }
+            },
+            "warmWhite": {
+                "type": "string",
+                "title": "In RGBWW mode, RGB value of warm white in format red,green,blue (optional)",
+                "condition": {
+                    "functionBody": "return ['lightbulb'].includes(model.type);"
+                }
+            },
+            "coldWhite": {
+                "type": "string",
+                "title": "In RGBWW mode, RGB value of cold white in format red,green,blue (optional)",
+                "condition": {
+                    "functionBody": "return ['lightbulb'].includes(model.type);"
+                }
+            },
+            "targetStateValues": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "currentStateValues": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "restrictTargetState": {
+                "type": "array",
+                "items": {
+                    "type": "integer"
+                }
+            },
+            "inputs": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "condition": {
+                    "functionBody": "return ['television'].includes(model.type);"
+                }
+            },
+            "durationTimer": {
+                "type": "boolean",
+                "title": "Enable duration timer (optional, recommended)",
+                "condition": {
+                    "functionBody": "return ['valve'].includes(model.type);"
+                }
+            },
+            "minDuration": {
+                "type": "integer",
+                "title": "Minimum duration (in seconds)",
+                "condition": {
+                    "functionBody": "return ['valve'].includes(model.type);"
+                }
+            },
+            "maxDuration": {
+                "type": "integer",
+                "title": "Maximum duration (in seconds)",
+                "condition": {
+                    "functionBody": "return ['valve'].includes(model.type);"
+                }
+            },
+            "positionStateValues": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "doorValues": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "layout": [
+        "type",
+        {
+            "key": "name",
+            "condition": {
+                "functionBody": "return model.type && model.type !== 'null';"
+            }
+        },
+        {
+            "type": "fieldset",
+            "expandable": true,
+            "title": "MQTT Settings",
+            "condition": {
+                "functionBody": "return model.type && model.type !== 'null';"
+            },
+            "items": [
+                "url",
+                "username",
+                "password",
+                "logMqtt"
+            ]
+        },
+        {
+            "type": "fieldset",
+            "expandable": true,
+            "title": "Topics",
+            "condition": {
+                "functionBody": "return model.type && model.type !== 'null';"
+            },
+            "items": [
+                "topics.getName",
+                "topics.getOn",
+                "topics.setOn",
+                "topics.getAirPressure",
+                "topics.getSwitch",
+                "topics.getActive",
+                "topics.setActive",
+                "topics.getAirQuality",
+                "topics.getAirQualityPPM",
+                "topics.getRotationMode",
+                "topics.setRotationMode",
+                "topics.getBrightness",
+                "topics.setBrightness",
+                "topics.getCarbonDioxideDetected",
+                "topics.getCarbonDioxideLevel",
+                "topics.getCarbonDioxidePeakLevel",
+                "topics.getCarbonMonoxideDetected",
+                "topics.getCarbonMonoxideLevel",
+                "topics.getCarbonMonoxidePeakLevel",
+                "topics.getChargingState",
+                "topics.getColorTemperature",
+                "topics.setColorTemperature",
+                "topics.getContactSensorState",
+                "topics.getCoolingThresholdTemperature",
+                "topics.setCoolingThresholdTemperature",
+                "topics.getCurrentAmbientLightLevel",
+                "topics.getCurrentDoorState",
+                "topics.getCurrentHeaterCoolerState",
+                "topics.getCurrentHeatingCoolingState",
+                "topics.getCurrentHorizontalTiltAngle",
+                "topics.getCurrentPosition",
+                "topics.getCurrentRelativeHumidity",
+                "topics.getCurrentTemperature",
+                "topics.getCurrentVerticalTiltAngle",
+                "topics.getHeatingThresholdTemperature",
+                "topics.setHeatingThresholdTemperature",
+                "topics.setHoldPosition",
+                "topics.getHue",
+                "topics.setHue",
+                "topics.getInUse",
+                "topics.getLeakDetected",
+                "topics.getLockCurrentState",
+                "topics.getLockTargetState",
+                "topics.setLockTargetState",
+                "topics.getMotionDetected",
+                "topics.getMute",
+                "topics.setMute",
+                "topics.getNitrogenDioxideDensity",
+                "topics.getObstructionDetected",
+                "topics.getOccupancyDetected",
+                "topics.getOzoneDensity",
+                "topics.getPM10Density",
+                "topics.getPM2_5Density",
+                "topics.getPositionState",
+                "topics.getDuration",
+                "topics.setDuration",
+                "topics.getRemainingDuration",
+                "topics.getRotationDirection",
+                "topics.setRotationDirection",
+                "topics.getRotationSpeed",
+                "topics.setRotationSpeed",
+                "topics.getSaturation",
+                "topics.setSaturation",
+                "topics.getSmokeDetected",
+                "topics.getSulphurDioxideDensity",
+                "topics.getSwingMode",
+                "topics.setSwingMode",
+                "topics.getTargetDoorState",
+                "topics.setTargetDoorState",
+                "topics.getTargetHeaterCoolerState",
+                "topics.setTargetHeaterCoolerState",
+                "topics.getTargetHeatingCoolingState",
+                "topics.setTargetHeatingCoolingState",
+                "topics.getTargetHorizontalTiltAngle",
+                "topics.setTargetHorizontalTiltAngle",
+                "topics.getTargetPosition",
+                "topics.setTargetPosition",
+                "topics.getTargetRelativeHumidity",
+                "topics.setTargetRelativeHumidity",
+                "topics.getTargetTemperature",
+                "topics.setTargetTemperature",
+                "topics.getTargetVerticalTiltAngle",
+                "topics.setTargetVerticalTiltAngle",
+                "topics.getTemperatureDisplayUnits",
+                "topics.setTemperatureDisplayUnits",
+                "topics.getVOCDensity",
+                "topics.getVolume",
+                "topics.setVolume",
+                "topics.setActiveInput",
+                "topics.getActiveInput",
+                "topics.setRemoteKey",
+                "topics.getWatts",
+                "topics.getVolts",
+                "topics.getAmperes",
+                "topics.getTotalConsumption",
+                "topics.setTargetState",
+                "topics.getTargetState",
+                "topics.getCurrentState",
+                "topics.getWeatherCondition",
+                "topics.getRain1h",
+                "topics.getRain24h",
+                "topics.getUVIndex",
+                "topics.getVisibility",
+                "topics.getWindDirection",
+                "topics.getWindSpeed",
+                "topics.getHSV",
+                "topics.setHSV",
+                "topics.getRGB",
+                "topics.setRGB",
+                "topics.getRGBW",
+                "topics.setRGBW",
+                "topics.getRGBWW",
+                "topics.setRGBWW",
+                "topics.getWhite",
+                "topics.setWhite",
+                "topics.getStatusActive",
+                "topics.getStatusFault",
+                "topics.getBatteryLevel",
+                "topics.getStatusLowBattery",
+                "topics.getStatusTampered"
+            ]
+        },
+        {
+            "type": "fieldset",
+            "expandable": true,
+            "title": "Advanced",
+            "items": [
+                "integerValue",
+                "history",
+                "onValue",
+                "offValue",
+                "resetStateAfterms",
+                "turnOffAfterms",
+                "minTemperature",
+                "maxTemperature",
+                "hex",
+                "hexPrefix",
+                "warmWhite",
+                "coldWhite",
+                "durationTimer",
+                "minDuration",
+                "maxDuration",
+                {
+                    "key": "inputs",
+                    "type": "array",
+                    "items": [
+                        {
+                            "type": "div",
+                            "displayFlex": true,
+                            "flex-direction": "row",
+                            "items": [
+                                {
+                                    "key": "inputs[].name",
+                                    "flex": "1 1 50px",
+                                    "notitle": true,
+                                    "placeholder": "Input Name"
+                                },
+                                {
+                                    "key": "inputs[].value",
+                                    "flex": "1 1 50px",
+                                    "notitle": true,
+                                    "placeholder": "Input Value"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
