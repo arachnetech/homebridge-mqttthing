@@ -1,0 +1,65 @@
+Configuration GUI Support
+-------------------------
+
+config-ui-x and HOOBS use different configuration schema files to drive their
+configuration GUIs. HOOBS plan to add some of the more advanced features from
+config-ui-x in the near future, so for now I am focussing on config-ui-x.
+
+The current config.schema.json file from config-ui-x author, @oznu, has two main
+limitations:
+
+1. The UI doesn't like properties with multiple types, so can't cope with the
+'apply' format of topics (where a { "topic": ..., "apply": ... } object is
+provided as an alternative to just the topic string).
+
+        "setBrightness": {
+          "topic": "test/lightbulb/setBrightness",
+          "apply": "return Math.round( message * 2.55 );"
+        },
+
+2. The UI can't handle "startPub" with its user-defined keys.
+
+      "startPub": {
+        "test/lightbulb/setOn": "1",
+        "test/lightbulb/getOn": "1",
+        "test/lightbulb/setBrightness": "200",
+        "test/lightbulb/getBrightness": "200",
+        "test/lightbulb": "Hello world"
+      }
+
+
+I can't immediately see a solution to issue 1 which wouldn't expose apply()
+functions for every topic in the GUI - which I would prefer to avoid as in apply
+functions are intended to be an advanced feature for solving specific issues.
+Having an 'apply' field below every 'topic' field would be cumbersome. Putting
+apply fields in a separate section is possible, but not ideal from a GUI
+perspective.
+
+However, I'm considering a new configuration mechanism based on device profiles,
+where common devices which currently require apply() functions in order to be
+configured would have the 'topics' part of their configuration generated from a
+simpler set of configuration properties. This feels like a better solution to
+me. For now, custom apply() functions defined directly in the configuration will
+require direct editing in JSON.
+
+Issue 2 is easier to solve. I will add an alternative startPub format like:
+
+      "startPub": [
+        { "topic": "test/lightbulb/setOn", "message": "1" },
+        { "topic": "test/lightbulb/getOn", "message": "1" }
+      ]
+
+Some accessories (particularly lightbulb) operate in different 'modes' depending
+on the topics configured. There are different types of light (on/off, dimmable,
+coloured), and come types of light can operate using different sets of topics
+(e.g. separate hue, saturation, brightness, RGB, HSV). Creating simplified
+configurations for specific light types could be very helpful here.
+
+
+So, the plan is:
+
+1. Add alternative startPub format and update config.schema.json to support it.
+2. Review field names and descriptions in config.schema.json.
+3. Release initial config-ui-x support.
+4. Add lightbulb sub-types for easier configuration.
+5. Add configuration profiles.
