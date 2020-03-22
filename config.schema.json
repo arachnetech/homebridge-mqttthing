@@ -1110,6 +1110,27 @@
                     }
                 }
             },
+            "startPub": {
+                "type": "array",
+                "title": "Publish on start-up",
+                "items": {
+                    "title": "Publish",
+                    "type": "object",
+                    "description": "publish",
+                    "properties": {
+                        "topic": {
+                            "type": "string",
+                            "title": "Topic",
+                            "description": "MQTT Topic"
+                        },
+                        "message": {
+                            "type": "string",
+                            "title": "Message",
+                            "description": "Message to publish"
+                        }
+                    }
+                } 
+            },
             "onlineValue": {
                 "type": "string",
                 "title": "Online Value",
