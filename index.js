@@ -4,7 +4,7 @@
 /* eslint-disable object-property-newline */
 /* eslint-disable no-plusplus */
 
-'use strict';
+'use strict'; // eslint-disable-line
 
 var os = require("os");
 var packagedef = require('./package.json');
@@ -2501,10 +2501,18 @@ function makeThing(log, config) {
 
         // start-up publishing
         if( config.startPub ) {
-            for( let topic in config.startPub ) {
-                if( config.startPub.hasOwnProperty( topic ) ) {
-                    let msg = config.startPub[ topic ];
-                    mqttPublish( topic, msg );
+            if( Array.isArray( config.startPub ) ) {
+                // new format - [ { topic: x, message: y }, ... ]
+                for( let entry of config.startPub ) {
+                    mqttPublish( entry.topic, entry.message );
+                }
+            } else {
+                // old format - object of topic->message
+                for( let topic in config.startPub ) {
+                    if( config.startPub.hasOwnProperty( topic ) ) {
+                        let msg = config.startPub[ topic ];
+                        mqttPublish( topic, msg );
+                    }
                 }
             }
         }

@@ -162,7 +162,16 @@ The following configuration settings may be specified if required to change info
 
 ### Publishing values on start-up
 
-MQTT messages may be published on start-up, e.g. to reset accessories to a known initial state, with `startPub`. This is an object containing MQTT topics as keys, and values to be published as values.
+MQTT messages may be published on start-up, e.g. to reset accessories to a known initial state, with `startPub`. This should contain an array of objects with `topic` and `message`
+keys, i.e.:
+```javascript
+"startPub": [
+    { "topic": "test/lightbulb/setOn", "message": "1" },
+    { "topic": "test/lightbulb/getOn", "message": "1" }
+]
+```
+
+Previously this was an object containing MQTT topics as keys, and values to be published as values. This format will still work but the format above is preferred.
 
 ### History Service
 
