@@ -1112,7 +1112,7 @@
             },
             "startPub": {
                 "type": "array",
-                "title": "Publish on start-up",
+                "title": "Topic",
                 "items": {
                     "title": "Publish",
                     "type": "object",
@@ -1121,7 +1121,7 @@
                         "topic": {
                             "type": "string",
                             "title": "Topic",
-                            "description": "MQTT Topic"
+                            "description": "MQTT Topic to publish on start-up"
                         },
                         "message": {
                             "type": "string",
@@ -1597,6 +1597,31 @@
                                     "flex": "1 1 50px",
                                     "notitle": true,
                                     "placeholder": "Input Value"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "key": "startPub",
+                    "type": "array",
+                    "items": [
+                        {
+                            "type": "div",
+                            "displayFlex": true,
+                            "flex-direction": "row",
+                            "items": [
+                                {
+                                    "key": "startPub[].topic",
+                                    "flex": "1 1 50px",
+                                    "notitle": true,
+                                    "placeholder": "Topic"
+                                },
+                                {
+                                    "key": "startPub[].message",
+                                    "flex": "1 1 50px",
+                                    "notitle": true,
+                                    "placeholder": "Message"
                                 }
                             ]
                         }
