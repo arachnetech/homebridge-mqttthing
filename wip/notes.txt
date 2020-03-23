@@ -58,7 +58,7 @@ configurations for specific light types could be very helpful here.
 
 So, the plan is:
 
-1. Add alternative startPub format and update config.schema.json to support it.
+1. Add alternative startPub format and update config.schema.json to support it. [Done]
 2. Review field names and descriptions in config.schema.json.
 3. Release initial config-ui-x support.
 4. Add lightbulb sub-types for easier configuration.

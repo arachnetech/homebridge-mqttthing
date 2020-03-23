@@ -241,7 +241,7 @@
                 "readOnly": false,
                 "writeOnly": false,
                 "title": "Log MQTT",
-                "description": "Set to true to enable MQTT logging for this accessory (optional, defaults to false)"
+                "description": "Set to true to enable MQTT logging for this accessory"
             },
             "topics": {
                 "type": "object",
@@ -513,20 +513,6 @@
                             "functionBody": "return ['batteryService'].includes(model.type);"
                         }
                     },
-                    "getBrightness": {
-                        "type": "string",
-                        "description": "topic used to provide 'brightness'",
-                        "condition": {
-                            "functionBody": "return ['doorbell','lightbulb'].includes(model.type);"
-                        }
-                    },
-                    "setBrightness": {
-                        "type": "string",
-                        "description": "topic used to provide 'brightness'",
-                        "condition": {
-                            "functionBody": "return ['doorbell','lightbulb'].includes(model.type);"
-                        }
-                    },
                     "getCarbonDioxideDetected": {
                         "type": "string",
                         "description": "topic used to provide 'carbon dioxide detected'",
@@ -588,20 +574,6 @@
                         "description": "topic used to provide 'charging state'",
                         "condition": {
                             "functionBody": "return ['batteryService'].includes(model.type);"
-                        }
-                    },
-                    "getColorTemperature": {
-                        "type": "string",
-                        "description": "topic used to provide 'color temperature'",
-                        "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
-                        }
-                    },
-                    "setColorTemperature": {
-                        "type": "string",
-                        "description": "topic used to provide 'color temperature'",
-                        "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
                         }
                     },
                     "getContactSensorState": {
@@ -709,20 +681,6 @@
                             "functionBody": "return ['door','window','windowCovering'].includes(model.type);"
                         }
                     },
-                    "getHue": {
-                        "type": "string",
-                        "description": "topic used to provide 'hue'",
-                        "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
-                        }
-                    },
-                    "setHue": {
-                        "type": "string",
-                        "description": "topic used to provide 'hue'",
-                        "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
-                        }
-                    },
                     "getInUse": {
                         "type": "string",
                         "description": "topic used to provide 'in use'",
@@ -781,7 +739,7 @@
                     },
                     "getName": {
                         "type": "string",
-                        "description": "topic used to provide 'name'"
+                        "description": "Topic used to notify mqttthing of 'name'"
                     },
                     "getNitrogenDioxideDensity": {
                         "type": "string",
@@ -806,16 +764,72 @@
                     },
                     "getOn": {
                         "type": "string",
-                        "description": "topic used to provide 'on'",
+                        "description": "Topic used to notify mqttthing of on/off state",
                         "condition": {
                             "functionBody": "return ['fan','lightbulb','outlet','switch','cameraControl'].includes(model.type);"
                         }
                     },
                     "setOn": {
                         "type": "string",
-                        "description": "topic used to provide 'on'",
+                        "description": "Topic published by mqttthing to control on/off state",
                         "condition": {
                             "functionBody": "return ['fan','lightbulb','outlet','switch','cameraControl'].includes(model.type);"
+                        }
+                    },
+                    "getHue": {
+                        "type": "string",
+                        "description": "Topic used to notify mqttthing of hue (range 0-360)",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "setHue": {
+                        "type": "string",
+                        "description": "Topic published by mqttthing to control hue (range 0-360)",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "getSaturation": {
+                        "type": "string",
+                        "description": "Topic used to notify mqttthing of saturation (range 0-100)",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "setSaturation": {
+                        "type": "string",
+                        "description": "Topic published by mqttthing to control saturation (range 0-100)",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "getBrightness": {
+                        "type": "string",
+                        "description": "Topic used to notify mqttthing of brightness (range 0-100)",
+                        "condition": {
+                            "functionBody": "return ['doorbell','lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "setBrightness": {
+                        "type": "string",
+                        "description": "Topic published by mqttthing to control brightness (range 0-100)",
+                        "condition": {
+                            "functionBody": "return ['doorbell','lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "getColorTemperature": {
+                        "type": "string",
+                        "description": "Topic used to notify mqttthing of color temperature",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                        }
+                    },
+                    "setColorTemperature": {
+                        "type": "string",
+                        "description": "Topic published by mqttthing to control color temperature",
+                        "condition": {
+                            "functionBody": "return ['lightbulb'].includes(model.type);"
                         }
                     },
                     "getOzoneDensity": {
@@ -881,20 +895,6 @@
                         "description": "topic used to provide 'rotation speed'",
                         "condition": {
                             "functionBody": "return ['airPurifier','fan','fanv2','heaterCooler','humidifierDehumidifier'].includes(model.type);"
-                        }
-                    },
-                    "getSaturation": {
-                        "type": "string",
-                        "description": "topic used to provide 'saturation'",
-                        "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
-                        }
-                    },
-                    "setSaturation": {
-                        "type": "string",
-                        "description": "topic used to provide 'saturation'",
-                        "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
                         }
                     },
                     "getSmokeDetected": {
@@ -1435,9 +1435,16 @@
                 "functionBody": "return model.type && model.type !== 'null';"
             },
             "items": [
-                "topics.getName",
-                "topics.getOn",
                 "topics.setOn",
+                "topics.getOn",
+                "topics.setHue",
+                "topics.getHue",
+                "topics.setSaturation",
+                "topics.getSaturation",
+                "topics.setBrightness",
+                "topics.getBrightness",
+                "topics.setColorTemperature",
+                "topics.getColorTemperature",
                 "topics.getAirPressure",
                 "topics.getSwitch",
                 "topics.getActive",
@@ -1446,8 +1453,6 @@
                 "topics.getAirQualityPPM",
                 "topics.getRotationMode",
                 "topics.setRotationMode",
-                "topics.getBrightness",
-                "topics.setBrightness",
                 "topics.getCarbonDioxideDetected",
                 "topics.getCarbonDioxideLevel",
                 "topics.getCarbonDioxidePeakLevel",
@@ -1455,8 +1460,6 @@
                 "topics.getCarbonMonoxideLevel",
                 "topics.getCarbonMonoxidePeakLevel",
                 "topics.getChargingState",
-                "topics.getColorTemperature",
-                "topics.setColorTemperature",
                 "topics.getContactSensorState",
                 "topics.getCoolingThresholdTemperature",
                 "topics.setCoolingThresholdTemperature",
@@ -1472,8 +1475,6 @@
                 "topics.getHeatingThresholdTemperature",
                 "topics.setHeatingThresholdTemperature",
                 "topics.setHoldPosition",
-                "topics.getHue",
-                "topics.setHue",
                 "topics.getInUse",
                 "topics.getLeakDetected",
                 "topics.getLockCurrentState",
@@ -1496,8 +1497,6 @@
                 "topics.setRotationDirection",
                 "topics.getRotationSpeed",
                 "topics.setRotationSpeed",
-                "topics.getSaturation",
-                "topics.setSaturation",
                 "topics.getSmokeDetected",
                 "topics.getSulphurDioxideDensity",
                 "topics.getSwingMode",
@@ -1550,6 +1549,7 @@
                 "topics.setRGBWW",
                 "topics.getWhite",
                 "topics.setWhite",
+                "topics.getName",
                 "topics.getStatusActive",
                 "topics.getStatusFault",
                 "topics.getBatteryLevel",
