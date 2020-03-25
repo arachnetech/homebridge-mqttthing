@@ -247,25 +247,25 @@
                 "properties": {
                     "getOnline": {
                         "type": "string",
-                        "description": "topic used to provide 'online'"
+                        "description": "Topic used to notify mqttthing of 'online' status"
                     },
                     "getAirPressure": {
                         "type": "string",
-                        "description": "topic used to provide 'air pressure'",
+                        "description": "Topic used to notify mqttthing of 'air pressure'",
                         "condition": {
                             "functionBody": "return ['airPressureSensor','airPressureSensor','weatherStation'].includes(model.type);"
                         }
                     },
                     "getSwitch": {
                         "type": "string",
-                        "description": "topic used to provide switch state",
+                        "description": "Topic used to notify mqttthing of switch state",
                         "condition": {
                             "functionBody": "return ['doorbell','statelessProgrammableSwitch'].includes(model.type);"
                         }
                     },
                     "getRotationMode": {
                         "type": "string",
-                        "description": "topic used to report 'rotation mode'",
+                        "description": "Topic used to notify mqttthing of 'rotation mode'",
                         "condition": {
                             "functionBody": "return ['heaterCooler'].includes(model.type);"
                         }
@@ -279,98 +279,98 @@
                     },
                     "getHSV": {
                         "type": "string",
-                        "description": "in HSV mode, topic to get comma-separated hue, saturation and value",
+                        "description": "In HSV mode, control topic published by mqttthing with comma-separated hue (0-360), saturation (0-100) and value (0-100)",
                         "condition": {
                             "functionBody": "return ['lightbulb'].includes(model.type);"
                         }
                     },
                     "setHSV": {
                         "type": "string",
-                        "description": "in HSV mode, topic to set comma-separated hue, saturation and value",
+                        "description": "In HSV mode, topic to set comma-separated hue, saturation and value",
                         "condition": {
                             "functionBody": "return ['lightbulb'].includes(model.type);"
                         }
                     },
                     "getRGB": {
                         "type": "string",
-                        "description": "in RGB mode, topic to get comma-separated hue, saturation and value",
+                        "description": "In RGB mode, topic to notify mqttthing of comma-separated red, green and blue",
                         "condition": {
                             "functionBody": "return ['lightbulb'].includes(model.type);"
                         }
                     },
                     "setRGB": {
                         "type": "string",
-                        "description": "in RGB mode, topic to set comma-separated hue, saturation and value",
+                        "description": "In RGB mode, control topic published by mqttthing with comma-separated red, green and blue (all 0-255)",
                         "condition": {
                             "functionBody": "return ['lightbulb'].includes(model.type);"
                         }
                     },
                     "getRGBW": {
                         "type": "string",
-                        "description": "in RGBW mode, topic to get comma-separated hue, saturation and value",
+                        "description": "In RGBW mode, topic to notify mqttthing of comma-separated red, green, blue and white",
                         "condition": {
                             "functionBody": "return ['lightbulb'].includes(model.type);"
                         }
                     },
                     "setRGBW": {
                         "type": "string",
-                        "description": "in RGBW mode, topic to set comma-separated hue, saturation and value",
+                        "description": "In RGBW mode, control topic published by mqttthing with comma-separated red, green, blue and white (all 0-255)",
                         "condition": {
                             "functionBody": "return ['lightbulb'].includes(model.type);"
                         }
                     },
                     "getRGBWW": {
                         "type": "string",
-                        "description": "in RGBWW mode, topic to get comma-separated hue, saturation and value",
+                        "description": "In RGBWW mode, topic to notify mqttthing of comma-separated red, green, blue, warm_white and cold_white",
                         "condition": {
                             "functionBody": "return ['lightbulb'].includes(model.type);"
                         }
                     },
                     "setRGBWW": {
                         "type": "string",
-                        "description": "in RGBWW mode, topic to set comma-separated hue, saturation and value",
+                        "description": "In RGBWW mode, control topic published by mqttthing with comma-separated red, green, blue, warm_white and cold_white (all 0-255)",
                         "condition": {
                             "functionBody": "return ['lightbulb'].includes(model.type);"
                         }
                     },
                     "getWhite": {
                         "type": "string",
-                        "description": "topic to get white level (0-255)> - used with getRGB for RGBW with separately-published white level",
+                        "description": "Topic used to notify mqttthing of white level (0-255) - used with getRGB for RGBW with separately-published white level",
                         "condition": {
                             "functionBody": "return ['lightbulb'].includes(model.type);"
                         }
                     },
                     "setWhite": {
                         "type": "string",
-                        "description": "topic to set white level (0-255)> - used with getRGB for RGBW with separately-published white level",
+                        "description": "Control topic published by mqttthing with white level (0-255) - used with getRGB for RGBW with separately-published white level",
                         "condition": {
                             "functionBody": "return ['lightbulb'].includes(model.type);"
                         }
                     },
                     "getWatts": {
                         "type": "string",
-                        "description": "topic used to provide 'current consumption' [Watts] (optional, Eve-App-only)",
+                        "description": "Topic used to notify mqttthing of 'current consumption' [Watts] (optional, Eve-App-only)",
                         "condition": {
                             "functionBody": "return ['outlet'].includes(model.type);"
                         }
                     },
                     "getVolts": {
                         "type": "string",
-                        "description": "topic used to provide 'voltage' [Volts] (optional, Eve-App-only)",
+                        "description": "Topic used to notify mqttthing of 'voltage' [Volts] (optional, Eve-App-only)",
                         "condition": {
                             "functionBody": "return ['outlet'].includes(model.type);"
                         }
                     },
                     "getAmperes": {
                         "type": "string",
-                        "description": "Topic used to provide 'electricCurrent' [Amperes] (optional, Eve-App-only)",
+                        "description": "Topic used to notify mqttthing of 'electricCurrent' [Amperes] (optional, Eve-App-only)",
                         "condition": {
                             "functionBody": "return ['outlet'].includes(model.type);"
                         }
                     },
                     "getTotalConsumption": {
                         "type": "string",
-                        "description": "Topic used to provide 'electricCurrent' [Amperes] (optional, Eve-App-only)",
+                        "description": "Topic used to notify mqttthing of 'electricCurrent' [Amperes] (optional, Eve-App-only)",
                         "condition": {
                             "functionBody": "return ['outlet'].includes(model.type);"
                         }
@@ -832,7 +832,7 @@
                     },
                     "getOzoneDensity": {
                         "type": "string",
-                        "description": "topic used to provide 'ozone density'",
+                        "description": "Topic used to notify mqttthing of 'ozone density'",
                         "condition": {
                             "functionBody": "return ['airQualitySensor'].includes(model.type);"
                         }
@@ -840,7 +840,7 @@
                     "getPM10Density": {
                         "type": "string",
                         "title": "Get PM10 Density",
-                        "description": "topic used to provide 'PM10 Density'",
+                        "description": "Topic used to notify mqttthing of 'PM10 Density'",
                         "condition": {
                             "functionBody": "return ['airQualitySensor'].includes(model.type);"
                         }
@@ -848,28 +848,28 @@
                     "getPM2_5Density": {
                         "type": "string",
                         "title": "Get PM2.5 Density",
-                        "description": "topic used to provide 'PM2.5 Density'",
+                        "description": "Topic used to notify mqttthing of 'PM2.5 Density'",
                         "condition": {
                             "functionBody": "return ['airQualitySensor'].includes(model.type);"
                         }
                     },
                     "getPositionState": {
                         "type": "string",
-                        "description": "topic used to provide 'position state'",
+                        "description": "Topic used to notify mqttthing of 'position state'",
                         "condition": {
                             "functionBody": "return ['door','window','windowCovering'].includes(model.type);"
                         }
                     },
                     "getRemainingDuration": {
                         "type": "string",
-                        "description": "topic used to provide 'remaining duration'",
+                        "description": "Topic used to notify mqttthing of 'remaining duration'",
                         "condition": {
                             "functionBody": "return ['irrigationSystem','valve'].includes(model.type);"
                         }
                     },
                     "getRotationDirection": {
                         "type": "string",
-                        "description": "topic used to provide 'rotation direction'",
+                        "description": "Topic used to notify mqttthing of 'rotation direction'",
                         "condition": {
                             "functionBody": "return ['fan','fanv2'].includes(model.type);"
                         }
@@ -883,7 +883,7 @@
                     },
                     "getRotationSpeed": {
                         "type": "string",
-                        "description": "topic used to provide 'rotation speed'",
+                        "description": "Topic used to notify mqttthing of 'rotation speed'",
                         "condition": {
                             "functionBody": "return ['airPurifier','fan','fanv2','heaterCooler','humidifierDehumidifier'].includes(model.type);"
                         }
@@ -897,49 +897,49 @@
                     },
                     "getSmokeDetected": {
                         "type": "string",
-                        "description": "topic used to provide 'smoke detected'",
+                        "description": "Topic used to notify mqttthing of 'smoke detected'",
                         "condition": {
                             "functionBody": "return ['smokeSensor'].includes(model.type);"
                         }
                     },
                     "getStatusActive": {
                         "type": "string",
-                        "description": "topic used to provide 'status active'",
+                        "description": "Topic used to notify mqttthing of 'status active'",
                         "condition": {
                             "functionBody": "return ['airPressureSensor','airPressureSensor', 'airQualitySensor','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
                         }
                     },
                     "getStatusFault": {
                         "type": "string",
-                        "description": "topic used to provide 'status fault'",
+                        "description": "Topic used to notify mqttthing of 'status fault'",
                         "condition": {
                             "functionBody": "return ['airPressureSensor','airPressureSensor', 'airQualitySensor','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','faucet','humiditySensor','irrigationSystem','leakSensor','lightSensor','motionSensor','occupancySensor','securitySystem','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
                         }
                     },
                     "getStatusLowBattery": {
                         "type": "string",
-                        "description": "topic used to provide 'status low battery'",
+                        "description": "Topic used to notify mqttthing of 'status low battery'",
                         "condition": {
                             "functionBody": "return ['airPressureSensor','airPressureSensor','airQualitySensor','batteryService','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
                         }
                     },
                     "getStatusTampered": {
                         "type": "string",
-                        "description": "topic used to provide 'status tampered'",
+                        "description": "Topic used to notify mqttthing of 'status tampered'",
                         "condition": {
                             "functionBody": "return ['airPressureSensor','airQualitySensor','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','securitySystem','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
                         }
                     },
                     "getSulphurDioxideDensity": {
                         "type": "string",
-                        "description": "topic used to provide 'sulphur dioxide density'",
+                        "description": "Topic used to notify mqttthing of 'sulphur dioxide density'",
                         "condition": {
                             "functionBody": "return ['airQualitySensor'].includes(model.type);"
                         }
                     },
                     "getSwingMode": {
                         "type": "string",
-                        "description": "topic used to provide 'swing mode'",
+                        "description": "Topic used to notify mqttthing of 'swing mode'",
                         "condition": {
                             "functionBody": "return ['airPurifier','fanv2','heaterCooler','humidifierDehumidifier','slat'].includes(model.type);"
                         }
@@ -953,7 +953,7 @@
                     },
                     "getTargetDoorState": {
                         "type": "string",
-                        "description": "topic used to provide 'target door state'",
+                        "description": "Topic used to notify mqttthing of 'target door state'",
                         "condition": {
                             "functionBody": "return ['garageDoorOpener'].includes(model.type);"
                         }
@@ -967,7 +967,7 @@
                     },
                     "getTargetHeaterCoolerState": {
                         "type": "string",
-                        "description": "topic used to provide 'target heater cooler state'",
+                        "description": "Topic used to notify mqttthing of 'target heater cooler state'",
                         "condition": {
                             "functionBody": "return ['heaterCooler'].includes(model.type);"
                         }
@@ -981,7 +981,7 @@
                     },
                     "getTargetHeatingCoolingState": {
                         "type": "string",
-                        "description": "topic used to provide 'target heating cooling state'",
+                        "description": "Topic used to notify mqttthing of 'target heating cooling state'",
                         "condition": {
                             "functionBody": "return ['thermostat'].includes(model.type);"
                         }
@@ -995,7 +995,7 @@
                     },
                     "getTargetHorizontalTiltAngle": {
                         "type": "string",
-                        "description": "topic used to provide 'target horizontal tilt angle'",
+                        "description": "Topic used to notify mqttthing of 'target horizontal tilt angle'",
                         "condition": {
                             "functionBody": "return ['windowCovering','cameraControl'].includes(model.type);"
                         }
@@ -1009,7 +1009,7 @@
                     },
                     "getTargetPosition": {
                         "type": "string",
-                        "description": "topic used to provide 'target position'",
+                        "description": "Topic used to notify mqttthing of 'target position'",
                         "condition": {
                             "functionBody": "return ['door','window','windowCovering'].includes(model.type);"
                         }
@@ -1023,7 +1023,7 @@
                     },
                     "getTargetRelativeHumidity": {
                         "type": "string",
-                        "description": "topic used to provide 'target relative humidity'",
+                        "description": "Topic used to notify mqttthing of 'target relative humidity'",
                         "condition": {
                             "functionBody": "return ['thermostat'].includes(model.type);"
                         }
@@ -1037,7 +1037,7 @@
                     },
                     "getTargetTemperature": {
                         "type": "string",
-                        "description": "topic used to provide 'target temperature'",
+                        "description": "Topic used to notify mqttthing of 'target temperature'",
                         "condition": {
                             "functionBody": "return ['thermostat'].includes(model.type);"
                         }
@@ -1051,7 +1051,7 @@
                     },
                     "getTargetVerticalTiltAngle": {
                         "type": "string",
-                        "description": "topic used to provide 'target vertical tilt angle'",
+                        "description": "Topic used to notify mqttthing of 'target vertical tilt angle'",
                         "condition": {
                             "functionBody": "return ['windowCovering','cameraControl'].includes(model.type);"
                         }
@@ -1065,7 +1065,7 @@
                     },
                     "getTemperatureDisplayUnits": {
                         "type": "string",
-                        "description": "topic used to provide 'temperature display units'",
+                        "description": "Topic used to notify mqttthing of 'temperature display units'",
                         "condition": {
                             "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
                         }
@@ -1080,14 +1080,14 @@
                     "getVOCDensity": {
                         "type": "string",
                         "title": "Get VOC Density",
-                        "description": "topic used to provide 'voc density'",
+                        "description": "Topic used to notify mqttthing of 'voc density'",
                         "condition": {
                             "functionBody": "return ['airQualitySensor'].includes(model.type);"
                         }
                     },
                     "getVolume": {
                         "type": "string",
-                        "description": "topic used to provide 'volume'",
+                        "description": "Topic used to notify mqttthing of 'volume'",
                         "condition": {
                             "functionBody": "return ['doorbell','microphone','speaker','televisionSpeaker'].includes(model.type);"
                         }
@@ -1477,9 +1477,9 @@
                 "topics.setHoldPosition",
                 "topics.getInUse",
                 "topics.getLeakDetected",
-                "topics.getLockCurrentState",
-                "topics.getLockTargetState",
                 "topics.setLockTargetState",
+                "topics.getLockTargetState",
+                "topics.getLockCurrentState",
                 "topics.getMotionDetected",
                 "topics.getMute",
                 "topics.setMute",
@@ -1490,38 +1490,38 @@
                 "topics.getPM10Density",
                 "topics.getPM2_5Density",
                 "topics.getPositionState",
-                "topics.getDuration",
                 "topics.setDuration",
+                "topics.getDuration",
                 "topics.getRemainingDuration",
-                "topics.getRotationDirection",
                 "topics.setRotationDirection",
-                "topics.getRotationSpeed",
+                "topics.getRotationDirection",
                 "topics.setRotationSpeed",
+                "topics.getRotationSpeed",
                 "topics.getSmokeDetected",
                 "topics.getSulphurDioxideDensity",
-                "topics.getSwingMode",
                 "topics.setSwingMode",
-                "topics.getTargetDoorState",
+                "topics.getSwingMode",
                 "topics.setTargetDoorState",
-                "topics.getTargetHeaterCoolerState",
+                "topics.getTargetDoorState",
                 "topics.setTargetHeaterCoolerState",
-                "topics.getTargetHeatingCoolingState",
+                "topics.getTargetHeaterCoolerState",
                 "topics.setTargetHeatingCoolingState",
-                "topics.getTargetHorizontalTiltAngle",
+                "topics.getTargetHeatingCoolingState",
                 "topics.setTargetHorizontalTiltAngle",
-                "topics.getTargetPosition",
+                "topics.getTargetHorizontalTiltAngle",
                 "topics.setTargetPosition",
-                "topics.getTargetRelativeHumidity",
+                "topics.getTargetPosition",
                 "topics.setTargetRelativeHumidity",
-                "topics.getTargetTemperature",
+                "topics.getTargetRelativeHumidity",
                 "topics.setTargetTemperature",
-                "topics.getTargetVerticalTiltAngle",
+                "topics.getTargetTemperature",
                 "topics.setTargetVerticalTiltAngle",
-                "topics.getTemperatureDisplayUnits",
+                "topics.getTargetVerticalTiltAngle",
                 "topics.setTemperatureDisplayUnits",
+                "topics.getTemperatureDisplayUnits",
                 "topics.getVOCDensity",
-                "topics.getVolume",
                 "topics.setVolume",
+                "topics.getVolume",
                 "topics.setActiveInput",
                 "topics.getActiveInput",
                 "topics.setRemoteKey",
@@ -1539,16 +1539,16 @@
                 "topics.getVisibility",
                 "topics.getWindDirection",
                 "topics.getWindSpeed",
-                "topics.getHSV",
                 "topics.setHSV",
-                "topics.getRGB",
+                "topics.getHSV",
                 "topics.setRGB",
-                "topics.getRGBW",
+                "topics.getRGB",
                 "topics.setRGBW",
-                "topics.getRGBWW",
+                "topics.getRGBW",
                 "topics.setRGBWW",
-                "topics.getWhite",
+                "topics.getRGBWW",
                 "topics.setWhite",
+                "topics.getWhite",
                 "topics.getName",
                 "topics.getStatusActive",
                 "topics.getStatusFault",
