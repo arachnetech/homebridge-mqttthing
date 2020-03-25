@@ -196,7 +196,7 @@
             "url": {
                 "type": "string",
                 "title": "URL",
-                "description": "URL of MQTT server if not localhost port 1883 (optional)",
+                "description": "URL of MQTT server (optional), default: http://localhost:1883",
                 "placeholder": "http://localhost:1883"
             },
             "username": {
@@ -214,12 +214,11 @@
             "mqttOptions": {
                 "type": "object",
                 "title": "MQTT Options",
-                "description": "An explanation about the purpose of this instance.",
                 "properties": {
                     "keepalive": {
                         "type": "integer",
                         "title": "Keep Alive",
-                        "description": "An explanation about the purpose of this instance.",
+                        "description": "Keep alive interval (seconds), or 0 to disable",
                         "placeholder": 0
                     }
                 }
@@ -227,12 +226,11 @@
             "mqttPubOptions": {
                 "type": "object",
                 "title": "MQTT Publish Options",
-                "description": "An explanation about the purpose of this instance.",
                 "properties": {
                     "retain": {
                         "type": "boolean",
                         "title": "Retain",
-                        "description": "An explanation about the purpose of this instance."
+                        "description": "Publishing - set Retain flag"
                     }
                 }
             },
@@ -1121,12 +1119,12 @@
                         "topic": {
                             "type": "string",
                             "title": "Topic",
-                            "description": "MQTT Topic to publish on start-up"
+                            "description": "MQTT Topic"
                         },
                         "message": {
                             "type": "string",
                             "title": "Message",
-                            "description": "Message to publish"
+                            "description": "Message"
                         }
                     }
                 } 
@@ -1424,13 +1422,15 @@
                 "url",
                 "username",
                 "password",
-                "logMqtt"
+                "logMqtt",
+                "mqttOptions.keepalive",
+                "mqttPubOptions.retain"
             ]
         },
         {
             "type": "fieldset",
             "expandable": true,
-            "title": "Topics",
+            "title": "MQTT Topics",
             "condition": {
                 "functionBody": "return model.type && model.type !== 'null';"
             },
@@ -1603,8 +1603,15 @@
                     ]
                 },
                 {
+                    "type": "help",
+                    "helpvalue": "<strong>MQTT topics to publish on start-up</strong>"
+                },
+                {
                     "key": "startPub",
                     "type": "array",
+                    "title": "Topic",
+                    "expandable": false,
+                    "notitle": true,
                     "items": [
                         {
                             "type": "div",
