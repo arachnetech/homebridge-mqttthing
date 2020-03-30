@@ -607,7 +607,7 @@ and False (or 0) maps to `LEAK_NOT_DETECTED`. To use different MQTT values, conf
 
 Light bulb can either use separate topics (for on, brightness, hue and saturation), or it can be configured to use a combined value holding comma-separated hue,sat,val or red,green,blue. 
 
-Hue is 0-360. Saturation is 0-100. Brightness is 0-100. Red, green and blue are 0-255.
+Hue is 0-360. Saturation is 0-100. Brightness is 0-100. Red, green and blue are 0-255. Colour temperature ranges from 140 (cold white) to 500 (warm white), centred at about 151.
 
 If `topics.setHSV` is populated, a combined value is used and any individual brightness, hue and saturation topics are ignored. On/off is sent with `setOn` if configured, or by setting V to 0 when off.
 
@@ -650,8 +650,8 @@ Set `confirmationPeriodms` to enable publishing confirmation for `setOn`/`getOn`
         "setRGBWW":         "<in RWGWW mode, topic to set comma-separated red, green, blue, warm_white, cold_white>",
         "getWhite":         "<topic to get white level (0-255)> - used with getRGB for RGBW with separately-published white level",
         "setWhite":         "<topic to set white level (0-255)> - used with setRGB for RGBW with separately-published white level",
-        "getColorTemperature": "<topic to report color temperature (optional)>",
-        "setColorTemperature": "<topic to control color temperature (optional)>"
+        "getColorTemperature": "<topic to report color temperature (140-500) (optional)>",
+        "setColorTemperature": "<topic to control color temperature (140-500) (optional)>"
     },
     "integerValue": "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue": "<value representing on (optional)>",
