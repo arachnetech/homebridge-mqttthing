@@ -1224,6 +1224,13 @@
                     "functionBody": "return ['contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
                 }
             },
+            "otherValueOff": {
+                "type": "boolean",
+                "description": "When 'onValue' and 'offValue' are configured, also treat any unrecognized received values as 'off'",
+                "condition": {
+                    "functionBody": "return ['contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
+                }
+            },
             "history": {
                 "type": "boolean",
                 "title": "Enable History service for Eve App (optional)",
@@ -1607,6 +1614,7 @@
                 "integerValue",
                 "onValue",
                 "offValue",
+                "otherValueOff",
                 "resetStateAfterms",
                 "turnOffAfterms",
                 "confirmationPeriodms",

@@ -61,5 +61,5 @@ So, the plan is:
 1. Add alternative startPub format and update config.schema.json to support it. [Done]
 2. Review field names and descriptions in config.schema.json. [Done]
 3. Release initial config-ui-x support. [Done - Version 1.1.2]
-4. Add lightbulb sub-types for easier configuration.
+4. Add lightbulb sub-types for easier configuration. [Done]
 5. Add configuration profiles.
