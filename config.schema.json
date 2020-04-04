@@ -77,6 +77,24 @@
                         ]
                     },
                     {
+                        "title": "Light bulb - on/off",
+                        "enum": [
+                            "lightbulb-OnOff"
+                        ]
+                    },
+                    {
+                        "title": "Light bulb - white dimmable (0-100)",
+                        "enum": [
+                            "lightbulb-Dimmable"
+                        ]
+                    },
+                    {
+                        "title": "Light bulb - white dimmable (0-255)",
+                        "enum": [
+                            "lightbulb-White"
+                        ]
+                    },
+                    {
                         "title": "Light Sensor",
                         "enum": [
                             "lightSensor"
@@ -335,16 +353,16 @@
                     },
                     "getWhite": {
                         "type": "string",
-                        "description": "Topic used to notify mqttthing of white level (0-255) - used with getRGB for RGBW with separately-published white level",
+                        "description": "Topic used to notify mqttthing of white level (0-255) - can be used with getRGB for RGBW with separately-published white level",
                         "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                            "functionBody": "return ['lightbulb','lightbulb-White'].includes(model.type);"
                         }
                     },
                     "setWhite": {
                         "type": "string",
-                        "description": "Control topic published by mqttthing with white level (0-255) - used with getRGB for RGBW with separately-published white level",
+                        "description": "Control topic published by mqttthing with white level (0-255) - can be used with getRGB for RGBW with separately-published white level",
                         "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                            "functionBody": "return ['lightbulb','lightbulb-White'].includes(model.type);"
                         }
                     },
                     "getWatts": {
@@ -750,14 +768,14 @@
                         "type": "string",
                         "description": "Topic used to notify mqttthing of on/off state",
                         "condition": {
-                            "functionBody": "return ['fan','lightbulb','outlet','switch','cameraControl'].includes(model.type);"
+                            "functionBody": "return ['fan','lightbulb','lightbulb-OnOff','lightbulb-Dimmable','outlet','switch','cameraControl'].includes(model.type);"
                         }
                     },
                     "setOn": {
                         "type": "string",
                         "description": "Topic published by mqttthing to control on/off state",
                         "condition": {
-                            "functionBody": "return ['fan','lightbulb','outlet','switch','cameraControl'].includes(model.type);"
+                            "functionBody": "return ['fan','lightbulb','lightbulb-OnOff','lightbulb-Dimmable','outlet','switch','cameraControl'].includes(model.type);"
                         }
                     },
                     "getHue": {
@@ -792,26 +810,26 @@
                         "type": "string",
                         "description": "Topic used to notify mqttthing of brightness (range 0-100)",
                         "condition": {
-                            "functionBody": "return ['doorbell','lightbulb'].includes(model.type);"
+                            "functionBody": "return ['doorbell','lightbulb','lightbulb-Dimmable'].includes(model.type);"
                         }
                     },
                     "setBrightness": {
                         "type": "string",
                         "description": "Topic published by mqttthing to control brightness (range 0-100)",
                         "condition": {
-                            "functionBody": "return ['doorbell','lightbulb'].includes(model.type);"
+                            "functionBody": "return ['doorbell','lightbulb','lightbulb-Dimmable'].includes(model.type);"
                         }
                     },
                     "getColorTemperature": {
                         "type": "string",
-                        "description": "Topic used to notify mqttthing of color temperature",
+                        "description": "Topic used to notify mqttthing of colour temperature (range 140-500)",
                         "condition": {
                             "functionBody": "return ['lightbulb'].includes(model.type);"
                         }
                     },
                     "setColorTemperature": {
                         "type": "string",
-                        "description": "Topic published by mqttthing to control color temperature",
+                        "description": "Topic published by mqttthing to control colour temperature (range 140-500)",
                         "condition": {
                             "functionBody": "return ['lightbulb'].includes(model.type);"
                         }
@@ -1138,37 +1156,37 @@
             },
             "confirmationPeriodms": {
                 "type": "integer",
-                "title": "Confirmationperiodms",
-                "description": "An explanation about the purpose of this instance.",
+                "title": "Confirmation Period (ms)",
+                "description": "In order to monitor accessory responsiveness automatically, enter the time (in milliseconds) to wait after publishing a 'set' topic to receive a confirmatary 'get' topic update. The accessory must echo messages it receives through the 'setOn' subject to the 'getOn' subject, otherwise homebridge-mqttthing will mark it as unresponsive and republish on the 'setOn' subject.",
                 "placeholder": 1000
-            },
-            "integerValue": {
-                "type": "boolean",
-                "title": "Use 1|0 instead of true|false default onValue and offValue",
-                "description": "An explanation about the purpose of this instance.",
-                "condition": {
-                    "functionBody": "return ['contactSensor','fan','lightbulb','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
-                }
-            },
-            "onValue": {
-                "type": "string",
-                "description": "value representing on (optional)",
-                "condition": {
-                    "functionBody": "return ['contactSensor','fan','lightbulb','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
-                }
-            },
-            "offValue": {
-                "type": "string",
-                "description": "value representing off (optional)",
-                "condition": {
-                    "functionBody": "return ['contactSensor','fan','lightbulb','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
-                }
             },
             "retryLimit": {
                 "type": "integer",
                 "title": "Retry Limit",
-                "description": "An explanation about the purpose of this instance.",
-                "placeholder": 0
+                "description": "When using confirmation period, configure the number of publishing retries attempted by homebrige-mqttthing when no confirmatory 'get' topic update is received.",
+                "placeholder": 3
+            },
+            "integerValue": {
+                "type": "boolean",
+                "title": "Use integer values (1 and 0) instead of 'true' and 'false'",
+                "description": "Use integer values 1 and 0 to represent on and off for Boolean values, instead of the default 'true' and 'false'. Alternatively specific values may be specified using 'onValue' and 'offValue'.",
+                "condition": {
+                    "functionBody": "return ['contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-Dimmable','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
+                }
+            },
+            "onValue": {
+                "type": "string",
+                "description": "Value to use to represent an 'on' or 'triggered' state (optional). Takes precedence over 'integerValue'.",
+                "condition": {
+                    "functionBody": "return ['contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-Dimmable','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
+                }
+            },
+            "offValue": {
+                "type": "string",
+                "description": "Value to use to represent an 'off' or 'not triggered' state (optional). Takes precedence over 'integerValue'.",
+                "condition": {
+                    "functionBody": "return ['contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-Dimmable','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
+                }
             },
             "history": {
                 "type": "boolean",
@@ -1192,7 +1210,7 @@
             "resetStateAfterms": {
                 "type": "integer",
                 "title": "Reset After",
-                "description": "milliseconds after which to reset state automatically (optional)",
+                "description": "Milliseconds after which to reset state automatically (optional)",
                 "condition": {
                     "functionBody": "return ['contactSensor','leakSensor','smokeSensor','switch'].includes(model.type);"
                 }
@@ -1212,9 +1230,9 @@
             "turnOffAfterms": {
                 "type": "integer",
                 "title": "Turn Off After",
-                "description": "milliseconds after which to turn off automatically (optional)",
+                "description": "Milliseconds after which to turn off automatically (optional)",
                 "condition": {
-                    "functionBody": "return ['fan','lightbulb','motionSensor','outlet','switch','valve'].includes(model.type);"
+                    "functionBody": "return ['fan','lightbulb','lightbulb-OnOff','lightbulb-Dimmable','motionSensor','outlet','switch','valve'].includes(model.type);"
                 }
             },
             "doorCurrentValues": {
@@ -1307,14 +1325,16 @@
             },
             "warmWhite": {
                 "type": "string",
-                "title": "In RGBWW mode, RGB value of warm white in format red,green,blue (optional)",
+                "title": "Warm White Colour",
+                "description": "In RGBWW mode, RGB value of warm white in format red,green,blue (optional)",
                 "condition": {
                     "functionBody": "return ['lightbulb'].includes(model.type);"
                 }
             },
             "coldWhite": {
                 "type": "string",
-                "title": "In RGBWW mode, RGB value of cold white in format red,green,blue (optional)",
+                "title": "Cold White Colour",
+                "description": "In RGBWW mode, RGB value of cold white in format red,green,blue (optional)",
                 "condition": {
                     "functionBody": "return ['lightbulb'].includes(model.type);"
                 }
@@ -1535,7 +1555,6 @@
                 "topics.getRGBWW",
                 "topics.setWhite",
                 "topics.getWhite",
-                "topics.getName",
                 "topics.getStatusActive",
                 "topics.getStatusFault",
                 "topics.getBatteryLevel",
@@ -1549,11 +1568,13 @@
             "title": "Advanced",
             "items": [
                 "integerValue",
-                "history",
                 "onValue",
                 "offValue",
                 "resetStateAfterms",
                 "turnOffAfterms",
+                "confirmationPeriodms",
+                "retryLimit",
+                "history",
                 "minTemperature",
                 "maxTemperature",
                 "hex",
@@ -1619,7 +1640,8 @@
                             ]
                         }
                     ]
-                }
+                },
+                "topics.getName"
             ]
         }
     ]

@@ -1966,7 +1966,10 @@ function makeThing(log, config) {
         var service = null; // to return a single service
         var services = null; // if returning multiple services
 
-        if (config.type == "lightbulb") {
+        //  config.type may be 'type-subtype', e.g. 'lightbulb-OnOff'
+        let configType = config.type.split('-')[0]; // ignore configuration subtype
+
+        if (configType == "lightbulb") {
             service = new Service.Lightbulb(name);
             if( config.topics.setHSV ) {
                 characteristics_HSVLight(service);
@@ -1989,10 +1992,10 @@ function makeThing(log, config) {
                     characteristic_ColorTemperature( service );
                 }
             }
-        } else if (config.type == "switch") {
+        } else if (configType == "switch") {
             service = new Service.Switch(name);
             characteristic_On(service);
-        } else if (config.type == "outlet") {
+        } else if (configType == "outlet") {
             service = new Service.Outlet(name);
             characteristic_On(service);
             if (config.topics.getInUse) {
@@ -2018,7 +2021,7 @@ function makeThing(log, config) {
                 // return history service too
                 services.push( historySvc );
             }
-        } else if (config.type == "motionSensor") {
+        } else if (configType == "motionSensor") {
             service = new Service.MotionSensor(name);
             characteristic_MotionDetected(service);
             services = [service];
@@ -2030,15 +2033,15 @@ function makeThing(log, config) {
                 services.push( historySvc );
             }
             addSensorOptionalCharacteristics(service);
-        } else if (config.type == "occupancySensor") {
+        } else if (configType == "occupancySensor") {
             service = new Service.OccupancySensor(name);
             characteristic_OccupancyDetected(service);
             addSensorOptionalCharacteristics(service);
-        } else if (config.type == "lightSensor") {
+        } else if (configType == "lightSensor") {
             service = new Service.LightSensor(name);
             characteristic_CurrentAmbientLightLevel(service);
             addSensorOptionalCharacteristics(service);
-        } else if (config.type == "temperatureSensor") {
+        } else if (configType == "temperatureSensor") {
             service = new Service.TemperatureSensor(name);
             characteristic_CurrentTemperature(service);
             addSensorOptionalCharacteristics(service);
@@ -2050,7 +2053,7 @@ function makeThing(log, config) {
                 // return history service too
                 services.push( historySvc );
             }
-        } else if (config.type == "humiditySensor") {
+        } else if (configType == "humiditySensor") {
             service = new Service.HumiditySensor(name);
             characteristic_CurrentRelativeHumidity(service);
             addSensorOptionalCharacteristics(service);
@@ -2062,7 +2065,7 @@ function makeThing(log, config) {
                 // return history service too
                 services.push( historySvc );
             }
-        } else if (config.type == "airPressureSensor") {
+        } else if (configType == "airPressureSensor") {
             service = new Eve.Services.AirPressureSensor(name);
             characteristic_AirPressure(service);
             addSensorOptionalCharacteristics(service);
@@ -2074,7 +2077,7 @@ function makeThing(log, config) {
                 // return history service too
                 services.push( historySvc );
             }
-        } else if (config.type == "weatherStation") {
+        } else if (configType == "weatherStation") {
             service = new Service.TemperatureSensor( svcNames.temperature || name + " Temperature");
             characteristic_CurrentTemperature( service );
             addSensorOptionalCharacteristics( service );
@@ -2133,7 +2136,7 @@ function makeThing(log, config) {
                 history_AirPressure( historySvc );
                 services.push( historySvc );
             }
-        } else if (config.type == "contactSensor") {
+        } else if (configType == "contactSensor") {
             service = new Service.ContactSensor(name);
             characteristic_ContactSensorState(service);
             addSensorOptionalCharacteristics(service);
@@ -2145,7 +2148,7 @@ function makeThing(log, config) {
                 // return history service too
                 services.push( historySvc );
             }
-        } else if (config.type == "doorbell") {
+        } else if (configType == "doorbell") {
             service = new Service.Doorbell(name);
             characteristic_ProgrammableSwitchEvent(service, config.topics.getSwitch, config.switchValues, config.restrictSwitchValues);
             if (config.topics.setBrightness || config.topics.getBrightness) {
@@ -2162,7 +2165,7 @@ function makeThing(log, config) {
                 // return motion sensor too
                 services.push( motionsvc );
             }
-        } else if( config.type == "statelessProgrammableSwitch" ) {
+        } else if( configType == "statelessProgrammableSwitch" ) {
             if (Array.isArray(config.topics.getSwitch)) {
                 service = new Service.ServiceLabel(name);
                 characteristic_ServiceLabelNamespace( service );
@@ -2201,7 +2204,7 @@ function makeThing(log, config) {
                 service = new Service.StatelessProgrammableSwitch( name );
                 characteristic_ProgrammableSwitchEvent(service, config.topics.getSwitch, config.switchValues, config.restrictSwitchValues);
             }
-        } else if (config.type == "securitySystem") {
+        } else if (configType == "securitySystem") {
             service = new Service.SecuritySystem(name);
             characteristic_SecuritySystemTargetState(service);
             characteristic_SecuritySystemCurrentState(service);
@@ -2212,11 +2215,11 @@ function makeThing(log, config) {
                 characteristic_StatusTampered(service);
             }
             // todo: SecuritySystemAlarmType
-        } else if (config.type == "smokeSensor") {
+        } else if (configType == "smokeSensor") {
             service = new Service.SmokeSensor(name);
             characteristic_SmokeDetected(service);
             addSensorOptionalCharacteristics(service);
-        } else if( config.type == "garageDoorOpener" ) {
+        } else if( configType == "garageDoorOpener" ) {
             service = new Service.GarageDoorOpener(name);
             characteristic_TargetDoorState(service);
             characteristic_CurrentDoorState(service);
@@ -2227,7 +2230,7 @@ function makeThing(log, config) {
             if( config.topics.getLockCurrentState ) {
                 characteristic_LockCurrentState(service);
             }
-        } else if( config.type == "lockMechanism" ) {
+        } else if( configType == "lockMechanism" ) {
             service = new Service.LockMechanism( name );
             if( config.topics.setLockTargetState ) {
                 characteristic_LockTargetState( service );
@@ -2235,7 +2238,7 @@ function makeThing(log, config) {
             if( config.topics.getLockCurrentState ) {
                 characteristic_LockCurrentState( service );
             }
-        } else if( config.type == "fan" ) {
+        } else if( configType == "fan" ) {
             service = new Service.Fan(name);
             characteristic_On(service);
             if( config.topics.getRotationDirection || config.topics.setRotationDirection ) {
@@ -2244,23 +2247,23 @@ function makeThing(log, config) {
             if( config.topics.getRotationSpeed || config.topics.setRotationSpeed ) {
                 characteristic_RotationSpeed(service);
             }
-        } else if( config.type == "leakSensor" ) { 
+        } else if( configType == "leakSensor" ) { 
             service = new Service.LeakSensor( name );
             characteristic_LeakDetected( service );
             addSensorOptionalCharacteristics(service);
-        } else if( config.type == "microphone" ) {
+        } else if( configType == "microphone" ) {
             service = new Service.Microphone( name );
             characteristic_Mute( service );
             if (config.topics.setVolume || config.topics.getVolume) {
                 characteristic_Volume(service);
             }
-        } else if( config.type == "speaker" ) {
+        } else if( configType == "speaker" ) {
             service = new Service.Speaker( name );
             characteristic_Mute( service );
             if (config.topics.setVolume || config.topics.getVolume) {
                 characteristic_Volume(service);
             }
-        } else if( config.type == "windowCovering" ) {
+        } else if( configType == "windowCovering" ) {
             service = new Service.WindowCovering( name );
             characteristic_CurrentPosition( service );
             characteristic_TargetPosition( service );
@@ -2283,7 +2286,7 @@ function makeThing(log, config) {
             if( config.topics.getObstructionDetected ) {
                 characteristic_ObstructionDetected( service );
             }
-        } else if( config.type == "window" ) {
+        } else if( configType == "window" ) {
             service = new Service.Window( name );
             characteristic_CurrentPosition( service );
             characteristic_TargetPosition( service );
@@ -2294,7 +2297,7 @@ function makeThing(log, config) {
             if( config.topics.getObstructionDetected ) {
                 characteristic_ObstructionDetected( service );
             }
-        } else if( config.type == "airQualitySensor" ) {
+        } else if( configType == "airQualitySensor" ) {
             service = new Service.AirQualitySensor( svcNames.airQuality || name );
             characteristic_AirQuality( service );
             addSensorOptionalCharacteristics( service );
@@ -2346,7 +2349,7 @@ function makeThing(log, config) {
                 history_CurrentRelativeHumidity( historySvc );
                 services.push( historySvc );
             }
-        } else if( config.type == 'carbonDioxideSensor' ) {
+        } else if( configType == 'carbonDioxideSensor' ) {
             service = new Service.CarbonDioxideSensor( name );
             characteristic_CarbonDioxideDetected( service );
             addSensorOptionalCharacteristics(service);
@@ -2356,7 +2359,7 @@ function makeThing(log, config) {
             if( config.topics.getCarbonDioxidePeakLevel ) {
                 characteristic_CarbonDioxidePeakLevel( service );
             }
-        } else if( config.type == 'valve' ) {
+        } else if( configType == 'valve' ) {
             service = new Service.Valve( name );
             characteristic_ValveType( service );
             characteristic_Active( service );
@@ -2368,7 +2371,7 @@ function makeThing(log, config) {
                 characteristic_RemainingDuration( service );
             }
             addSensorOptionalCharacteristics( service );
-        } else if( config.type == 'thermostat' ) {
+        } else if( configType == 'thermostat' ) {
             service = new Service.Thermostat( name );
             characteristic_CurrentHeatingCoolingState( service );
             characteristic_TargetHeatingCoolingState( service );
@@ -2387,7 +2390,7 @@ function makeThing(log, config) {
             if( config.topics.getHeatingThresholdTemperature || config.topics.setHeatingThresholdTemperature ) {
                 characteristic_HeatingThresholdTemperature( service );
             }
-        } else if( config.type == "heaterCooler" ) {
+        } else if( configType == "heaterCooler" ) {
             service = new Service.HeaterCooler( name );
             characteristic_Active( service );
             characteristic_CurrentHeaterCoolerState( service );
@@ -2411,7 +2414,7 @@ function makeThing(log, config) {
             if( config.topics.getRotationSpeed || config.topics.setRotationSpeed ) {
                 characteristic_RotationSpeed(service);
             }
-        } else if( config.type == 'television' ) {
+        } else if( configType == 'television' ) {
             service = new Service.Television( name );
             service.isPrimaryService = true;
             characteristic_Active( service );
@@ -2456,7 +2459,7 @@ function makeThing(log, config) {
                 service.setCharacteristic(Characteristic.DisplayOrder, displayOrderTlv);
             }
         } else {
-            log("ERROR: Unrecognized type: " + config.type);
+            log("ERROR: Unrecognized type: " + configType);
         }
 
         if (service) {
