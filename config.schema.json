@@ -95,6 +95,42 @@
                         ]
                     },
                     {
+                        "title": "Light bulb - white with variable colour temperature",
+                        "enum": [
+                            "lightbulb-ColTemp"
+                        ]
+                    },
+                    {
+                        "title": "Light bulb - colour (separate topics)",
+                        "enum": [
+                            "lightbulb-Colour"
+                        ]
+                    },
+                    {
+                        "title": "Light bulb - HSV",
+                        "enum": [
+                            "lightbulb-HSV"
+                        ]
+                    },
+                    {
+                        "title": "Light bulb - RGB",
+                        "enum": [
+                            "lightbulb-RGB"
+                        ]
+                    },
+                    {
+                        "title": "Light bulb - RGBW",
+                        "enum": [
+                            "lightbulb-RGBW"
+                        ]
+                    },
+                    {
+                        "title": "Light bulb - RGBWW",
+                        "enum": [
+                            "lightbulb-RGBWW"
+                        ]
+                    },
+                    {
                         "title": "Light Sensor",
                         "enum": [
                             "lightSensor"
@@ -299,70 +335,70 @@
                         "type": "string",
                         "description": "In HSV mode, control topic published by mqttthing with comma-separated hue (0-360), saturation (0-100) and value (0-100)",
                         "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                            "functionBody": "return ['lightbulb','lightbulb-HSV'].includes(model.type);"
                         }
                     },
                     "getHSV": {
                         "type": "string",
                         "description": "In HSV mode, status topic used to notify mqttthing of comma-separated hue (0-360), saturation (0-100) and value (0-100)",
                         "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                            "functionBody": "return ['lightbulb','lightbulb-HSV'].includes(model.type);"
                         }
                     },
                     "getRGB": {
                         "type": "string",
                         "description": "In RGB mode, topic to notify mqttthing of comma-separated red, green and blue",
                         "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                            "functionBody": "return ['lightbulb','lightbulb-RGB'].includes(model.type);"
                         }
                     },
                     "setRGB": {
                         "type": "string",
                         "description": "In RGB mode, control topic published by mqttthing with comma-separated red, green and blue (all 0-255)",
                         "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                            "functionBody": "return ['lightbulb','lightbulb-RGB'].includes(model.type);"
                         }
                     },
                     "getRGBW": {
                         "type": "string",
                         "description": "In RGBW mode, topic to notify mqttthing of comma-separated red, green, blue and white",
                         "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                            "functionBody": "return ['lightbulb','lightbulb-RGBW'].includes(model.type);"
                         }
                     },
                     "setRGBW": {
                         "type": "string",
                         "description": "In RGBW mode, control topic published by mqttthing with comma-separated red, green, blue and white (all 0-255)",
                         "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                            "functionBody": "return ['lightbulb','lightbulb-RGBW'].includes(model.type);"
                         }
                     },
                     "getRGBWW": {
                         "type": "string",
                         "description": "In RGBWW mode, topic to notify mqttthing of comma-separated red, green, blue, warm_white and cold_white",
                         "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                            "functionBody": "return ['lightbulb','lightbulb-RGBWW'].includes(model.type);"
                         }
                     },
                     "setRGBWW": {
                         "type": "string",
                         "description": "In RGBWW mode, control topic published by mqttthing with comma-separated red, green, blue, warm_white and cold_white (all 0-255)",
                         "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                            "functionBody": "return ['lightbulb','lightbulb-RGBWW'].includes(model.type);"
                         }
                     },
                     "getWhite": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of white level (0-255) - can be used with getRGB for RGBW with separately-published white level",
                         "condition": {
-                            "functionBody": "return ['lightbulb','lightbulb-White'].includes(model.type);"
+                            "functionBody": "return ['lightbulb','lightbulb-White','lightbulb-RGB'].includes(model.type);"
                         }
                     },
                     "setWhite": {
                         "type": "string",
                         "description": "Control topic published by mqttthing with white level (0-255) - can be used with getRGB for RGBW with separately-published white level",
                         "condition": {
-                            "functionBody": "return ['lightbulb','lightbulb-White'].includes(model.type);"
+                            "functionBody": "return ['lightbulb','lightbulb-White','lightbulb-RGB'].includes(model.type);"
                         }
                     },
                     "getWatts": {
@@ -768,70 +804,70 @@
                         "type": "string",
                         "description": "Topic used to notify mqttthing of on/off state",
                         "condition": {
-                            "functionBody": "return ['fan','lightbulb','lightbulb-OnOff','lightbulb-Dimmable','outlet','switch','cameraControl'].includes(model.type);"
+                            "functionBody": "return ['fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-Colour','lightbulb-ColTemp','outlet','switch','cameraControl'].includes(model.type);"
                         }
                     },
                     "setOn": {
                         "type": "string",
                         "description": "Topic published by mqttthing to control on/off state",
                         "condition": {
-                            "functionBody": "return ['fan','lightbulb','lightbulb-OnOff','lightbulb-Dimmable','outlet','switch','cameraControl'].includes(model.type);"
+                            "functionBody": "return ['fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','outlet','switch','cameraControl'].includes(model.type);"
                         }
                     },
                     "getHue": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of hue (range 0-360)",
                         "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                            "functionBody": "return ['lightbulb','lightbulb-Colour'].includes(model.type);"
                         }
                     },
                     "setHue": {
                         "type": "string",
                         "description": "Topic published by mqttthing to control hue (range 0-360)",
                         "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                            "functionBody": "return ['lightbulb','lightbulb-Colour'].includes(model.type);"
                         }
                     },
                     "getSaturation": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of saturation (range 0-100)",
                         "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                            "functionBody": "return ['lightbulb','lightbulb-Colour'].includes(model.type);"
                         }
                     },
                     "setSaturation": {
                         "type": "string",
                         "description": "Topic published by mqttthing to control saturation (range 0-100)",
                         "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                            "functionBody": "return ['lightbulb','lightbulb-Colour'].includes(model.type);"
                         }
                     },
                     "getBrightness": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of brightness (range 0-100)",
                         "condition": {
-                            "functionBody": "return ['doorbell','lightbulb','lightbulb-Dimmable'].includes(model.type);"
+                            "functionBody": "return ['doorbell','lightbulb','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp'].includes(model.type);"
                         }
                     },
                     "setBrightness": {
                         "type": "string",
                         "description": "Topic published by mqttthing to control brightness (range 0-100)",
                         "condition": {
-                            "functionBody": "return ['doorbell','lightbulb','lightbulb-Dimmable'].includes(model.type);"
+                            "functionBody": "return ['doorbell','lightbulb','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp'].includes(model.type);"
                         }
                     },
                     "getColorTemperature": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of colour temperature (range 140-500)",
                         "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                            "functionBody": "return ['lightbulb','lightbulb-ColTemp','lightbulb-Colour'].includes(model.type);"
                         }
                     },
                     "setColorTemperature": {
                         "type": "string",
                         "description": "Topic published by mqttthing to control colour temperature (range 140-500)",
                         "condition": {
-                            "functionBody": "return ['lightbulb'].includes(model.type);"
+                            "functionBody": "return ['lightbulb','lightbulb-ColTemp','lightbulb-Colour'].includes(model.type);"
                         }
                     },
                     "getOzoneDensity": {
@@ -1171,21 +1207,21 @@
                 "title": "Use integer values (1 and 0) instead of 'true' and 'false'",
                 "description": "Use integer values 1 and 0 to represent on and off for Boolean values, instead of the default 'true' and 'false'. Alternatively specific values may be specified using 'onValue' and 'offValue'.",
                 "condition": {
-                    "functionBody": "return ['contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-Dimmable','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
+                    "functionBody": "return ['contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
                 }
             },
             "onValue": {
                 "type": "string",
                 "description": "Value to use to represent an 'on' or 'triggered' state (optional). Takes precedence over 'integerValue'.",
                 "condition": {
-                    "functionBody": "return ['contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-Dimmable','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
+                    "functionBody": "return ['contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
                 }
             },
             "offValue": {
                 "type": "string",
                 "description": "Value to use to represent an 'off' or 'not triggered' state (optional). Takes precedence over 'integerValue'.",
                 "condition": {
-                    "functionBody": "return ['contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-Dimmable','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
+                    "functionBody": "return ['contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
                 }
             },
             "history": {
@@ -1232,7 +1268,7 @@
                 "title": "Turn Off After",
                 "description": "Milliseconds after which to turn off automatically (optional)",
                 "condition": {
-                    "functionBody": "return ['fan','lightbulb','lightbulb-OnOff','lightbulb-Dimmable','motionSensor','outlet','switch','valve'].includes(model.type);"
+                    "functionBody": "return ['fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','motionSensor','outlet','switch','valve'].includes(model.type);"
                 }
             },
             "doorCurrentValues": {
@@ -1311,16 +1347,17 @@
             },
             "hex": {
                 "type": "boolean",
-                "title": "Format combined RGB/RGBW in hexadecimal (e.g. 'FFA000') instead of as comma-separated decimals (e.g. '255,160,0').",
+                "title": "Use Hexadecimal",
+                "description": "Format combined RGB/RGBW/RGBWW in hexadecimal (e.g. 'FFA000') instead of as comma-separated decimals (e.g. '255,160,0').",
                 "condition": {
-                    "functionBody": "return ['lightbulb'].includes(model.type);"
+                    "functionBody": "return ['lightbulb','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW'].includes(model.type);"
                 }
             },
             "hexPrefix": {
                 "type": "string",
-                "description": "Format combined RGB/RGBW in hexadecimal with specified prefix (typically '#') instead of as comma-separated decimals.",
+                "description": "Format combined RGB/RGBW/RGBWW in hexadecimal with specified prefix (typically '#') instead of as comma-separated decimals.",
                 "condition": {
-                    "functionBody": "return ['lightbulb'].includes(model.type);"
+                    "functionBody": "return ['lightbulb','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW'].includes(model.type);"
                 }
             },
             "warmWhite": {
@@ -1328,7 +1365,7 @@
                 "title": "Warm White Colour",
                 "description": "In RGBWW mode, RGB value of warm white in format red,green,blue (optional)",
                 "condition": {
-                    "functionBody": "return ['lightbulb'].includes(model.type);"
+                    "functionBody": "return ['lightbulb','lightbulb-RGBWW'].includes(model.type);"
                 }
             },
             "coldWhite": {
@@ -1336,7 +1373,7 @@
                 "title": "Cold White Colour",
                 "description": "In RGBWW mode, RGB value of cold white in format red,green,blue (optional)",
                 "condition": {
-                    "functionBody": "return ['lightbulb'].includes(model.type);"
+                    "functionBody": "return ['lightbulb','lightbulb-RGBWW'].includes(model.type);"
                 }
             },
             "targetStateValues": {

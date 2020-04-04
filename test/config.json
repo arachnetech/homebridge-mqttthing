@@ -1,690 +1,765 @@
 {
-  "bridge": {
-    "name": "Homebridge",
-    "username": "DD:7C:A6:26:A7:69",
-    "port": 55555,
-    "pin": "323-32-223"
-  },
-  "description": "This is an example configuration file. You can use this as a template for creating your own configuration file.",
-  "platforms": [{
-    "platform": "config",
-    "name": "Config",
-    "port": 8080,
-    "sudo": false
-  }],
-  "accessories": [
-    {
-      "accessory": "mqttthing",
-      "type": "lightbulb",
-      "name": "Test lightbulb",
-      "url": "http://192.168.10.35:1883",
-      "mqttPubOptions": { "retain": true },
-      "topics": {
-        "getOn": "test/lightbulb/getOn",
-        "setOn": "test/lightbulb/setOn",
-        "getBrightness": {
-          "topic": "test/lightbulb/getBrightness",
-          "apply": "return Math.round( message / 2.55 );"
-        },
-        "setBrightness": {
-          "topic": "test/lightbulb/setBrightness",
-          "apply": "return Math.round( message * 2.55 );"
-        },
-        "getHue": "test/lightbulb/getHue",
-        "setHue": "test/lightbulb/setHue",
-        "getSaturation": "test/lightbulb/getSaturation",
-        "setSaturation": "test/lightbulb/setSaturation",
-        "getColorTemperature": "test/lightbulb/getTemperature",
-        "setColorTemperature": "test/lightbulb/setTemperature",
-        "getOnline": "test/lightbulb/getOnline"
-      },
-      "logMqtt": true,
-      "integerValue": true,
-      "onlineValue": "Online",
-      "startPub": [
-        { "topic": "test/lightbulb/setOn", "message": "1" },
-        { "topic": "test/lightbulb/getOn", "message": "1" },
-        { "topic": "test/lightbulb/setBrightness", "message": "200" },
-        { "topic": "test/lightbulb/getBrightness", "message": "200" },
-        { "topic": "test/lightbulb", "message": "Hello world" }
-      ]
+    "bridge": {
+        "name": "Homebridge",
+        "username": "DD:7C:A6:26:A7:69",
+        "port": 55555,
+        "pin": "323-32-223"
     },
-    {
-      "accessory": "mqttthing",
-      "type": "lightbulb",
-      "name": "Test HSV Light",
-      "url": "http://192.168.10.35:1883",
-      "topics": {
-        "getHSV": "test/hsvlight/getHSV",
-        "setHSV": "test/hsvlight/setHSV"
-      },
-      "logMqtt": true
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "lightbulb",
-      "name": "Test espurna Light",
-      "url": "http://192.168.10.35:1883",
-      "topics": {
-        "getHSV": "test/hsvlight2/hsv",
-        "setHSV": "test/hsvlight2/hsv/set",
-        "getOn": "test/hsvlight2/on",
-        "setOn": "test/hsvlight2/on/set"
-      },
-      "logMqtt": true,
-      "integerValue": true
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "lightbulb",
-      "name": "Test RGB Light",
-      "url": "http://192.168.10.35:1883",
-      "topics": {
-        "getRGB": "test/rgblight/rgb",
-        "setRGB": "test/rgblight/rgb/set",
-        "getOn": { "topic": "test/rgblight/on", "apply": "return JSON.parse( message ).state.power;" },
-        "setOn": { "topic": "test/rgblight/on/set", "apply": "return JSON.stringify( { state: { power: message }, version: 1 } );" }
-      },
-      "logMqtt": true,
-      "integerValue": false,
-      "hex": true
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "lightbulb",
-      "name": "Test RGBW Light",
-      "url": "http://192.168.10.35:1883",
-      "topics": {
-        "getRGBW": "test/rgbwlight/rgb",
-        "setRGBW": "test/rgbwlight/rgb/set"
-      },
-      "logMqtt": true,
-      "integerValue": true,
-      "hexPrefix": "#"
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "lightbulb",
-      "name": "Test RGBW Light 2",
-      "url": "http://192.168.10.35:1883",
-      "topics": {
-        "getRGB": "test/rgbwlight2/rgb",
-        "setRGB": "test/rgbwlight2/rgb/set",
-        "getWhite": "test/rgbwlight2/white",
-        "setWhite": "test/rgbwlight2/white/set",
-        "getOn": "test/rgbwlight2/on",
-        "setOn": "test/rgbwlight2/on/set"
-      },
-      "logMqtt": true,
-      "integerValue": true,
-      "hexPrefix": "#"
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "lightbulb",
-      "name": "Test RGBWW Light",
-      "url": "http://192.168.10.35:1883",
-      "topics": {
-        "getRGBWW": "test/rgbwwlight/rgb",
-        "setRGBWW": "test/rgbwwlight/rgb/set"
-      },
-      "logMqtt": true
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "lightbulb",
-      "name": "Test White Light",
-      "url": "http://192.168.10.35:1883",
-      "topics": {
-        "getWhite": "test/whitelight/white",
-        "setWhite": "test/whitelight/white/set"
-      },
-      "logMqtt": true
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "lightbulb",
-      "name": "Test ColorTemperature Light",
-      "url": "http://192.168.10.35:1883",
-      "topics": {
-        "getOn": "test/coltemp/getOn",
-        "setOn": "test/coltemp/setOn",
-        "getBrightness": "test/coltemp/getBrightness",
-        "setBrightness": "test/coltemp/setBrightness",
-        "getColorTemperature": "test/coltemp/getTemperature",
-        "setColorTemperature": "test/coltemp/setTemperature"
-      },
-      "logMqtt": true,
-      "integerValue": true
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "lightbulb",
-      "name": "Test Dimmable Light",
-      "url": "http://192.168.10.35:1883",
-      "topics": {
-        "getOn": "test/dimmable/setOn",
-        "setOn": "test/dimmable/setOn",
-        "getBrightness": "test/dimmable/getBrightness",
-        "setBrightness": "test/dimmable/setBrightness"
-      },
-      "logMqtt": true,
-      "onValue": "DIMMABLE",
-      "offValue": "OFF",
-      "otherValueOff": true
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "lightbulb",
-      "name": "Alternative Light Mode",
-      "url": "http://192.168.10.35:1883",
-      "topics": {
-        "getOn": "test/dimmable/setOn",
-        "setOn": "test/dimmable/setOn"
-      },
-      "logMqtt": true,
-      "onValue": "ALTMODE",
-      "offValue": "OFF",
-      "otherValueOff": true
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "switch",
-      "name": "Test switch",
-      "url": "http://192.168.10.35:1883",
-      "topics": {
-        "getOn": "test/switch/getOn",
-        "setOn": "test/switch/setOn"
-      },
-      "integerValue": true,
-      "turnOffAfterms": 2000
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "outlet",
-      "name": "Test outlet",
-      "url": "http://192.168.10.35:1883",
-      "mqttPubOptions": { "retain": true },
-      "topics": {
-        "getOn": "test/outlet/getOn",
-        "setOn": "test/outlet/setOn",
-        "getInUse": "test/outlet/getInUse",
-        "getWatts": "test/outlet/getWatts",
-        "getVolts": "test/outlet/getVolts",
-        "getAmperes": "test/outlet/getAmperes"
-      },
-      "integerValue": true,
-      "history": true,
-      "confirmationPeriodms": 2000,
-      "retryLimit": 10
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "motionSensor",
-      "name": "Test motion sensor",
-      "url": "http://192.168.10.35:1883",
-      "topics": {
-        "getMotionDetected": "test/motion/detected",
-        "getStatusActive": "test/motion/active",
-        "getStatusFault": "test/motion/fault",
-        "getStatusTampered": "test/motion/tampered",
-        "getStatusLowBattery": "test/motion/lowBattery",
-        "getBatteryLevel": "test/motion/batteryLevel",
-        "getChargingState": "test/motion/chargingState"
-      },
-      "integerValue": true,
-      "chargingStateValues": [ "NotCharging", "Charging", "NotChargeable" ],
-      "logMqtt": true,
-      "turnOffAfterms": 3000,
-      "history": {
-        "mergeInterval": 5
-      }
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "occupancySensor",
-      "name": "Test occupancy sensor",
-      "url": "http://192.168.10.35:1883",
-      "topics": {
-        "getOccupancyDetected": "test/occupancy/detected",
-        "getStatusActive": "test/occupancy/active",
-        "getStatusFault": "test/occupancy/fault",
-        "getStatusTampered": "test/occupancy/tampered",
-        "getStatusLowBattery": "test/occupancy/lowBattery"
-      },
-      "integerValue": true
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "lightSensor",
-      "name": "Test light sensor",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": true,
-      "topics": {
-        "getCurrentAmbientLightLevel": "test/light/level"
-      }
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "temperatureSensor",
-      "name": "Test temperature sensor",
-      "url": "http://192.168.10.35:1883",
-      "topics": {
-        "getCurrentTemperature": "test/temperature"
-      },
-      "history": true
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "humiditySensor",
-      "name": "Test humidity sensor",
-      "url": "http://192.168.10.35:1883",
-      "topics": {
-        "getCurrentRelativeHumidity": "test/humidity"
-      },
-      "history": {
-        "size": 1000,
-        "autoRepeat": false
-      }
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "airPressureSensor",
-      "name": "Test air pressure sensor",
-      "url": "http://192.168.10.35:1883",
-      "topics": {
-        "getAirPressure": "test/airpressure"
-      },
-      "history": true
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "weatherStation",
-      "name": "Test weather station",
-      "serviceNames" : {
-        "temperature": "WS-Temperature",
-        "humidity": "WS-Humidity",
-        "airPressure": "WS-AirPressure",
-        "weather": "WS-WeatherData"
-      },
-      "url": "mqtt://192.168.179.5:1883",
-      "topics": {
-          "getCurrentTemperature": "test/weather/temperature",
-          "getCurrentRelativeHumidity": "test/weather/humidity",
-          "getAirPressure": "test/weather/airpressure",
-          "getWeatherCondition": "test/weather/condition",
-          "getRain1h": "test/weather/rain1",
-          "getRain24h": "test/weather/rain24",
-          "getUVIndex": "test/weather/uv",
-          "getVisibility": "test/weather/visibility",
-          "getWindDirection": "test/weather/winddirection",
-          "getWindSpeed": "test/weather/windspeed"              
-      },
-      "history": false
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "contactSensor",
-      "name": "Test contact sensor",
-      "url": "http://192.168.10.35:1883",
-      "topics": {
-        "getContactSensorState": "test/contact/state"
-      },
-      "integerValue": true,
-      "history": true
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "doorbell",
-      "name": "Test doorbell",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": true,
-      "topics": {
-        "getSwitch": "test/doorbell/ring",
-        "getMotionDetected": "test/doorbell/motion/detected",
-        "setVolume": "test/doorbell/volume",
-        "setBrightness": "test/doorbell/brightness"
-      },
-      "switchValues": [ "SINGLE", "DOUBLE", "LONG" ],
-      "integerValue": true
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "securitySystem",
-      "name": "Test Security System",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": true,
-      "topics": {
-        "setTargetState": "test/security/target",
-        "getTargetState": "test/security/current",
-        "getCurrentState": "test/security/current"
-      },
-      "targetStateValues": [ "StayArm", "AwayArm", "NightArm", "Disarmed" ],
-      "currentStateValues": [ "StayArm", "AwayArm", "NightArm", "Disarmed", "Triggered" ],
-      "restrictTargetState": [ 1, 2, 3 ]
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "smokeSensor",
-      "name": "Test smoke sensor",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": true,
-      "topics": {
-        "getSmokeDetected": "test/smoke/detected"
-      },
-      "integerValue": true
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "leakSensor",
-      "name": "Test leak sensor",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": true,
-      "topics": {
-        "getLeakDetected": "test/leak/detected"
-      },
-      "integerValue": true,
-      "resetStateAfterms": 5000
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "statelessProgrammableSwitch",
-      "name": "Test Stateless Programmable Switch",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": true,
-      "topics": {
-        "getSwitch": "test/spswitch/state"
-      },
-      "restrictSwitchValues": [ 0, 1 ]
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "statelessProgrammableSwitch",
-      "name": "Multi-switch",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": true,
-      "topics": {
-        "getSwitch": [ "test/mspswitch/1", "test/mspswitch/2", "test/mspswitch/3" ]
-      }
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "garageDoorOpener",
-      "name": "Test Garage Door",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": true,
-      "topics":
-      {
-          "setTargetDoorState":       "test/garage/target",
-          "getTargetDoorState":       "test/garage/current",
-          "getCurrentDoorState":      "test/garage/current",
-          "setLockTargetState":       "test/lock/target",
-          "getLockTargetState":       "test/garagelock/current",
-          "getLockCurrentState":      "test/garagelock/current",
-          "getObstructionDetected":   "test/garage/obstruction"
-      },
-      "doorValues": [ "Open", "Closed", "Opening", "Closing", "Stopped" ],
-      "lockValues": [ "Unsecured", "Secured", "Jammed",  "Unknown" ]
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "lockMechanism",
-      "name": "Test Lock",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": true,
-      "topics":
-      {
-          "setLockTargetState":       "test/lock/target",
-          "getLockTargetState":       "test/lock/current",
-          "getLockCurrentState":      "test/lock/current"
-      },
-      "lockValues": [ "Unsecured", "Secured", "Jammed",  "Unknown" ]
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "fan",
-      "name": "Test Fan",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": true,
-      "topics":
-      {
-        "getOn": "test/fan/getOn",
-        "setOn": "test/fan/setOn",
-        "getRotationDirection": "test/fan/getRotationDirection",
-        "setRotationDirection": "test/fan/setRotationDirection",
-        "getRotationSpeed": "test/fan/getRotationSpeed",
-        "setRotationSpeed": "test/fan/setRotationSpeed"
-      },
-      "integerValue": true
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "lightbulb",
-      "name": "OnOffTest",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": "true",
-      "topics": {
-        "getOn": "test/onoff/getOn",
-        "setOn": "test/onoff/setOn"
-      },
-      "onValue": "on",
-      "offValue": "off"
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "switch",
-      "name": "Morning Scene",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": "true",
-      "topics": {
-        "getOn": "test/scene/name",
-        "setOn": "test/scene/name"
-      },
-      "onValue": "morning"
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "switch",
-      "name": "Afternoon Scene",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": "true",
-      "topics": {
-        "getOn": "test/scene/name",
-        "setOn": "test/scene/name"
-      },
-      "onValue": "afternoon"
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "switch",
-      "name": "Evening Scene",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": "true",
-      "topics": {
-        "getOn": "test/scene/name",
-        "setOn": "test/scene/name"
-      },
-      "onValue": "evening"
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "speaker",
-      "name": "Speaker",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": "true",
-      "topics": {
-        "getMute": "test/speaker/getMute",
-        "setMute": "test/speaker/setMute",
-        "getVolume": "test/speaker/getVolume",
-        "setVolume": "test/speaker/setVolume"
-      }
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "microphone",
-      "name": "Microphone",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": "true",
-      "topics": {
-        "getMute": "test/microphone/getMute",
-        "setMute": "test/microphone/setMute",
-        "getVolume": "test/microphone/getVolume",
-        "setVolume": "test/microphone/setVolume"
-      }
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "windowCovering",
-      "name": "Blind",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": "true",
-      "topics": {
-        "getCurrentPosition": "test/blind/getCurrentPosition",
-        "setTargetPosition": "test/blind/setTargetPosition",
-        "getPositionState": "test/blind/getPositionState",
-        "setTargetVerticalTiltAngle": "test/blind/setTargetVerticalTiltAngle",
-        "getCurrentVerticalTiltAngle": "test/blind/getCurrentVerticalTiltAngle"
-      }
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "window",
-      "name": "Window",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": "true",
-      "topics": {
-        "getCurrentPosition": "test/window/getCurrentPosition",
-        "setTargetPosition": "test/window/setTargetPosition",
-        "getPositionState": "test/window/getPositionState"
-      }
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "carbonDioxideSensor",
-      "name": "CO2",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": "true",
-      "topics": {
-        "getCarbonDioxideDetected": "test/co2/get"
-      }
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "airQualitySensor",
-      "name": "AirQuality",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": "true",
-      "topics": {
-        "getAirQuality": "test/airquality/get",
-        "getAirQualityPPM": "test/airqualityppm/get",
-        "getPM10Density": "test/airquality/pm10",
-        "getPM2_5Density": "test/airquality/pm2_5",
-        "getOzoneDensity": "test/airquality/ozone",
-        "getSulphurDioxideDensity": "test/airquality/so2",
-        "getNitrogenDioxideDensity": "test/airquality/no2",
-        "getVOCDensity": "test/airquality/voc",
-        "getCarbonMonoxideLevel": "test/airquality/co",
-        "getCarbonDioxideLevel": "test/airquality/co2",
-        "getCurrentTemperature": "test/airquality/temperature",
-        "getCurrentRelativeHumidity": "test/airquality/humidity"
-      },
-      "history": true
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "valve",
-      "valveType": "sprinkler",
-      "name": "Sprinkler",
-      "url": "http://192.168.10.35:1883",
-      "topics": {
-          "getActive": "test/sprinkler/getActive",
-          "setActive": "test/sprinkler/setActive",
-          "getInUse": "test/sprinkler/getInUse",
-          "getDuration": "test/sprinkler/getDuration",
-          "setDuration": "test/sprinkler/setDuration",
-          "getRemainingDuration": "test/sprinkler/getRemainingDuration"
-      },
-      "integerValue": true,
-      "durationTimer": true,
-      "maxDuration": 180
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "thermostat",
-      "name": "Thermostat",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": "true",
-      "topics": {
-        "getCurrentHeatingCoolingState": "test/thermostat/getCurrentState",
-        "setCurrentHeatingCoolingState": "test/thermostat/setCurrentState",
-        "getTargetHeatingCoolingState": "test/thermostat/getTargetState",
-        "setTargetHeatingCoolingState": "test/thermostat/setTargetState",
-        "getCurrentTemperature": "test/thermostat/getCurrentTemperature",
-        "setTargetTemperature": "test/thermostat/setTargetTemperature",
-        "getTargetTemperature": "test/thermostat/getTargetTemperature",
-        "setTemperatureDisplayUnits": "test/thermostat/setTemperatureDisplayUnits",
-        "getTemperatureDisplayUnits": "test/thermostat/getTemperatureDisplayUnits"
-      },
-      "minTemperature": 5,
-      "maxTemperature": 27.5,
-      "restrictHeatingCoolingState": [ 0, 1 ]
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "heaterCooler",
-      "name": "HeaterCooler",
-      "url": "http://192.168.10.35:1883",
-      "logMqtt": true,
-      "topics": {
-        "setActive": "test/heatcool/setActive",
-        "getActive": "test/heatcool/getActive",
-        "getCurrentHeaterCoolerState": "test/heatcool/getCurrentHeaterCoolerState",
-        "setTargetHeaterCoolerState": "test/heatcool/setCurrentHeaterCoolerState",
-        "getCurrentTemperature": "test/heatcool/getCurrentTemperature",
-        "setCoolingThresholdTemperature": "test/heatcool/setCoolingThresholdTemperature",
-        "setHeatingThresholdTemperature": "test/heatcool/setHeatingThresholdTemperature",
-        "setRotationMode": "test/heatcool/setRotationMode",
-        "setSwingMode": "test/heatcool/setSwingMode",
-        "setRotationSpeed": { "topic": "test/heatcool/setRotationSpeed", 
-            "apply": "return [ 'off', 'min', 'low', 'medium', 'high', 'max' ][ Math.floor( message / 20 ) ];" }
-      }
-    },
-    {
-      "accessory": "mqttthing",
-      "type": "television",
-      "name": "Television",
-      "url": "http://192.168.10.35:1883",
-      "topics": {
-        "setActive": "test/television/setActive",
-        "getActive": "test/television/getActive",
-        "setActiveInput": "test/television/setActiveInput",
-        "getActiveInput": "test/television/getActiveInput",
-        "setRemoteKey": "test/television/setRemoteKey"
-      },
-      "inputs": [
+    "description": "This is an example configuration file. You can use this as a template for creating your own configuration file.",
+    "platforms": [
         {
-          "name": "Live TV",
-          "value": "TV"
-        },
-        {
-          "name": "HDMI 1",
-          "value": "HDMI1"
-        },
-        {
-          "name": "HDMI 2",
-          "value": "HDMI2"
-        },
-        {
-          "name": "HDMI 3",
-          "value": "HDMI3"
-        },
-        {
-          "name": "Amazon Prime Video",
-          "value": "AMAZON"
+            "platform": "config",
+            "name": "Config",
+            "port": 8080,
+            "sudo": false
         }
-      ],
-      "logMqtt": true,
-      "integerValue": true
-    }
-  ]
+    ],
+    "accessories": [
+        {
+            "accessory": "mqttthing",
+            "type": "lightbulb",
+            "name": "Test lightbulb",
+            "url": "http://192.168.10.35:1883",
+            "mqttPubOptions": {
+                "retain": true
+            },
+            "topics": {
+                "getOn": "test/lightbulb/getOn",
+                "setOn": "test/lightbulb/setOn",
+                "getBrightness": {
+                    "topic": "test/lightbulb/getBrightness",
+                    "apply": "return Math.round( message / 2.55 );"
+                },
+                "setBrightness": {
+                    "topic": "test/lightbulb/setBrightness",
+                    "apply": "return Math.round( message * 2.55 );"
+                },
+                "getHue": "test/lightbulb/getHue",
+                "setHue": "test/lightbulb/setHue",
+                "getSaturation": "test/lightbulb/getSaturation",
+                "setSaturation": "test/lightbulb/setSaturation",
+                "getColorTemperature": "test/lightbulb/getTemperature",
+                "setColorTemperature": "test/lightbulb/setTemperature",
+                "getOnline": "test/lightbulb/getOnline"
+            },
+            "logMqtt": true,
+            "integerValue": true,
+            "onlineValue": "Online",
+            "startPub": [
+                {
+                    "topic": "test/lightbulb/setOn",
+                    "message": "1"
+                },
+                {
+                    "topic": "test/lightbulb/getOn",
+                    "message": "1"
+                },
+                {
+                    "topic": "test/lightbulb/setBrightness",
+                    "message": "200"
+                },
+                {
+                    "topic": "test/lightbulb/getBrightness",
+                    "message": "200"
+                },
+                {
+                    "topic": "test/lightbulb",
+                    "message": "Hello world"
+                }
+            ]
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "lightbulb-HSV",
+            "name": "Test HSV Light",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getHSV": "test/hsvlight/getHSV",
+                "setHSV": "test/hsvlight/setHSV"
+            },
+            "logMqtt": true
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "lightbulb-HSV",
+            "name": "Test espurna Light",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getHSV": "test/hsvlight2/hsv",
+                "setHSV": "test/hsvlight2/hsv/set",
+                "getOn": "test/hsvlight2/on",
+                "setOn": "test/hsvlight2/on/set"
+            },
+            "logMqtt": true,
+            "integerValue": true
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "lightbulb",
+            "name": "Test RGB Light",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getRGB": "test/rgblight/rgb",
+                "setRGB": "test/rgblight/rgb/set",
+                "getOn": {
+                    "topic": "test/rgblight/on",
+                    "apply": "return JSON.parse( message ).state.power;"
+                },
+                "setOn": {
+                    "topic": "test/rgblight/on/set",
+                    "apply": "return JSON.stringify( { state: { power: message }, version: 1 } );"
+                }
+            },
+            "logMqtt": true,
+            "integerValue": false,
+            "hex": true
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "lightbulb-RGBW",
+            "name": "Test RGBW Light",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getRGBW": "test/rgbwlight/rgb",
+                "setRGBW": "test/rgbwlight/rgb/set"
+            },
+            "logMqtt": true,
+            "integerValue": true,
+            "hexPrefix": "#"
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "lightbulb-RGB",
+            "name": "Test RGBW Light 2",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getRGB": "test/rgbwlight2/rgb",
+                "setRGB": "test/rgbwlight2/rgb/set",
+                "getWhite": "test/rgbwlight2/white",
+                "setWhite": "test/rgbwlight2/white/set",
+                "getOn": "test/rgbwlight2/on",
+                "setOn": "test/rgbwlight2/on/set"
+            },
+            "logMqtt": true,
+            "integerValue": true,
+            "hexPrefix": "#"
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "lightbulb-RGBWW",
+            "name": "Test RGBWW Light",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getRGBWW": "test/rgbwwlight/rgb",
+                "setRGBWW": "test/rgbwwlight/rgb/set"
+            },
+            "logMqtt": true
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "lightbulb-White",
+            "name": "Test White Light",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getWhite": "test/whitelight/white",
+                "setWhite": "test/whitelight/white/set"
+            },
+            "logMqtt": true
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "lightbulb-ColTemp",
+            "name": "Test ColorTemperature Light",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getOn": "test/coltemp/getOn",
+                "setOn": "test/coltemp/setOn",
+                "getBrightness": "test/coltemp/getBrightness",
+                "setBrightness": "test/coltemp/setBrightness",
+                "getColorTemperature": "test/coltemp/getTemperature",
+                "setColorTemperature": "test/coltemp/setTemperature"
+            },
+            "logMqtt": true,
+            "integerValue": true
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "lightbulb-Dimmable",
+            "name": "Test Dimmable Light",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getOn": "test/dimmable/setOn",
+                "setOn": "test/dimmable/setOn",
+                "getBrightness": "test/dimmable/getBrightness",
+                "setBrightness": "test/dimmable/setBrightness"
+            },
+            "logMqtt": true,
+            "onValue": "DIMMABLE",
+            "offValue": "OFF",
+            "otherValueOff": true
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "lightbulb-OnOff",
+            "name": "Alternative Light Mode",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getOn": "test/dimmable/setOn",
+                "setOn": "test/dimmable/setOn"
+            },
+            "logMqtt": true,
+            "onValue": "ALTMODE",
+            "offValue": "OFF",
+            "otherValueOff": true
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "switch",
+            "name": "Test switch",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getOn": "test/switch/getOn",
+                "setOn": "test/switch/setOn"
+            },
+            "integerValue": true,
+            "turnOffAfterms": 2000
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "outlet",
+            "name": "Test outlet",
+            "url": "http://192.168.10.35:1883",
+            "mqttPubOptions": {
+                "retain": true
+            },
+            "topics": {
+                "getOn": "test/outlet/getOn",
+                "setOn": "test/outlet/setOn",
+                "getInUse": "test/outlet/getInUse",
+                "getWatts": "test/outlet/getWatts",
+                "getVolts": "test/outlet/getVolts",
+                "getAmperes": "test/outlet/getAmperes"
+            },
+            "integerValue": true,
+            "history": true,
+            "confirmationPeriodms": 2000,
+            "retryLimit": 10
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "motionSensor",
+            "name": "Test motion sensor",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getMotionDetected": "test/motion/detected",
+                "getStatusActive": "test/motion/active",
+                "getStatusFault": "test/motion/fault",
+                "getStatusTampered": "test/motion/tampered",
+                "getStatusLowBattery": "test/motion/lowBattery",
+                "getBatteryLevel": "test/motion/batteryLevel",
+                "getChargingState": "test/motion/chargingState"
+            },
+            "integerValue": true,
+            "chargingStateValues": [
+                "NotCharging",
+                "Charging",
+                "NotChargeable"
+            ],
+            "logMqtt": true,
+            "turnOffAfterms": 3000,
+            "history": {
+                "mergeInterval": 5
+            }
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "occupancySensor",
+            "name": "Test occupancy sensor",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getOccupancyDetected": "test/occupancy/detected",
+                "getStatusActive": "test/occupancy/active",
+                "getStatusFault": "test/occupancy/fault",
+                "getStatusTampered": "test/occupancy/tampered",
+                "getStatusLowBattery": "test/occupancy/lowBattery"
+            },
+            "integerValue": true
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "lightSensor",
+            "name": "Test light sensor",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": true,
+            "topics": {
+                "getCurrentAmbientLightLevel": "test/light/level"
+            }
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "temperatureSensor",
+            "name": "Test temperature sensor",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getCurrentTemperature": "test/temperature"
+            },
+            "history": true
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "humiditySensor",
+            "name": "Test humidity sensor",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getCurrentRelativeHumidity": "test/humidity"
+            },
+            "history": {
+                "size": 1000,
+                "autoRepeat": false
+            }
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "airPressureSensor",
+            "name": "Test air pressure sensor",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getAirPressure": "test/airpressure"
+            },
+            "history": true
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "weatherStation",
+            "name": "Test weather station",
+            "serviceNames": {
+                "temperature": "WS-Temperature",
+                "humidity": "WS-Humidity",
+                "airPressure": "WS-AirPressure",
+                "weather": "WS-WeatherData"
+            },
+            "url": "mqtt://192.168.179.5:1883",
+            "topics": {
+                "getCurrentTemperature": "test/weather/temperature",
+                "getCurrentRelativeHumidity": "test/weather/humidity",
+                "getAirPressure": "test/weather/airpressure",
+                "getWeatherCondition": "test/weather/condition",
+                "getRain1h": "test/weather/rain1",
+                "getRain24h": "test/weather/rain24",
+                "getUVIndex": "test/weather/uv",
+                "getVisibility": "test/weather/visibility",
+                "getWindDirection": "test/weather/winddirection",
+                "getWindSpeed": "test/weather/windspeed"
+            },
+            "history": false
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "contactSensor",
+            "name": "Test contact sensor",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getContactSensorState": "test/contact/state"
+            },
+            "integerValue": true,
+            "history": true
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "doorbell",
+            "name": "Test doorbell",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": true,
+            "topics": {
+                "getSwitch": "test/doorbell/ring",
+                "getMotionDetected": "test/doorbell/motion/detected",
+                "setVolume": "test/doorbell/volume",
+                "setBrightness": "test/doorbell/brightness"
+            },
+            "switchValues": [
+                "SINGLE",
+                "DOUBLE",
+                "LONG"
+            ],
+            "integerValue": true
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "securitySystem",
+            "name": "Test Security System",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": true,
+            "topics": {
+                "setTargetState": "test/security/target",
+                "getTargetState": "test/security/current",
+                "getCurrentState": "test/security/current"
+            },
+            "targetStateValues": [
+                "StayArm",
+                "AwayArm",
+                "NightArm",
+                "Disarmed"
+            ],
+            "currentStateValues": [
+                "StayArm",
+                "AwayArm",
+                "NightArm",
+                "Disarmed",
+                "Triggered"
+            ],
+            "restrictTargetState": [
+                1,
+                2,
+                3
+            ]
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "smokeSensor",
+            "name": "Test smoke sensor",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": true,
+            "topics": {
+                "getSmokeDetected": "test/smoke/detected"
+            },
+            "integerValue": true
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "leakSensor",
+            "name": "Test leak sensor",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": true,
+            "topics": {
+                "getLeakDetected": "test/leak/detected"
+            },
+            "integerValue": true,
+            "resetStateAfterms": 5000
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "statelessProgrammableSwitch",
+            "name": "Test Stateless Programmable Switch",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": true,
+            "topics": {
+                "getSwitch": "test/spswitch/state"
+            },
+            "restrictSwitchValues": [
+                0,
+                1
+            ]
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "statelessProgrammableSwitch",
+            "name": "Multi-switch",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": true,
+            "topics": {
+                "getSwitch": [
+                    "test/mspswitch/1",
+                    "test/mspswitch/2",
+                    "test/mspswitch/3"
+                ]
+            }
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "garageDoorOpener",
+            "name": "Test Garage Door",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": true,
+            "topics": {
+                "setTargetDoorState": "test/garage/target",
+                "getTargetDoorState": "test/garage/current",
+                "getCurrentDoorState": "test/garage/current",
+                "setLockTargetState": "test/lock/target",
+                "getLockTargetState": "test/garagelock/current",
+                "getLockCurrentState": "test/garagelock/current",
+                "getObstructionDetected": "test/garage/obstruction"
+            },
+            "doorValues": [
+                "Open",
+                "Closed",
+                "Opening",
+                "Closing",
+                "Stopped"
+            ],
+            "lockValues": [
+                "Unsecured",
+                "Secured",
+                "Jammed",
+                "Unknown"
+            ]
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "lockMechanism",
+            "name": "Test Lock",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": true,
+            "topics": {
+                "setLockTargetState": "test/lock/target",
+                "getLockTargetState": "test/lock/current",
+                "getLockCurrentState": "test/lock/current"
+            },
+            "lockValues": [
+                "Unsecured",
+                "Secured",
+                "Jammed",
+                "Unknown"
+            ]
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "fan",
+            "name": "Test Fan",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": true,
+            "topics": {
+                "getOn": "test/fan/getOn",
+                "setOn": "test/fan/setOn",
+                "getRotationDirection": "test/fan/getRotationDirection",
+                "setRotationDirection": "test/fan/setRotationDirection",
+                "getRotationSpeed": "test/fan/getRotationSpeed",
+                "setRotationSpeed": "test/fan/setRotationSpeed"
+            },
+            "integerValue": true
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "lightbulb",
+            "name": "OnOffTest",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": "true",
+            "topics": {
+                "getOn": "test/onoff/getOn",
+                "setOn": "test/onoff/setOn"
+            },
+            "onValue": "on",
+            "offValue": "off"
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "switch",
+            "name": "Morning Scene",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": "true",
+            "topics": {
+                "getOn": "test/scene/name",
+                "setOn": "test/scene/name"
+            },
+            "onValue": "morning"
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "switch",
+            "name": "Afternoon Scene",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": "true",
+            "topics": {
+                "getOn": "test/scene/name",
+                "setOn": "test/scene/name"
+            },
+            "onValue": "afternoon"
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "switch",
+            "name": "Evening Scene",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": "true",
+            "topics": {
+                "getOn": "test/scene/name",
+                "setOn": "test/scene/name"
+            },
+            "onValue": "evening"
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "speaker",
+            "name": "Speaker",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": "true",
+            "topics": {
+                "getMute": "test/speaker/getMute",
+                "setMute": "test/speaker/setMute",
+                "getVolume": "test/speaker/getVolume",
+                "setVolume": "test/speaker/setVolume"
+            }
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "microphone",
+            "name": "Microphone",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": "true",
+            "topics": {
+                "getMute": "test/microphone/getMute",
+                "setMute": "test/microphone/setMute",
+                "getVolume": "test/microphone/getVolume",
+                "setVolume": "test/microphone/setVolume"
+            }
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "windowCovering",
+            "name": "Blind",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": "true",
+            "topics": {
+                "getCurrentPosition": "test/blind/getCurrentPosition",
+                "setTargetPosition": "test/blind/setTargetPosition",
+                "getPositionState": "test/blind/getPositionState",
+                "setTargetVerticalTiltAngle": "test/blind/setTargetVerticalTiltAngle",
+                "getCurrentVerticalTiltAngle": "test/blind/getCurrentVerticalTiltAngle"
+            }
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "window",
+            "name": "Window",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": "true",
+            "topics": {
+                "getCurrentPosition": "test/window/getCurrentPosition",
+                "setTargetPosition": "test/window/setTargetPosition",
+                "getPositionState": "test/window/getPositionState"
+            }
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "carbonDioxideSensor",
+            "name": "CO2",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": "true",
+            "topics": {
+                "getCarbonDioxideDetected": "test/co2/get"
+            }
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "airQualitySensor",
+            "name": "AirQuality",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": "true",
+            "topics": {
+                "getAirQuality": "test/airquality/get",
+                "getAirQualityPPM": "test/airqualityppm/get",
+                "getPM10Density": "test/airquality/pm10",
+                "getPM2_5Density": "test/airquality/pm2_5",
+                "getOzoneDensity": "test/airquality/ozone",
+                "getSulphurDioxideDensity": "test/airquality/so2",
+                "getNitrogenDioxideDensity": "test/airquality/no2",
+                "getVOCDensity": "test/airquality/voc",
+                "getCarbonMonoxideLevel": "test/airquality/co",
+                "getCarbonDioxideLevel": "test/airquality/co2",
+                "getCurrentTemperature": "test/airquality/temperature",
+                "getCurrentRelativeHumidity": "test/airquality/humidity"
+            },
+            "history": true
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "valve",
+            "valveType": "sprinkler",
+            "name": "Sprinkler",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getActive": "test/sprinkler/getActive",
+                "setActive": "test/sprinkler/setActive",
+                "getInUse": "test/sprinkler/getInUse",
+                "getDuration": "test/sprinkler/getDuration",
+                "setDuration": "test/sprinkler/setDuration",
+                "getRemainingDuration": "test/sprinkler/getRemainingDuration"
+            },
+            "integerValue": true,
+            "durationTimer": true,
+            "maxDuration": 180
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "thermostat",
+            "name": "Thermostat",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": "true",
+            "topics": {
+                "getCurrentHeatingCoolingState": "test/thermostat/getCurrentState",
+                "setCurrentHeatingCoolingState": "test/thermostat/setCurrentState",
+                "getTargetHeatingCoolingState": "test/thermostat/getTargetState",
+                "setTargetHeatingCoolingState": "test/thermostat/setTargetState",
+                "getCurrentTemperature": "test/thermostat/getCurrentTemperature",
+                "setTargetTemperature": "test/thermostat/setTargetTemperature",
+                "getTargetTemperature": "test/thermostat/getTargetTemperature",
+                "setTemperatureDisplayUnits": "test/thermostat/setTemperatureDisplayUnits",
+                "getTemperatureDisplayUnits": "test/thermostat/getTemperatureDisplayUnits"
+            },
+            "minTemperature": 5,
+            "maxTemperature": 27.5,
+            "restrictHeatingCoolingState": [
+                0,
+                1
+            ]
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "heaterCooler",
+            "name": "HeaterCooler",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": true,
+            "topics": {
+                "setActive": "test/heatcool/setActive",
+                "getActive": "test/heatcool/getActive",
+                "getCurrentHeaterCoolerState": "test/heatcool/getCurrentHeaterCoolerState",
+                "setTargetHeaterCoolerState": "test/heatcool/setCurrentHeaterCoolerState",
+                "getCurrentTemperature": "test/heatcool/getCurrentTemperature",
+                "setCoolingThresholdTemperature": "test/heatcool/setCoolingThresholdTemperature",
+                "setHeatingThresholdTemperature": "test/heatcool/setHeatingThresholdTemperature",
+                "setRotationMode": "test/heatcool/setRotationMode",
+                "setSwingMode": "test/heatcool/setSwingMode",
+                "setRotationSpeed": {
+                    "topic": "test/heatcool/setRotationSpeed",
+                    "apply": "return [ 'off', 'min', 'low', 'medium', 'high', 'max' ][ Math.floor( message / 20 ) ];"
+                }
+            }
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "television",
+            "name": "Television",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "setActive": "test/television/setActive",
+                "getActive": "test/television/getActive",
+                "setActiveInput": "test/television/setActiveInput",
+                "getActiveInput": "test/television/getActiveInput",
+                "setRemoteKey": "test/television/setRemoteKey"
+            },
+            "inputs": [
+                {
+                    "name": "Live TV",
+                    "value": "TV"
+                },
+                {
+                    "name": "HDMI 1",
+                    "value": "HDMI1"
+                },
+                {
+                    "name": "HDMI 2",
+                    "value": "HDMI2"
+                },
+                {
+                    "name": "HDMI 3",
+                    "value": "HDMI3"
+                },
+                {
+                    "name": "Amazon Prime Video",
+                    "value": "AMAZON"
+                }
+            ],
+            "logMqtt": true,
+            "integerValue": true
+        }
+    ]
 }
