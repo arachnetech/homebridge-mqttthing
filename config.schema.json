@@ -277,16 +277,16 @@
                             "functionBody": "return ['heaterCooler'].includes(model.type);"
                         }
                     },
-                    "getHSV": {
+                    "setHSV": {
                         "type": "string",
                         "description": "In HSV mode, control topic published by mqttthing with comma-separated hue (0-360), saturation (0-100) and value (0-100)",
                         "condition": {
                             "functionBody": "return ['lightbulb'].includes(model.type);"
                         }
                     },
-                    "setHSV": {
+                    "getHSV": {
                         "type": "string",
-                        "description": "In HSV mode, topic to set comma-separated hue, saturation and value",
+                        "description": "In HSV mode, status topic used to notify mqttthing of comma-separated hue (0-360), saturation (0-100) and value (0-100)",
                         "condition": {
                             "functionBody": "return ['lightbulb'].includes(model.type);"
                         }
@@ -737,7 +737,7 @@
                     },
                     "getName": {
                         "type": "string",
-                        "description": "Topic used to notify mqttthing of 'name'"
+                        "description": "Topic used to notify mqttthing of 'name' (optional, seldom-used)"
                     },
                     "getNitrogenDioxideDensity": {
                         "type": "string",
@@ -1307,7 +1307,7 @@
             },
             "hex": {
                 "type": "boolean",
-                "title": "Format combined RGB/RGBW in hexadecimal instead of as comma-separated decimals.",
+                "title": "Format combined RGB/RGBW in hexadecimal (e.g. 'FFA000') instead of as comma-separated decimals (e.g. '255,160,0').",
                 "condition": {
                     "functionBody": "return ['lightbulb'].includes(model.type);"
                 }
