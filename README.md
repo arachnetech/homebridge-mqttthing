@@ -54,10 +54,10 @@ The following settings apply to all device types:
     "integerValue": true,
     "onlineValue": "Online",
     "chargingStateValues": [ "NotCharging", "Charging", "NotChargeable" ],
-    "startPub": {
-        "topic1": "message1",
-        "topic2": "message2"
-    },
+    "startPub": [
+        { "topic": "topic1", "message": "message1" },
+        { "topic": "topic2", "message": "message2" }
+    ],
     "confirmationPeriodms": 1000,
     "retryLimit": 5
 }
@@ -1293,6 +1293,10 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 
 # Release notes
+
+Version 1.1.2
++ Added configuration schema, supporting configuration of most settings through config-ui-x (thanks, @oznu). Note that 'apply' functions are not supported.
++ Added new 'startPub' format, allowing configuration through config-ui-x.
 
 Version 1.1.1
 + Changed Boolean value handling to support bare JavaScript Booleans returned from incoming MQTT apply() functions (`"true" != true` but both are now accepted).
