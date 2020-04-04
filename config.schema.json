@@ -272,7 +272,7 @@
                     },
                     "setRotationMode": {
                         "type": "string",
-                        "description": "topic used to set 'rotation mode'",
+                        "description": "Topic published by mqttthing to control 'rotation mode'",
                         "condition": {
                             "functionBody": "return ['heaterCooler'].includes(model.type);"
                         }
@@ -377,7 +377,7 @@
                     },
                     "setTargetState": {
                         "type": "string",
-                        "description": "Topic published when the target alarm state is changed in HomeKit.",
+                        "description": "Topic published by mqttthing to control 'target alarm state'",
                         "condition": {
                             "functionBody": "return ['securitySystem'].includes(model.type);"
                         }
@@ -391,28 +391,28 @@
                     },
                     "getCurrentState": {
                         "type": "string",
-                        "description": "Topic published to notify HomeKit that an alarm state has been achieved. HomeKit will expect current state to end up matching target state.",
+                        "description": "Topic used to notify mqttthing that an alarm state has been achieved. HomeKit will expect current state to end up matching target state.",
                         "condition": {
                             "functionBody": "return ['securitySystem'].includes(model.type);"
                         }
                     },
                     "setActiveInput": {
                         "type": "string",
-                        "description": "Topic to set the active input source (optional).",
+                        "description": "Topic published by mqttthing to control 'active input source' (optional).",
                         "condition": {
                             "functionBody": "return ['television'].includes(model.type);"
                         }
                     },
                     "getActiveInput": {
                         "type": "string",
-                        "description": "topic to get the active input source (optional).",
+                        "description": "Topic used to notify mqttthing of 'active input source' (optional).",
                         "condition": {
                             "functionBody": "return ['television'].includes(model.type);"
                         }
                     },
                     "getWeatherCondition": {
                         "type": "string",
-                        "description": "topic used to provide 'weather condition' (optional, Eve-only)",
+                        "description": "Topic used to notify mqttthing of 'weather condition' (optional, Eve-only)",
                         "condition": {
                             "functionBody": "return ['weatherStation'].includes(model.type);"
                         }
@@ -420,7 +420,7 @@
                     "getRain1h": {
                         "type": "string",
                         "title": "Get Rain 1H",
-                        "description": "topic used to provide 'rain [mm] in last 1h' (optional, Eve-only)",
+                        "description": "Topic used to notify mqttthing of 'rain [mm] in last 1h' (optional, Eve-only)",
                         "condition": {
                             "functionBody": "return ['weatherStation'].includes(model.type);"
                         }
@@ -428,7 +428,7 @@
                     "getRain24h": {
                         "type": "string",
                         "title": "Get Rain 24H",
-                        "description": "topic used to provide 'rain [mm] in last 24h' (optional, Eve-only)",
+                        "description": "Topic used to notify mqttthing of 'rain [mm] in last 24h' (optional, Eve-only)",
                         "condition": {
                             "functionBody": "return ['weatherStation'].includes(model.type);"
                         }
@@ -436,326 +436,312 @@
                     "getUVIndex": {
                         "type": "string",
                         "title": "Get UV Index",
-                        "description": "topic used to provide 'UV index' (optional, Eve-only)",
+                        "description": "Topic used to notify mqttthing of 'UV index' (optional, Eve-only)",
                         "condition": {
                             "functionBody": "return ['weatherStation'].includes(model.type);"
                         }
                     },
                     "getVisibility": {
                         "type": "string",
-                        "description": "topic used to provide 'visibility [km]' (optional, Eve-only)",
+                        "description": "Topic used to notify mqttthing of 'visibility [km]' (optional, Eve-only)",
                         "condition": {
                             "functionBody": "return ['weatherStation'].includes(model.type);"
                         }
                     },
                     "getWindDirection": {
                         "type": "string",
-                        "description": "topic used to provide 'wind direction' (optional, Eve-only)",
+                        "description": "Topic used to notify mqttthing of 'wind direction' (optional, Eve-only)",
                         "condition": {
                             "functionBody": "return ['weatherStation'].includes(model.type);"
                         }
                     },
                     "getWindSpeed": {
                         "type": "string",
-                        "description": "topic used to provide 'wind speed [km/h]' (optional, Eve-only)",
+                        "description": "Topic used to notify mqttthing of 'wind speed [km/h]' (optional, Eve-only)",
                         "condition": {
                             "functionBody": "return ['weatherStation'].includes(model.type);"
                         }
                     },
                     "getActive": {
                         "type": "string",
-                        "description": "topic used to provide 'active'",
+                        "description": "Topic used to notify mqttthing of 'active'",
                         "condition": {
                             "functionBody": "return ['airPurifier','fanv2','faucet','heaterCooler','humidifierDehumidifier','irrigationSystem','valve','cameraEventRecordingManagement','television','televisionSpeaker','targetControl'].includes(model.type);"
                         }
                     },
                     "setActive": {
                         "type": "string",
-                        "description": "topic used to provide 'active'",
+                        "description": "Topic published by mqttthing to control 'active' state",
                         "condition": {
                             "functionBody": "return ['airPurifier','fanv2','faucet','heaterCooler','humidifierDehumidifier','irrigationSystem','valve','cameraEventRecordingManagement','television','televisionSpeaker','targetControl'].includes(model.type);"
                         }
                     },
                     "getAirQuality": {
                         "type": "string",
-                        "description": "topic used to provide 'air quality'",
+                        "description": "Topic used to notify mqttthing of 'air quality'",
                         "condition": {
                             "functionBody": "return ['airQualitySensor'].includes(model.type);"
                         }
                     },
                     "getAirQualityPPM": {
                         "type": "string",
-                        "description": "topic used to provide 'air quality voc in ppm' (Eve-only)",
+                        "description": "Topic used to notify mqttthing of 'air quality voc in ppm' (Eve-only)",
                         "condition": {
                             "functionBody": "return ['airQualitySensor'].includes(model.type);"
                         }
                     },
                     "setDuration": {
                         "type": "string",
-                        "description": "topic used to set default duration (seconds) (optional, with external timer)",
+                        "description": "Topic published by mqttthing to control 'default duration (seconds)' (optional, with external timer)",
                         "condition": {
                             "functionBody": "return ['valve'].includes(model.type);"
                         }
                     },
                     "getDuration": {
                         "type": "string",
-                        "description": "topic used to get default duration (seconds) (optional, with external timer)",
+                        "description": "Topic used to notify mqttthing of 'default duration (seconds)' (optional, with external timer)",
                         "condition": {
                             "functionBody": "return ['valve'].includes(model.type);"
                         }
                     },
                     "getBatteryLevel": {
                         "type": "string",
-                        "description": "topic used to provide 'battery level'",
+                        "description": "Topic used to notify mqttthing of 'battery level'",
                         "condition": {
                             "functionBody": "return ['batteryService'].includes(model.type);"
                         }
                     },
                     "getCarbonDioxideDetected": {
                         "type": "string",
-                        "description": "topic used to provide 'carbon dioxide detected'",
+                        "description": "Topic used to notify mqttthing of 'carbon dioxide detected'",
                         "condition": {
                             "functionBody": "return ['carbonDioxideSensor'].includes(model.type);"
                         }
                     },
                     "getCarbonDioxideLevel": {
                         "type": "string",
-                        "description": "topic used to provide 'carbon dioxide level'",
+                        "description": "Topic used to notify mqttthing of 'carbon dioxide level'",
                         "condition": {
                             "functionBody": "return ['airQualitySensor','carbonDioxideSensor'].includes(model.type);"
                         }
                     },
                     "getCarbonDioxidePeakLevel": {
                         "type": "string",
-                        "description": "topic used to provide 'carbon dioxide peak level'",
+                        "description": "Topic used to notify mqttthing of 'carbon dioxide peak level'",
                         "condition": {
                             "functionBody": "return ['carbonDioxideSensor'].includes(model.type);"
                         }
                     },
                     "getCarbonMonoxideDetected": {
                         "type": "string",
-                        "description": "topic used to provide 'carbon monoxide detected'",
+                        "description": "Topic used to notify mqttthing of 'carbon monoxide detected'",
                         "condition": {
                             "functionBody": "return ['carbonMonoxideSensor'].includes(model.type);"
                         }
                     },
                     "getCarbonMonoxideLevel": {
                         "type": "string",
-                        "description": "topic used to provide 'carbon monoxide level'",
+                        "description": "Topic used to notify mqttthing of 'carbon monoxide level'",
                         "condition": {
                             "functionBody": "return ['airQualitySensor','carbonMonoxideSensor'].includes(model.type);"
                         }
                     },
-                    "setCarbonMonoxideLevel": {
-                        "type": "string",
-                        "description": "topic used to provide 'carbon monoxide level'",
-                        "condition": {
-                            "functionBody": "return ['carbonMonoxideSensor'].includes(model.type);"
-                        }
-                    },
                     "getCarbonMonoxidePeakLevel": {
                         "type": "string",
-                        "description": "topic used to provide 'carbon monoxide peak level'",
-                        "condition": {
-                            "functionBody": "return ['carbonMonoxideSensor'].includes(model.type);"
-                        }
-                    },
-                    "setCarbonMonoxidePeakLevel": {
-                        "type": "string",
-                        "description": "topic used to provide 'carbon monoxide peak level'",
+                        "description": "Topic used to notify mqttthing of 'carbon monoxide peak level'",
                         "condition": {
                             "functionBody": "return ['carbonMonoxideSensor'].includes(model.type);"
                         }
                     },
                     "getChargingState": {
                         "type": "string",
-                        "description": "topic used to provide 'charging state'",
+                        "description": "Topic used to notify mqttthing of 'charging state'",
                         "condition": {
                             "functionBody": "return ['batteryService'].includes(model.type);"
                         }
                     },
                     "getContactSensorState": {
                         "type": "string",
-                        "description": "topic used to provide 'contact sensor state'",
+                        "description": "Topic used to notify mqttthing of 'contact sensor state'",
                         "condition": {
                             "functionBody": "return ['contactSensor'].includes(model.type);"
                         }
                     },
                     "getCoolingThresholdTemperature": {
                         "type": "string",
-                        "description": "topic used to provide 'cooling threshold temperature'",
+                        "description": "Topic used to notify mqttthing of 'cooling threshold temperature'",
                         "condition": {
                             "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
                         }
                     },
                     "setCoolingThresholdTemperature": {
                         "type": "string",
-                        "description": "topic used to provide 'cooling threshold temperature'",
+                        "description": "Topic published by mqttthing to control 'cooling threshold temperature'",
                         "condition": {
                             "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
                         }
                     },
                     "getCurrentAmbientLightLevel": {
                         "type": "string",
-                        "description": "topic used to provide 'current ambient light level'",
+                        "description": "Topic used to notify mqttthing of 'current ambient light level'",
                         "condition": {
                             "functionBody": "return ['lightSensor'].includes(model.type);"
                         }
                     },
                     "getCurrentDoorState": {
                         "type": "string",
-                        "description": "topic used to provide 'current door state'",
+                        "description": "Topic used to notify mqttthing of 'current door state'",
                         "condition": {
                             "functionBody": "return ['garageDoorOpener','lockManagement'].includes(model.type);"
                         }
                     },
                     "getCurrentHeaterCoolerState": {
                         "type": "string",
-                        "description": "topic used to provide 'current heater cooler state'",
+                        "description": "Topic used to notify mqttthing of 'current heater cooler state'",
                         "condition": {
                             "functionBody": "return ['heaterCooler'].includes(model.type);"
                         }
                     },
                     "getCurrentHeatingCoolingState": {
                         "type": "string",
-                        "description": "topic used to provide 'current heating cooling state'",
+                        "description": "Topic used to notify mqttthing of 'current heating cooling state'",
                         "condition": {
                             "functionBody": "return ['thermostat'].includes(model.type);"
                         }
                     },
                     "getCurrentHorizontalTiltAngle": {
                         "type": "string",
-                        "description": "topic used to provide 'current horizontal tilt angle'",
+                        "description": "Topic used to notify mqttthing of 'current horizontal tilt angle'",
                         "condition": {
                             "functionBody": "return ['windowCovering','cameraControl'].includes(model.type);"
                         }
                     },
                     "getCurrentPosition": {
                         "type": "string",
-                        "description": "topic used to provide 'current position'",
+                        "description": "Topic used to notify mqttthing of 'current position'",
                         "condition": {
                             "functionBody": "return ['door','window','windowCovering'].includes(model.type);"
                         }
                     },
                     "getCurrentRelativeHumidity": {
                         "type": "string",
-                        "description": "topic used to provide 'current relative humidity'",
+                        "description": "Topic used to notify mqttthing of 'current relative humidity'",
                         "condition": {
                             "functionBody": "return ['airQualitySensor','humidifierDehumidifier','humiditySensor','thermostat','weatherStation'].includes(model.type);"
                         }
                     },
                     "getCurrentTemperature": {
                         "type": "string",
-                        "description": "topic used to provide 'current temperature'",
+                        "description": "Topic used to notify mqttthing of 'current temperature'",
                         "condition": {
                             "functionBody": "return ['airQualitySensor','heaterCooler','temperatureSensor','thermostat','weatherStation'].includes(model.type);"
                         }
                     },
                     "getCurrentVerticalTiltAngle": {
                         "type": "string",
-                        "description": "topic used to provide 'current vertical tilt angle'",
+                        "description": "Topic used to notify mqttthing of 'current vertical tilt angle'",
                         "condition": {
                             "functionBody": "return ['windowCovering','cameraControl'].includes(model.type);"
                         }
                     },
                     "getHeatingThresholdTemperature": {
                         "type": "string",
-                        "description": "topic used to provide 'heating threshold temperature'",
+                        "description": "Topic used to notify mqttthing of 'heating threshold temperature'",
                         "condition": {
                             "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
                         }
                     },
                     "setHeatingThresholdTemperature": {
                         "type": "string",
-                        "description": "topic used to provide 'heating threshold temperature'",
+                        "description": "Topic published by mqttthing to control 'heating threshold temperature'",
                         "condition": {
                             "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
                         }
                     },
                     "setHoldPosition": {
                         "type": "string",
-                        "description": "topic used to provide 'hold position'",
+                        "description": "Topic published by mqttthing to control 'hold position'",
                         "condition": {
                             "functionBody": "return ['door','window','windowCovering'].includes(model.type);"
                         }
                     },
                     "getInUse": {
                         "type": "string",
-                        "description": "topic used to provide 'in use'",
+                        "description": "Topic used to notify mqttthing of 'in use' state",
                         "condition": {
                             "functionBody": "return ['outlet','irrigationSystem','valve'].includes(model.type);"
                         }
                     },
                     "getLeakDetected": {
                         "type": "string",
-                        "description": "topic used to provide 'leak detected'",
+                        "description": "Topic used to notify mqttthing of 'leak detected'",
                         "condition": {
                             "functionBody": "return ['leakSensor'].includes(model.type);"
                         }
                     },
                     "getLockCurrentState": {
                         "type": "string",
-                        "description": "topic used to provide 'lock current state'",
+                        "description": "Topic used to notify mqttthing of 'lock current state'",
                         "condition": {
                             "functionBody": "return ['garageDoorOpener','lockMechanism'].includes(model.type);"
                         }
                     },
                     "getLockTargetState": {
                         "type": "string",
-                        "description": "topic used to provide 'lock target state'",
+                        "description": "Topic used to notify mqttthing of 'lock target state'",
                         "condition": {
                             "functionBody": "return ['garageDoorOpener','lockMechanism'].includes(model.type);"
                         }
                     },
                     "setLockTargetState": {
                         "type": "string",
-                        "description": "topic used to provide 'lock target state'",
+                        "description": "Topic published by mqttthing to control 'lock target state'",
                         "condition": {
                             "functionBody": "return ['garageDoorOpener','lockMechanism'].includes(model.type);"
                         }
                     },
                     "getMotionDetected": {
                         "type": "string",
-                        "description": "topic used to provide 'motion detected'",
+                        "description": "Topic used to notify mqttthing of 'motion detected' state",
                         "condition": {
                             "functionBody": "return ['doorbell','lockManagement','motionSensor'].includes(model.type);"
                         }
                     },
                     "getMute": {
                         "type": "string",
-                        "description": "topic used to provide 'mute'",
+                        "description": "Topic used to notify mqttthing of 'mute'",
                         "condition": {
                             "functionBody": "return ['microphone','speaker','televisionSpeaker'].includes(model.type);"
                         }
                     },
                     "setMute": {
                         "type": "string",
-                        "description": "topic used to provide 'mute'",
+                        "description": "Topic published by mqttthing to control 'mute' state",
                         "condition": {
                             "functionBody": "return ['microphone','speaker','televisionSpeaker'].includes(model.type);"
                         }
                     },
                     "getName": {
                         "type": "string",
-                        "description": "Topic used to notify mqttthing of 'name' (optional, seldom-used)"
+                        "description": "Topic used to notify mqttthing of 'name' (optional, rarely-used)"
                     },
                     "getNitrogenDioxideDensity": {
                         "type": "string",
-                        "description": "topic used to provide 'nitrogen dioxide density'",
+                        "description": "Topic used to notify mqttthing of 'nitrogen dioxide density'",
                         "condition": {
                             "functionBody": "return ['airQualitySensor'].includes(model.type);"
                         }
                     },
                     "getObstructionDetected": {
                         "type": "string",
-                        "description": "topic used to provide 'obstruction detected'",
+                        "description": "Topic used to notify mqttthing of 'obstruction detected'",
                         "condition": {
                             "functionBody": "return ['door','garageDoorOpener','window','windowCovering'].includes(model.type);"
                         }
                     },
                     "getOccupancyDetected": {
                         "type": "string",
-                        "description": "topic used to provide 'occupancy detected'",
+                        "description": "Topic used to notify mqttthing of 'occupancy detected'",
                         "condition": {
                             "functionBody": "return ['occupancySensor'].includes(model.type);"
                         }
@@ -876,7 +862,7 @@
                     },
                     "setRotationDirection": {
                         "type": "string",
-                        "description": "topic used to provide 'rotation direction'",
+                        "description": "Topic published by mqttthing to control 'rotation direction'",
                         "condition": {
                             "functionBody": "return ['fan','fanv2'].includes(model.type);"
                         }
@@ -890,7 +876,7 @@
                     },
                     "setRotationSpeed": {
                         "type": "string",
-                        "description": "topic used to provide 'rotation speed'",
+                        "description": "Topic published by mqttthing to control 'rotation speed'",
                         "condition": {
                             "functionBody": "return ['airPurifier','fan','fanv2','heaterCooler','humidifierDehumidifier'].includes(model.type);"
                         }
@@ -946,7 +932,7 @@
                     },
                     "setSwingMode": {
                         "type": "string",
-                        "description": "topic used to provide 'swing mode'",
+                        "description": "Topic published by mqttthing to control 'swing mode'",
                         "condition": {
                             "functionBody": "return ['airPurifier','fanv2','heaterCooler','humidifierDehumidifier','slat'].includes(model.type);"
                         }
@@ -960,7 +946,7 @@
                     },
                     "setTargetDoorState": {
                         "type": "string",
-                        "description": "topic used to provide 'target door state'",
+                        "description": "Topic published by mqttthing to control 'target door state'",
                         "condition": {
                             "functionBody": "return ['garageDoorOpener'].includes(model.type);"
                         }
@@ -974,7 +960,7 @@
                     },
                     "setTargetHeaterCoolerState": {
                         "type": "string",
-                        "description": "topic used to provide 'target heater cooler state'",
+                        "description": "Topic published by mqttthing to control 'target heater cooler state'",
                         "condition": {
                             "functionBody": "return ['heaterCooler'].includes(model.type);"
                         }
@@ -988,7 +974,7 @@
                     },
                     "setTargetHeatingCoolingState": {
                         "type": "string",
-                        "description": "topic used to provide 'target heating cooling state'",
+                        "description": "Topic published by mqttthing to control 'target heating cooling state'",
                         "condition": {
                             "functionBody": "return ['thermostat'].includes(model.type);"
                         }
@@ -1002,7 +988,7 @@
                     },
                     "setTargetHorizontalTiltAngle": {
                         "type": "string",
-                        "description": "topic used to provide 'target horizontal tilt angle'",
+                        "description": "Topic published by mqttthing to control 'target horizontal tilt angle'",
                         "condition": {
                             "functionBody": "return ['windowCovering','cameraControl'].includes(model.type);"
                         }
@@ -1016,7 +1002,7 @@
                     },
                     "setTargetPosition": {
                         "type": "string",
-                        "description": "topic used to provide 'target position'",
+                        "description": "Topic published by mqttthing to control 'target position'",
                         "condition": {
                             "functionBody": "return ['door','window','windowCovering'].includes(model.type);"
                         }
@@ -1030,7 +1016,7 @@
                     },
                     "setTargetRelativeHumidity": {
                         "type": "string",
-                        "description": "topic used to provide 'target relative humidity'",
+                        "description": "Topic published by mqttthing to control 'target relative humidity'",
                         "condition": {
                             "functionBody": "return ['thermostat'].includes(model.type);"
                         }
@@ -1044,7 +1030,7 @@
                     },
                     "setTargetTemperature": {
                         "type": "string",
-                        "description": "topic used to provide 'target temperature'",
+                        "description": "Topic published by mqttthing to control 'target temperature'",
                         "condition": {
                             "functionBody": "return ['thermostat'].includes(model.type);"
                         }
@@ -1058,7 +1044,7 @@
                     },
                     "setTargetVerticalTiltAngle": {
                         "type": "string",
-                        "description": "topic used to provide 'target vertical tilt angle'",
+                        "description": "Topic published by mqttthing to control 'target vertical tilt angle'",
                         "condition": {
                             "functionBody": "return ['windowCovering','cameraControl'].includes(model.type);"
                         }
@@ -1072,7 +1058,7 @@
                     },
                     "setTemperatureDisplayUnits": {
                         "type": "string",
-                        "description": "topic used to provide 'temperature display units'",
+                        "description": "Topic published by mqttthing to control 'temperature display units'",
                         "condition": {
                             "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
                         }
@@ -1094,14 +1080,14 @@
                     },
                     "setVolume": {
                         "type": "string",
-                        "description": "topic used to provide 'volume'",
+                        "description": "Topic published by mqttthing to control 'volume'",
                         "condition": {
                             "functionBody": "return ['doorbell','microphone','speaker','televisionSpeaker'].includes(model.type);"
                         }
                     },
                     "setRemoteKey": {
                         "type": "string",
-                        "description": "topic used to provide 'remote key'",
+                        "description": "Topic published by mqttthing to control 'remote key'",
                         "condition": {
                             "functionBody": "return ['television'].includes(model.type);"
                         }
