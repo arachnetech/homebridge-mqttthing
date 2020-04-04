@@ -1294,6 +1294,10 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 # Release notes
 
+Version 1.1.3
++ Added lightbulb sub-types to configuration schema, allowing easier configuration of different lightbulb types.
++ Added missing otherValueOff to configuration schema.
+
 Version 1.1.2
 + Added configuration schema, supporting configuration of most settings through config-ui-x (thanks, @oznu). Note that 'apply' functions are not supported.
 + Added new 'startPub' format, allowing configuration through config-ui-x.
