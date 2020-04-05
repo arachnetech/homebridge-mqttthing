@@ -201,6 +201,7 @@ History is currently supported for:
 * Motion Sensor
 * Contact Sensor
 * Outlet (power consumption)
+* Switch
 
 `history` - set to **true** for enabling History Service (Boolean, optional)
 
@@ -1040,7 +1041,8 @@ Set `confirmationPeriodms` to enable publishing confirmation for `setOn`/`getOn`
     "onValue": "<value representing on (optional)>",
     "offValue": "<value representing off (optional)>",
     "turnOffAfterms": "<milliseconds after which to turn off automatically (optional)>",
-    "resetStateAfterms": "<milliseconds after which to reset state automatically (optional)>"
+    "resetStateAfterms": "<milliseconds after which to reset state automatically (optional)>",
+    "history": "<true to enable History service for Eve App (optional)>"
 }
 ```
 

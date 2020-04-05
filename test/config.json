@@ -226,6 +226,18 @@
         },
         {
             "accessory": "mqttthing",
+            "type": "switch",
+            "name": "Test switch 2",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getOn": "test/switch2/getOn",
+                "setOn": "test/switch2/setOn"
+            },
+            "integerValue": true,
+            "history": true
+        },
+        {
+            "accessory": "mqttthing",
             "type": "outlet",
             "name": "Test outlet",
             "url": "http://192.168.10.35:1883",
