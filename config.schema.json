@@ -562,7 +562,7 @@
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'battery level'",
                         "condition": {
-                            "functionBody": "return ['batteryService'].includes(model.type);"
+                            "functionBody": "return ['airPressureSensor','airPressureSensor','airQualitySensor','batteryService','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
                         }
                     },
                     "getCarbonDioxideDetected": {
@@ -611,7 +611,7 @@
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'charging state'",
                         "condition": {
-                            "functionBody": "return ['batteryService'].includes(model.type);"
+                            "functionBody": "return ['airPressureSensor','airPressureSensor','airQualitySensor','batteryService','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
                         }
                     },
                     "getContactSensorState": {
@@ -1172,10 +1172,19 @@
             "onlineValue": {
                 "type": "string",
                 "title": "Online Value",
-                "description": "An explanation about the purpose of this instance.",
+                "description": "Value representing that an accessory is online (as received through 'getOnline') if different to 'onValue'",
                 "default": "",
                 "examples": [
                     "Online"
+                ]
+            },
+            "offlineValue": {
+                "type": "string",
+                "title": "Online Value",
+                "description": "Value representing that an accessory is offline (as received through 'getOnline') if different to 'offValue'",
+                "default": "",
+                "examples": [
+                    "Offline"
                 ]
             },
             "chargingStateValues": {
@@ -1188,6 +1197,9 @@
                     "title": "Items",
                     "description": "An explanation about the purpose of this instance.",
                     "placeholder": "NotCharging, Charging, or NotChargeable"
+                },
+                "condition": {
+                    "functionBody": "return ['airPressureSensor','airPressureSensor','airQualitySensor','batteryService','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
                 }
             },
             "confirmationPeriodms": {
@@ -1235,7 +1247,7 @@
                 "type": "boolean",
                 "title": "Enable History service for Eve App (optional)",
                 "condition": {
-                    "functionBody": "return ['airPressureSensor','contactSensor','humiditySensor','motionSensor','outlet','temperatureSensor','weatherStation'].includes(model.type);"
+                    "functionBody": "return ['airPressureSensor','contactSensor','humiditySensor','motionSensor','outlet','temperatureSensor','weatherStation','switch'].includes(model.type);"
                 }
             },
             "airQualityValues": {
@@ -1509,7 +1521,6 @@
                 "topics.getCarbonMonoxideDetected",
                 "topics.getCarbonMonoxideLevel",
                 "topics.getCarbonMonoxidePeakLevel",
-                "topics.getChargingState",
                 "topics.getContactSensorState",
                 "topics.getCoolingThresholdTemperature",
                 "topics.setCoolingThresholdTemperature",
@@ -1603,7 +1614,9 @@
                 "topics.getStatusFault",
                 "topics.getBatteryLevel",
                 "topics.getStatusLowBattery",
-                "topics.getStatusTampered"
+                "topics.getChargingState",
+                "topics.getStatusTampered",
+                "topics.getOnline"
             ]
         },
         {
@@ -1629,6 +1642,8 @@
                 "durationTimer",
                 "minDuration",
                 "maxDuration",
+                "onlineValue",
+                "offlineValue",
                 {
                     "key": "inputs",
                     "type": "array",
