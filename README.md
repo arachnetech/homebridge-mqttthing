@@ -1311,6 +1311,12 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 # Release notes
 
+Version 1.1.6
++ Added history support for switch (thanks, @tobekas)
++ Fixed #223 and #207 - history not working if getTotalConsumption used (thanks, @tobekas)
++ Fixed history last activation in motion and contact sensor (thanks, @tokekas)
++ Allowed config.url string without protocol, now defaulting to mqtt:// (thanks, @tobekas)
+
 Version 1.1.5
 + Don't throw an exception at start-up if the configuration is invalid (as this stops Homebridge unnecessarily)
 
