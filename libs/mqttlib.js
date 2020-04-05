@@ -47,7 +47,15 @@ var mqttlib = new function() {
             }
         }
 
+        // add protocol to url string, if not yet available
+        let brokerUrl = config.url;
+        if( brokerUrl && ! brokerUrl.includes( '://' ) ) {
+            brokerUrl = 'mqtt://' + brokerUrl;
+        }
+
+        // log MQTT settings
         if( logmqtt ) {
+            log( 'MQTT URL: ' + brokerUrl );
             log( 'MQTT options: ' + JSON.stringify( options, function( k, v ) {
                 if( k == "password" ) {
                     return undefined; // filter out
@@ -56,11 +64,6 @@ var mqttlib = new function() {
             } ) );
         }
 
-        // add protocol to url string, if not yet available
-        let brokerUrl = config.url;
-        if( brokerUrl && ! brokerUrl.includes( '://' ) ) {
-            brokerUrl = 'mqtt://' + brokerUrl;
-        }
         // create MQTT client
         var mqttClient = mqtt.connect(brokerUrl, options);
         mqttClient.on('error', function (err) {
