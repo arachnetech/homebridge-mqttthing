@@ -1309,6 +1309,9 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 # Release notes
 
+Version 1.1.5
++ Don't throw an exception at start-up if the configuration is invalid (as this stops Homebridge unnecessarily)
+
 Version 1.1.4
 + Fixed excessive MQTT logging (introduced in 1.1.2). Thanks, @nzbullet.
 
