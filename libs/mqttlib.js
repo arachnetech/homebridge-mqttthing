@@ -58,7 +58,7 @@ var mqttlib = new function() {
 
         // add protocol to url string, if not yet available
         let brokerUrl = config.url;
-        if (!brokerUrl.includes('://')){
+        if( brokerUrl && ! brokerUrl.includes( '://' ) ) {
             brokerUrl = 'mqtt://' + brokerUrl;
         }
         // create MQTT client
