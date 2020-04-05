@@ -997,6 +997,25 @@ function makeThing(log, config) {
         booleanCharacteristic(service, 'on', Characteristic.On, config.topics.setOn, config.topics.getOn, null, null, config.turnOffAfterms, config.resetStateAfterms, true);
     }
 
+    // History for On (Eve-only)
+    function history_On(historySvc, service) {
+        characteristic_LastActivation(historySvc, service);
+
+        // get characteristic to be logged
+        var charac = service.getCharacteristic(Characteristic.On);
+        // attach change callback for this characteristic
+        charac.on('change', function (obj) {
+            var logEntry = {
+                time: Math.floor(Date.now() / 1000),  // seconds (UTC)
+                status: (obj.newValue ? 1 : 0)  // fakegato-history logProperty 'status' for switch
+            };
+            historySvc.addEntry(logEntry);
+            // update Eve's Characteristic.LastActivation
+            state.lastActivation = logEntry.time - historySvc.getInitialTime();
+            service.updateCharacteristic(Eve.Characteristics.LastActivation, state.lastActivation); 
+        });
+    }    
+
     // Characteristic.Brightness
     function characteristic_Brightness(service) {
         integerCharacteristic(service, 'brightness', Characteristic.Brightness, config.topics.setBrightness, config.topics.getBrightness);
@@ -1061,12 +1080,12 @@ function makeThing(log, config) {
                 time: Math.floor(Date.now() / 1000),  // seconds (UTC)
                 status: (obj.newValue ? 1 : 0)  // fakegato-history logProperty 'status' for motion sensor
             };
-            let mergeInterval = config.history.mergeInterval*60000 || 0;
+            // update Eve's Characteristic.LastActivation
+            state.lastActivation = logEntry.time - historySvc.getInitialTime();
+            service.updateCharacteristic(Eve.Characteristics.LastActivation, state.lastActivation);
 
-            if (logEntry.status) {
-                // update Eve's Characteristic.LastActivation
-                state.lastActivation = logEntry.time - historySvc.getInitialTime();
-                service.updateCharacteristic(Eve.Characteristics.LastActivation, state.lastActivation);
+            let mergeInterval = config.history.mergeInterval*60000 || 0;
+            if (logEntry.status) {    
                 if (historyMergeTimer) {
                     // reset timer -> discard off-event
                     clearTimeout(historyMergeTimer);
@@ -1332,10 +1351,10 @@ function makeThing(log, config) {
                     time: Math.floor(Date.now() / 1000),  // seconds (UTC)
                     status: obj.newValue  // fakegato-history logProperty 'status' for contact sensor
                 };
+                // update Eve's Characteristic.LastActivation
+                state.lastActivation = logEntry.time - historySvc.getInitialTime();
+                service.updateCharacteristic(Eve.Characteristics.LastActivation, state.lastActivation);
                 if (logEntry.status) {
-                    // update Eve's Characteristic.LastActivation
-                    state.lastActivation = logEntry.time - historySvc.getInitialTime();
-                    service.updateCharacteristic(Eve.Characteristics.LastActivation, state.lastActivation);
                     // update Eve's Characteristic.TimesOpened 
                     state.timesOpened++;
                     service.updateCharacteristic(Eve.Characteristics.TimesOpened, state.timesOpened);
@@ -1996,6 +2015,14 @@ function makeThing(log, config) {
         } else if (configType == "switch") {
             service = new Service.Switch(name);
             characteristic_On(service);
+            services = [service];
+            if (config.history) {
+                let historyOptions = new HistoryOptions();
+                let historySvc = new HistoryService('switch', {displayName: name, log: log}, historyOptions);
+                history_On(historySvc, service);
+                // return history service too
+                services.push( historySvc );
+            }
         } else if (configType == "outlet") {
             service = new Service.Outlet(name);
             characteristic_On(service);
