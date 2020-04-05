@@ -2477,7 +2477,7 @@ function makeThing(log, config) {
             if( service ) {
                 services = [ service ];
             } else {
-                log( 'Error: No service(s) returned for ' + name );
+                log( 'Error: No service(s) created for ' + name );
                 return;
             }
         }
@@ -2524,14 +2524,19 @@ function makeThing(log, config) {
     }
 
     // The service
-    var services = createServices();
+    var services = [];
+    try {
+        services = createServices();
+    } catch( ex ) {
+        log( 'Exception while creating services: ' + ex );
+    }
 
     // Our accessory instance
     var thing = {};
 
     // Return services
     thing.getServices = function () {
-        return services;
+        return services || [];
     };
 
     return thing;
