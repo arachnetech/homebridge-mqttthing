@@ -1,5 +1,9 @@
-# homebridge-mqttthing
-Homebridge plugin supporting various services over MQTT, originally based on homebrige-mqttswitch and homebridge-mqttlightbulb
+[![npm](https://badgen.net/npm/v/homebridge-mqttthing/latest)](https://www.npmjs.com/package/homebridge-mqttthing)
+[![npm](https://badgen.net/npm/dt/homebridge-mqttthing)](https://www.npmjs.com/package/homebridge-mqttthing)
+[![Discord](https://img.shields.io/discord/432663330281226270?color=728ED5&logo=discord&label=discord)](https://discord.gg/MTpeMC)
+
+# Homebridge MQTT-Thing
+[Homebridge MQTT-Thing](https://www.npmjs.com/package/homebridge-mqttthing) is a plugin for [Homebridge](https://github.com/homebridge/homebridge) allowing the integration of [many different accessory types](#supported-accessories) using MQTT.
 
 ---
 
@@ -20,12 +24,18 @@ This plugin is published through [NPM](https://www.npmjs.com/package/homebridge-
 
     npm install -g homebridge-mqttthing
 
+Installation through 
+[Homebridge Config UI X](https://www.npmjs.com/package/homebridge-config-ui-x) is also supported (and recommended).
+
 # Configuration
-Configure the plugin in your homebridge config.json file.
+Configure the plugin in your homebridge `config.json` file. Most configuration settings can now also be entered using 
+[Homebridge Config UI X](https://www.npmjs.com/package/homebridge-config-ui-x).
 
-Note that setXxx topics are published by Homebridge and should be subscribed-to by devices, and getXxx topics are published by devices to provide feedback on state to Homebridge.
+MQTT topics used fall into two categories:
 
-Various different service types are supported by this single 'mqttthing' accessory...
+   * Control topics, of the form `setXXX`, are published by MQTT-Thing in order to 
+   * Status/notification topics, of the form `getXXX`, are published by the device to notify MQTT-Thing that something has occurred (e.g. that a sensor has detected something or a control topic action has been performed).
+
 
 **All values shown below (often within <>) are comments/descriptions, and should not be copied into your configuration file. For an example of an actual configuration file, please see `test/config.json`.**
 
@@ -89,7 +99,9 @@ The following settings apply to all device types:
 
 ### MQTT Topics
 
-`getName` - Topic that may be published to send HomeKit the name of the accessory (optional)
+MQTT Topics are configured within a `topics` object. Most topics are optional (including all of the topics described in this section).
+
+`getName` - Topic that may be published to send HomeKit the name of the accessory (optional). HomeKit doesn't show name changes dynamically, so it's generally simpler just to configure the name with `name`.
 
 `getOnline` - Topic that may be published to tell homebridge-mqttthing whether or not the accessory is online (optional). This is a Boolean value (see below) intended to be published as false by the MQTT Last Will and Testament (LWT) feature in order to notify homebridge-mqttthing that the accessory is offline. Accessories using this feature must also publish an online true status when available.
 
@@ -128,6 +140,8 @@ e.g. Scaling brightness from its internal 0-100 range to an external 0-255 range
         "apply": "return Math.round( message * 2.55 );"
     }
 ```
+
+This functionality is not currently available when editing MQTT topics using config-ui-x.
 
 ### Boolean Value Settings
 
@@ -664,6 +678,7 @@ Set `confirmationPeriodms` to enable publishing confirmation for `setOn`/`getOn`
 }
 ```
 
+When using config-ui-x, multiple lightbulb types are available. The generic 'lightbulb' allows all possible settings to be entered. Serveral sub-types ('lightbulb-OnOff', 'lightbulb-Dimmable' etc.) show the configuration settings relevant for specific light types only. This can greatly simplify the configuration process.
 
 ## Light Sensor
 
