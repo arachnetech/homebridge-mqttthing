@@ -56,8 +56,13 @@ var mqttlib = new function() {
             } ) );
         }
 
+        // add protocol to url string, if not yet available
+        let brokerUrl = config.url;
+        if (!brokerUrl.includes('://')){
+            brokerUrl = 'mqtt://' + brokerUrl;
+        }
         // create MQTT client
-        var mqttClient = mqtt.connect(config.url, options);
+        var mqttClient = mqtt.connect(brokerUrl, options);
         mqttClient.on('error', function (err) {
             log('MQTT Error: ' + err);
         });
