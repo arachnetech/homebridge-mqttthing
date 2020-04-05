@@ -1,7 +1,7 @@
 // MQTT Thing Accessory plugin for Homebridge
 // MQTT Library
 
-'use strict';
+'use strict'; // eslint-disable-line
 
 var mqtt = require("mqtt");
 
@@ -65,8 +65,6 @@ var mqttlib = new function() {
         mqttClient.on('message', function (topic, message) {
             if (logmqtt) {
                 log("Received MQTT: " + topic + " = " + message);
-            } else {
-                log("** Received MQTT: " + topic + " = " + message);
             }
             var handlers = mqttDispatch[topic];
             if (handlers) {

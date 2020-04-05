@@ -1294,6 +1294,9 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 # Release notes
 
+Version 1.1.4
++ Fixed excessive MQTT logging (introduced in 1.1.2). Thanks, @nzbullet.
+
 Version 1.1.3
 + Added lightbulb sub-types to configuration schema, allowing easier configuration of different lightbulb types.
 + Added missing otherValueOff to configuration schema.
