@@ -1,6 +1,7 @@
 [![npm](https://badgen.net/npm/v/homebridge-mqttthing/latest)](https://www.npmjs.com/package/homebridge-mqttthing)
 [![npm](https://badgen.net/npm/dt/homebridge-mqttthing)](https://www.npmjs.com/package/homebridge-mqttthing)
 [![Discord](https://img.shields.io/discord/432663330281226270?color=728ED5&logo=discord&label=discord)](https://discord.gg/MTpeMC)
+[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
 
 # Homebridge MQTT-Thing
 [Homebridge MQTT-Thing](https://www.npmjs.com/package/homebridge-mqttthing) is a plugin for [Homebridge](https://github.com/homebridge/homebridge) allowing the integration of [many different accessory types](#supported-accessories) using MQTT.
