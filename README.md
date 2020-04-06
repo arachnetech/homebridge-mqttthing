@@ -1314,7 +1314,7 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 Version 1.1.6
 + Added history support for switch (thanks, @tobekas)
 + Fixed #223 and #207 - history not working if getTotalConsumption used (thanks, @tobekas)
-+ Fixed history last activation in motion and contact sensor (thanks, @tokekas)
++ Fixed history last activation in motion and contact sensor (thanks, @tobekas)
 + Allowed config.url string without protocol, now defaulting to mqtt:// (thanks, @tobekas)
 
 Version 1.1.5
