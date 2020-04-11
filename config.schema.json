@@ -1210,9 +1210,15 @@
             },
             "retryLimit": {
                 "type": "integer",
-                "title": "Retry Limit",
+                "title": "Confirmation Retry Limit",
                 "description": "When using confirmation period, configure the number of publishing retries attempted by homebrige-mqttthing when no confirmatory 'get' topic update is received.",
                 "placeholder": 3
+            },
+            "confirmationIndicateOffline": {
+                "type": "boolean",
+                "title": "Confirmation Indicate Offline",
+                "description": "Indicate offline ('No Response') when confirmation message not received",
+                "default": true
             },
             "integerValue": {
                 "type": "boolean",
@@ -1632,6 +1638,7 @@
                 "turnOffAfterms",
                 "confirmationPeriodms",
                 "retryLimit",
+                "confirmationIndicateOffline",
                 "history",
                 "minTemperature",
                 "maxTemperature",

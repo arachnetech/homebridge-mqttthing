@@ -188,6 +188,7 @@ var mqttlib = new function() {
                 if( indicatedOffline ) {
                     state.online = true;
                     indicatedOffline = false;
+                    log( 'Setting accessory state to online' );
                 }
             }
         } );
@@ -204,10 +205,11 @@ var mqttlib = new function() {
             function confirmationTimeout() {
                 // confirmation period has expired
                 timer = null;
-                // indicate offline (unless accessory is publishing this explicitly)
-                if( ! config.topics.getOnline && ! indicatedOffline ) {
+                // indicate offline (unless accessory is publishing this explicitly - overridden with confirmationIndicateOffline)
+                if( config.confirmationIndicateOffline !== false && ( ! config.topics.getOnline || config.confirmationIndicateOffline === true ) && ! indicatedOffline ) {
                     state.online = false;
                     indicatedOffline = true;
+                    log( 'Setting accessory state to offline' );
                 }
 
                 // retry

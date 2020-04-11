@@ -1,11 +1,11 @@
 {
     "bridge": {
         "name": "Homebridge",
-        "_username": "DD:7C:A6:26:A7:69",
-        "username": "DA:7C:A6:27:A7:69",
+        "username": "DD:7C:A6:26:A7:69",
+        "_username": "DA:7C:A6:27:A7:69",
         "port": 55555,
-        "_pin": "323-32-223",
-        "pin": "813-65-465"
+        "pin": "323-32-223",
+        "_pin": "813-65-465"
     },
     "description": "This is an example configuration file. You can use this as a template for creating your own configuration file.",
     "platforms": [
@@ -259,6 +259,26 @@
             "confirmationPeriodms": 2000,
             "retryLimit": 10
         },
+        {
+            "accessory" : "mqttthing",
+            "confirmationPeriodms" : 1000,
+            "confirmationIndicateOffline": false,
+            "mqttPubOptions" : {
+              "retain" : true
+            },
+            "name" : "WZ Licht Vorne",
+            "offValue" : "off",
+            "onlineValue" : "true",
+            "onValue" : "on",
+            "retryLimit" : 3,
+            "topics" : {
+              "getOn" : "shellies/shelly1-2C6BF0/relay/0",
+              "xgetOnline" : "shellies/shelly1-2C6BF0/online",
+              "setOn" : "shellies/shelly1-2C6BF0/relay/0/command"
+            },
+            "type" : "switch",
+            "url": "http://192.168.10.35:1883"
+        },        
         {
             "accessory": "mqttthing",
             "type": "motionSensor",
