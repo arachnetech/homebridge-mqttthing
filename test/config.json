@@ -1,9 +1,11 @@
 {
     "bridge": {
         "name": "Homebridge",
-        "username": "DD:7C:A6:26:A7:69",
+        "_username": "DD:7C:A6:26:A7:69",
+        "username": "DA:7C:A6:27:A7:69",
         "port": 55555,
-        "pin": "323-32-223"
+        "_pin": "323-32-223",
+        "pin": "813-65-465"
     },
     "description": "This is an example configuration file. You can use this as a template for creating your own configuration file.",
     "platforms": [
@@ -315,7 +317,9 @@
             "topics": {
                 "getCurrentTemperature": "test/temperature"
             },
-            "history": true
+            "history": true,
+            "logMqtt": true,
+            "maxTemperature": 150
         },
         {
             "accessory": "mqttthing",

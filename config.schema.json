@@ -1340,16 +1340,16 @@
             },
             "minTemperature": {
                 "type": "number",
-                "title": "Minimum Target Temperature",
+                "title": "Minimum Temperature",
                 "condition": {
-                    "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
+                    "functionBody": "return ['heaterCooler','thermostat','temperatureSensor'].includes(model.type);"
                 }
             },
             "maxTemperature": {
                 "type": "number",
-                "title": "Maximum Target Temperature",
+                "title": "Maximum Temperature",
                 "condition": {
-                    "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
+                    "functionBody": "return ['heaterCooler','thermostat','temperatureSensor'].includes(model.type);"
                 }
             },
             "restrictHeaterCoolerState": {

@@ -525,7 +525,7 @@ Swing mode state may be **DISABLED** or **ENABLED**. To use different values, sp
 
 Temperature display units can be **CELSIUS** or **FAHRENHEIT**. To use different values, specify an array of strings in `temperatureDisplayUnitsValues`.
 
-`minTemperature` and `maxTemperature` may optionally be used to change the minimum and maximum heating and cooling target temperatures that can be set from Homekit.
+`minTemperature` and `maxTemperature` may optionally be used to change the minimum and maximum heating and cooling target and temperatures that can be set from Homekit (and also affect current temperature range).
 
 Configure `restrictHeaterCoolerState` to an array of integers to restrict the target heating/cooling states made available by Homekit, where 0 represents AUTO, 1 HEAT and 2 COOL, for example:
 
@@ -1091,7 +1091,7 @@ To send remote key commands (`setRemoteKey`), you can use the remote control wit
 
 ## Temperature Sensor
 
-Current temperature must be in the range 0 to 100 degrees Celsius to a maximum of 1dp.
+Current temperature is specified in degrees Celsius, to a maximum of 1dp.
 
 ```javascript
 {
@@ -1110,9 +1110,13 @@ Current temperature must be in the range 0 to 100 degrees Celsius to a maximum o
         "getStatusTampered":            "<topic used to provide 'tampered' status (optional)>",
         "getStatusLowBattery":          "<topic used to provide 'low battery' status (optional)>"
     },
-    "history": "<true to enable History service for Eve App (optional)>"
+    "history": "<true to enable History service for Eve App (optional)>",
+    "minTemperature": minimum_target_temperature,
+    "maxTemperature": maximum_taret_temperature
 }
 ```
+
+`minTemperature` and `maxTemperature` may optionally be used to change the minimum and maximum temperature allowed by Homekit from its default range of 0-100 C. If neither option is specified, mqttthing lowers the minimum temperature to -100 C (for compatibility with earlier versions of mqttthing).
 
 
 ## Thermostat
@@ -1311,6 +1315,9 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 
 # Release notes
+
+Version 1.1.7
++ Allow temperature sensor current temperature range to be overriden (using minTemperature and maxTemperature)
 
 Version 1.1.6
 + Added history support for switch (thanks, @tobekas)

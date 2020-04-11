@@ -1149,9 +1149,12 @@ function makeThing(log, config) {
         floatCharacteristic(service, 'currentTemperature', Characteristic.CurrentTemperature,
             null, config.topics.getCurrentTemperature, 0 );
 
-        // allow negative temperatures (down to -100)
-        var characteristic = service.getCharacteristic( Characteristic.CurrentTemperature );
-        characteristic.props.minValue = -100;
+        // configured temperature ranges
+        if( ! tempRange( service, Characteristic.CurrentTemperature ) ) {
+            // or (old behaviour) allow negative temperatures (down to -100)
+            var characteristic = service.getCharacteristic( Characteristic.CurrentTemperature );
+            characteristic.props.minValue = -100;
+        }
     }
 
     // History for CurrentTemperature (Eve-only)
@@ -1169,7 +1172,9 @@ function makeThing(log, config) {
     }
 
     function tempRange( service, theCharacteristic ) {
+        let customRangeSet = false;
         if( config.minTemperature !== undefined || config.maxTemperature !== undefined ) {
+            customRangeSet = true;
             var characteristic = service.getCharacteristic( theCharacteristic );
             if( config.minTemperature !== undefined ) {
                 characteristic.props.minValue = config.minTemperature;
@@ -1178,6 +1183,7 @@ function makeThing(log, config) {
                 characteristic.props.maxValue = config.maxTemperature;
             }
         }
+        return customRangeSet;
     }
 
     // Characteristic.TargetTemperature
