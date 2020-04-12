@@ -1322,6 +1322,7 @@ Version 1.1.7
 + Allow temperature sensor current temperature range to be overriden (using minTemperature and maxTemperature)
 + Added confirmationIndicateOffline option
 + Moved history options from history to historyOptions object
++ Added config-ui-x support for historyOptions
 
 Version 1.1.6
 + Added history support for switch (thanks, @tobekas)

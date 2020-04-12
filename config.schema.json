@@ -1266,7 +1266,7 @@
                         "description": "Maximum size of stored data points",
                         "default": 4032,
                         "condition": {
-                            "functionBody": "return ['airPressureSensor','contactSensor','humiditySensor','motionSensor','outlet','temperatureSensor','weatherStation','switch'].includes(model.type);"
+                            "functionBody": "return model.history && ['airPressureSensor','contactSensor','humiditySensor','motionSensor','outlet','temperatureSensor','weatherStation','switch'].includes(model.type);"
                         }
                     },
                     "autoTimer": {
@@ -1275,7 +1275,7 @@
                         "description": "Enable averaging (and repeating) 10min timer",
                         "default": true,
                         "condition": {
-                            "functionBody": "return ['airPressureSensor','contactSensor','humiditySensor','motionSensor','outlet','temperatureSensor','weatherStation','switch'].includes(model.type);"
+                            "functionBody": "return model.history && ['airPressureSensor','contactSensor','humiditySensor','motionSensor','outlet','temperatureSensor','weatherStation','switch'].includes(model.type);"
                         }
                     },
                     "autoRepeat": {
@@ -1284,7 +1284,7 @@
                         "description": "Enable repetition of last value if no data was received in last 10min interval",
                         "default": true,
                         "condition": {
-                            "functionBody": "return ['airPressureSensor','contactSensor','humiditySensor','motionSensor','outlet','temperatureSensor','weatherStation','switch'].includes(model.type);"
+                            "functionBody": "return model.history && ['airPressureSensor','contactSensor','humiditySensor','motionSensor','outlet','temperatureSensor','weatherStation','switch'].includes(model.type);"
                         }
                     },
                     "mergeInterval": {
@@ -1293,9 +1293,12 @@
                         "description": "Set merge interval (in minutes) for events, which are very close in time (not in combination with autoTimer/autoRepeat)",
                         "default": 0,
                         "condition": {
-                            "functionBody": "return ['motionSensor'].includes(model.type);"
+                            "functionBody": "return model.history && ['motionSensor'].includes(model.type);"
                         }
                     }
+                },
+                "condition": {
+                    "functionBody": "return model.history && ['airPressureSensor','contactSensor','humiditySensor','motionSensor','outlet','temperatureSensor','weatherStation','switch'].includes(model.type);"
                 }
             },
             "airQualityValues": {
