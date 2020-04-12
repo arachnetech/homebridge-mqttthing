@@ -29,6 +29,13 @@ function makeThing(log, config) {
                 config.historyOptions = {};
             }
         }
+        // migrate negated options for config-ui-x defaults
+        if( ! config.historyOptions.hasOwnProperty( 'noAutoTimer' ) ) {
+            config.historyOptions.noAutoTimer = ( config.historyOptions.autoTimer === false );
+        }
+        if( ! config.historyOptions.hasOwnProperty( 'noAutoRepeat' ) ) {
+            config.historyOptions.noAutoRepeat = ( config.historyOptions.autoRepeat === false );
+        }
     }
 
     //
@@ -57,13 +64,13 @@ function makeThing(log, config) {
         this.size = config.historyOptions.size || 4032;
         // data will be stored in .homebridge or path specified with homebridge -U option
         this.storage = 'fs';
-        if(config.historyOptions.autoTimer===false || config.historyOptions.mergeInterval) {
+        if(config.historyOptions.noAutoTimer===true || config.historyOptions.mergeInterval) {
             // disable averaging (and repeating) interval timer
             // if mergeInterval is used, then autoTimer has to be deactivated (inconsistencies possible)
             this.disableTimer = true;
         }
         // disable repetition (if no data was received in last interval)
-        if (config.historyOptions.autoRepeat===false) {
+        if (config.historyOptions.noAutoRepeat===true) {
             if (isEventSensor) {
                 // for 'motion' and 'door' type
                 this.disableTimer = true;

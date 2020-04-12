@@ -210,9 +210,9 @@ History options may be specified in a `historyOptions` object containing one or 
 
 `size` - maximum size of stored data points (optional), default: 4032
 
-`autoTimer` - enable/disable averaging (and repeating) 10min timer (optional), default: true
+`noAutoTimer` - enable/disable averaging (and repeating) 10min timer (optional). Set to true to disable auto-timer.
 
-`autoRepeat` - enable/disable repetition of last value if no data was received in last 10min interval (optional), default: true
+`noAutoRepeat` - enable/disable repetition of last value if no data was received in last 10min interval (optional). Set to true to disable auto-repeat.
 
 `mergeInterval` - set merge interval [minutes] for events, which are very close in time (optional, for motion sensor only, not in combination with autoTimer/autoRepeat), default: 0
 

@@ -1263,26 +1263,23 @@
                     "size": {
                         "type": "integer",
                         "title": "History Size",
-                        "description": "Maximum size of stored data points",
-                        "default": 4032,
+                        "description": "Maximum size of stored data points (default: 4032)",
                         "condition": {
                             "functionBody": "return model.history && ['airPressureSensor','contactSensor','humiditySensor','motionSensor','outlet','temperatureSensor','weatherStation','switch'].includes(model.type);"
                         }
                     },
-                    "autoTimer": {
+                    "noAutoTimer": {
                         "type": "boolean",
-                        "title": "History Auto-timer",
-                        "description": "Enable averaging (and repeating) 10min timer",
-                        "default": true,
+                        "title": "History No Auto-timer",
+                        "description": "Disable averaging (and repeating) 10min timer",
                         "condition": {
                             "functionBody": "return model.history && ['airPressureSensor','contactSensor','humiditySensor','motionSensor','outlet','temperatureSensor','weatherStation','switch'].includes(model.type);"
                         }
                     },
-                    "autoRepeat": {
+                    "noAutoRepeat": {
                         "type": "boolean",
-                        "title": "History Auto-repeat",
-                        "description": "Enable repetition of last value if no data was received in last 10min interval",
-                        "default": true,
+                        "title": "History No Auto-repeat",
+                        "description": "Disable repetition of last value if no data was received in last 10min interval",
                         "condition": {
                             "functionBody": "return model.history && ['airPressureSensor','contactSensor','humiditySensor','motionSensor','outlet','temperatureSensor','weatherStation','switch'].includes(model.type);"
                         }
@@ -1291,7 +1288,6 @@
                         "type": "integer",
                         "title": "History Merge Interval (minutes)",
                         "description": "Set merge interval (in minutes) for events, which are very close in time (not in combination with autoTimer/autoRepeat)",
-                        "default": 0,
                         "condition": {
                             "functionBody": "return model.history && ['motionSensor'].includes(model.type);"
                         }
@@ -1683,8 +1679,8 @@
                 "turnOffAfterms",
                 "history",
                 "historyOptions.size",
-                "historyOptions.autoTimer",
-                "historyOptions.autoRepeat",
+                "historyOptions.noAutoTimer",
+                "historyOptions.noAutoRepeat",
                 "historyOptions.mergeInterval",
                 "minTemperature",
                 "maxTemperature",
