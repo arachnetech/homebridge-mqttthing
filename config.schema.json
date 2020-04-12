@@ -1217,8 +1217,7 @@
             "confirmationIndicateOffline": {
                 "type": "boolean",
                 "title": "Confirmation Indicate Offline",
-                "description": "Indicate offline ('No Response') when confirmation message not received",
-                "default": true
+                "description": "Indicate offline ('No Response') when confirmation message not received"
             },
             "integerValue": {
                 "type": "boolean",
