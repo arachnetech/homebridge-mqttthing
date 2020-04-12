@@ -262,7 +262,7 @@
         {
             "accessory" : "mqttthing",
             "confirmationPeriodms" : 1000,
-            "confirmationIndicateOffline": false,
+            "confirmationIndicateOffline": true,
             "mqttPubOptions" : {
               "retain" : true
             },
@@ -273,7 +273,7 @@
             "retryLimit" : 3,
             "topics" : {
               "getOn" : "shellies/shelly1-2C6BF0/relay/0",
-              "xgetOnline" : "shellies/shelly1-2C6BF0/online",
+              "getOnline" : "shellies/shelly1-2C6BF0/online",
               "setOn" : "shellies/shelly1-2C6BF0/relay/0/command"
             },
             "type" : "switch",
