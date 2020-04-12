@@ -206,7 +206,7 @@ History is currently supported for:
 
 `history` - set to **true** for enabling History Service (Boolean, optional)
 
-Alternatively, you can specify `history` as an object with some properties:
+History options may be specified in a `historyOptions` object containing one or more of the following properties:
 
 `size` - maximum size of stored data points (optional), default: 4032
 
@@ -1321,6 +1321,7 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 Version 1.1.7
 + Allow temperature sensor current temperature range to be overriden (using minTemperature and maxTemperature)
 + Added confirmationIndicateOffline option
++ Moved history options from history to historyOptions object
 
 Version 1.1.6
 + Added history support for switch (thanks, @tobekas)

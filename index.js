@@ -19,6 +19,18 @@ var homebridgePath;
 
 function makeThing(log, config) {
 
+    // Migrate old-style history options
+    if( config.hasOwnProperty( 'history' ) ) {
+        if( typeof config.history == 'object' ) {
+            config.historyOptions = config.history;
+            config.history = true;
+        } else {
+            if( ! config.hasOwnProperty( 'historyOptions' ) ) {
+                config.historyOptions = {};
+            }
+        }
+    }
+
     //
     //  MQTT Wrappers
     //
@@ -42,16 +54,16 @@ function makeThing(log, config) {
     // constructor for fakegato-history options
     function HistoryOptions(isEventSensor=false) {
         // maximum size of stored data points
-        this.size = config.history.size || 4032;
+        this.size = config.historyOptions.size || 4032;
         // data will be stored in .homebridge or path specified with homebridge -U option
         this.storage = 'fs';
-        if(config.history.autoTimer===false || config.history.mergeInterval) {
+        if(config.historyOptions.autoTimer===false || config.historyOptions.mergeInterval) {
             // disable averaging (and repeating) interval timer
             // if mergeInterval is used, then autoTimer has to be deactivated (inconsistencies possible)
             this.disableTimer = true;
         }
         // disable repetition (if no data was received in last interval)
-        if (config.history.autoRepeat===false) {
+        if (config.historyOptions.autoRepeat===false) {
             if (isEventSensor) {
                 // for 'motion' and 'door' type
                 this.disableTimer = true;
@@ -1084,7 +1096,7 @@ function makeThing(log, config) {
             state.lastActivation = logEntry.time - historySvc.getInitialTime();
             service.updateCharacteristic(Eve.Characteristics.LastActivation, state.lastActivation);
 
-            let mergeInterval = config.history.mergeInterval*60000 || 0;
+            let mergeInterval = config.historyOptions.mergeInterval*60000 || 0;
             if (logEntry.status) {    
                 if (historyMergeTimer) {
                     // reset timer -> discard off-event
