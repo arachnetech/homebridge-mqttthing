@@ -644,14 +644,14 @@
                     },
                     "getCurrentDoorState": {
                         "type": "string",
-                        "description": "Topic used to notify mqttthing of 'current door state'",
+                        "description": "Topic used to notify mqttthing of 'current door state' (from 'door current values'). Use either 'current door state' or 'door moving'.",
                         "condition": {
                             "functionBody": "return ['garageDoorOpener','lockManagement'].includes(model.type);"
                         }
                     },
                     "getDoorMoving": {
                         "type": "string",
-                        "description": "Topic used to notify mqttthing where or not the door is moving (as a simpler alternative to getCurrentDoorState)",
+                        "description": "Topic used to notify mqttthing whether or not the door is moving (as a simpler alternative to getCurrentDoorState). Use either 'current door state' or 'door moving'.",
                         "condition": {
                             "functionBody": "return ['garageDoorOpener'].includes(model.type);"
                         }
@@ -1000,7 +1000,7 @@
                     },
                     "getTargetDoorState": {
                         "type": "string",
-                        "description": "Topic used to notify mqttthing of 'target door state'",
+                        "description": "Topic used to notify mqttthing of 'target door state' (for external door control)",
                         "condition": {
                             "functionBody": "return ['garageDoorOpener'].includes(model.type);"
                         }
@@ -1578,6 +1578,8 @@
                 "topics.getCoolingThresholdTemperature",
                 "topics.setCoolingThresholdTemperature",
                 "topics.getCurrentAmbientLightLevel",
+                "topics.setTargetDoorState",
+                "topics.getTargetDoorState",
                 "topics.getCurrentDoorState",
                 "topics.getDoorMoving",
                 "topics.getCurrentHeaterCoolerState",
@@ -1616,8 +1618,6 @@
                 "topics.getSulphurDioxideDensity",
                 "topics.setSwingMode",
                 "topics.getSwingMode",
-                "topics.setTargetDoorState",
-                "topics.getTargetDoorState",
                 "topics.setTargetHeaterCoolerState",
                 "topics.getTargetHeaterCoolerState",
                 "topics.setTargetHeatingCoolingState",
