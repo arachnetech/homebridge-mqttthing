@@ -1,11 +1,11 @@
 {
     "bridge": {
         "name": "Homebridge",
-        "_username": "DD:7C:A6:26:A7:69",
-        "username": "DA:7C:A6:27:A7:69",
+        "username": "DD:7C:A6:26:A7:69",
+        "_username": "DA:7C:A6:27:A7:69",
         "port": 55555,
-        "_pin": "323-32-223",
-        "pin": "813-65-465"
+        "pin": "323-32-223",
+        "_pin": "813-65-465"
     },
     "description": "This is an example configuration file. You can use this as a template for creating your own configuration file.",
     "platforms": [
@@ -508,10 +508,10 @@
             "logMqtt": true,
             "topics": {
                 "setTargetDoorState": "test/garage/target",
-                "getTargetDoorState": "test/garage/current",
+                "getTargetDoorState": "test/garage/target",
                 "getCurrentDoorState": "test/garage/current",
                 "setLockTargetState": "test/lock/target",
-                "getLockTargetState": "test/garagelock/current",
+                "getLockTargetState": "test/garagelock/target",
                 "getLockCurrentState": "test/garagelock/current",
                 "getObstructionDetected": "test/garage/obstruction"
             },
@@ -527,6 +527,22 @@
                 "Secured",
                 "Jammed",
                 "Unknown"
+            ]
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "garageDoorOpener",
+            "name": "Simple Garage Door",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": true,
+            "topics": {
+                "setTargetDoorState": "test/garage2/target",
+                "getTargetDoorState": "test/garage2/target",
+                "getDoorMoving": "test/garage2/moving"
+            },
+            "doorTargetValues": [
+                "Open",
+                "Closed"
             ]
         },
         {

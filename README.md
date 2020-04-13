@@ -451,9 +451,9 @@ Set `confirmationPeriodms` to enable publishing confirmation for `setOn`/`getOn`
 
 ## Garage Door Opener
 
-Garage door opener *current* door state can be **OPEN**, **CLOSED**, **OPENING**, **CLOSING**, **STOPPED**. By default, these use values of `O`, `C`, `o`, `c` and `S` respectively; these defaults can be changed using the **doorCurrentValues** setting.
+Garage door opener *target* state can be **OPEN** or **CLOSED**. By default, values of `O` and `C` are used respectively (unless changed through **doorTargetValues**). Homekit always assumes that the door is moving towards is target state, so to control it externally you must publish the getTargetDoorState topic to notify Homekit of the new target state. (You may also wish to publish the setTargetDoorState topic to notify your accessory of the new target state.) The same topic may be used for both to simplify this.
 
-Garage door opener *target* state can be **OPEN** or **CLOSED**. By default, values of `O` and `C` are used respectively (unless changed through **doorTargetValues**).
+Garage door opener *current* door state can be **OPEN**, **CLOSED**, **OPENING**, **CLOSING**, **STOPPED**. By default, these use values of `O`, `C`, `o`, `c` and `S` respectively; these defaults can be changed using the **doorCurrentValues** setting. As a simpler alternative, `getDoorMoving` may be used to specify a Boolean topic indicating whether or not the garage door is currently moving. Mqttthing will generate an appropriate current state automatically, assuming that the door is moving towards its target state or stopped at its target state.
 
 If the *current* and *target* state values are the same (but non-default), these can be changed together by using the **doorValues** setting.
 
@@ -473,10 +473,10 @@ Lock target state can be **UNSECURED** or **SECURED**. By default, these use val
     "topics":
     {
         "setTargetDoorState":       "test/garage/target",
-        "getTargetDoorState":       "test/garage/current",
+        "getTargetDoorState":       "test/garage/target",
         "getCurrentDoorState":      "test/garage/current",
         "setLockTargetState":       "test/garagelock/target",
-        "getLockTargetState":       "test/garagelock/current",
+        "getLockTargetState":       "test/garagelock/target",
         "getLockCurrentState":      "test/garagelock/current",
         "getObstructionDetected":   "test/garage/obstruction"
     },
@@ -1317,6 +1317,10 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 
 # Release notes
+
+Version 1.1.8
++ Garage door add getDoorMoving option as simpler alternative to getCurrentDoorState
++ Changed default garage door state (after restart) to closed
 
 Version 1.1.7
 + Allow temperature sensor current temperature range to be overriden (using minTemperature and maxTemperature)

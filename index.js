@@ -84,6 +84,15 @@ function makeThing(log, config) {
     // The states of our characteristics
     var state = ctx.state = {};
 
+    // Internal event handling
+    var events = {};
+
+    function raiseEvent( property ) {
+        if( events.hasOwnProperty( property ) ) {
+            events[ property ]();
+        }
+    }
+
     function makeConfirmedPublisher( setTopic, getTopic, makeConfirmed ) {
         return mqttlib.makeConfirmedPublisher( ctx, setTopic, getTopic, makeConfirmed );
     }
@@ -986,6 +995,7 @@ function makeThing(log, config) {
                     if (mqttVal !== undefined) {
                         mqttPublish(setTopic, mqttVal);
                     }
+                    raiseEvent( property );
                 }
                 callback();
             });
@@ -1006,6 +1016,7 @@ function makeThing(log, config) {
                     }
                     state[property] = newState;
                     service.getCharacteristic(characteristic).setValue(newState, undefined, c_mySetContext);
+                    raiseEvent( property );
                 }
             });
         }
@@ -1449,7 +1460,65 @@ function makeThing(log, config) {
         if (!values) {
             values = ['O', 'C', 'o', 'c', 'S'];
         }
-        multiCharacteristic(service, 'doorcur', Characteristic.CurrentDoorState, null, config.topics.getCurrentDoorState, values, Characteristic.CurrentDoorState.OPEN);
+        multiCharacteristic(service, 'doorcur', Characteristic.CurrentDoorState, null, config.topics.getCurrentDoorState, values, Characteristic.CurrentDoorState.CLOSED);
+    }
+
+    function characteristic_SimpleCurrentDoorState( service, property, getTopic, initialValue, mapValueFunc ) {
+        // set up characteristic
+        var charac = service.getCharacteristic( Characteristic.CurrentDoorState );
+        charac.on( 'get', function( callback ) {
+            handleGetStateCallback( callback, mapValueFunc( state[ property ] ) );
+        } );
+
+        // property-changed handler
+        let propChangedHandler = events.doortar = function() {
+            setTimeout( () => {
+                charac.setValue( mapValueFunc( state[ property ] ), undefined, c_mySetContext );
+            }, 1000 );
+        };
+
+        // set initial value
+        state[ property ] = initialValue;
+        propChangedHandler();
+
+        // subscribe to get topic
+        if( getTopic ) {
+            mqttSubscribe( getTopic, function( topic, message ) {
+                // determine whether this is an on or off value
+                let newState = false; // assume off
+                if( isRecvValueOn( message ) ) {
+                    newState = true; // received on value so on
+                } else if ( ! isRecvValueOff( message ) ) {
+                    // received value NOT acceptable as 'off' so ignore message
+                    return;
+                }
+
+                // if changed, set
+                if( state[ property ] != newState ) {
+                    state[ property ] = newState;
+                    propChangedHandler();
+                }
+            } );
+        }
+    }
+
+    // Characteristic.DoorMoving (mqttthing simplified state)
+    function characteristic_DoorMoving( service ) {
+        characteristic_SimpleCurrentDoorState( service, 'doormoving', config.topics.getDoorMoving, false, ( isMoving ) => {
+            if( isMoving ) {
+                if( state.doortar == Characteristic.TargetDoorState.OPEN ) {
+                    return Characteristic.CurrentDoorState.OPENING;
+                } else {
+                    return Characteristic.CurrentDoorState.CLOSING;
+                }
+            } else {
+                if( state.doortar == Characteristic.TargetDoorState.OPEN ) {
+                    return Characteristic.CurrentDoorState.OPEN;
+                } else {
+                    return Characteristic.CurrentDoorState.CLOSED;
+                }
+            }
+        } );
     }
 
     // Characteristic.TargetDoorState
@@ -2275,7 +2344,11 @@ function makeThing(log, config) {
         } else if( configType == "garageDoorOpener" ) {
             service = new Service.GarageDoorOpener(name);
             characteristic_TargetDoorState(service);
-            characteristic_CurrentDoorState(service);
+            if( config.topics.getDoorMoving ) {
+                characteristic_DoorMoving(service);
+            } else {
+                characteristic_CurrentDoorState(service);
+            }
             characteristic_ObstructionDetected(service);
             if( config.topics.setLockTargetState ) {
                 characteristic_LockTargetState(service);

@@ -649,6 +649,13 @@
                             "functionBody": "return ['garageDoorOpener','lockManagement'].includes(model.type);"
                         }
                     },
+                    "getDoorMoving": {
+                        "type": "string",
+                        "description": "Topic used to notify mqttthing where or not the door is moving (as a simpler alternative to getCurrentDoorState)",
+                        "condition": {
+                            "functionBody": "return ['garageDoorOpener'].includes(model.type);"
+                        }
+                    },
                     "getCurrentHeaterCoolerState": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'current heater cooler state'",
@@ -1572,6 +1579,7 @@
                 "topics.setCoolingThresholdTemperature",
                 "topics.getCurrentAmbientLightLevel",
                 "topics.getCurrentDoorState",
+                "topics.getDoorMoving",
                 "topics.getCurrentHeaterCoolerState",
                 "topics.getCurrentHeatingCoolingState",
                 "topics.getCurrentHorizontalTiltAngle",
