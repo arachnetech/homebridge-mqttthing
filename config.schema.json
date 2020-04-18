@@ -1297,6 +1297,14 @@
                         "condition": {
                             "functionBody": "return model.history && ['motionSensor'].includes(model.type);"
                         }
+                    },
+                    "persistencePath": {
+                        "type": "string",
+                        "title": "History Persistence Path",
+                        "description": "Full path of directory in which to store history data (defaults to homebridge user storage path)",
+                        "condition": {
+                            "functionBody": "return model.history && ['airPressureSensor','contactSensor','humiditySensor','motionSensor','outlet','temperatureSensor','weatherStation','switch'].includes(model.type);"
+                        }
                     }
                 },
                 "condition": {
@@ -1689,6 +1697,7 @@
                 "historyOptions.noAutoTimer",
                 "historyOptions.noAutoRepeat",
                 "historyOptions.mergeInterval",
+                "historyOptions.persistencePath",
                 "minTemperature",
                 "maxTemperature",
                 "hex",

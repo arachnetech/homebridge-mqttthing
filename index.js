@@ -38,6 +38,18 @@ function makeThing(log, config) {
         }
     }
 
+    // History persistence path
+    function historyCounterFile() {
+        let directory;
+        if( config.historyOptions && config.historyOptions.peristencePath ) {
+            directory = config.historyOptions.persistencePath;
+        } else {
+            directory = homebridgePath;
+        }
+        const counterFile = path.join(directory, os.hostname().split(".")[0] + "_" + config.name + "_cnt_persist.json");
+        return counterFile;
+    }
+
     //
     //  MQTT Wrappers
     //
@@ -1346,7 +1358,7 @@ function makeThing(log, config) {
         var charac = service.getCharacteristic(Characteristic.ContactSensorState);
 
         // counterFile for saving 'timesOpened' and 'resetTotal'
-        const counterFile = path.join(homebridgePath, os.hostname().split(".")[0] + "_" + config.name + "_cnt_persist.json");
+        const counterFile = historyCounterFile();
         function writeCounterFile () {
             let saveObj = {timesOpened: state.timesOpened, resetTotal: state.resetTotal};
             fs.writeFile(counterFile, JSON.stringify(saveObj), 'utf8', function (err) {
@@ -1830,7 +1842,7 @@ function makeThing(log, config) {
         const energyCounter = config.topics.getTotalConsumption ? false : true;
         var lastLogEntry = {time: 0, power: 0};  // for energyCounter
         // counterFile for saving 'totalConsumption' and 'resetTotal'
-        const counterFile = path.join(homebridgePath, os.hostname().split(".")[0] + "_" + config.name + "_cnt_persist.json");
+        const counterFile = historyCounterFile();
 
         function writeCounterFile () {
             let saveObj = {totalConsumption: state.totalConsumption, resetTotal: state.resetTotal};

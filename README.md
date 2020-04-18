@@ -217,6 +217,8 @@ History options may be specified in a `historyOptions` object containing one or 
 
 `mergeInterval` - set merge interval [minutes] for events, which are very close in time (optional, for motion sensor only, not in combination with autoTimer/autoRepeat), default: 0
 
+`persistencePath` - full path of directory in which to store history data (defaults to homebridge user storage path)
+
 Avoid the use of "/" in characteristics of the Information Service (e.g. serial number, manufacturer, etc.), since this may cause data to not appear in the history. Note that if your Eve.app is controlling more than one accessory for each type, the serial number should be unique, otherwise Eve.app will merge the histories.
 
 ### Confirmation
@@ -1318,6 +1320,9 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 
 # Release notes
+
+Version 1.1.9
++ Added persistencePath to historyOptions
 
 Version 1.1.8
 + Garage door add getDoorMoving option as simpler alternative to getCurrentDoorState
