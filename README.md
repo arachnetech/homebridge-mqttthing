@@ -64,6 +64,7 @@ The following settings apply to all device types:
     },
     "integerValue": true,
     "onlineValue": "Online",
+    "offlineValue": "Offline",
     "chargingStateValues": [ "NotCharging", "Charging", "NotChargeable" ],
     "startPub": [
         { "topic": "topic1", "message": "message1" },
@@ -156,7 +157,7 @@ Homekit Boolean types like on/off use strings "true" and "false" in MQTT message
 
 When `onValue` and `offValue` are configured, by default any other value received on the _get_ topic will be ignored. To treat unrecognized received values as off, set `otherValueOff: true`.
 
-`onlineValue` - configure a specific value representing that an accessory is online (received through `getOnline`). If not specified, the configured *on* value will be used to represent an online state (i.e. `onValue` if configured, otherwise **1** with `integerValue: true` or **true** with `integerValue: false`).
+`onlineValue`, `offlineValue` - configure specific values representing that an accessory is online or offline (received through `getOnline`). If not specified, the configured *on* and *off* values will be used to represent online and offline states (i.e. `onValue`/`offValue` if configured, otherwise **1** / **0** with `integerValue: true` or **true** / **false** with `integerValue: false`).
 
 In mqttthing versions before 1.0.23, receiving any value not matching the configured 'on value' for a Boolean characteristic turned it off. From 1.0.23, the received message must match the offValue to turn off a characteristic.
 To turn off on any value except the onValue, omit configuration of offValue.
