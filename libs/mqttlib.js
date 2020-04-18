@@ -3,9 +3,13 @@
 
 'use strict'; // eslint-disable-line
 
-var mqtt = require("mqtt");
+const mqtt = require( "mqtt" );
+const path = require( "path" );
+const fs = require("fs");
 
 var mqttlib = new function() {
+
+    let codec = null;
 
     //! Initialise MQTT. Requires context ( { log, config } ).
     //! Context populated with mqttClient and mqttDispatch.
@@ -84,24 +88,63 @@ var mqttlib = new function() {
             }
         });
 
+        // Load any codec
+        if( config.codec ) {
+            let codecPath = config.codec;
+            if( codecPath[ 0 ] != '/' ) {
+                codecPath = path.join( ctx.homebridgePath, codecPath );
+            }
+            if( fs.existsSync( codecPath ) ) {
+                // load codec
+                log( 'Loading codec from ' + codecPath );
+                codec = require( codecPath );
+                if( typeof codec.init === "function" ) {
+                    // init()
+                    codec.init( { log, config } );
+                }
+
+                // encode/decode must be functions
+                if( typeof codec.encode !== "function" ) {
+                    codec.encode = null;
+                }
+                if( typeof codec.decode !== "function" ) {
+                    codec.decode = null;
+                }
+            } else {
+                log( 'ERROR: codec file [' + codecPath + '] does not exist' );
+            }
+        }
+
         ctx.mqttClient = mqttClient;
         return mqttClient;
     };
 
     // Subscribe
-    this.subscribe = function( ctx, topic, handler ) {
+    this.subscribe = function( ctx, topic, property, handler ) {
         let { mqttDispatch, log, mqttClient } = ctx;
         if( ! mqttClient ) {
             log( 'ERROR: Call mqttlib.init() before mqttlib.subscribe()' );
             return;
         }
 
+        // send through codec's decode function
+        if( codec && codec.decode ) {
+            let realHandler = handler;
+            handler = function( intopic, message ) {
+                let decoded = codec.decode( message, { topic, property } );
+                if( decoded !== undefined ) {
+                    return realHandler( intopic, decoded );
+                }
+            };
+        }
+
+        // send through any apply function
         if (typeof topic != 'string') {
-            var extendedTopic = topic;
+            let extendedTopic = topic;
             topic = extendedTopic.topic;
             if (extendedTopic.hasOwnProperty('apply')) {
-                var previous = handler;
-                var applyFn = Function("message", extendedTopic['apply']); //eslint-disable-line
+                let previous = handler;
+                let applyFn = Function("message", extendedTopic['apply']); //eslint-disable-line
                 handler = function (intopic, message) {
                     let decoded;
                     try {

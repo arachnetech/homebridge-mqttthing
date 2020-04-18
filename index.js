@@ -55,12 +55,12 @@ function makeThing(log, config) {
     //
 
     // Initialize MQTT client
-    let ctx = { log, config };
+    let ctx = { log, config, homebridgePath };
     mqttlib.init( ctx );
 
     // MQTT Subscribe
-    function mqttSubscribe( topic, handler ) {
-        mqttlib.subscribe( ctx, topic, handler );
+    function mqttSubscribe( topic, property, handler ) {
+        mqttlib.subscribe( ctx, topic, property, handler );
     }
 
     // MQTT Publish
@@ -243,7 +243,7 @@ function makeThing(log, config) {
 
         // subscribe to get topic
         if (getTopic) {
-            mqttSubscribe(getTopic, function (topic, message) {
+            mqttSubscribe(getTopic, property, function (topic, message) {
                 // determine whether this is an on or off value
                 let newState = false; // assume off
                 if( isRecvValueOn( message ) ) {
@@ -278,7 +278,7 @@ function makeThing(log, config) {
 
         // MQTT subscription
         if( getTopic ) {
-            mqttSubscribe( getTopic, function( topic, message ) {
+            mqttSubscribe( getTopic, property, function( topic, message ) {
                 if( isOnFunc( message ) ) {
                     state[ property ] = true;
                 } else if( isOffFunc( message ) ) {
@@ -316,7 +316,7 @@ function makeThing(log, config) {
 
         // subscribe to get topic
         if (getTopic) {
-            mqttSubscribe(getTopic, function (topic, message) {
+            mqttSubscribe(getTopic, property, function (topic, message) {
                 var newState = parseInt(message);
                 if (state[property] != newState) {
                     state[property] = newState;
@@ -385,7 +385,7 @@ function makeThing(log, config) {
         } );
 
         if( config.topics.getHSV ) {
-            mqttSubscribe( config.topics.getHSV, function( topic, message ) {
+            mqttSubscribe( config.topics.getHSV, 'HSV', function( topic, message ) {
                 var comps =  ('' + message ).split( ',' );
                 if( comps.length == 3 ) {
                     var hue = parseInt( comps[ 0 ] );
@@ -586,13 +586,14 @@ function makeThing(log, config) {
         state.warmWhite = 0;
         state.coldWhite = 0;
 
-        var setTopic, getTopic, numComponents;
+        var setTopic, getTopic, numComponents, property;
         var wwcwComps = false;
         var whiteComp = false;
         var whiteSep = false;
         if( config.topics.setRGBWW ) {
             setTopic = config.topics.setRGBWW;
             getTopic = config.topics.getRGBWW;
+            property = 'RGBWW';
             wwcwComps = true;
             numComponents = 5;
             warmWhiteRGB = decodeRGBCommaSeparatedString( config.warmWhite ) || {r: 255, g: 158, b: 61};
@@ -600,11 +601,13 @@ function makeThing(log, config) {
         } else if( config.topics.setRGBW ) {
             setTopic = config.topics.setRGBW;
             getTopic = config.topics.getRGBW;
+            property = 'RGBW';
             whiteComp = true;
             numComponents = 4;
         } else {
             setTopic = config.topics.setRGB;
             getTopic = config.topics.getRGB;
+            property = 'RGB';
             if( config.topics.setWhite ) {
                 whiteSep = true;
             }
@@ -773,7 +776,7 @@ function makeThing(log, config) {
         }
 
         if( getTopic ) {
-            mqttSubscribe( getTopic, function( topic, message ) {
+            mqttSubscribe( getTopic, property, function( topic, message ) {
                 var ok = false;
                 var red, green, blue, white, warmWhite, coldWhite;
                 if( hexPrefix == null ) {
@@ -830,7 +833,7 @@ function makeThing(log, config) {
         }
 
         if( whiteSep ) {
-            mqttSubscribe( config.topics.getWhite, function( topic, message ) {
+            mqttSubscribe( config.topics.getWhite, 'white', function( topic, message ) {
                 state.white = parseInt( message );
                 updateColour( state.red, state.green, state.blue, state.white );
             } );
@@ -877,7 +880,7 @@ function makeThing(log, config) {
         } );
 
         if( config.topics.getWhite ) {
-            mqttSubscribe( config.topics.getWhite, function( topic, message ) {
+            mqttSubscribe( config.topics.getWhite, 'white', function( topic, message ) {
                 var ok = false;
                 var white;
                 if( hexPrefix == null ) {
@@ -938,7 +941,7 @@ function makeThing(log, config) {
 
         // subscribe to get topic
         if (getTopic) {
-            mqttSubscribe(getTopic, function (topic, message) {
+            mqttSubscribe(getTopic, property, function (topic, message) {
                 var newState = parseFloat(message);
                 if (state[property] != newState) {
                     state[property] = newState;
@@ -969,7 +972,7 @@ function makeThing(log, config) {
 
         // subscribe to get topic
         if (getTopic) {
-            mqttSubscribe(getTopic, function (topic, message) {
+            mqttSubscribe(getTopic, property, function (topic, message) {
                 var newState = message.toString();
                 if (state[property] !== newState) {
                     state[property] = newState;
@@ -1019,7 +1022,7 @@ function makeThing(log, config) {
 
         // MQTT set (Homekit get)
         if (getTopic) {
-            mqttSubscribe(getTopic, function (topic, message) {
+            mqttSubscribe(getTopic, property, function (topic, message) {
                 let data = message.toString();
                 let newState = mqttToHomekit[data];
                 if (newState !== undefined && ( eventOnly || state[property] != newState ) ) {
@@ -1075,12 +1078,12 @@ function makeThing(log, config) {
 
     // Characteristic.ColorTemperature
     function characteristic_ColorTemperature( service ) {
-        integerCharacteristic( service, 'coltemp', Characteristic.ColorTemperature, config.topics.setColorTemperature, config.topics.getColorTemperature );
+        integerCharacteristic( service, 'colorTemperature', Characteristic.ColorTemperature, config.topics.setColorTemperature, config.topics.getColorTemperature );
     }
 
     // Characteristic.OutletInUse
     function characteristic_OutletInUse(service) {
-        booleanCharacteristic(service, 'inUse', Characteristic.OutletInUse, null, config.topics.getInUse);
+        booleanCharacteristic(service, 'outletInUse', Characteristic.OutletInUse, null, config.topics.getInUse);
     }
 
     // Characteristic.Name
@@ -1203,7 +1206,7 @@ function makeThing(log, config) {
     function history_CurrentTemperature(historySvc) {
         if (config.topics.getCurrentTemperature) {
             // additional MQTT subscription instead of set-callback due to correct averaging:
-            mqttSubscribe(config.topics.getCurrentTemperature, function (topic, message) {
+            mqttSubscribe(config.topics.getCurrentTemperature, 'currentTemperature', function (topic, message) {
                 var logEntry = {
                     time: Math.floor(Date.now() / 1000),  // seconds (UTC)
                     temp: parseFloat(message)  // fakegato-history logProperty 'temp' for temperature sensor
@@ -1269,7 +1272,7 @@ function makeThing(log, config) {
     function history_CurrentRelativeHumidity(historySvc) {
         if (config.topics.getCurrentRelativeHumidity) {
             // additional MQTT subscription instead of set-callback due to correct averaging:
-            mqttSubscribe(config.topics.getCurrentRelativeHumidity, function (topic, message) {
+            mqttSubscribe(config.topics.getCurrentRelativeHumidity, 'currentRelativeHumidity', function (topic, message) {
                 var logEntry = {
                     time: Math.floor(Date.now() / 1000),  // seconds (UTC)
                     humidity: parseFloat(message)  // fakegato-history logProperty 'humidity' for humidity sensor
@@ -1290,7 +1293,7 @@ function makeThing(log, config) {
     function history_AirPressure(historySvc) {
         if (config.topics.getAirPressure) {
             // additional MQTT subscription instead of set-callback due to correct averaging:
-            mqttSubscribe(config.topics.getAirPressure, function (topic, message) {
+            mqttSubscribe(config.topics.getAirPressure, 'airPressure', function (topic, message) {
                 var logEntry = {
                     time: Math.floor(Date.now() / 1000),  // seconds (UTC)
                     pressure: parseFloat(message)  // fakegato-history logProperty 'pressure' for air pressure sensor
@@ -1344,7 +1347,7 @@ function makeThing(log, config) {
 
     // Characteristic.ContactSensorState
     function characteristic_ContactSensorState(service) {
-        booleanCharacteristic(service, 'contactSensor', Characteristic.ContactSensorState,
+        booleanCharacteristic(service, 'contactSensorState', Characteristic.ContactSensorState,
             null, config.topics.getContactSensorState, false, function (val) {
                 return val ? Characteristic.ContactSensorState.CONTACT_NOT_DETECTED : Characteristic.ContactSensorState.CONTACT_DETECTED;
             }, undefined, config.resetStateAfterms);
@@ -1414,12 +1417,12 @@ function makeThing(log, config) {
     }
 
     // Characteristic.ProgrammableSwitchEvent
-    function characteristic_ProgrammableSwitchEvent(service, getTopic, switchValues, restrictSwitchValues) {
+    function characteristic_ProgrammableSwitchEvent(service, property, getTopic, switchValues, restrictSwitchValues) {
         let values = switchValues;
         if (!values) {
             values = ['1', '2', 'L']; // 1 means SINGLE_PRESS, 2 means DOUBLE_PRESS, L means LONG_PRESS
         }
-        multiCharacteristic(service, 'progswitch', Characteristic.ProgrammableSwitchEvent, null, getTopic, values, null, true);
+        multiCharacteristic(service, property, Characteristic.ProgrammableSwitchEvent, null, getTopic, values, null, true);
         if( restrictSwitchValues ) {
             let characteristic = service.getCharacteristic( Characteristic.ProgrammableSwitchEvent );
             characteristic.props.validValues = restrictSwitchValues;
@@ -1442,7 +1445,7 @@ function makeThing(log, config) {
         if (!values) {
             values = ['SA', 'AA', 'NA', 'D', 'T'];
         }
-        multiCharacteristic(service, 'seccur', Characteristic.SecuritySystemCurrentState, null, config.topics.getCurrentState, values, Characteristic.SecuritySystemCurrentState.DISARMED);
+        multiCharacteristic(service, 'currentState', Characteristic.SecuritySystemCurrentState, null, config.topics.getCurrentState, values, Characteristic.SecuritySystemCurrentState.DISARMED);
     }
 
     // Characteristic.SecuritySystemTargetState
@@ -1451,7 +1454,7 @@ function makeThing(log, config) {
         if (!values) {
             values = ['SA', 'AA', 'NA', 'D'];
         }
-        multiCharacteristic(service, 'sectar', Characteristic.SecuritySystemTargetState, config.topics.setTargetState, config.topics.getTargetState, values, Characteristic.SecuritySystemTargetState.DISARM);
+        multiCharacteristic(service, 'targetState', Characteristic.SecuritySystemTargetState, config.topics.setTargetState, config.topics.getTargetState, values, Characteristic.SecuritySystemTargetState.DISARM);
         if( config.restrictTargetState ) {
             let characteristic = service.getCharacteristic( Characteristic.SecuritySystemTargetState );
             characteristic.props.validValues = config.restrictTargetState;
@@ -1472,7 +1475,7 @@ function makeThing(log, config) {
         if (!values) {
             values = ['O', 'C', 'o', 'c', 'S'];
         }
-        multiCharacteristic(service, 'doorcur', Characteristic.CurrentDoorState, null, config.topics.getCurrentDoorState, values, Characteristic.CurrentDoorState.CLOSED);
+        multiCharacteristic(service, 'currentDoorState', Characteristic.CurrentDoorState, null, config.topics.getCurrentDoorState, values, Characteristic.CurrentDoorState.CLOSED);
     }
 
     function characteristic_SimpleCurrentDoorState( service, property, getTopic, initialValue, mapValueFunc ) {
@@ -1483,7 +1486,7 @@ function makeThing(log, config) {
         } );
 
         // property-changed handler
-        let propChangedHandler = events.doortar = function() {
+        let propChangedHandler = events.targetDoorState = function() {
             setTimeout( () => {
                 charac.setValue( mapValueFunc( state[ property ] ), undefined, c_mySetContext );
             }, 1000 );
@@ -1495,7 +1498,7 @@ function makeThing(log, config) {
 
         // subscribe to get topic
         if( getTopic ) {
-            mqttSubscribe( getTopic, function( topic, message ) {
+            mqttSubscribe( getTopic, property, function( topic, message ) {
                 // determine whether this is an on or off value
                 let newState = false; // assume off
                 if( isRecvValueOn( message ) ) {
@@ -1516,15 +1519,15 @@ function makeThing(log, config) {
 
     // Characteristic.DoorMoving (mqttthing simplified state)
     function characteristic_DoorMoving( service ) {
-        characteristic_SimpleCurrentDoorState( service, 'doormoving', config.topics.getDoorMoving, false, ( isMoving ) => {
+        characteristic_SimpleCurrentDoorState( service, 'doorMoving', config.topics.getDoorMoving, false, ( isMoving ) => {
             if( isMoving ) {
-                if( state.doortar == Characteristic.TargetDoorState.OPEN ) {
+                if( state.targetDoorState == Characteristic.TargetDoorState.OPEN ) {
                     return Characteristic.CurrentDoorState.OPENING;
                 } else {
                     return Characteristic.CurrentDoorState.CLOSING;
                 }
             } else {
-                if( state.doortar == Characteristic.TargetDoorState.OPEN ) {
+                if( state.targetDoorState == Characteristic.TargetDoorState.OPEN ) {
                     return Characteristic.CurrentDoorState.OPEN;
                 } else {
                     return Characteristic.CurrentDoorState.CLOSED;
@@ -1539,12 +1542,12 @@ function makeThing(log, config) {
         if (!values) {
             values = ['O', 'C'];
         }
-        multiCharacteristic(service, 'doortar', Characteristic.TargetDoorState, config.topics.setTargetDoorState, config.topics.getTargetDoorState, values, Characteristic.TargetDoorState.OPEN);
+        multiCharacteristic(service, 'targetDoorState', Characteristic.TargetDoorState, config.topics.setTargetDoorState, config.topics.getTargetDoorState, values, Characteristic.TargetDoorState.OPEN);
     }
 
     // Characteristic.ObstructionDetected
     function characteristic_ObstructionDetected(service) {
-        booleanCharacteristic(service, 'obstrucdet', Characteristic.ObstructionDetected, null, config.topics.getObstructionDetected, false);
+        booleanCharacteristic(service, 'obstructionDetected', Characteristic.ObstructionDetected, null, config.topics.getObstructionDetected, false);
     }
 
     // Characteristic.LockCurrentState
@@ -1553,7 +1556,7 @@ function makeThing(log, config) {
         if( ! values ) {
             values = [ 'U', 'S', 'J', '?' ];
         }
-        multiCharacteristic( service, 'lockcur', Characteristic.LockCurrentState, null, config.topics.getLockCurrentState, values, Characteristic.LockCurrentState.UNSECURED );
+        multiCharacteristic( service, 'lockCurrentState', Characteristic.LockCurrentState, null, config.topics.getLockCurrentState, values, Characteristic.LockCurrentState.UNSECURED );
     }
 
     // Characteristic.LockTargetState
@@ -1562,7 +1565,7 @@ function makeThing(log, config) {
         if( ! values ) {
             values = [ 'U', 'S' ];
         }
-        multiCharacteristic( service, 'locktar', Characteristic.LockTargetState, config.topics.setLockTargetState, config.topics.getLockTargetState, values, Characteristic.LockTargetState.UNSECURED );
+        multiCharacteristic( service, 'lockTargetState', Characteristic.LockTargetState, config.topics.setLockTargetState, config.topics.getLockTargetState, values, Characteristic.LockTargetState.UNSECURED );
     }
 
     // Characteristic.RotationDirection
@@ -1681,20 +1684,20 @@ function makeThing(log, config) {
 
     // Characteristic.CarbonMonoxideDensity
     function characteristic_CarbonMonoxideLevel( service ) {
-        floatCharacteristic( service, 'CarbonMonoxideLevel', Characteristic.CarbonMonoxideLevel, null, config.topics.getCarbonMonoxideLevel );
+        floatCharacteristic( service, 'carbonMonoxideLevel', Characteristic.CarbonMonoxideLevel, null, config.topics.getCarbonMonoxideLevel );
     }
    
     // Eve.Characteristics.AirParticulateDensity (Eve-only)
     function characteristic_AirQualityPPM( service ) {
         service.addOptionalCharacteristic(Eve.Characteristics.AirParticulateDensity); // to avoid warnings
-        floatCharacteristic( service, 'ppm', Eve.Characteristics.AirParticulateDensity, null, config.topics.getAirQualityPPM );
+        floatCharacteristic( service, 'airQualityPPM', Eve.Characteristics.AirParticulateDensity, null, config.topics.getAirQualityPPM );
     }
 
     // History for Air Quality (Eve-only)
     function history_AirQualityPPM( historySvc ) {
         if (config.topics.getAirQualityPPM) {
             // additional MQTT subscription instead of set-callback due to correct averaging:
-            mqttSubscribe(config.topics.getAirQualityPPM, function (topic, message) {
+            mqttSubscribe(config.topics.getAirQualityPPM, 'airQualityPPM', function (topic, message) {
                 var logEntry = {
                     time: Math.floor(Date.now() / 1000),  // seconds (UTC)
                     ppm: parseFloat(message)  // fakegato-history logProperty 'ppm' for air quality sensor
@@ -1878,7 +1881,7 @@ function makeThing(log, config) {
 
         if (config.topics.getWatts) {
             // additional MQTT subscription instead of set-callback due to correct averaging:
-            mqttSubscribe(config.topics.getWatts, function (topic, message) {
+            mqttSubscribe(config.topics.getWatts, 'watts', function (topic, message) {
                 var logEntry = {
                     time: Math.floor(Date.now() / 1000),  // seconds (UTC)
                     power: parseFloat(message)  // fakegato-history logProperty 'power' for energy meter
@@ -2014,7 +2017,7 @@ function makeThing(log, config) {
 
         // subscribe to get topic, update remainingDuration
         if (config.topics.getRemainingDuration) {
-            mqttSubscribe(config.topics.getRemainingDuration, function (topic, message) {
+            mqttSubscribe(config.topics.getRemainingDuration, 'remainingDuration', function (topic, message) {
                 let remainingDuration = parseInt(message);
                 state.durationEndTime = Math.floor(Date.now() / 1000) + remainingDuration;
                 charac.updateValue( remainingDuration );
@@ -2284,7 +2287,7 @@ function makeThing(log, config) {
             }
         } else if (configType == "doorbell") {
             service = new Service.Doorbell(name);
-            characteristic_ProgrammableSwitchEvent(service, config.topics.getSwitch, config.switchValues, config.restrictSwitchValues);
+            characteristic_ProgrammableSwitchEvent(service, 'switch', config.topics.getSwitch, config.switchValues, config.restrictSwitchValues);
             if (config.topics.setBrightness || config.topics.getBrightness) {
                 characteristic_Brightness(service);
             }
@@ -2330,13 +2333,13 @@ function makeThing(log, config) {
                         }
                     }
                     let buttonSvc = new Service.StatelessProgrammableSwitch( name + "_" + i, i + 1 );
-                    characteristic_ProgrammableSwitchEvent(buttonSvc, buttonTopic, switchValues, restrictSwitchValues);
+                    characteristic_ProgrammableSwitchEvent(buttonSvc, 'switch' + i, buttonTopic, switchValues, restrictSwitchValues);
                     characteristic_ServiceLabelIndex( buttonSvc, i + 1 );
                     services.push(buttonSvc)
                 }
             } else {
                 service = new Service.StatelessProgrammableSwitch( name );
-                characteristic_ProgrammableSwitchEvent(service, config.topics.getSwitch, config.switchValues, config.restrictSwitchValues);
+                characteristic_ProgrammableSwitchEvent(service, 'switch', config.topics.getSwitch, config.switchValues, config.restrictSwitchValues);
             }
         } else if (configType == "securitySystem") {
             service = new Service.SecuritySystem(name);
