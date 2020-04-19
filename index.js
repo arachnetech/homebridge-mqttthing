@@ -41,7 +41,6 @@ function makeThing(log, config) {
     // History persistence path
     function historyPersistencePath() {
         let directory;
-        log( config.name );
         if( config.historyOptions && config.historyOptions.persistencePath ) {
             if( config.historyOptions.persistencePath[ 0 ] == '/' ) {
                 // full path
