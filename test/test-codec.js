@@ -33,6 +33,8 @@ function init( params ) {
      */
     function encode( message, info, output ) {
         log( `encode() called for topic ${info.topic}, property ${info.property} with message ${message}` );
+
+        // in this example we just delay publishing
         setTimeout( () => { 
             output( message );
         }, 1000 );
@@ -50,6 +52,8 @@ function init( params ) {
      */
     function decode( message, info, output ) { // eslint-disable-line no-unused-vars
         log( `decode() called for topic ${info.topic}, property ${info.property} with message ${message}` );
+
+        // in this example we just delay passing the received mesage on to homebridge
         setTimeout( () => {
             output( message );
         }, 500 );

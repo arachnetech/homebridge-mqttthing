@@ -115,6 +115,8 @@ MQTT Topics are configured within a `topics` object. Most topics are optional (i
 
 ### Applying functions to MQTT messages (custom payload encoding/decoding)
 
+See also [Codecs](#codecs).
+
 If an MQTT message is not a simple value or does not match the expected syntax, it is possible to specify a JavaScript function that is called for the message every time it is received/published. For this, the topic string in the configuration can be replaced with an object with these properties:
 
 `topic` - Topic string
@@ -228,6 +230,17 @@ Some accessories support confirmation for some of their 'set' topics. When enabl
 Accessories supporting message confirmation list the topics supporting message confirmation below.
 
 Mqttthing can optionally set an accessory as 'offline' when it doesn't receive confirmation messages. By default it does this is a `getOnline` topic hasn't been configured - i.e. if online state isn't already being managed explicitly. However, this behaviour can be overridden. Set `confirmationIndicateOffline` to `true` to indicate offline ('No Response') even when a `getOnline` topic is configured, or set `confirmationIndicateOffline` to `false` to disable offline indication when there is no response.
+
+### Codecs
+
+Rather like apply functions, a codec can be used to apply transformations to incoming and outgoing data. Unlike apply functions, a codec is written
+in a separate JavaScript file which is referenced by the configuration.
+
+To use a codec, configure the path to its JavaScript file using the `codec` configuration setting. The codec will then be called to encode data before 
+publishing and to decode received data for all configured topics. The codec can decide which topics and properties to process, and can suppress messages 
+and generate additional messages as required.
+
+For further details, see the example in `test\test-codec.js`.
 
 # Supported Accessories
 
@@ -1323,6 +1336,7 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 
 Version 1.1.9
 + Added persistencePath to historyOptions
++ Added support for codecs
 
 Version 1.1.8
 + Garage door add getDoorMoving option as simpler alternative to getCurrentDoorState
