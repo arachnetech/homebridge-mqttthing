@@ -39,14 +39,25 @@ function makeThing(log, config) {
     }
 
     // History persistence path
-    function historyCounterFile() {
+    function historyPersistencePath() {
         let directory;
-        if( config.historyOptions && config.historyOptions.peristencePath ) {
-            directory = config.historyOptions.persistencePath;
+        log( config.name );
+        if( config.historyOptions && config.historyOptions.persistencePath ) {
+            if( config.historyOptions.persistencePath[ 0 ] == '/' ) {
+                // full path
+                directory = config.historyOptions.persistencePath;
+            } else {
+                // assume relative to homebridge path
+                directory = path.join( homebridgePath, config.historyOptions.persistencePath );
+            }
         } else {
+            // no path configured - use homebridge path
             directory = homebridgePath;
         }
-        const counterFile = path.join(directory, os.hostname().split(".")[0] + "_" + config.name + "_cnt_persist.json");
+        return directory;
+    }
+    function historyCounterFile() {
+        const counterFile = path.join(historyPersistencePath(), os.hostname().split(".")[0] + "_" + config.name + "_cnt_persist.json");
         return counterFile;
     }
 
@@ -76,6 +87,9 @@ function makeThing(log, config) {
         this.size = config.historyOptions.size || 4032;
         // data will be stored in .homebridge or path specified with homebridge -U option
         this.storage = 'fs';
+        if( config.historyOptions.persistencePath ) {
+            this.path = historyPersistencePath();
+        }
         if(config.historyOptions.noAutoTimer===true || config.historyOptions.mergeInterval) {
             // disable averaging (and repeating) interval timer
             // if mergeInterval is used, then autoTimer has to be deactivated (inconsistencies possible)

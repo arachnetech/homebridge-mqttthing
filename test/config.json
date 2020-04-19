@@ -353,7 +353,8 @@
             },
             "history": {
                 "size": 1000,
-                "autoRepeat": false
+                "autoRepeat": false,
+                "persistencePath": "history"
             }
         },
         {
