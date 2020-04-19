@@ -6,34 +6,60 @@
 
  'use strict';
 
-var log, config;
-
-function init( params ) {
-    // grab the parameters that we want
-    ( { log, config } = params );
-
-    setInterval( () => {
-        log( `Hello from test-codec.js. This is ${config.name}.` );
-    }, 2000 );
-}
-
-function encode() {
-}
-
-function decode( message, info ) {
-    log( `decode() called for topic ${info.topic}, property ${info.property}` );
-    return message;
-}
-
 /**
- * Exported functions - one or more of:
- * init( params ) - called on start-up with params object holding: logging (log) and configuration (config)
- * encode( )
- * decode( message, info ) - info is object with topic and property
+ * Initialise codec for accessory
+ * @param {object} params Initialisation parameters object
+ * @param {function} params.log Logging function
+ * @param {object} params.config Configuration
+ * @return {object} Encode and/or decode functions
  */
-// Export our functions
+function init( params ) {
+    // extract parameters for convenience
+    let { log, config } = params;
+
+    setTimeout( () => {
+        log( `Hello from test-codec.js. This is ${config.name}.` );
+    }, 10000 );
+
+    /**
+     * Encode message before sending.
+     * The output function may be called to deliver an encoded value for the property later.
+     * @param {string} message Message from mqttthing to be published to MQTT
+     * @param {object} info Object giving contextual information
+     * @param {string} info.topic MQTT topic to be published
+     * @param {string} info.property Property associated with publishing operation
+     * @param {function} output Function which may be called to deliver the encoded value asynchronously
+     * @returns {string} Processed message (optionally)
+     */
+    function encode( message, info, output ) {
+        log( `encode() called for topic ${info.topic}, property ${info.property}` );
+        setTimeout( () => { 
+            output( message );
+        }, 1000 );
+    }
+
+    /**
+     * Decode received message, and optionally return decoded value.
+     * The output function may be called to deliver a decoded value for the property later.
+     * @param {string} message Message received from MQTT
+     * @param {object} info Object giving contextual information
+     * @param {string} info.topic MQTT topic received
+     * @param {string} info.property Property associated with subscription
+     * @param {function} output Function which may be called to deliver the decoded value asynchronously
+     * @returns {string} Processed message (optionally)
+     */
+    function decode( message, info, output ) { // eslint-disable-line no-unused-vars
+        log( `decode() called for topic ${info.topic}, property ${info.property}` );
+        setTimeout( () => {
+            output( message );
+        }, 500 );
+    }
+    
+    // return encode and decode functions
+    return { encode, decode };
+}
+
+// export initialisation function
 module.exports = {
-    init,
-    encode,
-    decode
+    init
 };

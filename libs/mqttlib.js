@@ -9,14 +9,12 @@ const fs = require("fs");
 
 var mqttlib = new function() {
 
-    let codec = null;
-
     //! Initialise MQTT. Requires context ( { log, config } ).
     //! Context populated with mqttClient and mqttDispatch.
     this.init = function( ctx ) {
         // MQTT message dispatch
         let mqttDispatch = ctx.mqttDispatch = {}; // map of topic to function( topic, message ) to handle
-        
+
         let { config, log } = ctx;
         let logmqtt = config.logMqtt;
         var clientId = 'mqttthing_' + config.name.replace(/[^\x20-\x7F]/g, "") + '_' + Math.random().toString(16).substr(2, 8);
@@ -97,18 +95,22 @@ var mqttlib = new function() {
             if( fs.existsSync( codecPath ) ) {
                 // load codec
                 log( 'Loading codec from ' + codecPath );
-                codec = require( codecPath );
-                if( typeof codec.init === "function" ) {
-                    // init()
-                    codec.init( { log, config } );
-                }
-
-                // encode/decode must be functions
-                if( typeof codec.encode !== "function" ) {
-                    codec.encode = null;
-                }
-                if( typeof codec.decode !== "function" ) {
-                    codec.decode = null;
+                let codecMod = require( codecPath );
+                if( typeof codecMod.init === "function" ) {
+                    // initialise codec
+                    let codec = ctx.codec = codecMod.init( { log, config } );
+                    if( codec ) {
+                        // encode/decode must be functions
+                        if( typeof codec.encode !== "function" ) {
+                            codec.encode = null;
+                        }
+                        if( typeof codec.decode !== "function" ) {
+                            codec.decode = null;
+                        }
+                    }
+                } else {
+                    // no initialisation function
+                    log( 'ERROR: No codec initialisation function returned from ' + codecPath );
                 }
             } else {
                 log( 'ERROR: codec file [' + codecPath + '] does not exist' );
@@ -121,7 +123,7 @@ var mqttlib = new function() {
 
     // Subscribe
     this.subscribe = function( ctx, topic, property, handler ) {
-        let { mqttDispatch, log, mqttClient } = ctx;
+        let { mqttDispatch, log, mqttClient, codec } = ctx;
         if( ! mqttClient ) {
             log( 'ERROR: Call mqttlib.init() before mqttlib.subscribe()' );
             return;
@@ -130,10 +132,13 @@ var mqttlib = new function() {
         // send through codec's decode function
         if( codec && codec.decode ) {
             let realHandler = handler;
+            let output = function( message ) {
+                return realHandler( topic, message );
+            };
             handler = function( intopic, message ) {
-                let decoded = codec.decode( message, { topic, property } );
+                let decoded = codec.decode( message, { topic, property }, output );
                 if( decoded !== undefined ) {
-                    return realHandler( intopic, decoded );
+                    return output( decoded );
                 }
             };
         }
