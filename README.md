@@ -230,7 +230,7 @@ Some accessories support confirmation for some of their 'set' topics. When enabl
 
 Accessories supporting message confirmation list the topics supporting message confirmation below.
 
-Mqttthing can optionally set an accessory as 'offline' when it doesn't receive confirmation messages. By default it does this is a `getOnline` topic hasn't been configured - i.e. if online state isn't already being managed explicitly. However, this behaviour can be overridden. Set `confirmationIndicateOffline` to `true` to indicate offline ('No Response') even when a `getOnline` topic is configured, or set `confirmationIndicateOffline` to `false` to disable offline indication when there is no response.
+Mqttthing can optionally set an accessory as 'offline' when it doesn't receive confirmation messages. By default it does this if a `getOnline` topic hasn't been configured - i.e. if online state isn't already being managed explicitly. However, this behaviour can be overridden. Set `confirmationIndicateOffline` to `true` to indicate offline ('No Response') even when a `getOnline` topic is configured, or set `confirmationIndicateOffline` to `false` to disable offline indication when there is no response.
 
 ### Codecs
 
