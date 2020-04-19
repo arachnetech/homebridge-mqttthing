@@ -17,7 +17,19 @@ MQTT topics used fall into two categories:
 
 **All values shown below (often within <>) are comments/descriptions, and should not be copied into your configuration file. For an example of an actual configuration file, please see `test/config.json`.**
 
-## Common settings
+   * [General Settings](#general-settings)
+   * [MQTT Settings](#mqtt-settings)
+   * [MQTT Topics](#mqtt-topics)
+   * [Topic Apply Functions](#apply-functions)
+   * [Boolean Value Settings](#boolean-value-settings)
+   * [Accessory Information](#accessory-information)
+   * [Publishing Values on Start-up](#publishing-values-on-start-up)
+   * [History Service](#history-service)
+   * [Confirmation](#confirmation)
+   * [Codecs](#codecs)
+   * [Accessories](#accessories)
+
+## Common Settings
 
 The following settings apply to all device types:
 
@@ -90,9 +102,9 @@ MQTT Topics are configured within a `topics` object. Most topics are optional (i
 
 `getStatusLowBattery` - Topic that may be published by an accessory to indicate whether it has a low battery (optional).
 
-### Applying functions to MQTT messages (custom payload encoding/decoding)
+### Apply Functions
 
-See also [Codecs](#codecs).
+User functions may be applied to MQTT messages for custom payload encoding/decoding. Apply functions do this within the main configuration file, but are not supported by config-ui-x. Alternatively, an external codec may be used (see [Codecs](#codecs)).
 
 If an MQTT message is not a simple value or does not match the expected syntax, it is possible to specify a JavaScript function that is called for the message every time it is received/published. For this, the topic string in the configuration can be replaced with an object with these properties:
 
@@ -157,7 +169,7 @@ The following configuration settings may be specified if required to change info
 
 `firmwareRevision` - sets the firmware revision number (defaults to mqttthing version)
 
-### Publishing values on start-up
+### Publishing Values on Start-up
 
 MQTT messages may be published on start-up, e.g. to reset accessories to a known initial state, with `startPub`. This should contain an array of objects with `topic` and `message`
 keys, i.e.:

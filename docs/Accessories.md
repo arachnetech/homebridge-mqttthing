@@ -35,7 +35,9 @@ The following Homekit accessory types are supported by MQTT-Thing:
    * [Weather Station](#weather-station)
    * [Window](#window)
    * [Window Covering (Blinds)](#window-covering)
-   
+
+For general details on configuration, please see [Configuration.md](Configuration.md).
+
 ## Tested Configurations
 
 Tested and working configurations for devices are available on the [Wiki](https://github.com/arachnetech/homebridge-mqttthing/wiki/Tested-Configurations).  Please add your working configurations for others.
