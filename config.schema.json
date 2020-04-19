@@ -295,6 +295,11 @@
                 "title": "Log MQTT",
                 "description": "Set to true to enable MQTT logging for this accessory"
             },
+            "codec": {
+                "type": "string",
+                "title": "Codec",
+                "description": "Filename of JavaScript file implementing codec"
+            },
             "topics": {
                 "type": "object",
                 "title": "Topics",
@@ -1547,7 +1552,8 @@
                 "password",
                 "logMqtt",
                 "mqttOptions.keepalive",
-                "mqttPubOptions.retain"
+                "mqttPubOptions.retain",
+                "codec"
             ]
         },
         {
