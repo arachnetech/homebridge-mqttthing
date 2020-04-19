@@ -174,40 +174,53 @@ var mqttlib = new function() {
     };
 
     // Publish
-    this.publish = function( ctx, topic, message ) {
-        let { config, log, mqttClient } = ctx;
+    this.publish = function( ctx, topic, property, inMessage ) {
+        let { config, log, mqttClient, codec } = ctx;
         if( ! mqttClient ) {
             log( 'ERROR: Call mqttlib.init() before mqttlib.publish()' );
             return;
         }
 
-        if( message === null || topic === undefined ) {
+        if( inMessage === null || topic === undefined ) {
             return; // don't publish if message is null or topic is undefined
         }
 
-        if (typeof topic != 'string') {
-            // encode data with user-supplied apply() function
-            var extendedTopic = topic;
-            topic = extendedTopic.topic;
-            if (extendedTopic.hasOwnProperty('apply')) {
-                var applyFn = Function("message", extendedTopic['apply']); //eslint-disable-line
-                try {
-                    message = applyFn(message);
-                } catch( ex ) {
-                    log( 'Encode function apply( message ) { ' + extendedTopic.apply + ' } failed for topic ' + topic + ' with message ' + message + ' - ' + ex );
-                    message = null; // stop publish
-                }
-                if( message === null ) {
-                    return;
+        function publishImpl( message ) {
+            if (typeof topic != 'string') {
+                // encode data with user-supplied apply() function
+                var extendedTopic = topic;
+                topic = extendedTopic.topic;
+                if (extendedTopic.hasOwnProperty('apply')) {
+                    var applyFn = Function("message", extendedTopic['apply']); //eslint-disable-line
+                    try {
+                        message = applyFn(message);
+                    } catch( ex ) {
+                        log( 'Encode function apply( message ) { ' + extendedTopic.apply + ' } failed for topic ' + topic + ' with message ' + message + ' - ' + ex );
+                        message = null; // stop publish
+                    }
+                    if( message === null ) {
+                        return;
+                    }
                 }
             }
+    
+            // publish
+            if( config.logMqtt ) {
+                log( 'Publishing MQTT: ' + topic + ' = ' + message );
+            }
+            mqttClient.publish(topic, message.toString(), config.mqttPubOptions );
         }
 
-        // publish
-        if( config.logMqtt ) {
-            log( 'Publishing MQTT: ' + topic + ' = ' + message );
+        if( codec && codec.encode ) {
+            // send through codec's encode function
+            let encoded = codec.encode( inMessage, { topic, property }, publishImpl );
+            if( encoded !== undefined ) {
+                publishImpl( encoded );
+            }
+        } else {
+            // publish as-is
+            publishImpl( inMessage );
         }
-        mqttClient.publish(topic, message.toString(), config.mqttPubOptions );
     };
 
     // Confirmed publisher
@@ -218,8 +231,8 @@ var mqttlib = new function() {
         // if confirmation isn't being used, just return a simple publishing function
         if( ! config.confirmationPeriodms || ! getTopic || ! makeConfirmed ) {
             // no confirmation - return generic publishing function
-            return function( message ) {
-                mqttlib.publish( ctx, setTopic, message );
+            return function( property, message ) {
+                mqttlib.publish( ctx, setTopic, property, message );
             }
         }
 
@@ -242,7 +255,7 @@ var mqttlib = new function() {
         } );
 
         // return enhanced publishing function
-        return function( message ) {
+        return function( property, message ) {
             // clear any existing confirmation timer
             if( timer ) {
                 clearTimeout( timer );
@@ -275,7 +288,7 @@ var mqttlib = new function() {
 
                 // publish
                 expected = message;
-                mqttlib.publish( ctx, setTopic, message );
+                mqttlib.publish( ctx, setTopic, property, message );
             }
 
             // initialise retry counter

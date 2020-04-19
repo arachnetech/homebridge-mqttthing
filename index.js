@@ -64,8 +64,8 @@ function makeThing(log, config) {
     }
 
     // MQTT Publish
-    function mqttPublish( topic, message ) {
-        mqttlib.publish( ctx, topic, message );
+    function mqttPublish( topic, property, message ) {
+        mqttlib.publish( ctx, topic, property, message );
     }
 
     var c_mySetContext = '---my-set-context--';
@@ -217,7 +217,7 @@ function makeThing(log, config) {
             charac.on('set', function (value, callback, context) {
                 if (context !== c_mySetContext) {
                     state[property] = value;
-                    publish( getOnOffPubValue( value ) );
+                    publish( property, getOnOffPubValue( value ) );
                 }
                 callback();
 
@@ -230,7 +230,7 @@ function makeThing(log, config) {
                         autoOffTimer = null;
 
                         state[property] = false;
-                        publish( getOnOffPubValue( false ) );
+                        publish( property, getOnOffPubValue( false ) );
                         service.getCharacteristic(characteristic).setValue(mapValueForHomebridge(false, mapValueFunc), undefined, c_mySetContext);
 
                     }, turnOffAfterms );
@@ -305,7 +305,7 @@ function makeThing(log, config) {
             charac.on('set', function (value, callback, context) {
                 if (context !== c_mySetContext) {
                     state[property] = value;
-                    mqttPublish(setTopic, value);
+                    mqttPublish(setTopic, property, value);
                 }
                 callback();
             });
@@ -360,7 +360,7 @@ function makeThing(log, config) {
             }
             var msg = state.hue + ',' + state.sat + ',' + bri;
             if( msg != lastpubmsg ) {
-                mqttPublish( config.topics.setHSV, msg );
+                mqttPublish( config.topics.setHSV, 'HSV', msg );
                 lastpubmsg = msg;
             }
         }
@@ -698,12 +698,12 @@ function makeThing(log, config) {
                 }
             }
             if( msg != lastpubmsg ) {
-                mqttPublish( setTopic, msg );
+                mqttPublish( setTopic, property, msg );
                 lastpubmsg = msg;
             }
 
             if( whiteSep ) {
-                mqttPublish( config.topics.setWhite, rgb.w );
+                mqttPublish( config.topics.setWhite, 'white', rgb.w );
             }
         }
 
@@ -861,7 +861,7 @@ function makeThing(log, config) {
             } else {
                 msg = hexPrefix + toHex( white );
             }
-            mqttPublish( config.topics.setWhite, msg );
+            mqttPublish( config.topics.setWhite, 'white', msg );
         }
 
         addCharacteristic( service, 'on', Characteristic.On, 0, function() {
@@ -930,7 +930,7 @@ function makeThing(log, config) {
             charac.on('set', function (value, callback, context) {
                 if (context !== c_mySetContext) {
                     state[property] = value;
-                    mqttPublish(setTopic, value);
+                    mqttPublish(setTopic, property, value);
                 }
                 callback();
             });
@@ -964,7 +964,7 @@ function makeThing(log, config) {
             charac.on('set', function (value, callback, context) {
                 if (context !== c_mySetContext) {
                     state[property] = value;
-                    mqttPublish(setTopic, value);
+                    mqttPublish(setTopic, property, value);
                 }
                 callback();
             });
@@ -1008,7 +1008,7 @@ function makeThing(log, config) {
                     state[property] = value;
                     let mqttVal = values[value];
                     if (mqttVal !== undefined) {
-                        mqttPublish(setTopic, mqttVal);
+                        mqttPublish(setTopic, property, mqttVal);
                     }
                     raiseEvent( property );
                 }
@@ -1961,7 +1961,7 @@ function makeThing(log, config) {
         function timerFunc() {
             durationTimer = null;
             state.active = false;
-            mqttPublish( config.topics.setActive, getOnOffPubValue( false ) );
+            mqttPublish( config.topics.setActive, 'active', getOnOffPubValue( false ) );
             characActive.updateValue( Characteristic.Active.INACTIVE );
         }
 
@@ -2648,14 +2648,14 @@ function makeThing(log, config) {
             if( Array.isArray( config.startPub ) ) {
                 // new format - [ { topic: x, message: y }, ... ]
                 for( let entry of config.startPub ) {
-                    mqttPublish( entry.topic, entry.message );
+                    mqttPublish( entry.topic, 'startPub', entry.message );
                 }
             } else {
                 // old format - object of topic->message
                 for( let topic in config.startPub ) {
                     if( config.startPub.hasOwnProperty( topic ) ) {
                         let msg = config.startPub[ topic ];
-                        mqttPublish( topic, msg );
+                        mqttPublish( topic, 'startPub', msg );
                     }
                 }
             }

@@ -32,7 +32,7 @@ function init( params ) {
      * @returns {string} Processed message (optionally)
      */
     function encode( message, info, output ) {
-        log( `encode() called for topic ${info.topic}, property ${info.property}` );
+        log( `encode() called for topic ${info.topic}, property ${info.property} with message ${message}` );
         setTimeout( () => { 
             output( message );
         }, 1000 );
@@ -49,7 +49,7 @@ function init( params ) {
      * @returns {string} Processed message (optionally)
      */
     function decode( message, info, output ) { // eslint-disable-line no-unused-vars
-        log( `decode() called for topic ${info.topic}, property ${info.property}` );
+        log( `decode() called for topic ${info.topic}, property ${info.property} with message ${message}` );
         setTimeout( () => {
             output( message );
         }, 500 );
