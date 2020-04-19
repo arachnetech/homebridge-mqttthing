@@ -34,9 +34,8 @@ Configure the plugin in your homebridge `config.json` file. Most configuration s
 
 MQTT topics used fall into two categories:
 
-   * Control topics, of the form `setXXX`, are published by MQTT-Thing in order to 
+   * Control topics, of the form `setXXX`, are published by MQTT-Thing in order to control device state (e.g. to turn on a light).
    * Status/notification topics, of the form `getXXX`, are published by the device to notify MQTT-Thing that something has occurred (e.g. that a sensor has detected something or a control topic action has been performed).
-
 
 **All values shown below (often within <>) are comments/descriptions, and should not be copied into your configuration file. For an example of an actual configuration file, please see `test/config.json`.**
 
@@ -121,7 +120,7 @@ If an MQTT message is not a simple value or does not match the expected syntax, 
 
 `topic` - Topic string
 
-`apply` - Javascript function to apply (must be a complete function body that `return`s a value). The function is called with one argument: `message`, holding the original message. (optional)
+`apply` - Javascript function to apply (must be a complete function body that `return`s a value). The function is called with one arguments: `message`, holding the original message, and `state`. (optional)
 
 e.g. Decoding a JSON payload:
 ```javascript
@@ -144,6 +143,8 @@ e.g. Scaling brightness from its internal 0-100 range to an external 0-255 range
         "apply": "return Math.round( message * 2.55 );"
     }
 ```
+
+The `state` parameter holds an object which may be used to store local state used by the apply function. Additionally, `state.global` points at an object shared between all topics.
 
 This functionality is not currently available when editing MQTT topics using config-ui-x.
 
@@ -1337,6 +1338,7 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
 Version 1.1.9
 + Added persistencePath to historyOptions
 + Added support for codecs
++ Added state to apply functions
 
 Version 1.1.8
 + Garage door add getDoorMoving option as simpler alternative to getCurrentDoorState

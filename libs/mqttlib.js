@@ -121,6 +121,16 @@ var mqttlib = new function() {
         return mqttClient;
     };
 
+    function getApplyState( ctx, property ) {
+        if( ! ctx.hasOwnProperty( 'applyState' ) ) {
+            ctx.applyState = { props: {}, global: {} };
+        }
+        if( ! ctx.applyState.props.hasOwnProperty( property ) ) {
+            ctx.applyState.props[ property ] = { global: ctx.applyState.global };
+        }
+        return ctx.applyState.props[ property ];
+    }
+
     // Subscribe
     this.subscribe = function( ctx, topic, property, handler ) {
         let { mqttDispatch, log, mqttClient, codec } = ctx;
@@ -149,11 +159,11 @@ var mqttlib = new function() {
             topic = extendedTopic.topic;
             if (extendedTopic.hasOwnProperty('apply')) {
                 let previous = handler;
-                let applyFn = Function("message", extendedTopic['apply']); //eslint-disable-line
+                let applyFn = Function( "message", "state", extendedTopic['apply'] ); //eslint-disable-line
                 handler = function (intopic, message) {
                     let decoded;
                     try {
-                        decoded = applyFn( message );
+                        decoded = applyFn( message, getApplyState( ctx, property ) );
                     } catch( ex ) {
                         log( 'Decode function apply( message) { ' + extendedTopic.apply + ' } failed for topic ' + topic + ' with message ' + message + ' - ' + ex );
                     }
@@ -191,9 +201,9 @@ var mqttlib = new function() {
                 var extendedTopic = topic;
                 topic = extendedTopic.topic;
                 if (extendedTopic.hasOwnProperty('apply')) {
-                    var applyFn = Function("message", extendedTopic['apply']); //eslint-disable-line
+                    var applyFn = Function( "message", "state", extendedTopic['apply'] ); //eslint-disable-line
                     try {
-                        message = applyFn(message);
+                        message = applyFn( message, getApplyState( ctx, property ) );
                     } catch( ex ) {
                         log( 'Encode function apply( message ) { ' + extendedTopic.apply + ' } failed for topic ' + topic + ' with message ' + message + ' - ' + ex );
                         message = null; // stop publish

@@ -34,7 +34,7 @@
                 },
                 "setBrightness": {
                     "topic": "test/lightbulb/setBrightness",
-                    "apply": "return Math.round( message * 2.55 );"
+                    "apply": "state.val = state.val ? ( state.val + 1 ) : 1; return Math.round( message * 2.55 ) + ' - ' + state.val;"
                 },
                 "getHue": "test/lightbulb/getHue",
                 "setHue": "test/lightbulb/setHue",
