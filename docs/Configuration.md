@@ -224,7 +224,7 @@ Mqttthing can optionally set an accessory as 'offline' when it doesn't receive c
 
 ### Codecs
 
-Rather like apply functions, a codec can be used to apply transformations to incoming and outgoing data. Unlike apply functions, a codec is written
+Rather like [apply functions](#apply-functions), a codec can be used to apply transformations to incoming and outgoing data. Unlike apply functions, a codec is written
 in a separate JavaScript file which is referenced by the configuration.
 
 To use a codec, configure the path to its JavaScript file using the `codec` configuration setting. The codec will then be called to encode data before 

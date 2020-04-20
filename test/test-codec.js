@@ -58,6 +58,27 @@ function init( params ) {
             output( message );
         }, 500 );
     }
+
+    /**
+     * The init() function must return an object containing encode and/or decode functions as defined above.
+     * To define property-specific encode/decode functions, the following syntax may be used:
+     *  {
+     *      properties: {
+     *          targetProp1: {
+     *              encode: encodeFunction1,
+     *              decode: decodeFunction2
+     *          },
+     *          targetProp2: {
+     *              encode: encodeFunction2
+     *          },
+     *      },
+     *      encode: defaultEncodeFunction,
+     *      decode: defaultDecodeFunction
+     *  }
+     * 
+     * The default encode/decode functions are called for properties for which no property-specific
+     * entry is specified.
+     */
     
     // return encode and decode functions
     return { encode, decode };

@@ -131,6 +131,15 @@ var mqttlib = new function() {
         return ctx.applyState.props[ property ];
     }
 
+    function getCodecFunction( codec, property, functionName ) {
+        if( codec ) {
+            if( codec.properties && codec.properties[ property ] ) {
+                return codec.properties[ property ][ functionName ];
+            }
+            return codec[ functionName ];
+        }
+    }
+
     // Subscribe
     this.subscribe = function( ctx, topic, property, handler ) {
         let { mqttDispatch, log, mqttClient, codec } = ctx;
@@ -140,13 +149,14 @@ var mqttlib = new function() {
         }
 
         // send through codec's decode function
-        if( codec && codec.decode ) {
+        let codecDecode = getCodecFunction( codec, property, 'decode' );
+        if( codecDecode ) {
             let realHandler = handler;
             let output = function( message ) {
                 return realHandler( topic, message );
             };
             handler = function( intopic, message ) {
-                let decoded = codec.decode( message, { topic, property }, output );
+                let decoded = codecDecode( message, { topic, property }, output );
                 if( decoded !== undefined ) {
                     return output( decoded );
                 }
@@ -221,9 +231,10 @@ var mqttlib = new function() {
             mqttClient.publish(topic, message.toString(), config.mqttPubOptions );
         }
 
-        if( codec && codec.encode ) {
+        let codecEncode = getCodecFunction( codec, property, 'encode' );
+        if( codecEncode ) {
             // send through codec's encode function
-            let encoded = codec.encode( inMessage, { topic, property }, publishImpl );
+            let encoded = codecEncode( inMessage, { topic, property }, publishImpl );
             if( encoded !== undefined ) {
                 publishImpl( encoded );
             }
