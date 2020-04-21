@@ -218,7 +218,7 @@ var mqttlib = new function() {
                         log( 'Encode function apply( message ) { ' + extendedTopic.apply + ' } failed for topic ' + topic + ' with message ' + message + ' - ' + ex );
                         message = null; // stop publish
                     }
-                    if( message === null ) {
+                    if( message === null || message === undefined ) {
                         return;
                     }
                 }
