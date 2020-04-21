@@ -18,35 +18,27 @@
     ],
     "accessories": [
         {
-            "accessory": "mqttthing",
-            "type": "lightbulb",
+            "type": "lightbulb-Colour",
             "name": "Test lightbulb",
             "url": "http://192.168.10.35:1883",
             "mqttPubOptions": {
                 "retain": true
             },
+            "logMqtt": true,
+            "codec": "empty-codec.js",
             "topics": {
+                "getOnline": "test/lightbulb/getOnline",
                 "getOn": "test/lightbulb/getOn",
                 "setOn": "test/lightbulb/setOn",
-                "getBrightness": {
-                    "topic": "test/lightbulb/getBrightness",
-                    "apply": "return Math.round( message / 2.55 );"
-                },
-                "setBrightness": {
-                    "topic": "test/lightbulb/setBrightness",
-                    "apply": "state.val = state.val ? ( state.val + 1 ) : 1; return Math.round( message * 2.55 ) + ' - ' + state.val;"
-                },
                 "getHue": "test/lightbulb/getHue",
                 "setHue": "test/lightbulb/setHue",
                 "getSaturation": "test/lightbulb/getSaturation",
                 "setSaturation": "test/lightbulb/setSaturation",
+                "getBrightness": "test/lightbulb/getBrightness",
+                "setBrightness": "test/lightbulb/setBrightness",
                 "getColorTemperature": "test/lightbulb/getTemperature",
-                "setColorTemperature": "test/lightbulb/setTemperature",
-                "getOnline": "test/lightbulb/getOnline"
+                "setColorTemperature": "test/lightbulb/setTemperature"
             },
-            "logMqtt": true,
-            "integerValue": true,
-            "onlineValue": "Online",
             "startPub": [
                 {
                     "topic": "test/lightbulb/setOn",
@@ -58,17 +50,20 @@
                 },
                 {
                     "topic": "test/lightbulb/setBrightness",
-                    "message": "200"
+                    "message": "80"
                 },
                 {
                     "topic": "test/lightbulb/getBrightness",
-                    "message": "200"
+                    "message": "80"
                 },
                 {
                     "topic": "test/lightbulb",
                     "message": "Hello world"
                 }
-            ]
+            ],
+            "onlineValue": "Online",
+            "integerValue": true,
+            "accessory": "mqttthing"
         },
         {
             "accessory": "mqttthing",
@@ -262,25 +257,25 @@
             "retryLimit": 10
         },
         {
-            "accessory" : "mqttthing",
-            "confirmationPeriodms" : 1000,
+            "accessory": "mqttthing",
+            "confirmationPeriodms": 1000,
             "confirmationIndicateOffline": true,
-            "mqttPubOptions" : {
-              "retain" : true
+            "mqttPubOptions": {
+                "retain": true
             },
-            "name" : "WZ Licht Vorne",
-            "offValue" : "off",
-            "onlineValue" : "true",
-            "onValue" : "on",
-            "retryLimit" : 3,
-            "topics" : {
-              "getOn" : "shellies/shelly1-2C6BF0/relay/0",
-              "getOnline" : "shellies/shelly1-2C6BF0/online",
-              "setOn" : "shellies/shelly1-2C6BF0/relay/0/command"
+            "name": "WZ Licht Vorne",
+            "offValue": "off",
+            "onlineValue": "true",
+            "onValue": "on",
+            "retryLimit": 3,
+            "topics": {
+                "getOn": "shellies/shelly1-2C6BF0/relay/0",
+                "getOnline": "shellies/shelly1-2C6BF0/online",
+                "setOn": "shellies/shelly1-2C6BF0/relay/0/command"
             },
-            "type" : "switch",
+            "type": "switch",
             "url": "http://192.168.10.35:1883"
-        },        
+        },
         {
             "accessory": "mqttthing",
             "type": "motionSensor",
