@@ -32,7 +32,7 @@ function init( params ) {
      * @returns {string} Processed message (optionally)
      */
     function encode( message, info, output ) {
-        log( `encode() called for topic ${info.topic}, property ${info.property} with message ${message}` );
+        log( `encode() called for topic [${info.topic}], property [${info.property}] with message [${message}]` );
 
         // in this example we just delay publishing
         setTimeout( () => { 
@@ -51,12 +51,24 @@ function init( params ) {
      * @returns {string} Processed message (optionally)
      */
     function decode( message, info, output ) { // eslint-disable-line no-unused-vars
-        log( `decode() called for topic ${info.topic}, property ${info.property} with message ${message}` );
+        log( `decode() called for topic [${info.topic}], property [${info.property}] with message [${message}]` );
 
         // in this example we just delay passing the received mesage on to homebridge
         setTimeout( () => {
             output( message );
         }, 500 );
+    }
+
+    function encode_brightness( message ) {
+        // scale up to 0-255 range
+        log( "brightness out: " + message );
+        return Math.floor( message * 2.55 );
+    }
+
+    function decode_brightness( message ) {
+        // scale down to 0-100 range
+        log( "brightness in: " + message );
+        return Math.floor( message / 2.55 );
     }
 
     /**
@@ -81,7 +93,15 @@ function init( params ) {
      */
     
     // return encode and decode functions
-    return { encode, decode };
+    return { 
+        encode, decode, // default encode/decode functions
+        properties: {
+            brightness: { // encode/decode functions for brightness property
+                encode: encode_brightness,
+                decode: decode_brightness
+            }
+        }
+    };
 }
 
 // export initialisation function
