@@ -110,7 +110,7 @@ If an MQTT message is not a simple value or does not match the expected syntax, 
 
 `topic` - Topic string
 
-`apply` - Javascript function to apply (must be a complete function body that `return`s a value). The function is called with one arguments: `message`, holding the original message, and `state`. (optional)
+`apply` - Javascript function to apply (must be a complete function body that `return`s a value). The function is called with one arguments: `message`, holding the original message, and `state` (optional).
 
 e.g. Decoding a JSON payload:
 ```javascript
