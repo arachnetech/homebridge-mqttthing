@@ -245,14 +245,14 @@ var mqttlib = new function() {
     };
 
     // Confirmed publisher
-    this.makeConfirmedPublisher = function( ctx, setTopic, getTopic, makeConfirmed ) {
+    this.makeConfirmedPublisher = function( ctx, setTopic, getTopic, property, makeConfirmed ) {
 
         let { state, config, log } = ctx;
 
         // if confirmation isn't being used, just return a simple publishing function
         if( ! config.confirmationPeriodms || ! getTopic || ! makeConfirmed ) {
             // no confirmation - return generic publishing function
-            return function( property, message ) {
+            return function( message ) {
                 mqttlib.publish( ctx, setTopic, property, message );
             }
         }
@@ -263,7 +263,7 @@ var mqttlib = new function() {
         var retriesRemaining = 0;
 
         // subscribe to our get topic
-        mqttlib.subscribe( ctx, getTopic, function( topic, message ) {
+        mqttlib.subscribe( ctx, getTopic, property, function( topic, message ) {
             if( message == expected && timer ) {
                 clearTimeout( timer );
                 timer = null;
@@ -276,7 +276,7 @@ var mqttlib = new function() {
         } );
 
         // return enhanced publishing function
-        return function( property, message ) {
+        return function( message ) {
             // clear any existing confirmation timer
             if( timer ) {
                 clearTimeout( timer );

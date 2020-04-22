@@ -118,8 +118,8 @@ function makeThing(log, config) {
         }
     }
 
-    function makeConfirmedPublisher( setTopic, getTopic, makeConfirmed ) {
-        return mqttlib.makeConfirmedPublisher( ctx, setTopic, getTopic, makeConfirmed );
+    function makeConfirmedPublisher( setTopic, getTopic, property, makeConfirmed ) {
+        return mqttlib.makeConfirmedPublisher( ctx, setTopic, getTopic, property, makeConfirmed );
     }
 
     //! Determine appropriate on/off value for Boolean property (not forced to string) for MQTT publishing.
@@ -212,7 +212,7 @@ function makeThing(log, config) {
 
     function booleanCharacteristic(service, property, characteristic, setTopic, getTopic, initialValue, mapValueFunc, turnOffAfterms, resetStateAfterms, enableConfirmation) {
 
-        var publish = makeConfirmedPublisher( setTopic, getTopic, enableConfirmation );
+        var publish = makeConfirmedPublisher( setTopic, getTopic, property, enableConfirmation );
 
         // auto-turn-off and reset-state timers
         var autoOffTimer = null;
@@ -230,7 +230,7 @@ function makeThing(log, config) {
             charac.on('set', function (value, callback, context) {
                 if (context !== c_mySetContext) {
                     state[property] = value;
-                    publish( property, getOnOffPubValue( value ) );
+                    publish( getOnOffPubValue( value ) );
                 }
                 callback();
 
@@ -243,7 +243,7 @@ function makeThing(log, config) {
                         autoOffTimer = null;
 
                         state[property] = false;
-                        publish( property, getOnOffPubValue( false ) );
+                        publish( getOnOffPubValue( false ) );
                         service.getCharacteristic(characteristic).setValue(mapValueForHomebridge(false, mapValueFunc), undefined, c_mySetContext);
 
                     }, turnOffAfterms );

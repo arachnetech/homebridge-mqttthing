@@ -810,6 +810,32 @@
             ],
             "logMqtt": true,
             "integerValue": true
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "switch",
+            "name": "Hallway Lights",
+            "url": "http://192.168.10.35:1883",
+            "manufacturer": "Sonoff",
+            "model": "Touch",
+            "serialNumber": "sonoff1",
+            "topics": {
+                "setOn": "cmnd/sonoff1/power",
+                "getOn": "stat/sonoff1/POWER",
+                "getOnline": {
+                    "topic": "tele/sonoff1/LWT",
+                    "apply": "return message == 'Online' ? 'ON' : 'OFF';"
+                }
+            },
+            "onValue": "ON",
+            "offValue": "OFF",
+            "confirmationPeriodms": 1000,
+            "retryLimit": 3,
+            "logMqtt": true,
+            "startPub": {
+                "cmnd/sonoff1/power": ""
+            },
+            "turnOffAfterms": 6000
         }
     ]
 }
