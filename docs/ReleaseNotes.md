@@ -5,6 +5,9 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.10
++ Fixed crash in 1.1.9 with confirmed publisher on/off acknowledgement
+
 ### Version 1.1.9
 + Added persistencePath to historyOptions
 + Added support for codecs
