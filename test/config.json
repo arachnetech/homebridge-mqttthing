@@ -814,6 +814,40 @@
         {
             "accessory": "mqttthing",
             "type": "switch",
+            "name": "Ucam Gartenhaus Audio",
+            "manufacturer": "INSTAR",
+            "model": "IN-9008 FullHD",
+            "serialNumber": "1234567890",
+            "firmwareRevision": "0.1",
+            "url": "http://192.168.10.35:1883",
+            "username": "USERNAME",
+            "password": "PASSWORD",
+            "caption": "Audio",
+            "mqttOptions": {
+                "keepalive": 30
+            },
+            "mqttPubOptions": {
+                "retain": true
+            },
+            "logMqtt": true,
+            "topics": {
+                "getOn": {
+                    "topic": "instar/local/status/multimedia/audio/enable/high",
+                    "apply": "return JSON.parse(message).val;"
+                },
+                "setOn": {
+                    "topic": "instar/local/multimedia/audio/enable/high",
+                    "apply": "return JSON.stringify({val: (message)})"
+                }
+            },
+            "onValue": "1",
+            "offValue": "0",
+            "confirmationPeriodms": 1000,
+            "retryLimit": 3
+        },        
+        {
+            "accessory": "mqttthing",
+            "type": "switch",
             "name": "Hallway Lights",
             "url": "http://192.168.10.35:1883",
             "manufacturer": "Sonoff",
