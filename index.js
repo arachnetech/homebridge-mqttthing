@@ -2661,7 +2661,9 @@ function makeThing(log, config) {
             if( Array.isArray( config.startPub ) ) {
                 // new format - [ { topic: x, message: y }, ... ]
                 for( let entry of config.startPub ) {
-                    mqttPublish( entry.topic, 'startPub', entry.message );
+                    if( entry.topic ) {
+                        mqttPublish( entry.topic, 'startPub', entry.message || '' );
+                    }
                 }
             } else {
                 // old format - object of topic->message

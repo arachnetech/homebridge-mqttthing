@@ -66,16 +66,21 @@
             "accessory": "mqttthing"
         },
         {
-            "accessory": "mqttthing",
             "type": "lightbulb-HSV",
             "name": "Test HSV Light",
             "url": "http://192.168.10.35:1883",
-            "topics": {
-                "getHSV": "test/hsvlight/getHSV",
-                "setHSV": "test/hsvlight/setHSV"
-            },
             "logMqtt": true,
-            "codec": "test-codec.js"
+            "codec": "test-codec.js",
+            "topics": {
+                "setHSV": "test/hsvlight/setHSV",
+                "getHSV": "test/hsvlight/getHSV"
+            },
+            "startPub": [
+                {
+                    "topic": "test/hsvlight/setHSV"
+                }
+            ],
+            "accessory": "mqttthing"
         },
         {
             "accessory": "mqttthing",
@@ -844,7 +849,7 @@
             "offValue": "0",
             "confirmationPeriodms": 1000,
             "retryLimit": 3
-        },        
+        },
         {
             "accessory": "mqttthing",
             "type": "switch",
