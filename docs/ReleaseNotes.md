@@ -6,10 +6,10 @@
 # Homebridge MQTT-Thing: Release Notes
 
 ### Version 1.1.11
-+ Fixed publishing of empty messages configured through config-ui-x in startPub
++ Fixed publishing of empty messages configured through config-ui-x in startPub (#253)
 
 ### Version 1.1.10
-+ Fixed crash (introduced in version 1.1.9) with confirmed publisher on/off acknowledgement
++ Fixed crash (introduced in version 1.1.9) with confirmed publisher on/off acknowledgement (#252)
 
 ### Version 1.1.9
 + Added persistencePath to historyOptions
