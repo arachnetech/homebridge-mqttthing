@@ -227,12 +227,7 @@ Mqttthing can optionally set an accessory as 'offline' when it doesn't receive c
 Rather like [apply functions](#apply-functions), a codec can be used to apply transformations to incoming and outgoing data. Unlike apply functions, a codec is written
 in a separate JavaScript file which is referenced by the configuration.
 
-To use a codec, configure the path to its JavaScript file using the `codec` configuration setting. The codec will then be called to encode data before 
-publishing and to decode received data for all configured topics. The codec can decide which topics and properties to process, and can suppress messages 
-and generate additional messages as required.
-
-A codec is a Node.js module which makes encode() and decode() functions available, which are called for all properties or specific properties of the configured 
-accessory. For further details, see the example in `test/empty-codec.js` and `test/test-codec.js`.
+For further details, please see [Codecs.md](Codecs.md).
 
 ## Accessories
 

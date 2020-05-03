@@ -1,0 +1,123 @@
+[![npm](https://badgen.net/npm/v/homebridge-mqttthing/latest)](https://www.npmjs.com/package/homebridge-mqttthing)
+[![npm](https://badgen.net/npm/dt/homebridge-mqttthing)](https://www.npmjs.com/package/homebridge-mqttthing)
+[![Discord](https://img.shields.io/discord/432663330281226270?color=728ED5&logo=discord&label=discord)](https://discord.gg/MTpeMC)
+[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
+
+# Homebridge MQTT-Thing: Codecs
+
+## Introduction
+
+A codec can be used to apply transformations to incoming and outgoing data. Unlike apply functions, a codec is written
+in a separate JavaScript file which is referenced by the configuration.
+
+To use a codec, configure the path to its JavaScript file using the `codec` configuration setting. The codec will then be called to encode data before 
+publishing and to decode received data for all configured topics. The codec can decide which topics and properties to process, and can suppress messages 
+and generate additional messages as required.
+
+## Structure
+
+A codec is a Node.js module which makes encode() and decode() functions available, which are called for 
+all properties or specific properties of the configured accessory. Codecs must implement a single function, `init()`, exported through `module.exports`. For example, here is a minimal codec implementation which does nothing:
+
+```javascript
+function init() {
+
+    function encode( message ) {
+        return message; // no-op
+    }
+
+    function decode( message ) {
+        return message; // no-op
+    }
+
+    // return encode and decode functions
+    return {
+        encode,
+        decode
+    };
+}
+
+module.exports = {
+    init
+};
+```
+
+This could also be written more concisely as:
+
+```javascript
+module.exports = {
+    init: function() {
+        return {
+            encode( message ) {
+                return message;
+            },
+            decode( message ) {
+                return message;
+            }
+        }
+    }
+}
+```
+
+### Local State
+
+A codec that is used by multiple accessories will only be loaded once, so any accessory-specific state must be stored within the `init()` function. The choice to return `encode()` and `decode()` functions from `init()` (as opposed to exporting them directly) is intended to make this easier.
+
+## Function Reference
+
+### `init( params )`
+
+The `init()` function is passed a single object containing initialisation parameters for the accessory.
+
+   * `params.log` can be used to write to Homebridge's log.
+   * `params.config` is the accessory's configuration (as configured in `config.json`). This gives the codec access to the standard configuration settings, and lets it use its own if required.
+
+The `init()` function must return an object containing `encode()` and `decode()` functions (as described below). This can be just single `encode()` and `decode()` functions for all properties as above. More commonly a properties map containing property-specific functions is used, as follows:
+
+```javascript
+function init() {
+    return {
+        properties: {
+            targetProp1: {
+                encode: encodeFunction1,
+                decode: decodeFunction2
+            },
+            targetProp2: {
+                encode: encodeFunction2
+            },
+        },
+        encode: defaultEncodeFunction,
+        decode: defaultDecodeFunction
+    }
+}
+```
+
+The allows different encoding/decoding logic for each property. The default `encode()`/`decode()` functions are called for properties for which no property-specific function is defined.
+
+### `encode( message, info, output )`
+
+The `encode()` function is called to encode a message before publishing it to MQTT. It is passed three parameters:
+
+   * `message` is the message to be encoded
+   * `info` is an object holding:
+      * `info.topic` - the MQTT topic to be published
+      * `info.property` - the property associated with the publishing operation
+   * `output` is a function which may be called to deliver the encoded value asynchronously
+
+The `encode()` function may either return the encoded message, or it may deliver it asynchronously by passing it as a parameter to the provided `output` function. It if does neither, no value will be published.
+
+### `decode( message, info, output )`
+
+The `decode`() function is called to decode a message received from MQTT before passing it for processing by MQTT-Thing. It takes three parameters:
+
+   * `message` is the message to be decoded
+   * `info` is an object holding:
+      * `info.topic` - the MQTT topic received
+      * `info.property` the property associated with the received message
+   * `output` is a function which may be called to deliver the decoded value asynchronously
+
+The `decode()` function may either return the decoded message, or it may deliver it asynchronously by passing it as a parameter to the provided `output` function. If it does neither, no notification will be passed on to MQTT-Thing.
+
+## Empty Codec
+
+When writing a codec, you may find it helpful to start with the no-op implementation in [`test/empty-codec.js`](../test/empty-codec.js). 
