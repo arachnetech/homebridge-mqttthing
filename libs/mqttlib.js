@@ -133,10 +133,14 @@ var mqttlib = new function() {
 
     function getCodecFunction( codec, property, functionName ) {
         if( codec ) {
+            let fn;
             if( codec.properties && codec.properties[ property ] ) {
-                return codec.properties[ property ][ functionName ];
+                fn = codec.properties[ property ][ functionName ];
             }
-            return codec[ functionName ];
+            if( fn === undefined ) {
+                fn = codec[ functionName ];
+            }
+            return fn;
         }
     }
 
