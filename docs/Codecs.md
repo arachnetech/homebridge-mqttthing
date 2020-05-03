@@ -80,7 +80,7 @@ function init() {
         properties: {
             targetProp1: {
                 encode: encodeFunction1,
-                decode: decodeFunction2
+                decode: decodeFunction1
             },
             targetProp2: {
                 encode: encodeFunction2
@@ -121,3 +121,119 @@ The `decode()` function may either return the decoded message, or it may deliver
 ## Empty Codec
 
 When writing a codec, you may find it helpful to start with the no-op implementation in [`test/empty-codec.js`](../test/empty-codec.js). 
+
+## Properties
+
+This section lists the properties available for each accessory type. All accessories may also support `batteryLevel`, `chargingState` and `statusLowBattery`.
+
+### Air Pressure Sensor
+
+`airPressure`, `statusActive`, `statusFault`, `statusTampered`, `statusLowBattery`
+
+### Air Quality Sensor
+
+`airQuality`, `statusActive`, `statusFault`, `statusTampered`, `statusLowBattery`, `carbonDioxideLevel`, `pm10density`, `pm2_5density`, `ozonedensity`, `nitrogenDioxideDensity`, `sulphurDioxideDensity`, `VOCDensity`, `carbonMonoxideLevel`, `airQualityPPM`, `currentTemperature`, `currentRelativeHumidity`
+
+### Carbon Dioxide Sensor
+
+`carbonDioxideDetected`, `carbonDioxideLevel`, `carbonDioxidePeakLevel`, `statusActive`, `statusFault`, `statusTampered`, `statusLowBattery`
+
+### Contact Sensor
+
+`contactSensorState`, `statusActive`, `statusFault`, `statusTampered`, `statusLowBattery`
+
+### Doorbell
+
+`switch`, `brightness`, `volume`, `motionDetected`
+
+### Fan
+
+`on`, `rotationDirection`, `rotationSpeed`
+
+### Garage door opener
+
+`targetDoorState`, `currentDoorState`, `doorMoving`, `obstructionDetected`, `lockTargetState`, `lockCurrentState`
+
+### Heater Cooler
+
+`active`, `currentHeaterCoolerState`, `targetHeaterCoolerState`, `currentTemperature`, `lockPhysicalControls`, `swingMode`, `coolingThresholdTemperature`, `heatingThresholdTemperature`, `temperatureDisplayUnits`, `rotationSpeed`
+
+### Humidity Sensor
+
+`currentRelativeHumidity`, `statusActive`, `statusFault`, `statusTampered`, `statusLowBattery`
+
+### Leak Sensor
+
+`leakDetected`, `statusActive`, `statusFault`, `statusTampered`, `statusLowBattery`
+
+### Light bulb
+
+`on`, `brightness`, `hue`, `saturation`, `colorTemperature`, `white`, `HSV`, `RGB`, `RGBW`, `RGBWW`
+
+### Light Sensor
+
+`currentAmbientLightLevel`, `statusActive`, `statusFault`, `statusTampered`, `statusLowBattery`
+
+### Lock Mechanism
+
+`lockTargetState`, `lockCurrentState`
+
+### Microphone
+
+`mute`, `volume`
+
+### Motion Sensor
+
+`motionDetected`, `statusActive`, `statusFault`, `statusTampered`, `statusLowBattery`
+
+### Occupancy Sensor
+
+`occupancyDetected`, `statusActive`, `statusFault`, `statusTampered`, `statusLowBattery`
+
+### Outlet
+
+`on`, `outletInUse`, `currentConsumption`, `voltage`, `electricCurrent`, `totalConsumption`
+
+### Security System
+
+`targetState`, `currentState`, `statusFault`, `statusTampered`
+
+### Speaker
+
+`mute`, `volume`
+
+### StatelessProgrammableSwitch
+
+`switch`, `switch0`, `switch1`, `switch2`, ...
+
+### Switch
+
+`on`
+
+### Television
+
+`active`, `input`XX
+
+### Temperature Sensor
+
+`currentTemperature`, `statusActive`, `statusFault`, `statusTampered`, `statusLowBattery`
+
+### Thermostat
+
+`currentHeatingCoolingState`, `targetHeatingCoolingState`, `currentTemperature`, `targetTemperature`, `temperatureDisplayUnits`, `currentRelativeHumidity`, `targetRelativeHumidity`, `coolingThresholdTemperature`, `heatingThresholdTemperature`
+
+### Valve (Sprinkler, Shower, Faucet)
+
+`active`, `inUse`, `setDuration`, `remainingDuration`
+
+### Weather Station
+
+`currentTemperature`, `statusActive`, `statusFault`, `statusTampered`, `statusLowBattery`, `currentRelativeHumidity`, `airPressure`, `weatherCondition`, `rain1h`, `rain24h`, `uvIndex`, `visibility`, `windDirection`, `windSpeed`
+
+### Window
+
+`currentPosition`, `targetPosition`, `positionState`, `holdPosition`, `obstructionDetected`
+
+### Window Covering (Blinds)
+
+`currentPosition`, `targetPosition`, `positionState`, `holdPosition`, `obstructionDetected`, `targetHorizontalTiltAngle`, `currentHorizontalTiltAngle`, `targetVerticalTiltAngle`, `currentVerticalTiltAngle`

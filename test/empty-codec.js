@@ -64,7 +64,7 @@ function init( params ) {
      *      properties: {
      *          targetProp1: {
      *              encode: encodeFunction1,
-     *              decode: decodeFunction2
+     *              decode: decodeFunction1
      *          },
      *          targetProp2: {
      *              encode: encodeFunction2

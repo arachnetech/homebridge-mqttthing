@@ -35,7 +35,7 @@ MQTT topics used fall into two categories:
    * Control topics, of the form `setXXX`, are published by MQTT-Thing in order to control device state (e.g. to turn on a light).
    * Status/notification topics, of the form `getXXX`, are published by the device to notify MQTT-Thing that something has occurred (e.g. that a sensor has detected something or a control topic action has been performed).
 
-For further details, see [docs/Configuration.md](docs/Configuration.md).
+For further details, see [docs/Configuration.md](docs/Configuration.md) and [docs/Codecs.md](docs/Codecs.md).
 
 ## Supported Accessories
 

@@ -1677,22 +1677,22 @@ function makeThing(log, config) {
 
     // Characteristic.OzoneDensity
     function characteristic_OzoneDensity( service ) {
-        floatCharacteristic( service, 'Ozonedensity', Characteristic.OzoneDensity, null, config.topics.getOzoneDensity );
+        floatCharacteristic( service, 'ozoneDensity', Characteristic.OzoneDensity, null, config.topics.getOzoneDensity );
     }
 
     // Characteristic.NitrogenDioxideDensity
     function characteristic_NitrogenDioxideDensity( service ) {
-        floatCharacteristic( service, 'NitrogenDioxidedensity', Characteristic.NitrogenDioxideDensity, null, config.topics.getNitrogenDioxideDensity );
+        floatCharacteristic( service, 'nitrogenDioxideDensity', Characteristic.NitrogenDioxideDensity, null, config.topics.getNitrogenDioxideDensity );
     }
     
     // Characteristic.SulphurDioxideDensity
     function characteristic_SulphurDioxideDensity( service ) {
-        floatCharacteristic( service, 'SulphurDioxidedensity', Characteristic.SulphurDioxideDensity, null, config.topics.getSulphurDioxideDensity );
+        floatCharacteristic( service, 'sulphurDioxideDensity', Characteristic.SulphurDioxideDensity, null, config.topics.getSulphurDioxideDensity );
     }
 
     // Characteristic.VOCDensity
     function characteristic_VOCDensity( service ) {
-        floatCharacteristic( service, 'VOCdensity', Characteristic.VOCDensity, null, config.topics.getVOCDensity );
+        floatCharacteristic( service, 'VOCDensity', Characteristic.VOCDensity, null, config.topics.getVOCDensity );
     }
 
     // Characteristic.CarbonMonoxideDensity
@@ -1736,7 +1736,7 @@ function makeThing(log, config) {
 
     // Characteristic.CarbonDioxideLevel
     function characteristic_CarbonDioxidePeakLevel( service ) {
-        floatCharacteristic( service, 'carbonDioxidePeak', Characteristic.CarbonDioxidePeakLevel, null, config.topics.getCarbonDioxidePeakLevel, 0 );
+        floatCharacteristic( service, 'carbonDioxidePeakLevel', Characteristic.CarbonDioxidePeakLevel, null, config.topics.getCarbonDioxidePeakLevel, 0 );
     }
 
     // Characteristic.CurrentHeatingCoolingState
