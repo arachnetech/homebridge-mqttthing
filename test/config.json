@@ -875,6 +875,40 @@
                 "cmnd/sonoff1/power": ""
             },
             "turnOffAfterms": 6000
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "statelessProgrammableSwitch",
+            "name": "4 Button Remote",
+            "url": "http://192.168.10.35:1883",
+            "caption": "4 Button Remote",
+            "topics": {
+                "getSwitch": [
+                    { 
+                        "topic": "tele/RF/RESULT",
+                        "apply": "return JSON.parse( message ).RfReceived.Data;"
+                    }, { 
+                        "topic": "tele/RF/RESULT",
+                        "apply": "return JSON.parse( message ).RfReceived.Data;"
+                    }, { 
+                        "topic": "tele/RF/RESULT",
+                        "apply": "return JSON.parse( message ).RfReceived.Data;"
+                    }, { 
+                        "topic": "tele/RF/RESULT",
+                        "apply": "return JSON.parse( message ).RfReceived.Data;"
+                    }
+                ]
+            },
+            "switchValues": [
+                [ "A56021" ],
+                [ "A56022" ],
+                [ "A56028" ],
+                [ "A56024" ]
+            ],
+            "restrictSwitchValues": [
+                0
+            ],
+            "logMqtt": true
         }
     ]
 }
