@@ -5,6 +5,10 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.12
++ Extended codecs to support ad hoc property changes and MQTT publishing
++ Codec defaults changed to apply per-function
+
 ### Version 1.1.11
 + Fixed publishing of empty messages configured through config-ui-x in startPub (#253)
 

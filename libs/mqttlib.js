@@ -13,7 +13,8 @@ var mqttlib = new function() {
     //! Context populated with mqttClient and mqttDispatch.
     this.init = function( ctx ) {
         // MQTT message dispatch
-        let mqttDispatch = ctx.mqttDispatch = {}; // map of topic to function( topic, message ) to handle
+        let mqttDispatch = ctx.mqttDispatch = {}; // map of topic to [ function( topic, message ) ] to handle
+        let propDispatch = ctx.propDispatch = {}; // map of proerty to [ rawhandler( topic, message ) ]
 
         let { config, log } = ctx;
         let logmqtt = config.logMqtt;
@@ -76,9 +77,9 @@ var mqttlib = new function() {
             if (logmqtt) {
                 log("Received MQTT: " + topic + " = " + message);
             }
-            var handlers = mqttDispatch[topic];
+            let handlers = mqttDispatch[topic];
             if (handlers) {
-                for( var i = 0; i < handlers.length; i++ ) {
+                for( let i = 0; i < handlers.length; i++ ) {
                     handlers[ i ]( topic, message );
                 }
             } else {
@@ -97,8 +98,27 @@ var mqttlib = new function() {
                 log( 'Loading codec from ' + codecPath );
                 let codecMod = require( codecPath );
                 if( typeof codecMod.init === "function" ) {
+
+                    // direct publishing
+                    let directPub = function( topic, message ) {
+                        if( config.logMqtt ) {
+                            log( 'Publishing MQTT: ' + topic + ' = ' + message );
+                        }
+                        mqttClient.publish( topic, message.toString(), config.mqttPubOptions );
+                    };
+
+                    // notification by property
+                    let notifyByProp = function( property, message ) {
+                        let handlers = propDispatch[ property ];
+                        if( handlers ) {
+                            for( let i = 0; i < handlers.length; i++ ) {
+                                handlers[ i ]( '_prop-' + property, message );
+                            }
+                        }
+                    };
+                    
                     // initialise codec
-                    let codec = ctx.codec = codecMod.init( { log, config } );
+                    let codec = ctx.codec = codecMod.init( { log, config, publish: directPub, notify: notifyByProp } );
                     if( codec ) {
                         // encode/decode must be functions
                         if( typeof codec.encode !== "function" ) {
@@ -146,7 +166,8 @@ var mqttlib = new function() {
 
     // Subscribe
     this.subscribe = function( ctx, topic, property, handler ) {
-        let { mqttDispatch, log, mqttClient, codec } = ctx;
+        let rawHandler = handler;
+        let { mqttDispatch, log, mqttClient, codec, propDispatch } = ctx;
         if( ! mqttClient ) {
             log( 'ERROR: Call mqttlib.init() before mqttlib.subscribe()' );
             return;
@@ -187,6 +208,22 @@ var mqttlib = new function() {
                 };
             }
         }
+
+        // register property dispatch (codec only)
+        if( codec ) {
+            if( propDispatch.hasOwnProperty( property ) ) {
+                // new handler for existing property
+                propDispatch[ property ].push( rawHandler );
+            } else {
+                // new property
+                propDispatch[ property ] = [ rawHandler ];
+                if( ctx.config.logMqtt ) {
+                    log( 'Avalable codec notification property: ' + property );
+                }
+            }
+        }
+
+        // register MQTT dispatch and subscribe
         if( mqttDispatch.hasOwnProperty( topic ) ) {
             // new handler for existing topic
             mqttDispatch[ topic ].push( handler );

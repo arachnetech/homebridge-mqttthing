@@ -71,6 +71,8 @@ The `init()` function is passed a single object containing initialisation parame
 
    * `params.log` can be used to write to Homebridge's log.
    * `params.config` is the accessory's configuration (as configured in `config.json`). This gives the codec access to the standard configuration settings, and lets it use its own if required.
+   * `params.publish` may be used to publish to MQTT directly
+   * `params.notify` may be used to send MQTT-Thing a property notification
 
 The `init()` function must return an object containing `encode()` and `decode()` functions (as described below). This can be just single `encode()` and `decode()` functions for all properties as above. More commonly a properties map containing property-specific functions is used, as follows:
 
@@ -117,6 +119,24 @@ The `decode`() function is called to decode a message received from MQTT before 
    * `output` is a function which may be called to deliver the decoded value asynchronously
 
 The `decode()` function may either return the decoded message, or it may deliver it asynchronously by passing it as a parameter to the provided `output` function. If it does neither, no notification will be passed on to MQTT-Thing.
+
+### `publish( topic, message )`
+
+The `publish()` function provided in `init()`'s `params` may be used to publish a message directly to MQTT.
+
+   * `topic` is the MQTT topic to publish
+   * `message` is the message to publish to MQTT
+
+The message is published directly to MQTT, ignoring any apply function usually with the topic and not passing through the Codec's `encode()` function.
+
+### `notify( property, message )`
+
+The `notify()` function provided in `init()`'s `params` may be used to notify MQTT-Thing of the new value for a property. This will deliver the notification to all internal subscribers to the property. Note that generally a corresponding MQTT 'get' topic must have been configured in order for internal subscribers to exist.
+
+   * `property` is the MQTT-Thing property to update
+   * `message` is the value to be passed to MQTT-Thing
+
+The message is passed directly to MQTT-Thing. It does not pass through any apply function or through the Codec's `decode()` function.
 
 ## Empty Codec
 

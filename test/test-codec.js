@@ -15,11 +15,20 @@
  */
 function init( params ) {
     // extract parameters for convenience
-    let { log, config } = params;
+    let { log, config, publish, notify } = params;
 
     setTimeout( () => {
-        log( `Hello from test-codec.js. This is ${config.name}.` );
-    }, 10000 );
+        let msg = `Hello from test-codec.js. This is ${config.name}.`;
+        log( msg );
+
+        // publish a test message
+        publish( 'hello/mqtt', msg );
+
+        // update state
+        notify( 'on', config.onValue || 1 );
+        notify( 'brightness', 50 );
+        notify( 'HSV', '0,100,100' );
+    }, 3000 );
 
     /**
      * Encode message before sending.
