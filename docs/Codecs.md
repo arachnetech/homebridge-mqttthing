@@ -138,9 +138,11 @@ The `notify()` function provided in `init()`'s `params` may be used to notify MQ
 
 The message is passed directly to MQTT-Thing. It does not pass through any apply function or through the Codec's `decode()` function.
 
-## Empty Codec
+## Examples
 
 When writing a codec, you may find it helpful to start with the no-op implementation in [`test/empty-codec.js`](../test/empty-codec.js). 
+
+Test examples of codec capabilities can be found in [`test/test-codec.js`](../test/test-codec.js). 
 
 ## Properties
 
