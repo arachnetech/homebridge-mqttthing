@@ -11,6 +11,8 @@
  * @param {object} params Initialisation parameters object
  * @param {function} params.log Logging function
  * @param {object} params.config Configuration
+ * @param {function} params.publish Function to publish a message directly to MQTT
+ * @param {function} params.notify Function to send MQTT-Thing a property notification
  * @return {object} Encode and/or decode functions
  */
 function init( params ) {
