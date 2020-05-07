@@ -94,7 +94,11 @@
                 "setOn": "test/hsvlight2/on/set"
             },
             "logMqtt": true,
-            "integerValue": true
+            "integerValue": true,
+            "codec": "keep-alive-codec.js",
+            "keepAliveTopic": "keep/alive",
+            "keepAlivePeriod": 30,
+            "keepAliveMessage": "Keep-alive!"
         },
         {
             "accessory": "mqttthing",
