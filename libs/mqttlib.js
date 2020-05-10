@@ -9,6 +9,21 @@ const fs = require("fs");
 
 var mqttlib = new function() {
 
+    function makeCodecPath( codec, homebridgePath ) {
+        let codecPath = codec;
+        // if it doesn't start with a '/' (i.e. not fully-qualified)...
+        if( codecPath[ 0 ] != '/' ) {
+            if( codecPath.substr( codecPath.length - 3 ) !== '.js' ) {
+                // no js extension - assume it's an internal codec
+                codecPath = path.join( __dirname, '../codecs/', codecPath );
+            } else {
+                // relative external codec is relative to homebridge userdata
+                codecPath = path.join( homebridgePath, codecPath );
+            }
+        }
+        return codecPath;
+    }
+
     //! Initialise MQTT. Requires context ( { log, config } ).
     //! Context populated with mqttClient and mqttDispatch.
     this.init = function( ctx ) {
@@ -89,10 +104,7 @@ var mqttlib = new function() {
 
         // Load any codec
         if( config.codec ) {
-            let codecPath = config.codec;
-            if( codecPath[ 0 ] != '/' ) {
-                codecPath = path.join( ctx.homebridgePath, codecPath );
-            }
+            let codecPath = makeCodecPath( config.codec, ctx.homebridgePath );
             if( fs.existsSync( codecPath ) ) {
                 // load codec
                 log( 'Loading codec from ' + codecPath );
@@ -122,18 +134,20 @@ var mqttlib = new function() {
                     if( codec ) {
                         // encode/decode must be functions
                         if( typeof codec.encode !== "function" ) {
+                            log.warn( 'No codec encode() function' );
                             codec.encode = null;
                         }
                         if( typeof codec.decode !== "function" ) {
+                            log.warn( 'No codec decode() function' );
                             codec.decode = null;
                         }
                     }
                 } else {
                     // no initialisation function
-                    log( 'ERROR: No codec initialisation function returned from ' + codecPath );
+                    log.error( 'ERROR: No codec initialisation function returned from ' + codecPath );
                 }
             } else {
-                log( 'ERROR: codec file [' + codecPath + '] does not exist' );
+                log.error( 'ERROR: Codec file [' + codecPath + '] does not exist' );
             }
         }
 
