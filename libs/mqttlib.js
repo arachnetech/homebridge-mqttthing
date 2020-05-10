@@ -308,11 +308,12 @@ var mqttlib = new function() {
             if( message == expected && timer ) {
                 clearTimeout( timer );
                 timer = null;
-                if( indicatedOffline ) {
-                    state.online = true;
-                    indicatedOffline = false;
-                    log( 'Setting accessory state to online' );
-                }
+            }
+            if( indicatedOffline && ! timer ) {
+                // if we're not waiting (or no-longer waiting), a message clears the offline state
+                state.online = true;
+                indicatedOffline = false;
+                log( 'Setting accessory state to online' );
             }
         } );
 

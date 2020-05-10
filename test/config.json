@@ -263,7 +263,8 @@
             "integerValue": true,
             "history": true,
             "confirmationPeriodms": 2000,
-            "retryLimit": 10
+            "retryLimit": 10,
+            "logMqtt": true
         },
         {
             "accessory": "mqttthing",
