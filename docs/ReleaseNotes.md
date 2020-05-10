@@ -5,6 +5,9 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.13
++ When using missing confirmation to set offline state, any message received after timeout sets state back to online
+
 ### Version 1.1.12
 + Extended codecs to support ad hoc property changes and MQTT publishing
 + Codec defaults changed to apply per-function
