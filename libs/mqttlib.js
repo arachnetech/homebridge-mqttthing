@@ -15,7 +15,7 @@ var mqttlib = new function() {
         if( codecPath[ 0 ] != '/' ) {
             if( codecPath.substr( codecPath.length - 3 ) !== '.js' ) {
                 // no js extension - assume it's an internal codec
-                codecPath = path.join( __dirname, '../codecs/', codecPath );
+                codecPath = path.join( __dirname, '../codecs/', codecPath + '.js' );
             } else {
                 // relative external codec is relative to homebridge userdata
                 codecPath = path.join( homebridgePath, codecPath );

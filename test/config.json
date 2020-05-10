@@ -106,20 +106,20 @@
             "name": "Test RGB Light",
             "url": "http://192.168.10.35:1883",
             "topics": {
-                "getRGB": "test/rgblight/rgb",
-                "setRGB": "test/rgblight/rgb/set",
-                "getOn": {
-                    "topic": "test/rgblight/on",
-                    "apply": "return JSON.parse( message ).state.power;"
-                },
-                "setOn": {
-                    "topic": "test/rgblight/on/set",
-                    "apply": "return JSON.stringify( { state: { power: message }, version: 1 } );"
-                }
+                "getRGB": "test/rgblight/get",
+                "setRGB": "test/rgblight/set",
+                "getOn": "test/rgblight/get",
+                "setOn": "test/rgblight/set"
             },
             "logMqtt": true,
             "integerValue": false,
-            "hex": true
+            "codec": "json",
+            "jsonCodec": {
+                "properties": {
+                    "on": "state.power",
+                    "RGB": "state.rgb"
+                }
+            }
         },
         {
             "accessory": "mqttthing",
