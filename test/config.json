@@ -1,10 +1,10 @@
 {
     "bridge": {
         "name": "Homebridge",
-        "username": "DD:7C:A6:26:A7:69",
+        "username": "DA:7C:A3:24:AA:69",
         "_username": "DA:7C:A6:27:A7:69",
         "port": 55555,
-        "pin": "323-32-223",
+        "pin": "884-65-462",
         "_pin": "813-65-465"
     },
     "description": "This is an example configuration file. You can use this as a template for creating your own configuration file.",

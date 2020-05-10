@@ -1,2 +1,2 @@
 #export DEBUG=*
-homebridge -U test -P .
+homebridge -D -U test -P .
