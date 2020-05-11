@@ -73,6 +73,29 @@ function init( params ) {
         }
     };
 
+    // pending messages/timers by MQTT topic
+    let pending = {};
+
+    // get message object which will be published (automatically)
+    let publishMessage = function( topic, publish ) {
+        let entry = pending[ topic ];
+        if( entry ) {
+            // existing entry - clear timer
+            clearTimeout( entry.tmr );
+        } else {
+            // new entry
+            entry = pending[ topic ] = { msg: emptyMessage() };
+        }
+
+        // publish later
+        entry.tmr = setTimeout( () => {
+            pending[ topic ] = null;
+            publish( JSON.stringify( entry.msg ) );
+        }, 50 );
+
+        return entry.msg;
+    }
+
     /**
      * Encode message before sending.
      * The output function may be called to deliver an encoded value for the property later.
@@ -86,18 +109,15 @@ function init( params ) {
     function encode( message, info, output ) { // eslint-disable-line no-unused-vars
         let diag = ! jsonConfig || jsonConfig.diag;
         let jpath = readJPath( info.property );
-        let encoded;
         if( jpath ) {
-            let msg = emptyMessage();
+            let msg = publishMessage( info.topic, output );
             setJson( msg, jpath, message );
-            encoded = JSON.stringify( msg );
         } else {
             diag = true;
         }
         if( diag ) {
             log( `json-codec: encode() called for topic [${info.topic}], property [${info.property}] with message [${message}]` );
         }
-        return encoded;
     }
 
     /**
@@ -116,7 +136,6 @@ function init( params ) {
         let decoded;
         if( jpath ) {
             let msg = JSON.parse( message );
-            log( msg );
             decoded = getJson( msg, jpath );
         } else {
             diag = true;

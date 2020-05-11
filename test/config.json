@@ -143,16 +143,24 @@
             "name": "Test RGBW Light 2",
             "url": "http://192.168.10.35:1883",
             "topics": {
-                "getRGB": "test/rgbwlight2/rgb",
-                "setRGB": "test/rgbwlight2/rgb/set",
-                "getWhite": "test/rgbwlight2/white",
-                "setWhite": "test/rgbwlight2/white/set",
-                "getOn": "test/rgbwlight2/on",
-                "setOn": "test/rgbwlight2/on/set"
+                "getRGB": "test/rgbwlight2",
+                "setRGB": "test/rgbwlight2/set",
+                "getWhite": "test/rgbwlight2",
+                "setWhite": "test/rgbwlight2/set",
+                "getOn": "test/rgbwlight2",
+                "setOn": "test/rgbwlight2/set"
             },
             "logMqtt": true,
             "integerValue": true,
-            "hexPrefix": "#"
+            "hexPrefix": "#",
+            "codec": "json",
+            "jsonCodec": {
+                "properties": {
+                    "RGB": "state.rgb",
+                    "white": "state.white",
+                    "on": "state.on"
+                }
+            }
         },
         {
             "accessory": "mqttthing",
