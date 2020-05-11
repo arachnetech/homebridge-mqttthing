@@ -117,6 +117,10 @@
                 "properties": {
                     "on": "state.power",
                     "RGB": "state.rgb"
+                },
+                "fixed": {
+                    "version": 1,
+                    "sender": "MQTT-Thing"
                 }
             }
         },

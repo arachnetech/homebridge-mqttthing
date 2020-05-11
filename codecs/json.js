@@ -63,7 +63,15 @@ function init( params ) {
         if( jsonConfig && jsonConfig.properties ) {
             return jsonConfig.properties[ prop ];
         }
-    }
+    };
+
+    let emptyMessage = function() {
+        if( jsonConfig && jsonConfig.fixed ) {
+            return JSON.parse( JSON.stringify( jsonConfig.fixed ) );
+        } else {
+            return {};
+        }
+    };
 
     /**
      * Encode message before sending.
@@ -80,7 +88,7 @@ function init( params ) {
         let jpath = readJPath( info.property );
         let encoded;
         if( jpath ) {
-            let msg = {};
+            let msg = emptyMessage();
             setJson( msg, jpath, message );
             encoded = JSON.stringify( msg );
         } else {
