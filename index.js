@@ -78,6 +78,18 @@ function makeThing(log, config) {
         mqttlib.publish( ctx, topic, property, message );
     }
 
+    // Delayed one-shot function call
+    let throttledCallTimers = {};
+    let throttledCall = function( func, identifier, timeout ) {
+        if( throttledCallTimers[ identifier ] ) {
+            clearTimeout( throttledCallTimers[ identifier ] );
+        }
+        throttledCallTimers[ identifier ] = setTimeout( function() {
+            throttledCallTimers[ identifier ] = null;
+            func();
+        }, timeout );
+    }
+
     var c_mySetContext = '---my-set-context--';
 
     // constructor for fakegato-history options
@@ -366,7 +378,7 @@ function makeThing(log, config) {
 
         let lastpubmsg = '';
 
-        function publish() {
+        function publishNow() {
             var bri = state.bri;
             if( ! config.topics.setOn && ! state.on ) {
                 bri = 0;
@@ -376,6 +388,10 @@ function makeThing(log, config) {
                 mqttPublish( config.topics.setHSV, 'HSV', msg );
                 lastpubmsg = msg;
             }
+        }
+
+        function publish() {
+            throttledCall( publishNow, 'hsv_publish', 20 );
         }
 
         if( config.topics.setOn ) {
@@ -636,7 +652,7 @@ function makeThing(log, config) {
 
         let lastpubmsg = '';
 
-        function publish() {
+        function publishNow() {
             var bri = state.bri;
             if( ! config.topics.setOn && ! state.on ) {
                 bri = 0;
@@ -718,6 +734,11 @@ function makeThing(log, config) {
             if( whiteSep ) {
                 mqttPublish( config.topics.setWhite, 'white', rgb.w );
             }
+        }
+
+        // hold off before publishing to ensure that all updated properties are collected first
+        function publish() {
+            throttledCall( publishNow, 'rgb_publish', 20 );
         }
 
         if( config.topics.setOn ) {

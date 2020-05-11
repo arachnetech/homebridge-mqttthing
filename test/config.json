@@ -70,7 +70,6 @@
             "name": "Test HSV Light",
             "url": "http://192.168.10.35:1883",
             "logMqtt": true,
-            "codec": "test-codec.js",
             "topics": {
                 "setHSV": "test/hsvlight/setHSV",
                 "getHSV": "test/hsvlight/getHSV"

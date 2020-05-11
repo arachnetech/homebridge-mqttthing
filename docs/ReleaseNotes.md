@@ -9,6 +9,7 @@
 + When using missing confirmation to set offline state, any message received after timeout sets state back to online
 + Added internal codec concept: specifying a codec with no .js suffix will load it from the mqttthing 'codecs' directory
 + Added experimental JSON codec (json)
++ RGB and HSV lights: wait for multiple property changes before publishing
 
 ### Version 1.1.12
 + Extended codecs to support ad hoc property changes and MQTT publishing
