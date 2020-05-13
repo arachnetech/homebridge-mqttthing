@@ -785,11 +785,11 @@ The **switchValues** and **restrictSwitchValues** options also support an array 
     },
     "switchValues":
         [
-            "<array of 3 switch values corresponding to single-press, double-press and long-press respectively for switch 1 (optional)>"
-            "<array of 3 switch values corresponding to single-press, double-press and long-press respectively for switch 2 (optional)>"
+            "<array of 3 switch values corresponding to single-press, double-press and long-press respectively for switch 1 (optional)>",
+            "<array of 3 switch values corresponding to single-press, double-press and long-press respectively for switch 2 (optional)>",
             "<array of 3 switch values corresponding to single-press, double-press and long-press respectively for switch 3 (optional)>"
-        ]
-    "switchValues": "<array of 3 switch values corresponding to single-press, double-press and long-press respectively (optional)>"
+        ],
+    "switchValues": "<array of 3 switch values corresponding to single-press, double-press and long-press respectively (optional)>",
     "restrictSwitchValues": [ 0, 2 ] // optional and applied to all buttons
 }
 ```
