@@ -383,7 +383,7 @@ Current relative humidity must be in the range 0 to 100 percent with no decimal 
 
 ## Leak Sensor
 
-Leak sensor state is exposed as a Boolean. True (or 1 with integer values) maps to `LEAK_DETECTED` 
+Leak sensor state is exposed as a Boolean. True (or 1 with integer values) maps to `LEAK_DETECTED`
 and False (or 0) maps to `LEAK_NOT_DETECTED`. To use different MQTT values, configure `onValue` and `offValue`.
 
 ```javascript
@@ -402,7 +402,7 @@ and False (or 0) maps to `LEAK_NOT_DETECTED`. To use different MQTT values, conf
 
 ## Light bulb
 
-Light bulb can either use separate topics (for on, brightness, hue and saturation), or it can be configured to use a combined value holding comma-separated hue,sat,val or red,green,blue. 
+Light bulb can either use separate topics (for on, brightness, hue and saturation), or it can be configured to use a combined value holding comma-separated hue,sat,val or red,green,blue.
 
 Hue is 0-360. Saturation is 0-100. Brightness is 0-100. Red, green and blue are 0-255. Colour temperature ranges from 140 (cold white) to 500 (warm white), centred at about 151.
 
@@ -688,7 +688,7 @@ Configure `restrictTargetState` to an array of integers to restrict the target s
 
 ## Smoke Sensor
 
-Smoke sensor state is exposed as a Boolean. True (or 1 with integer values) maps to `SMOKE_DETECTED` 
+Smoke sensor state is exposed as a Boolean. True (or 1 with integer values) maps to `SMOKE_DETECTED`
 and False (or 0) maps to `SMOKE_NOT_DETECTED`. To use different MQTT values, configure `onValue` and `offValue`.
 
 ```javascript
@@ -781,7 +781,7 @@ The **switchValues** and **restrictSwitchValues** options also support an array 
                 "<topic used to provide switch 1 state>",
                 "<topic used to provide switch 2 state>",
                 "<topic used to provide switch 3 state>"
-            ]           
+            ]
     },
     "switchValues":
         [
@@ -958,7 +958,7 @@ If the device itself provides duration timing via MQTT or if you want to query o
 
 The default run time defaults to between 5 minutes and 1 hour (in 5 minute increments). This can be changed with `minDuration` and `maxDuration`. Note however that the Home App in iOS 12 doesn't like to show durations below 5 minutes. (This appears to have been improved in the iOS 13 Beta.)
 
-Configuring `turnOffAfterms` causes the valve to turn off automatically the specified (fixed!) number of milliseconds after it is turned on by homekit. It can be used instead of `durationTimer` or `setDuration`/`getDuration`. 
+Configuring `turnOffAfterms` causes the valve to turn off automatically the specified (fixed!) number of milliseconds after it is turned on by homekit. It can be used instead of `durationTimer` or `setDuration`/`getDuration`.
 
 ```javascript
 {
@@ -1043,7 +1043,7 @@ Weather condition and wind direction are custom string values.
 ```
 
 
-## Window 
+## Window
 
 Window position state can be **DECREASING**, **INCREASING** or **STOPPED**. By default, these use values of `DECREASING`, `INCREASING`, and `STOPPED` respectively; these defaults can be changed using the **positionStateValues** setting.
 
@@ -1056,7 +1056,7 @@ Window position state can be **DECREASING**, **INCREASING** or **STOPPED**. By d
     {
         "getCurrentPosition":           "<topic used to report current position (integer 0-100)>",
         "setTargetPosition":            "<topic used to control target position (integer 0-100)>",
-        "getTargetPosition":            "<topic used to report target position (optional)>", 
+        "getTargetPosition":            "<topic used to report target position (optional)>",
         "getPositionState":             "<topic used to report position state>",
         "setHoldPosition":              "<topic used to control hold position (Boolean)>",
         "getObstructionDetected":       "<topic used to report whether an obstruction is detected (Boolean)>"
