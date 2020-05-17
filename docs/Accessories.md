@@ -216,7 +216,7 @@ Set `confirmationPeriodms` to enable publishing confirmation for `setOn`/`getOn`
     {
         "getOn":                "<topic to notify homebridge of 'fan on' status>",
         "setOn":                "<topic published by homebridge to set 'fan on' status>",
-        "getRotationDirection": "<topic to notify homebridge of rotation direction (optional)> ",
+        "getRotationDirection": "<topic to notify homebridge of rotation direction (optional)>",
         "setRotationDirection": "<topic published by homebridge to set rotation direction (optional)>",
         "getRotationSpeed":     "<topic to notify homebridge of rotation speed (optional)",
         "setRotationSpeed":     "<topic published by homebridge to set rotation speed (optional)"
@@ -251,13 +251,13 @@ Lock target state can be **UNSECURED** or **SECURED**. By default, these use val
     "caption": "<label (optional)>",
     "topics":
     {
-        "setTargetDoorState":       "test/garage/target",
-        "getTargetDoorState":       "test/garage/target",
-        "getCurrentDoorState":      "test/garage/current",
-        "setLockTargetState":       "test/garagelock/target",
-        "getLockTargetState":       "test/garagelock/target",
-        "getLockCurrentState":      "test/garagelock/current",
-        "getObstructionDetected":   "test/garage/obstruction"
+        "setTargetDoorState":       "<topic used to set 'target door state'>",
+        "getTargetDoorState":       "<topic used to report 'target door state'>",
+        "getCurrentDoorState":      "<topic used to report 'current door state'>",
+        "setLockTargetState":       "<topic used to set 'lock target state' (optional)>",
+        "getLockTargetState":       "<topic used to report 'lock target state' (optional)>",
+        "getLockCurrentState":      "<topic used to report 'lock current state' (optional)>",
+        "getObstructionDetected":   "<topic used to report 'obstruction detected' (optional)>"
     },
     "doorCurrentValues": [ "Open", "Closed", "Opening", "Closing", "Stopped" ],
     "doorTargetValues": ["open", "close"],
@@ -337,12 +337,12 @@ Configure cooling threshold temperature unless target heater/cooler states exclu
         "getHeatingThresholdTemperature":   "<topic used to report 'heating threshold temperature'>",
         "setTemperatureDisplayUnits":       "<topic used to control 'temperature display units'>",
         "getTemperatureDisplayUnits":       "<topic used to report 'temperature display units'>",
-        "setRotationMode":                  "<topic used to control 'rotation mode' (optional)",
-        "getRotationMode":                  "<topic used to report 'rotation mode' (optional)",
-        "setSwingMode":                     "<topic used to control 'swing mode' (optional)",
-        "getSwingMode":                     "<topic used to report 'swing mode' (optional)",
-        "setRotationSpeed":                 "<topic used to control 'rotation speed' (optional)",
-        "getRotationSpeed":                 "<topic used to report 'rotation speed' (optional)"
+        "setRotationMode":                  "<topic used to control 'rotation mode' (optional)>",
+        "getRotationMode":                  "<topic used to report 'rotation mode' (optional)>",
+        "setSwingMode":                     "<topic used to control 'swing mode' (optional)>",
+        "getSwingMode":                     "<topic used to report 'swing mode' (optional)>",
+        "setRotationSpeed":                 "<topic used to control 'rotation speed' (optional)>",
+        "getRotationSpeed":                 "<topic used to report 'rotation speed' (optional)>"
     },
     "targetHeaterCoolerValues":             "<array of values to be used to represent AUTO, HEAT, COOL respectively (optional)>",
     "lockPhysicalControlsValues":           "<array of values to be used to represent DISABLED and ENABLED respectively (optional)>",
@@ -383,7 +383,7 @@ Current relative humidity must be in the range 0 to 100 percent with no decimal 
 
 ## Leak Sensor
 
-Leak sensor state is exposed as a Boolean. True (or 1 with integer values) maps to `LEAK_DETECTED` 
+Leak sensor state is exposed as a Boolean. True (or 1 with integer values) maps to `LEAK_DETECTED`
 and False (or 0) maps to `LEAK_NOT_DETECTED`. To use different MQTT values, configure `onValue` and `offValue`.
 
 ```javascript
@@ -402,7 +402,7 @@ and False (or 0) maps to `LEAK_NOT_DETECTED`. To use different MQTT values, conf
 
 ## Light bulb
 
-Light bulb can either use separate topics (for on, brightness, hue and saturation), or it can be configured to use a combined value holding comma-separated hue,sat,val or red,green,blue. 
+Light bulb can either use separate topics (for on, brightness, hue and saturation), or it can be configured to use a combined value holding comma-separated hue,sat,val or red,green,blue.
 
 Hue is 0-360. Saturation is 0-100. Brightness is 0-100. Red, green and blue are 0-255. Colour temperature ranges from 140 (cold white) to 500 (warm white), centred at about 151.
 
@@ -504,9 +504,9 @@ Lock target state can be **UNSECURED** or **SECURED**. By default, these use val
     "name": "<name of sensor>",
     "topics":
     {
-        "setLockTargetState":       "test/lock/target",
-        "getLockTargetState":       "test/lock/current",
-        "getLockCurrentState":      "test/lock/current"
+        "setLockTargetState":       "<topic used to set 'lock target state'>",
+        "getLockTargetState":       "<topic used to provide 'lock target state'>",
+        "getLockCurrentState":      "<topic used to provide 'lock current state'>"
     },
     "lockValues": [ "Unsecured", "Secured", "Jammed",  "Unknown" ]
 }
@@ -661,9 +661,9 @@ Configure `restrictTargetState` to an array of integers to restrict the target s
     "password": "<password for MQTT (optional)>",
     "caption": "<label (optional)>",
     "topics": {
-        "setTargetState": "test/security/target",
-        "getTargetState": "test/security/current",
-        "getCurrentState": "test/security/current"
+        "setTargetState":  "<topic used to set 'target state'>",
+        "getTargetState":  "<topic used to get 'target state'>",
+        "getCurrentState": "<topic used to get 'current state'>"
     },
     "targetStateValues": [ "StayArm", "AwayArm", "NightArm", "Disarmed" ],
     "currentStateValues": [ "StayArm", "AwayArm", "NightArm", "Disarmed", "Triggered" ],
@@ -688,7 +688,7 @@ Configure `restrictTargetState` to an array of integers to restrict the target s
 
 ## Smoke Sensor
 
-Smoke sensor state is exposed as a Boolean. True (or 1 with integer values) maps to `SMOKE_DETECTED` 
+Smoke sensor state is exposed as a Boolean. True (or 1 with integer values) maps to `SMOKE_DETECTED`
 and False (or 0) maps to `SMOKE_NOT_DETECTED`. To use different MQTT values, configure `onValue` and `offValue`.
 
 ```javascript
@@ -781,7 +781,7 @@ The **switchValues** and **restrictSwitchValues** options also support an array 
                 "<topic used to provide switch 1 state>",
                 "<topic used to provide switch 2 state>",
                 "<topic used to provide switch 3 state>"
-            ]           
+            ]
     },
     "switchValues":
         [
@@ -958,7 +958,7 @@ If the device itself provides duration timing via MQTT or if you want to query o
 
 The default run time defaults to between 5 minutes and 1 hour (in 5 minute increments). This can be changed with `minDuration` and `maxDuration`. Note however that the Home App in iOS 12 doesn't like to show durations below 5 minutes. (This appears to have been improved in the iOS 13 Beta.)
 
-Configuring `turnOffAfterms` causes the valve to turn off automatically the specified (fixed!) number of milliseconds after it is turned on by homekit. It can be used instead of `durationTimer` or `setDuration`/`getDuration`. 
+Configuring `turnOffAfterms` causes the valve to turn off automatically the specified (fixed!) number of milliseconds after it is turned on by homekit. It can be used instead of `durationTimer` or `setDuration`/`getDuration`.
 
 ```javascript
 {
@@ -1043,7 +1043,7 @@ Weather condition and wind direction are custom string values.
 ```
 
 
-## Window 
+## Window
 
 Window position state can be **DECREASING**, **INCREASING** or **STOPPED**. By default, these use values of `DECREASING`, `INCREASING`, and `STOPPED` respectively; these defaults can be changed using the **positionStateValues** setting.
 
@@ -1056,7 +1056,7 @@ Window position state can be **DECREASING**, **INCREASING** or **STOPPED**. By d
     {
         "getCurrentPosition":           "<topic used to report current position (integer 0-100)>",
         "setTargetPosition":            "<topic used to control target position (integer 0-100)>",
-        "getTargetPosition":            "<topic used to report target position (optional)>", 
+        "getTargetPosition":            "<topic used to report target position (optional)>",
         "getPositionState":             "<topic used to report position state>",
         "setHoldPosition":              "<topic used to control hold position (Boolean)>",
         "getObstructionDetected":       "<topic used to report whether an obstruction is detected (Boolean)>"
@@ -1077,16 +1077,16 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
     "name": "<name of device>",
     "topics":
     {
-        "getCurrentPosition":           "<topic used to report current position (integer 0-100)>",
-        "setTargetPosition":            "<topic used to control target position (integer 0-100)>",
-        "getTargetPosition":            "<topic used to report target position (optional)>", 
-        "getPositionState":             "<topic used to report position state>",
-        "setHoldPosition":              "<topic used to control hold position (Boolean)>",
-        "setTargetHorizontalTiltAngle": "<topic used to control target horizontal tilt angle (-90 to 90)>",
-        "getTargetHorizontalTiltAngle": "<topic used to report target horizontal tilt angle (optional)>",
+        "getCurrentPosition":            "<topic used to report current position (integer 0-100)>",
+        "setTargetPosition":             "<topic used to control target position (integer 0-100)>",
+        "getTargetPosition":             "<topic used to report target position (optional)>",
+        "getPositionState":              "<topic used to report position state>",
+        "setHoldPosition":               "<topic used to control hold position (Boolean)>",
+        "setTargetHorizontalTiltAngle":  "<topic used to control target horizontal tilt angle (-90 to 90)>",
+        "getTargetHorizontalTiltAngle":  "<topic used to report target horizontal tilt angle (optional)>",
         "getCurrentHorizontalTiltAngle": "<topic used to report current horizontal tilt angle>",
-        "setTargetVerticalTiltAngle":   "<topic used to control target vertical tilt angle (-90 to 90)>",
-        "getTargetVerticalTiltAngle":   "<topic used to report target vertical tilt angle (optional)>",
+        "setTargetVerticalTiltAngle":    "<topic used to control target vertical tilt angle (-90 to 90)>",
+        "getTargetVerticalTiltAngle":    "<topic used to report target vertical tilt angle (optional)>",
         "getCurrentVerticalTiltAngle":   "<topic used to report current vertical tilt angle>",
         "getObstructionDetected":        "<topic used to report whether an obstruction is detected (Boolean)>"
     },

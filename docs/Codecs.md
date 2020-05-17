@@ -10,13 +10,13 @@
 A codec can be used to apply transformations to incoming and outgoing data. Unlike apply functions, a codec is written
 in a separate JavaScript file which is referenced by the configuration.
 
-To use a codec, configure the path to its JavaScript file using the `codec` configuration setting. The codec will then be called to encode data before 
-publishing and to decode received data for all configured topics. The codec can decide which topics and properties to process, and can suppress messages 
+To use a codec, configure the path to its JavaScript file using the `codec` configuration setting. The codec will then be called to encode data before
+publishing and to decode received data for all configured topics. The codec can decide which topics and properties to process, and can suppress messages
 and generate additional messages as required.
 
 ## Structure
 
-A codec is a Node.js module which makes encode() and decode() functions available, which are called for 
+A codec is a Node.js module which makes encode() and decode() functions available, which are called for
 all properties or specific properties of the configured accessory. Codecs must implement a single function, `init()`, exported through `module.exports`. For example, here is a minimal codec implementation which does nothing:
 
 ```javascript
@@ -140,9 +140,9 @@ The message is passed directly to MQTT-Thing. It does not pass through any apply
 
 ## Examples
 
-When writing a codec, you may find it helpful to start with the no-op implementation in [`test/empty-codec.js`](../test/empty-codec.js). 
+When writing a codec, you may find it helpful to start with the no-op implementation in [`test/empty-codec.js`](../test/empty-codec.js).
 
-Test examples of codec capabilities can be found in [`test/test-codec.js`](../test/test-codec.js). 
+Test examples of codec capabilities can be found in [`test/test-codec.js`](../test/test-codec.js).
 
 ## Properties
 

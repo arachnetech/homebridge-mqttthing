@@ -7,7 +7,7 @@
 
 ## Introduction
 
-Configure the plugin in your homebridge `config.json` file. Most configuration settings can now also be entered using 
+Configure the plugin in your homebridge `config.json` file. Most configuration settings can now also be entered using
 [Homebridge Config UI X](https://www.npmjs.com/package/homebridge-config-ui-x).
 
 MQTT topics used fall into two categories:
@@ -83,7 +83,7 @@ The following settings apply to all device types:
 `password` - Password for MQTT server (optional)
 
 `mqttOptions` - Object containing all MQTT options passed to https://www.npmjs.com/package/mqtt#client, for MQTT configuration settings not supported above (optional). Any standard settings *not* specified in an **mqttOptions** option will be set by homebridge-mqttthing. Enable MQTT logging with **logMqtt** to check the options provided.
- 
+
 `mqttPubOptions` - Option containing any MQTT publishing options required. See https://www.npmjs.com/package/mqtt#publish for details.
 
 `logMqtt` - Set to true to enable MQTT logging for this accessory (optional, defaults to false)
