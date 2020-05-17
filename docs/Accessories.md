@@ -661,9 +661,9 @@ Configure `restrictTargetState` to an array of integers to restrict the target s
     "password": "<password for MQTT (optional)>",
     "caption": "<label (optional)>",
     "topics": {
-        "setTargetState": "test/security/target",
-        "getTargetState": "test/security/current",
-        "getCurrentState": "test/security/current"
+        "setTargetState":  "<topic used to set 'target state'>",
+        "getTargetState":  "<topic used to get 'target state'>",
+        "getCurrentState": "<topic used to get 'current state'>"
     },
     "targetStateValues": [ "StayArm", "AwayArm", "NightArm", "Disarmed" ],
     "currentStateValues": [ "StayArm", "AwayArm", "NightArm", "Disarmed", "Triggered" ],
