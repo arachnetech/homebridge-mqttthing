@@ -504,9 +504,9 @@ Lock target state can be **UNSECURED** or **SECURED**. By default, these use val
     "name": "<name of sensor>",
     "topics":
     {
-        "setLockTargetState":       "test/lock/target",
-        "getLockTargetState":       "test/lock/current",
-        "getLockCurrentState":      "test/lock/current"
+        "setLockTargetState":       "<topic used to set 'lock target state'>",
+        "getLockTargetState":       "<topic used to provide 'lock target state'>",
+        "getLockCurrentState":      "<topic used to provide 'lock current state'>"
     },
     "lockValues": [ "Unsecured", "Secured", "Jammed",  "Unknown" ]
 }
