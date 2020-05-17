@@ -337,12 +337,12 @@ Configure cooling threshold temperature unless target heater/cooler states exclu
         "getHeatingThresholdTemperature":   "<topic used to report 'heating threshold temperature'>",
         "setTemperatureDisplayUnits":       "<topic used to control 'temperature display units'>",
         "getTemperatureDisplayUnits":       "<topic used to report 'temperature display units'>",
-        "setRotationMode":                  "<topic used to control 'rotation mode' (optional)",
-        "getRotationMode":                  "<topic used to report 'rotation mode' (optional)",
-        "setSwingMode":                     "<topic used to control 'swing mode' (optional)",
-        "getSwingMode":                     "<topic used to report 'swing mode' (optional)",
-        "setRotationSpeed":                 "<topic used to control 'rotation speed' (optional)",
-        "getRotationSpeed":                 "<topic used to report 'rotation speed' (optional)"
+        "setRotationMode":                  "<topic used to control 'rotation mode' (optional)>",
+        "getRotationMode":                  "<topic used to report 'rotation mode' (optional)>",
+        "setSwingMode":                     "<topic used to control 'swing mode' (optional)>",
+        "getSwingMode":                     "<topic used to report 'swing mode' (optional)>",
+        "setRotationSpeed":                 "<topic used to control 'rotation speed' (optional)>",
+        "getRotationSpeed":                 "<topic used to report 'rotation speed' (optional)>"
     },
     "targetHeaterCoolerValues":             "<array of values to be used to represent AUTO, HEAT, COOL respectively (optional)>",
     "lockPhysicalControlsValues":           "<array of values to be used to represent DISABLED and ENABLED respectively (optional)>",
