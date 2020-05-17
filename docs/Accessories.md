@@ -251,13 +251,13 @@ Lock target state can be **UNSECURED** or **SECURED**. By default, these use val
     "caption": "<label (optional)>",
     "topics":
     {
-        "setTargetDoorState":       "test/garage/target",
-        "getTargetDoorState":       "test/garage/target",
-        "getCurrentDoorState":      "test/garage/current",
-        "setLockTargetState":       "test/garagelock/target",
-        "getLockTargetState":       "test/garagelock/target",
-        "getLockCurrentState":      "test/garagelock/current",
-        "getObstructionDetected":   "test/garage/obstruction"
+        "setTargetDoorState":       "<topic used to set 'target door state'>",
+        "getTargetDoorState":       "<topic used to report 'target door state'>",
+        "getCurrentDoorState":      "<topic used to report 'current door state'>",
+        "setLockTargetState":       "<topic used to set 'lock target state' (optional)>",
+        "getLockTargetState":       "<topic used to report 'lock target state' (optional)>",
+        "getLockCurrentState":      "<topic used to report 'lock current state' (optional)>",
+        "getObstructionDetected":   "<topic used to report 'obstruction detected' (optional)>"
     },
     "doorCurrentValues": [ "Open", "Closed", "Opening", "Closing", "Stopped" ],
     "doorTargetValues": ["open", "close"],
