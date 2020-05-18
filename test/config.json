@@ -96,7 +96,7 @@
             "integerValue": true,
             "codec": "keep-alive-codec.js",
             "keepAliveTopic": "keep/alive",
-            "keepAlivePeriod": 30,
+            "keepAlivePeriod": 120,
             "keepAliveMessage": "Keep-alive!"
         },
         {

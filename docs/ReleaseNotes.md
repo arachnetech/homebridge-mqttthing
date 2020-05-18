@@ -5,6 +5,10 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.14
++ Added air purifier (implemented by @tobekas)
++ JSON codec: added per-topic fixed values and retain option
+
 ### Version 1.1.13
 + When using missing confirmation to set offline state, any message received after timeout sets state back to online
 + Added internal codec concept: specifying a codec with no .js suffix will load it from the mqttthing 'codecs' directory
@@ -37,10 +41,10 @@
 + Added config-ui-x support for historyOptions
 
 ### Version 1.1.6
-+ Added history support for switch (thanks, @tobekas)
-+ Fixed #223 and #207 - history not working if getTotalConsumption used (thanks, @tobekas)
-+ Fixed history last activation in motion and contact sensor (thanks, @tobekas)
-+ Allowed config.url string without protocol, now defaulting to mqtt:// (thanks, @tobekas)
++ Added history support for switch (implemented by @tobekas)
++ Fixed #223 and #207 - history not working if getTotalConsumption used (implemented by @tobekas)
++ Fixed history last activation in motion and contact sensor (implemented by @tobekas)
++ Allowed config.url string without protocol, now defaulting to mqtt:// (implemented by @tobekas)
 
 ### Version 1.1.5
 + Don't throw an exception at start-up if the configuration is invalid (as this stops Homebridge unnecessarily)
@@ -88,7 +92,7 @@
 
 ### Version 1.0.42
 + Added publishing confirmation (`setOn` message must be echoed to `getOn` topic to confirm that it has been processed by the accessory), with automatic republishing
-+ Added Television (thanks, tobekas)
++ Added Television (implemented by tobekas)
 + Fix to characteristics with multiple states (thanks, tobekas)
 
 ### Version 1.0.41
@@ -98,7 +102,7 @@
 + Thermostat: Allow target heating/cooling states to be restricted
 
 ### Version 1.0.39
-+ Valve: Added duration timer (thanks, tobekas)
++ Valve: Added duration timer (implemented by tobekas)
 
 ### Version 1.0.38
 + Thermostat: Allow minimum and maximum target temperature to be configured
@@ -111,11 +115,11 @@
 + Added experimental support for RGBWWCW lights (red, green, blue, warm_white and cold_white channels)
 
 ### Version 1.0.35
-+ Added Valve (for Sprinkler, Shower and Faucet) - thanks, tobekas
++ Added Valve (for Sprinkler, Shower and Faucet) - implemented by tobekas
 
 ### Version 1.0.34
-+ Added Air Pressure Sensor (thanks, tobekas)
-+ Added Weather Station with custom Eve characteristics (thanks, tobekas)
++ Added Air Pressure Sensor (implemented by tobekas)
++ Added Weather Station with custom Eve characteristics (implemented by tobekas)
 + Fakegato-History fix
 
 ### Version 1.0.33
@@ -125,15 +129,15 @@
 + Added resetStateAfterms option for contact sensor, leak sensor and smoke sensor
 
 ### Version 1.0.31
-+ Added Eve history support for outlet power consumption (thanks, tobekas)
++ Added Eve history support for outlet power consumption (implemented by tobekas)
 + Wrap exception handling around 'apply' functions (used for encoding/decoding MQTT messages), so that errors don't crash Homebridge and messages that can't be decoded are skipped
 
 ### Version 1.0.30
 + Added Elgato history support for AirQuality (thanks, sieren)
-+ Extended Eve history support (thanks, tobekas)
++ Extended Eve history support (implemented by tobekas)
 
 ### Version 1.0.29
-+ Added history support for Eve App (only) using fakegato-history. (Thanks, tobekas!)
++ Added history support for Eve App (only) using fakegato-history (implemented by tobekas)
 
 ### Version 1.0.28
 + Improve behaviour of RGB, RGBW and HSV lightbulbs when not using a separate on/off topic

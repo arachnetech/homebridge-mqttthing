@@ -7,8 +7,17 @@
  *     "properties": {
  *         "on": "state.power",
  *         "RGB": "state.rgb"
- *     }
+ *     },
+ *     "fixed": { fixed properties object (global/default) },
+ *     "fixedByTopic": {
+ *         "topic1": { fixed properties object for topic1 },
+ *         "topic2": { fixed properties object for topic2 }
+ *     },
+ *     "retain": true|false
  * }
+ * 
+ * Set retain: true in order to retain the object published for each topic, so that unchanged properties are published. 
+ * (Default is retain: false, recreating object from fixed properties on every publish.)
  */
 
 'use strict';
@@ -65,12 +74,15 @@ function init( params ) {
         }
     };
 
-    let emptyMessage = function() {
-        if( jsonConfig && jsonConfig.fixed ) {
-            return JSON.parse( JSON.stringify( jsonConfig.fixed ) );
-        } else {
-            return {};
+    let emptyMessage = function( topic ) {
+        if( jsonConfig ) {
+            if( jsonConfig.fixedByTopic && jsonConfig.fixedByTopic[ topic ] ) {
+                return JSON.parse( JSON.stringify( jsonConfig.fixedByTopic[ topic ] ) );
+            } else if( jsonConfig.fixed ) {
+                return JSON.parse( JSON.stringify( jsonConfig.fixed ) );
+            }
         }
+        return {};
     };
 
     // pending messages/timers by MQTT topic
@@ -80,16 +92,24 @@ function init( params ) {
     let publishMessage = function( topic, publish ) {
         let entry = pending[ topic ];
         if( entry ) {
-            // existing entry - clear timer
-            clearTimeout( entry.tmr );
+            // existing entry - clear any timer
+            if( entry.tmr ) {
+                clearTimeout( entry.tmr );
+            }
         } else {
             // new entry
-            entry = pending[ topic ] = { msg: emptyMessage() };
+            entry = pending[ topic ] = { msg: emptyMessage( topic ) };
         }
 
         // publish later
         entry.tmr = setTimeout( () => {
-            pending[ topic ] = null;
+            if( jsonConfig && jsonConfig.retain ) {
+                // retain: just clear timer - keep the message
+                entry.tmr = null;
+            } else {
+                // no retain: remove entry
+                pending[ topic ] = null;
+            }
             publish( JSON.stringify( entry.msg ) );
         }, 50 );
 
