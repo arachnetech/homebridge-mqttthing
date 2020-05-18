@@ -56,7 +56,9 @@
     "shower",
     "faucet",
     "thermostat",
-    "heater cooler"
+    "heater cooler",
+    "irrigation system",
+    "air purifier"
   ],
   "author": "David Miller",
   "license": "Apache-2.0",

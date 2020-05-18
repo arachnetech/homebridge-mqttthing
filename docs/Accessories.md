@@ -8,6 +8,7 @@
 The following Homekit accessory types are supported by MQTT-Thing:
 
    * [Air Pressure Sensor](#air-pressure-sensor)
+   * [Air Purifier](#air-purifier)
    * [Air Quality Sensor](#air-quality-sensor)
    * [Carbon Dioxide Sensor](#carbon-dioxide-sensor)
    * [Contact Sensor](#contact-sensor)
@@ -67,6 +68,56 @@ Air Pressure must be in the range 700 to 1100 hPa.
         "getStatusLowBattery":   "<topic used to provide 'low battery' status (optional)>"
     },
     "history": "<true to enable History service for Eve App (optional)>"
+}
+```
+
+
+## Air Purifier
+
+Active state is set with a boolean value (see [Boolean Value Settings](../docs/Configuration.md#boolean-value-settings)).
+
+Target air purifier state can be **MANUAL** or **AUTO**. To use different values, specify an array of strings in **targetAirPurifierStateValues**. (*Note: Apple's Home App will apparently set the target air purifier state to **AUTO** when the device is activated.*)
+
+Current air purifier state can be **INACTIVE**, **IDLE** or **PURIFYING**. To use different values, specify an array of strings in **currentAirPurifierStateValues**. **INACTIVE** should be used in response if "Active" is set to false. **IDLE** or **PURIFYING** should be used in response if "Active" is set to true.
+
+Lock physical controls state may be **DISABLED** or **ENABLED**. To use different values, specify an array of strings in **lockPhysicalControlsValues**.
+
+Swing mode state may be **DISABLED** or **ENABLED**. To use different values, specify an array of strings in **swingModeValues**.
+
+Filter life level must be in the range 0 to 100 percent with no decimal places.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "airPurifier",
+    "name": "<name of device>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "logMqtt": true | false,
+    "topics": {
+        "setActive":                    "<topic used to control 'active' state>",
+        "getActive":                    "<topic used to report 'active' state>",
+        "getCurrentAirPurifierState":   "<topic used to report 'current air purifier state'>",
+        "setTargetAirPurifierState":    "<topic used to control 'target air purifier state'>",
+        "getTargetAirPurifierState":    "<topic used to report 'target air purifier state'>",
+        "setRotationSpeed":             "<topic used to control 'rotation speed' (optional)>",
+        "getRotationSpeed":             "<topic used to report 'rotation speed' (optional)>"
+        "setSwingMode":                 "<topic used to control 'swing mode' (optional)>",
+        "getSwingMode":                 "<topic used to report 'swing mode' (optional)>",
+        "setLockPhysicalControls":      "<topic used to control 'lock physical controls' (optional)>",
+        "getLockPhysicalControls":      "<topic used to report 'lock physical controls' (optional)>",
+        "getFilterChangeIndication":    "<topic used to report 'filter change indication' (optional)'>",
+        "getFilterLifeLevel":           "<topic used to report 'filter life level' (optional)>",
+        "setResetFilterIndication":     "<topic used to control 'reset filter indication (optional)'>"
+    },
+    "integerValue":                     "true to use 1|0 instead of true|false default onValue and offValue",
+    "onValue":                          "<value representing on (optional)>",
+    "offValue":                         "<value representing off (optional)>",
+    "targetAirPurifierValues":          "<array of values to be used to represent MANUAL, AUTO respectively (optional)>",
+    "currentAirPurifierValues":         "<array of values to be used to represent INACTIVE, IDLE, PURIFYING respectively (optional)>",
+    "swingModeValues":                  "<array of values to be used to represent DISABLED and ENABLED respectively (optional)>",
+    "lockPhysicalControlsValues":       "<array of values to be used to represent DISABLED and ENABLED respectively (optional)>"
 }
 ```
 
@@ -297,7 +348,9 @@ Lock target state can be **UNSECURED** or **SECURED**. By default, these use val
 
 ## Heater Cooler
 
-Current heater/cooler state can be **INACTIVE**, **IDLE**, **HEATING** or **COOLING**. To use different values, specify an array of strings in **currentHeaterCoolerValues**.
+Active state is set with a boolean value (see [Boolean Value Settings](../docs/Configuration.md#boolean-value-settings)).
+
+Current heater/cooler state can be **INACTIVE**, **IDLE**, **HEATING** or **COOLING**. To use different values, specify an array of strings in **currentHeaterCoolerValues**. **INACTIVE** should be used in response if "Active" is set to false. **IDLE**, **HEATING** or **COOLING** should be used in response if "Active" is set to true.
 
 Target heater/cooler state can be **AUTO**, **HEAT** or **COOL**. To use different values, specify an array of strings in **targetHeaterCoolerValues**.
 
@@ -345,6 +398,7 @@ Configure cooling threshold temperature unless target heater/cooler states exclu
         "setRotationSpeed":                 "<topic used to control 'rotation speed' (optional)>",
         "getRotationSpeed":                 "<topic used to report 'rotation speed' (optional)>"
     },
+    "currentHeaterCoolerValues":            "<array of values to be used to represent INACTIVE, IDLE, HEATING, COOLING respectively (optional)>",
     "targetHeaterCoolerValues":             "<array of values to be used to represent AUTO, HEAT, COOL respectively (optional)>",
     "lockPhysicalControlsValues":           "<array of values to be used to represent DISABLED and ENABLED respectively (optional)>",
     "swingModeValues":                      "<array of values to be used to represent DISABLED and ENABLED respectively (optional)>",

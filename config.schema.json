@@ -17,6 +17,12 @@
                         ]
                     },
                     {
+                        "title": "Air Purifierr",
+                        "enum": [
+                            "airPurifier"
+                        ]
+                    },
+                    {
                         "title": "Air Quality Sensor",
                         "enum": [
                             "airQualitySensor"
@@ -661,6 +667,13 @@
                             "functionBody": "return ['garageDoorOpener'].includes(model.type);"
                         }
                     },
+                    "getCurrentAirPurifierState": {
+                        "type": "string",
+                        "description": "Topic used to notify mqttthing of 'current air purifier state'",
+                        "condition": {
+                            "functionBody": "return ['airPurifier'].includes(model.type);"
+                        }
+                    },
                     "getCurrentHeaterCoolerState": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'current heater cooler state'",
@@ -1017,6 +1030,20 @@
                             "functionBody": "return ['garageDoorOpener'].includes(model.type);"
                         }
                     },
+                    "getTargetAirPurifierState": {
+                        "type": "string",
+                        "description": "Topic used to notify mqttthing of 'target air purifier state'",
+                        "condition": {
+                            "functionBody": "return ['airPurifier'].includes(model.type);"
+                        }
+                    },
+                    "setTargetAirPurifierState": {
+                        "type": "string",
+                        "description": "Topic published by mqttthing to control 'target air purifier state'",
+                        "condition": {
+                            "functionBody": "return ['airPurifier'].includes(model.type);"
+                        }
+                    },
                     "getTargetHeaterCoolerState": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'target heater cooler state'",
@@ -1157,6 +1184,27 @@
                         "condition": {
                             "functionBody": "return ['television'].includes(model.type);"
                         }
+                    },
+                    "getFilterChangeIndication": {
+                        "type": "string",
+                        "description": "Topic used to notify mqttthing of 'filter change indication'",
+                        "condition": {
+                            "functionBody": "return ['airPurifier'].includes(model.type);"
+                        }
+                    },
+                    "getFilterLifeLevel": {
+                        "type": "string",
+                        "description": "Topic used to notify mqttthing of 'filter life level'",
+                        "condition": {
+                            "functionBody": "return ['airPurifier'].includes(model.type);"
+                        }
+                    },
+                    "setResetFilterIndication": {
+                        "type": "string",
+                        "description": "Topic published by mqttthing to control 'reset filter indication'",
+                        "condition": {
+                            "functionBody": "return ['airPurifier'].includes(model.type);"
+                        }
                     }
                 }
             },
@@ -1236,28 +1284,28 @@
                 "title": "Use integer values (1 and 0) instead of 'true' and 'false'",
                 "description": "Use integer values 1 and 0 to represent on and off for Boolean values, instead of the default 'true' and 'false'. Alternatively specific values may be specified using 'onValue' and 'offValue'.",
                 "condition": {
-                    "functionBody": "return ['contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
+                    "functionBody": "return ['airPurifier','contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
                 }
             },
             "onValue": {
                 "type": "string",
                 "description": "Value to use to represent an 'on' or 'triggered' state (optional). Takes precedence over 'integerValue'.",
                 "condition": {
-                    "functionBody": "return ['contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
+                    "functionBody": "return ['airPurifier','contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
                 }
             },
             "offValue": {
                 "type": "string",
                 "description": "Value to use to represent an 'off' or 'not triggered' state (optional). Takes precedence over 'integerValue'.",
                 "condition": {
-                    "functionBody": "return ['contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
+                    "functionBody": "return ['airPurifier','contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
                 }
             },
             "otherValueOff": {
                 "type": "boolean",
                 "description": "When 'onValue' and 'offValue' are configured, also treat any unrecognized received values as 'off'",
                 "condition": {
-                    "functionBody": "return ['contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
+                    "functionBody": "return ['airPurifier','contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
                 }
             },
             "history": {
@@ -1374,7 +1422,25 @@
                     "type": "string"
                 }
             },
+            "currentHeaterCoolerValues": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
             "targetHeaterCoolerValues": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "currentAirPurifierValues": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "targetAirPurifierValues": {
                 "type": "array",
                 "items": {
                     "type": "string"
@@ -1596,6 +1662,7 @@
                 "topics.getTargetDoorState",
                 "topics.getCurrentDoorState",
                 "topics.getDoorMoving",
+                "topics.getCurrentAirPurifierState",
                 "topics.getCurrentHeaterCoolerState",
                 "topics.getCurrentHeatingCoolingState",
                 "topics.getCurrentHorizontalTiltAngle",
@@ -1632,6 +1699,8 @@
                 "topics.getSulphurDioxideDensity",
                 "topics.setSwingMode",
                 "topics.getSwingMode",
+                "topics.setTargetAirPurifierState",
+                "topics.getTargetAirPurifierState",
                 "topics.setTargetHeaterCoolerState",
                 "topics.getTargetHeaterCoolerState",
                 "topics.setTargetHeatingCoolingState",
@@ -1684,7 +1753,10 @@
                 "topics.getStatusLowBattery",
                 "topics.getChargingState",
                 "topics.getStatusTampered",
-                "topics.getOnline"
+                "topics.getOnline",
+                "topics.getFilterChangeIndication",
+                "topics.getFilterLifeLevel",
+                "topics.setResetFilterIndication"
             ]
         },
         {
