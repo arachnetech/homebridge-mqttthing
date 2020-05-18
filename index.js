@@ -2784,7 +2784,7 @@ function makeThing(log, config) {
                 service.setCharacteristic(Characteristic.DisplayOrder, displayOrderTlv);
             }
         } else if( config.type == 'irrigationSystem' ) {
-            let service = new Service.IrrigationSystem( name );
+            service = new Service.IrrigationSystem( name );
             service.isPrimaryService = true;
             if ( !config.topics ) {
                 config.topics = {};
@@ -2806,7 +2806,7 @@ function makeThing(log, config) {
                     let zoneId = index + 1;
                     let zoneName = zone.name || ''; // default name doesn't seem to work
                     let valveSvc = new Service.Valve( zoneName, zoneId );
-                    characteristic_ValveType( valveSvc, Characteristic.ValveType.IRRIGATION) ;
+                    characteristic_ValveType( valveSvc, Characteristic.ValveType.IRRIGATION);
                     characteristic_ServiceLabelIndex( valveSvc, zoneId );
                     characteristic_Active( valveSvc, zoneId, zone );
                     characteristic_InUse( valveSvc, zoneId, zone );
