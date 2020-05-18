@@ -94,7 +94,7 @@ MQTT Topics are configured within a `topics` object. Most topics are optional (i
 
 `getName` - Topic that may be published to send HomeKit the name of the accessory (optional). HomeKit doesn't show name changes dynamically, so it's generally simpler just to configure the name with `name`.
 
-`getOnline` - Topic that may be published to tell homebridge-mqttthing whether or not the accessory is online (optional). This is a Boolean value (see below) intended to be published as false by the MQTT Last Will and Testament (LWT) feature in order to notify homebridge-mqttthing that the accessory is offline. Accessories using this feature must also publish an online true status when available.
+`getOnline` - Topic that may be published to tell homebridge-mqttthing whether or not the accessory is online (optional). This is a Boolean value (see below) intended to be published as false by the MQTT Last Will and Testament (LWT) feature in order to notify homebridge-mqttthing that the accessory is offline. Accessories using this feature must also publish an online true status when available. The "not responding" state is not updated immediately. This feature is a little hack... but there is no other possibility to achieve anything similar. It will be visible after closing and reopening the App or sometimes by switching the room view. The trick is to respond to a get request from the App with an exception. But this is only possible when there is a get request.
 
 `getBatteryLevel` - Topic that may be published by an accessory to indicate its current battery level, from 0 to 100 (optional).
 
