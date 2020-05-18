@@ -963,6 +963,23 @@
             ],
             "durationTimer": true,
             "integerValue": true
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "airPurifier",
+            "name": "Air Purifier",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getActive": "test/airpurifier/getActive",
+                "setActive": "test/airpurifier/setActive",
+                "getCurrentAirPurifierState": "test/airpurifier/getCurrentState",
+                "getTargetAirPurifierState": "test/airpurifier/getTargetState",
+                "setTargetAirPurifierState": "test/airpurifier/setTargetState",
+                "getRotationSpeed": "test/airpurifier/getRotationSpeed",
+                "getSwingMode": "test/airpurifier/getSwingMode",
+                "setLockPhysicalControls": "test/airpurifier/setLockPhysicalControls"
+            },
+            "integerValue": true
         }
     ]
 }

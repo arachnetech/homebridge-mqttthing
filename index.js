@@ -1804,6 +1804,24 @@ function makeThing(log, config) {
         }
     }
 
+    // Characteristic.CurrentAirPurifierState
+    function characteristic_CurrentAirPurifierState( service ) {
+        let values = config.currentAirPurifierStateValues;
+        if( ! values ) {
+            values = [ 'INACTIVE', 'IDLE', 'PURIFYING' ];
+        }
+        multiCharacteristic( service, 'currentAirPurifierState', Characteristic.CurrentAirPurifierState, null, config.topics.getCurrentAirPurifierState, values, Characteristic.CurrentAirPurifierState.INACTIVE );
+    }
+
+    // Characteristic.TargetAirPurifierState
+    function characteristic_TargetAirPurifierState( service ) {
+        let values = config.targetAirPurifierStateValues;
+        if( ! values ) {
+            values = [ 'MANUAL', 'AUTO' ];
+        }
+        multiCharacteristic( service, 'targetAirPurifierState', Characteristic.TargetAirPurifierState, config.topics.setTargetAirPurifierState, config.topics.getTargetAirPurifierState, values, Characteristic.TargetAirPurifierState.AUTO );
+    }
+
     // Characteristic.LockPhysicalControls
     function characteristic_LockPhysicalControls( service ) {
         let values = config.lockPhysicalControlsValues;
@@ -2205,6 +2223,23 @@ function makeThing(log, config) {
                 'SELECT', 'BACK', 'EXIT', 'PLAY_PAUSE', '12', '13', '14', 'INFO' ];
         }
         multiCharacteristic( service, 'remoteKey', Characteristic.RemoteKey, config.topics.setRemoteKey, undefined, values, null, true );
+    }
+
+    // Characteristic.FilterChangeIndication
+    function characteristic_FilterChangeIndication( service ) {
+        booleanCharacteristic( service, 'filterChangeIndication', Characteristic.FilterChangeIndication, null, config.topics.getFilterChangeIndication, false, function (val) {
+            return val ? Characteristic.FilterChangeIndication.CHANGE_FILTER : Characteristic.FilterChangeIndication.FILTER_OK;
+        });
+    }
+
+    // Characteristic.FilterLifeLevel
+    function characteristic_FilterLifeLevel( service ) {
+        floatCharacteristic( service, 'filterLifeLevel', Characteristic.FilterLifeLevel, null, config.topics.getFilterLifeLevel, 100 );
+    }
+
+    // Characteristic.ResetFilterIndication
+    function characteristic_ResetFilterIndication( service ) {
+        booleanCharacteristic( service, 'resetFilterIndication', Characteristic.ResetFilterIndication, config.topics.setResetFilterIndication, null, false );
     }
 
     // add optional sensor characteristics
@@ -2784,6 +2819,33 @@ function makeThing(log, config) {
                     linkIrrigationCharacteristics( service, valveSvc, zoneId );  // valveSvc must be linked to main service
                     services.push( valveSvc );
                 });
+            }
+        } else if( configType == "airPurifier" ) {
+            service = new Service.AirPurifier( name );
+            characteristic_Active( service );
+            characteristic_CurrentAirPurifierState( service );
+            characteristic_TargetAirPurifierState( service );
+            if( config.topics.getRotationSpeed || config.topics.setRotationSpeed ) {
+                characteristic_RotationSpeed( service );
+            }
+            if( config.topics.getSwingMode || config.topics.setSwingMode ) {
+                characteristic_SwingMode( service );
+            }
+            if( config.topics.setLockPhysicalControls || config.topics.getLockPhysicalControls ) {
+                characteristic_LockPhysicalControls( service );
+            }
+            services = [ service ];
+            if( config.topics.getFilterChangeIndication || config.topics.getFilterLifeLevel || config.topics.setResetFilterIndication ) {
+                let filterSvc = new Service.FilterMaintenance( svcNames.filter || name + "-Filter" );
+                service.addLinkedService( filterSvc );
+                characteristic_FilterChangeIndication( filterSvc ); // required
+                if( config.topics.getFilterLifeLevel ) {
+                    characteristic_FilterLifeLevel( filterSvc );
+                }
+                if( config.topics.setResetFilterIndication ) {
+                    characteristic_ResetFilterIndication( filterSvc );
+                }
+                services.push( filterSvc );
             }
         } else {
             log("ERROR: Unrecognized type: " + configType);
