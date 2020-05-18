@@ -256,7 +256,7 @@ function makeThing(log, config) {
 
                         state[property] = false;
                         publish( getOnOffPubValue( false ) );
-                        service.getCharacteristic(characteristic).setValue(mapValueForHomebridge(false, mapValueFunc), undefined, c_mySetContext);
+                        charac.setValue(mapValueForHomebridge(false, mapValueFunc), undefined, c_mySetContext);
 
                     }, turnOffAfterms );
                 }
@@ -280,7 +280,7 @@ function makeThing(log, config) {
                 // if it changed, set characteristic
                 if (state[property] != newState) {
                     state[property] = newState;
-                    service.getCharacteristic(characteristic).setValue(mapValueForHomebridge(newState, mapValueFunc), undefined, c_mySetContext);
+                    charac.setValue(mapValueForHomebridge(newState, mapValueFunc), undefined, c_mySetContext);
                 }
                 // optionally reset state to OFF after a timeout
                 if( newState && resetStateAfterms ) {
@@ -290,7 +290,7 @@ function makeThing(log, config) {
                     autoResetStateTimer = setTimeout( function() {
                         autoResetStateTimer = null;
                         state[ property ] = false;
-                        service.getCharacteristic(characteristic).setValue(mapValueForHomebridge(false, mapValueFunc), undefined, c_mySetContext);
+                        charac.setValue(mapValueForHomebridge(false, mapValueFunc), undefined, c_mySetContext);
                     }, resetStateAfterms );
                 }
             } );
@@ -345,7 +345,7 @@ function makeThing(log, config) {
                 var newState = parseInt(message);
                 if (state[property] != newState) {
                     state[property] = newState;
-                    service.getCharacteristic(characteristic).setValue(newState, undefined, c_mySetContext);
+                    charac.setValue(newState, undefined, c_mySetContext);
                 }
             });
         }
@@ -979,7 +979,7 @@ function makeThing(log, config) {
                 var newState = parseFloat(message);
                 if (state[property] != newState) {
                     state[property] = newState;
-                    service.getCharacteristic(characteristic).setValue(newState, undefined, c_mySetContext);
+                    charac.setValue(newState, undefined, c_mySetContext);
                 }
             });
         }
@@ -1010,7 +1010,7 @@ function makeThing(log, config) {
                 var newState = message.toString();
                 if (state[property] !== newState) {
                     state[property] = newState;
-                    service.getCharacteristic(characteristic).setValue(newState, undefined, c_mySetContext);
+                    charac.setValue(newState, undefined, c_mySetContext);
                 }
             });
         }
@@ -1064,7 +1064,7 @@ function makeThing(log, config) {
                         log( 'State ' + property + ' is now: ' + newState );
                     }
                     state[property] = newState;
-                    service.getCharacteristic(characteristic).setValue(newState, undefined, c_mySetContext);
+                    charac.setValue(newState, undefined, c_mySetContext);
                     raiseEvent( property );
                 }
             });
@@ -1937,76 +1937,187 @@ function makeThing(log, config) {
     }
 
     // Characteristic.Active
-    function characteristic_Active( service ) {
-        booleanCharacteristic(service, 'active', Characteristic.Active, config.topics.setActive, config.topics.getActive, false, function (val) {
+    function characteristic_Active( service, subIdx, subConfig ) {
+        let property_active = 'active';
+        let topic_setActive = config.topics.setActive;
+        let topic_getActive = config.topics.getActive;
+        // for usage in linked sub-services:
+        if ( subIdx !== undefined && subIdx !== null && subConfig ) {
+            property_active = property_active + '-' + subIdx;
+            topic_setActive = subConfig.topics.setActive;
+            topic_getActive = subConfig.topics.getActive;
+            if( !state.activePropertyList ) {
+                state.activePropertyList = [ property_active ];
+            } else {
+                state.activePropertyList.push( property_active );
+            }
+        } 
+        booleanCharacteristic( service, property_active, Characteristic.Active, topic_setActive, topic_getActive, false, function (val) {
             return val ? Characteristic.Active.ACTIVE : Characteristic.Active.INACTIVE;
-        }, config.turnOffAfterms);
+        }, config.turnOffAfterms );
     }
 
     // Characteristic.InUse
-    function characteristic_InUse( service ) {
-        booleanCharacteristic(service, 'inUse', Characteristic.InUse, null, config.topics.getInUse, false, function (val) {
+    function characteristic_InUse( service, subIdx, subConfig ) {
+        let property_inUse = 'inUse';
+        let topic_getInUse = config.topics.getInUse;
+        // for usage in linked sub-services:
+        if ( subIdx !== undefined && subIdx !== null && subConfig ) {
+            property_inUse = property_inUse + '-' + subIdx;
+            topic_getInUse = subConfig.topics.getInUse;
+            if( !state.inUsePropertyList ) {
+                state.inUsePropertyList = [ property_inUse ];
+            } else {
+                state.inUsePropertyList.push( property_inUse );
+            }
+        }
+        booleanCharacteristic( service, property_inUse, Characteristic.InUse, null, topic_getInUse, false, function (val) {
             return val ? Characteristic.InUse.IN_USE : Characteristic.InUse.NOT_IN_USE;
         });
     }
 
+    function linkIrrigationCharacteristics( service, valveSvc, subIdx ) {
+        service.addLinkedService( valveSvc );
+        let mainActive = service.getCharacteristic( Characteristic.Active );
+        let mainInUse = service.getCharacteristic( Characteristic.InUse );
+        let valveActive = valveSvc.getCharacteristic( Characteristic.Active );
+        let valveInUse = valveSvc.getCharacteristic( Characteristic.InUse );
+
+        // if valve is active, main service must also be active
+        // if none of the valves is active, main service should be deactivated (except with config.noAutoInactive)
+        valveActive.on( 'change', function (obj) {
+            if ( obj.newValue == Characteristic.Active.ACTIVE && !state.active ) {
+                state.active = true;
+                mainActive.setValue( Characteristic.Active.ACTIVE, undefined, 'valve activated');
+            } else if ( obj.newValue == Characteristic.Active.INACTIVE && !config.noAutoInactive ) {
+                let mainActiveValue = false;
+                for( let prop of state.activePropertyList ) {
+                    if ( state[ prop ] ) {
+                        mainActiveValue = true;
+                        break;
+                    }
+                }
+                if ( !mainActiveValue && state.active ) {
+                    state.active = false;
+                    mainActive.setValue( Characteristic.Active.INACTIVE, undefined, 'all valves inactive' );
+                }
+            }
+        });
+
+        // if main service is set to inactive, valves should also be inactive
+        mainActive.on( 'change', function (obj) {
+            if ( obj.newValue == Characteristic.Active.INACTIVE && state[ 'active-' + subIdx ] ) {
+                state[ 'active-' + subIdx ] = false;
+                valveActive.setValue( Characteristic.Active.INACTIVE, undefined, 'main off' );
+            }
+        });
+
+        // if valve is inUse, main service must also be inUse
+        // if none of the valves is inUse, main service should not be inUse anymore
+        valveInUse.on( 'change', function (obj) {
+            if ( obj.newValue == Characteristic.InUse.IN_USE && !state.inUse ) {
+                state.inUse = true;
+                mainInUse.updateValue( Characteristic.InUse.IN_USE );
+            } else if ( obj.newValue == Characteristic.InUse.NOT_IN_USE ) {
+                let mainInUseValue = false;
+                for( let prop of state.inUsePropertyList ) {
+                    if ( state[ prop ] ) {
+                        mainInUseValue = true;
+                        break;
+                    }
+                }
+                if ( !mainInUseValue && state.inUse ) {
+                    state.inUse = false;
+                    mainInUse.updateValue( Characteristic.InUse.NOT_IN_USE );
+                }
+            }
+        });
+    }
+
     // Characteristic.SetDuration
-    function characteristic_SetDuration( service ) {
-        if ( !config.topics.setDuration ) { 
-            addCharacteristic(service, 'setDuration', Characteristic.SetDuration, 10*60, function() {
-                log.debug('set SetDuration to ' + state.setDuration + 's.');
+    function characteristic_SetDuration( service, subIdx, subConfig ) {
+        let property_setDuration = 'setDuration';
+        let topic_setDuration = config.topics.setDuration;
+        let topic_getDuration = config.topics.getDuration;
+        // for usage in linked sub-services:
+        if ( subIdx !== undefined && subIdx !== null && subConfig ) {
+            property_setDuration = property_setDuration + '-' + subIdx;
+            if ( subConfig.topics.setDuration ) {
+                topic_setDuration = subConfig.topics.setDuration;
+            }
+            if ( subConfig.topics.getDuration ) {
+                topic_getDuration = subConfig.topics.getDuration;
+            }
+        }
+        if ( !topic_setDuration ) {
+            /* no topic specified, but propery is still created internally */
+            addCharacteristic(service, property_setDuration, Characteristic.SetDuration, 10*60, function() {
+                log.debug('set "' + property_setDuration + '" to ' + state[property_setDuration] + 's.');
             });
         } else {
-            integerCharacteristic(service, 'setDuration', Characteristic.SetDuration, config.topics.setDuration, config.topics.getDuration, 10*60);
-
-            // minimum/maximum duration
-            if( config.minDuration !== undefined || config.maxDuration !== undefined ) {
-                var charac = service.getCharacteristic( Characteristic.SetDuration );
-                if( config.minDuration !== undefined ) {
-                    charac.props.minValue = config.minDuration;
-                }
-                if( config.maxDuration !== undefined ) {
-                    charac.props.maxValue = config.maxDuration;
-                }
+            integerCharacteristic(service, property_setDuration, Characteristic.SetDuration, topic_setDuration, topic_getDuration, 10*60);
+        }
+        // minimum/maximum duration
+        if( config.minDuration !== undefined || config.maxDuration !== undefined ) {
+            var charac = service.getCharacteristic( Characteristic.SetDuration );
+            if( config.minDuration !== undefined ) {
+                charac.props.minValue = config.minDuration;
+            }
+            if( config.maxDuration !== undefined ) {
+                charac.props.maxValue = config.maxDuration;
             }
         }
     }
 
     // Characteristic.RemainingDuration
-    function characteristic_RemainingDuration( service ) {
+    function characteristic_RemainingDuration( service, subIdx, subConfig ) {
+        let property_active = 'active';
+        let property_inUse = 'inUse';
+        let property_setDuration = 'setDuration';
+        let property_durationEndTime = 'durationEndTime';
+        let topic_getRemainingDuration = config.topics.getRemainingDuration;
+        // for usage in linked sub-services:
+        if ( subIdx !== undefined && subIdx !== null && subConfig ) {
+            property_active = property_active + '-' + subIdx;
+            property_inUse = property_inUse + '-' + subIdx;
+            property_setDuration = property_setDuration + '-' + subIdx;
+            property_durationEndTime = property_durationEndTime + '-' + subIdx;
+            topic_getRemainingDuration = subConfig.topics.getRemainingDuration;
+        }
         // Instead of saving the remaining duration, the time of the expected end is stored.
         // This makes it easier to respond to following GET queries from HomeKit.
-        state.durationEndTime = Math.floor(Date.now() / 1000);
+        state[ property_durationEndTime ] = Math.floor(Date.now() / 1000);
 
         function getRemainingDuration() {
-            let remainingDuration = state.durationEndTime - Math.floor(Date.now() / 1000);
-            return (state.active && remainingDuration > 0) ? remainingDuration : 0;
+            let remainingDuration = state[ property_durationEndTime ] - Math.floor(Date.now() / 1000);
+            return ( state[ property_inUse ] && remainingDuration > 0 ) ? remainingDuration : 0;
         }
 
         // set up characteristic
-        var charac = service.addCharacteristic(Characteristic.RemainingDuration);
-        charac.on('get', function (callback) {
+        let charac = service.addCharacteristic( Characteristic.RemainingDuration );
+        charac.on('get', function ( callback ) {
             handleGetStateCallback( callback, getRemainingDuration() );
         });
-        var characActive = service.getCharacteristic(Characteristic.Active);
+        let characActive = service.getCharacteristic( Characteristic.Active );
+        let characInUse = service.getCharacteristic( Characteristic.InUse );
 
         // duration timer function
-        var durationTimer = null;
+        let durationTimer = null;
         function timerFunc() {
             durationTimer = null;
-            state.active = false;
-            mqttPublish( config.topics.setActive, 'active', getOnOffPubValue( false ) );
-            characActive.updateValue( Characteristic.Active.INACTIVE );
+            state[ property_active ] = false;
+            characActive.setValue( Characteristic.Active.INACTIVE, undefined, 'time expired' );
+            // this will also publish a MQTT message
         }
 
         // update durationEndTime once when 'Active' changes to ACTIVE
-        if (service.testCharacteristic(Characteristic.SetDuration)) {
-            if (config.durationTimer) {
+        if ( service.testCharacteristic( Characteristic.SetDuration )) {
+            if ( config.durationTimer ) {
                 // add durationTimer (turn off timer)
-                characActive.on('change', function (obj) {
-                    if ( obj.newValue == Characteristic.Active.ACTIVE ) {
-                        state.durationEndTime = Math.floor(Date.now() / 1000) + state.setDuration;
-                        durationTimer = setTimeout( timerFunc, state.setDuration * 1000 );
+                characInUse.on( 'change', function (obj) {
+                    if ( obj.newValue == Characteristic.InUse.IN_USE ) {
+                        state[ property_durationEndTime ] = Math.floor(Date.now() / 1000) + state[ property_setDuration ];
+                        durationTimer = setTimeout( timerFunc, state[ property_setDuration ] * 1000 );
                     } else {
                         if( durationTimer ) {
                             clearTimeout( durationTimer );
@@ -2016,30 +2127,30 @@ function makeThing(log, config) {
                 });
             } else {
                 // device will handle the timer by itself
-                characActive.on('change', function (obj) {
-                    if ( obj.newValue == Characteristic.Active.ACTIVE ) {
-                        state.durationEndTime = Math.floor(Date.now() / 1000) + state.setDuration;
+                characInUse.on('change', function (obj) {
+                    if ( obj.newValue == Characteristic.InUse.IN_USE ) {
+                        state[ property_durationEndTime ] = Math.floor(Date.now() / 1000) + state[ property_setDuration ];
                     }
                     charac.updateValue( getRemainingDuration() );
                 });
             }
-        } else if (config.turnOffAfterms) {
+        } else if ( config.turnOffAfterms ) {
             // no SetDuration Characteristic configured, but turnOffAfterms
-            service.getCharacteristic(Characteristic.Active).on('change', function (obj) {
+            characActive.on( 'change', function (obj) {
                 if ( obj.newValue == Characteristic.Active.ACTIVE ) {
-                    state.durationEndTime = Math.floor((Date.now() + config.turnOffAfterms) / 1000);
+                    state[ property_durationEndTime ] = Math.floor((Date.now() + config.turnOffAfterms) / 1000);
                 }
                 charac.updateValue( getRemainingDuration() );
             });
         }
 
         // update durationEndTime once when 'SetDuration' changes (if 'SetDuration' exists)
-        if (service.testCharacteristic(Characteristic.SetDuration)) {
-            service.getCharacteristic(Characteristic.SetDuration).on('change', function (obj) {
+        if ( service.testCharacteristic( Characteristic.SetDuration ) ) {
+            service.getCharacteristic( Characteristic.SetDuration ).on( 'change', function (obj) {
                 // extend or shorten duration
                 let maxEndTime = Math.floor(Date.now() / 1000) + obj.newValue;
-                let newEndTime = state.durationEndTime + (obj.newValue - obj.oldValue);
-                state.durationEndTime = (newEndTime < maxEndTime) ? newEndTime : maxEndTime;
+                let newEndTime = state[ property_durationEndTime ] + (obj.newValue - obj.oldValue);
+                state[ property_durationEndTime ] = (newEndTime < maxEndTime) ? newEndTime : maxEndTime;
                 charac.updateValue( getRemainingDuration() );
                 if( durationTimer ) {
                     // update timer
@@ -2050,10 +2161,10 @@ function makeThing(log, config) {
         }
 
         // subscribe to get topic, update remainingDuration
-        if (config.topics.getRemainingDuration) {
-            mqttSubscribe(config.topics.getRemainingDuration, 'remainingDuration', function (topic, message) {
+        if ( topic_getRemainingDuration ) {
+            mqttSubscribe( topic_getRemainingDuration, 'remainingDuration', function (topic, message) {
                 let remainingDuration = parseInt(message);
-                state.durationEndTime = Math.floor(Date.now() / 1000) + remainingDuration;
+                state[ property_durationEndTime ] = Math.floor(Date.now() / 1000) + remainingDuration;
                 charac.updateValue( remainingDuration );
                 if( durationTimer ) {
                     // update timer
@@ -2065,16 +2176,20 @@ function makeThing(log, config) {
     }
 
     // Characteristic.ValveType
-    function characteristic_ValveType( service ) {
-        if (config.valveType === 'sprinkler') {
-            service.setCharacteristic(Characteristic.ValveType, Characteristic.ValveType.IRRIGATION);
-        } else if (config.valveType === 'shower') {
-            service.setCharacteristic(Characteristic.ValveType, Characteristic.ValveType.SHOWER_HEAD);
-        } else if (config.valveType === 'faucet') {
-            service.setCharacteristic(Characteristic.ValveType, Characteristic.ValveType.WATER_FAUCET);
-        } else {
-            service.setCharacteristic(Characteristic.ValveType, Characteristic.ValveType.GENERIC_VALVE);
+    function characteristic_ValveType( service, valveType ) {
+        if ( valveType === undefined || valveType === null ) {
+            // if not specified by argument, use specification from config file
+            if ( config.valveType === 'sprinkler' ) {
+                valveType = Characteristic.ValveType.IRRIGATION;
+            } else if ( config.valveType === 'shower' ) {
+                valveType = Characteristic.ValveType.SHOWER_HEAD;
+            } else if ( config.valveType === 'faucet' ) {
+                valveType = Characteristic.ValveType.WATER_FAUCET;
+            } else {
+                valveType = Characteristic.ValveType.GENERIC_VALVE;
+            }
         }
+        service.setCharacteristic( Characteristic.ValveType, valveType );
     }
 
     // Characteristic.ActiveIdentifier
@@ -2630,8 +2745,45 @@ function makeThing(log, config) {
                     services.push(inputSvc);
                 });
                 characteristic_ActiveIdentifier( service, inputValues );  // for selecting inputs
-                var displayOrderTlv = new Buffer.from(displayOrderTlvArray).toString('base64');
+                var displayOrderTlv = Buffer.from(displayOrderTlvArray).toString('base64');
                 service.setCharacteristic(Characteristic.DisplayOrder, displayOrderTlv);
+            }
+        } else if( config.type == 'irrigationSystem' ) {
+            let service = new Service.IrrigationSystem( name );
+            service.isPrimaryService = true;
+            if ( !config.topics ) {
+                config.topics = {};
+            }
+            characteristic_Active( service );
+            characteristic_InUse( service );
+            service.setCharacteristic( Characteristic.ProgramMode, Characteristic.ProgramMode.NO_PROGRAM_SCHEDULED );
+            if ( config.topics.getStatusFault ) {
+                characteristic_StatusFault( service );
+            }
+
+            services = [ service ];
+
+            if ( config.zones ) {
+                let serviceLabel = new Service.ServiceLabel();
+                serviceLabel.setCharacteristic( Characteristic.ServiceLabelNamespace, Characteristic.ServiceLabelNamespace.ARABIC_NUMERALS );
+                services.push( serviceLabel )
+                config.zones.forEach( function( zone, index ) {
+                    let zoneId = index + 1;
+                    let zoneName = zone.name || ''; // default name doesn't seem to work
+                    let valveSvc = new Service.Valve( zoneName, zoneId );
+                    characteristic_ValveType( valveSvc, Characteristic.ValveType.IRRIGATION) ;
+                    characteristic_ServiceLabelIndex( valveSvc, zoneId );
+                    characteristic_Active( valveSvc, zoneId, zone );
+                    characteristic_InUse( valveSvc, zoneId, zone );
+                    characteristic_SetDuration( valveSvc, zoneId, zone );
+                    characteristic_RemainingDuration( valveSvc, zoneId, zone );
+                    valveSvc.setCharacteristic( Characteristic.IsConfigured, Characteristic.IsConfigured.CONFIGURED );
+                    if ( zone.topics.getStatusFault ) {
+                        characteristic_StatusFault( valveSvc );
+                    }
+                    linkIrrigationCharacteristics( service, valveSvc, zoneId );  // valveSvc must be linked to main service
+                    services.push( valveSvc );
+                });
             }
         } else {
             log("ERROR: Unrecognized type: " + configType);
@@ -2701,7 +2853,7 @@ function makeThing(log, config) {
     }
 
     // The service
-    var services = [];
+    var services = null;
     try {
         services = createServices();
     } catch( ex ) {

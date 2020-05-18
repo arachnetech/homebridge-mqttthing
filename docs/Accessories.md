@@ -16,6 +16,7 @@ The following Homekit accessory types are supported by MQTT-Thing:
    * [Garage door opener](#garage-door-opener)
    * [Heater Cooler](#heater-cooler)
    * [Humidity Sensor](#humidity-sensor)
+   * [Irrigation System](#irrigation-system)
    * [Leak Sensor](#leak-sensor)
    * [Light bulb](#light-bulb)
    * [Light Sensor](#light-sensor)
@@ -377,6 +378,69 @@ Current relative humidity must be in the range 0 to 100 percent with no decimal 
         "getStatusLowBattery":          "<topic used to provide 'low battery' status (optional)>"
     },
     "history": "<true to enable History service for Eve App (optional)>"
+}
+```
+
+
+## Irrigation System
+
+Multi-zone sprinkler accessory. See also [Valve (Sprinkler, Shower, Faucet)](#valve) for a single valve accessory.
+
+If `durationTimer` is set to **true** (recommended), this plugin will handle the duration timer for each zone and will automatically send a stop command after the configured time.
+
+If the device itself provides duration timing via MQTT or if you want to query or set the duration via MQTT, you can make use of `setDuration`/`getDuration`. The remaining time is shown in HomeKit even if no `getRemainingDuration` is configured. `getRemainingDuration` can be used to update the remaining time, if the duration is changed at the device itself in some way.
+
+The topics under `"topics"` are optional. They describe the main topics for the entire system and are derived from the states of the individual zones. So `"topics"` might be empty (`"topics": {}`). Topics for the individual zones must be defined under `"zones" / "topics"`.
+
+The default run time defaults to between 5 minutes and 1 hour (in 5 minute increments). This can be changed with `minDuration` and `maxDuration`. Note however that the Home App in iOS 12 doesn't like to show durations below 5 minutes. (This appears to have been improved in the iOS 13 Beta.)
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "irrigationSystem",
+    "name": "<name of system>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "topics":
+    {
+        "getActive":      "<topic to report the target state (optional)>",
+        "setActive":      "<topic to control the target state (optional)>",
+        "getStatusFault": "<topic used to provide 'fault' status (optional)>"
+    },
+    "zones": [
+        {
+            "name": "First Zone",
+            "topics": {
+                "getActive":            "<topic to report the target state of the first zone>",
+                "setActive":            "<topic to control the target state of the first zone>",
+                "getInUse":             "<topic to report the current state feedback of the first zone>",
+                "setDuration":          "<topic used to set default duration (seconds) (optional, with external timer)>",
+                "getDuration":          "<topic used to get default duration (seconds) (optional, with external timer)>",
+                "getRemainingDuration": "<topic used to get remaining duration (seconds) (optional, with external timer)>",
+                "getStatusFault":       "<topic used to provide 'fault' status (optional)>"
+            }
+        },
+        ...
+        {
+            "name": "Last Zone",
+            "topics": {
+                "getActive":            "<topic to report the target state of the last zone>",
+                "setActive":            "<topic to control the target state of the last zone>",
+                "getInUse":             "<topic to report the current state feedback of the last zone>",
+                "setDuration":          "<topic used to set default duration (seconds) (optional, with external timer)>",
+                "getDuration":          "<topic used to get default duration (seconds) (optional, with external timer)>",
+                "getRemainingDuration": "<topic used to get remaining duration (seconds) (optional, with external timer)>",
+                "getStatusFault":       "<topic used to provide 'fault' status (optional)>"
+            }
+        }
+    ],
+    "integerValue":  "true to use 1|0 instead of true|false default onValue and offValue",
+    "onValue":       "<value representing on (optional)>",
+    "offValue":      "<value representing off (optional)>",
+    "durationTimer": "<true to enable duration timer (recommended)>",
+    "minDuration":   "<minimum duration (in seconds) (optional)>",
+    "maxDuration":   "<maximum duration (in seconds) (optional)>"
 }
 ```
 
@@ -950,7 +1014,7 @@ Configure `restrictHeatingCoolingState` to an array of integers to restrict the 
 
 ## Valve
 
-`valveType` can be `"sprinkler"`, `"shower"` or `"faucet"`.
+Single valve accessory. `valveType` can be `"sprinkler"`, `"shower"` or `"faucet"`. See also [Irrigation System](#irrigation-system) for multi-zone sprinkler accessories.
 
 If `durationTimer` is set to **true**, this plugin will provide additional characteristics to set the standard duration for the valve and will stop the water flow after this time.
 

@@ -50,6 +50,7 @@ The following Homekit accessory types are supported by MQTT-Thing:
    * [Garage door opener](docs/Accessories.md#garage-door-opener)
    * [Heater Cooler](docs/Accessories.md#heater-cooler)
    * [Humidity Sensor](docs/Accessories.md#humidity-sensor)
+   * [Irrigation System](docs/Accessories.md#irrigation-system)
    * [Leak Sensor](docs/Accessories.md#leak-sensor)
    * [Light bulb](docs/Accessories.md#light-bulb)
    * [Light Sensor](docs/Accessories.md#light-sensor)

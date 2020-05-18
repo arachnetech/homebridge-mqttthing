@@ -925,6 +925,44 @@
                 0
             ],
             "logMqtt": true
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "irrigationSystem",
+            "name": "Irrigation",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getActive": "test/irrigation/getActive",
+                "setActive": "test/irrigation/setActive"
+            },
+            "zones": [
+                {
+                    "name": "Zone 1",
+                    "topics": {
+                        "getActive": "test/irrigation/1/getActive",
+                        "setActive": "test/irrigation/1/setActive",
+                        "getInUse": "test/irrigation/1/getInUse"
+                    }
+                },
+                {
+                    "name": "Zone 2",
+                    "topics": {
+                        "getActive": "test/irrigation/2/getActive",
+                        "setActive": "test/irrigation/2/setActive",
+                        "getInUse": "test/irrigation/2/getInUse"
+                    }
+                },
+                {
+                    "name": "Zone 3",
+                    "topics": {
+                        "getActive": "test/irrigation/3/getActive",
+                        "setActive": "test/irrigation/3/setActive",
+                        "getInUse": "test/irrigation/3/getInUse"
+                    }
+                }
+            ],
+            "durationTimer": true,
+            "integerValue": true
         }
     ]
 }
