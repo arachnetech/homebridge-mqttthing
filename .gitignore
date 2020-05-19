@@ -7,3 +7,12 @@ test/persist/IdentifierCache.*.json
 test/.uix-dashboard.json
 test/.uix-secrets
 test/auth.json
+test/config.json.*
+test2/*_persist.json
+test2/accessories/cachedAccessories
+test2/persist/AccessoryInfo.*.json
+test2/persist/IdentifierCache.*.json
+test2/.uix-dashboard.json
+test2/.uix-secrets
+test2/auth.json
+test2/config.json.*

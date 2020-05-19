@@ -3,7 +3,7 @@
  * codecs/json.js
  * 
  * Add configuration giving JSON 'path' for each property used by the accessory. For example:
- * "jsonConfig": {
+ * "jsonCodec": {
  *     "properties": {
  *         "on": "state.power",
  *         "RGB": "state.rgb"

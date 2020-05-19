@@ -1,0 +1,70 @@
+{
+    "bridge": {
+        "name": "Dev2",
+        "username": "CA:7C:A3:34:AA:69",
+        "port": 51826,
+        "pin": "784-65-422"
+    },
+    "platforms": [
+        {
+            "platform": "config",
+            "name": "Config",
+            "port": 8080,
+            "sudo": false
+        }
+    ],
+    "accessories": [
+        {
+            "type": "lightbulb-OnOff",
+            "name": "Light",
+            "url": "homebridge",
+            "topics": {
+                "getOn": "light/get",
+                "setOn": "light/set"
+            },
+            "accessory": "mqttthing"
+        },
+        {
+            "type": "television",
+            "name": "Tasmota-TV",
+            "url": "homebridge",
+            "logMqtt": true,
+            "accessory": "mqttthing",
+            "topics": {
+                "setActive": "cmnd/Remote/irsend",
+                "setActiveInput": "cmnd/Remote/irsend"
+            },
+            "inputs": [
+                { 
+                    "name": "Input 1",
+                    "value": "3249178998"
+                },
+                { 
+                    "name": "Input 2",
+                    "value": "input-2-rf-code"
+                },
+                { 
+                    "name": "Input 3",
+                    "value": "input-3-rf-code"
+                },
+                { 
+                    "name": "Input 4",
+                    "value": "input-4-rf-code"
+                }
+            ],
+            "codec": "json",
+            "jsonCodec": {
+                "fixed": {
+                    "Protocol": "NEC",
+                    "Bits": 32
+                },
+                "properties": {
+                    "activeIdentifier": "Data",
+                    "active": "Data"
+                }
+            },
+            "onValue": "power-on-rf-code",
+            "offValue": "power-off-rf-code"
+        }
+    ]
+}
