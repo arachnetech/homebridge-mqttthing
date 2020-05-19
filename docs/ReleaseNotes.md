@@ -7,6 +7,7 @@
 
 ### Version 1.1.14
 + Added air purifier (implemented by @tobekas)
++ Added irrigation system (implemented by @tobekas)
 + JSON codec: added per-topic fixed values and retain option
 
 ### Version 1.1.13
