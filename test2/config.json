@@ -25,6 +25,32 @@
             "accessory": "mqttthing"
         },
         {
+            "accessory": "mqttthing",
+            "type": "weatherStation",
+            "name": "Test weather station",
+            "serviceNames": {
+                "temperature": "WS-Temperature",
+                "humidity": "WS-Humidity",
+                "airPressure": "WS-AirPressure",
+                "weather": "WS-WeatherData"
+            },
+            "url": "homebridge",
+            "topics": {
+                "getCurrentTemperature": "test/weather/temperature",
+                "getCurrentRelativeHumidity": "test/weather/humidity",
+                "getAirPressure": "test/weather/airpressure",
+                "getWeatherCondition": "test/weather/condition",
+                "getRain1h": "test/weather/rain1",
+                "getRain24h": "test/weather/rain24",
+                "getUVIndex": "test/weather/uv",
+                "getVisibility": "test/weather/visibility",
+                "getWindDirection": "test/weather/winddirection",
+                "getWindSpeed": "test/weather/windspeed"
+            },
+            "logMqtt": true,
+            "history": false
+        },
+        {
             "type": "television",
             "name": "Tasmota-TV",
             "url": "homebridge",

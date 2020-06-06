@@ -1339,8 +1339,8 @@ function makeThing(log, config) {
 
     // Characteristic.WeatherCondition (Eve-only)
     function characteristic_WeatherCondition(service) {
-        service.addOptionalCharacteristic(Eve.Characteristics.WeatherCondition); // to avoid warnings
-        stringCharacteristic(service, 'weatherCondition', Eve.Characteristics.WeatherCondition, null, config.topics.getWeatherCondition, '-' );
+        service.addOptionalCharacteristic(Eve.Characteristics.Condition); // to avoid warnings
+        stringCharacteristic(service, 'weatherCondition', Eve.Characteristics.Condition, null, config.topics.getWeatherCondition, '-' );
     }
 
     // Characteristic.Rain1h (Eve-only)
@@ -1357,8 +1357,8 @@ function makeThing(log, config) {
 
     // Characteristic.UVIndex (Eve-only)
     function characteristic_UVIndex(service) {
-        service.addOptionalCharacteristic(Eve.Characteristics.UVIndex); // to avoid warnings
-        integerCharacteristic(service, 'uvIndex', Eve.Characteristics.UVIndex, null, config.topics.getUVIndex);
+        service.addOptionalCharacteristic(Eve.Characteristics.UvIndex); // to avoid warnings
+        integerCharacteristic(service, 'uvIndex', Eve.Characteristics.UvIndex, null, config.topics.getUVIndex);
     }
 
     // Characteristic.Visibility (Eve-only)
@@ -2920,6 +2920,7 @@ function makeThing(log, config) {
         services = createServices();
     } catch( ex ) {
         log( 'Exception while creating services: ' + ex );
+        log( ex.stack );
     }
 
     // Our accessory instance
