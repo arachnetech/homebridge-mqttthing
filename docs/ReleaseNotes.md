@@ -6,7 +6,7 @@
 # Homebridge MQTT-Thing: Release Notes
 
 ### Version 1.1.15
-+ Fix weather station with homebridge-lib 4.7.7
++ Fixed weather station with homebridge-lib 4.7.7
 
 ### Version 1.1.14
 + Added air purifier (implemented by @tobekas)
