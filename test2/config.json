@@ -53,19 +53,19 @@
                 "setActiveInput": "cmnd/Remote/irsend"
             },
             "inputs": [
-                { 
+                {
                     "name": "Input 1",
                     "value": "3249178998"
                 },
-                { 
+                {
                     "name": "Input 2",
                     "value": "input-2-rf-code"
                 },
-                { 
+                {
                     "name": "Input 3",
                     "value": "input-3-rf-code"
                 },
-                { 
+                {
                     "name": "Input 4",
                     "value": "input-4-rf-code"
                 }
@@ -83,6 +83,18 @@
             },
             "onValue": "power-on-rf-code",
             "offValue": "power-off-rf-code"
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "switch",
+            "name": "Toggle Switch",
+            "url": "homebridge",
+            "logMqtt": true,
+            "topics": {
+                "getOn": "test/toggle/get",
+                "setOn": "test/toggle/set"
+            },
+            "codec": "toggle.js"
         }
     ]
 }

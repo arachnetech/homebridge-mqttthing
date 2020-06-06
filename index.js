@@ -2919,7 +2919,7 @@ function makeThing(log, config) {
     try {
         services = createServices();
     } catch( ex ) {
-        log( 'Exception while creating services: ' + ex );
+        log.error( 'Exception while creating services: ' + ex );
         log( ex.stack );
     }
 
