@@ -1,9 +1,9 @@
 {
     "bridge": {
-        "name": "Dev2",
-        "username": "CA:7C:A3:34:AA:69",
+        "name": "Dev-2",
+        "username": "CA:7C:A3:34:AA:6B",
         "port": 51826,
-        "pin": "784-65-422"
+        "pin": "784-65-424"
     },
     "platforms": [
         {
@@ -26,29 +26,21 @@
         },
         {
             "accessory": "mqttthing",
-            "type": "weatherStation",
-            "name": "Test weather station",
-            "serviceNames": {
-                "temperature": "WS-Temperature",
-                "humidity": "WS-Humidity",
-                "airPressure": "WS-AirPressure",
-                "weather": "WS-WeatherData"
-            },
-            "url": "homebridge",
+            "type": "valve",
+            "valveType": "sprinkler",
+            "name": "Sprinkler",
+            "url": "http://192.168.10.35:1883",
             "topics": {
-                "getCurrentTemperature": "test/weather/temperature",
-                "getCurrentRelativeHumidity": "test/weather/humidity",
-                "getAirPressure": "test/weather/airpressure",
-                "getWeatherCondition": "test/weather/condition",
-                "getRain1h": "test/weather/rain1",
-                "getRain24h": "test/weather/rain24",
-                "getUVIndex": "test/weather/uv",
-                "getVisibility": "test/weather/visibility",
-                "getWindDirection": "test/weather/winddirection",
-                "getWindSpeed": "test/weather/windspeed"
+                "getActive": "test/sprinkler/getActive",
+                "setActive": "test/sprinkler/setActive",
+                "getInUse": "test/sprinkler/getInUse",
+                "getDuration": "test/sprinkler/getDuration",
+                "setDuration": "test/sprinkler/setDuration",
+                "getRemainingDuration": "test/sprinkler/getRemainingDuration"
             },
-            "logMqtt": true,
-            "history": false
+            "integerValue": true,
+            "durationTimer": true,
+            "maxDuration": 180
         },
         {
             "type": "television",
