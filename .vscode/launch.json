@@ -12,7 +12,7 @@
                 "<node_internals>/**"
             ],
             "program": "/usr/bin/homebridge",
-            "args": [ "-U", "test", "-P", "." ],
+            "args": [ "-U", "test2", "-P", "." ],
             "cwd": "${workspaceFolder}"
         }
     ]

@@ -95,6 +95,26 @@
                 "setOn": "test/toggle/set"
             },
             "codec": "toggle.js"
-        }
+        },
+        {
+			"accessory": "mqttthing",
+			"type": "doorbell",
+			"name": "Door Bell",
+			"url": "homebridge",
+			"caption": "Front Door Bell",
+			"topics": {
+				"getSwitch": {
+					"topic": "tele/RF/RESULT",
+					"apply": "return JSON.parse( message ).RfReceived.Data;"
+				}
+			},
+			"switchValues": [
+				["F1FB61"]
+			],
+			"restrictSwitchValues": [
+				0
+			],
+			"logMqtt": true
+		}
     ]
 }
