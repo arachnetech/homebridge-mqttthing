@@ -14,6 +14,13 @@ To use a codec, configure the path to its JavaScript file using the `codec` conf
 publishing and to decode received data for all configured topics. The codec can decide which topics and properties to process, and can suppress messages
 and generate additional messages as required.
 
+   * [Structure](#structure)
+   * [Function Reference](#function-reference)
+   * [Properties](#properties)
+   * [Example Codecs](#examples)
+   * [Built-in Codecs](#built-in-codecs)
+      * [JSON Codec](#json-codec)
+
 ## Structure
 
 A codec is a Node.js module which makes encode() and decode() functions available, which are called for
@@ -138,12 +145,6 @@ The `notify()` function provided in `init()`'s `params` may be used to notify MQ
 
 The message is passed directly to MQTT-Thing. It does not pass through any apply function or through the Codec's `decode()` function.
 
-## Examples
-
-When writing a codec, you may find it helpful to start with the no-op implementation in [`test/empty-codec.js`](../test/empty-codec.js).
-
-Test examples of codec capabilities can be found in [`test/test-codec.js`](../test/test-codec.js).
-
 ## Properties
 
 This section lists the properties available for each accessory type. All accessories may also support `batteryLevel`, `chargingState` and `statusLowBattery`.
@@ -259,3 +260,163 @@ This section lists the properties available for each accessory type. All accesso
 ### Window Covering (Blinds)
 
 `currentPosition`, `targetPosition`, `positionState`, `holdPosition`, `obstructionDetected`, `targetHorizontalTiltAngle`, `currentHorizontalTiltAngle`, `targetVerticalTiltAngle`, `currentVerticalTiltAngle`
+
+## Examples
+
+When writing a codec, you may find it helpful to start with the no-op implementation in [`test/empty-codec.js`](../test/empty-codec.js).
+
+Test examples of codec capabilities can be found in [`test/test-codec.js`](../test/test-codec.js).
+
+### Toggle switch
+
+This codec can be used to toggle the state of a switch whenever it receives any message.
+
+#### Accessory (in *config.json*)
+
+```json
+    {
+        "accessory": "mqttthing",
+        "type": "switch",
+        "name": "Toggle Switch",
+        "url": "mqtt-url",
+        "logMqtt": true,
+        "topics": {
+            "getOn": "test/toggle/get",
+            "setOn": "test/toggle/set"
+        },
+        "codec": "toggle.js"
+    }
+```
+
+#### Codec file (*toggle.js*)
+
+```javascript
+/**
+ * Test 'toggle' codec - toggles switch on receipt of any message
+ * toggle.js
+ */
+
+'use strict'
+
+module.exports = {
+    init: function() {
+        let state = false;
+        return {
+            properties: {
+                on: {
+                    decode: function() {
+                        state = ! state;
+                        return state;
+                    },
+                    encode: function( msg ) {
+                        state = msg;
+                        return msg;
+                    }
+                }
+            }
+        };
+    }
+};
+```
+
+Codec state is declared within _init()_. The codec targets only the **on** property, toggling its state whenever it receives a message and recording the current state when publishing.
+
+### Keep-alive Codec
+
+Codecs can be used to run arbitrary JavaScript code from within MQTT-Thing, not necessarily related to encoding/decoding messages. For example, the codec below sends a 'keep-alive' message at regular intervals. The message and send interval can be configured within the accessory configuration, in `keepAliveMessage` and `keepAliveInterval` respectively.
+
+```javascript
+/**
+ * Test/Demo Homebridge-MQTTThing Codec (encoder/decoder)
+ * Codecs allow custom logic to be applied to accessories in mqttthing, rather like apply() functions, 
+ * but in the convenience of a stand-alone JavaScript file.
+ * 
+ * keep-alive-codec.js - sends keep-alive message at configurable interval
+ */
+
+'use strict';
+
+module.exports = {
+    init: function( params ) {
+        let { config, publish } = params;
+
+        // publish keep-alive topic at regular interval
+        if( config.keepAliveTopic ) {
+            let keepAlivePeriod = config.keepAlivePeriod || 60;
+            let keepAliveMessage = config.keepAliveMessage || '';
+    
+            setInterval( () => {
+                publish( config.keepAliveTopic, keepAliveMessage );
+            }, keepAlivePeriod * 1000 );
+        }
+    
+        // no encode/decode in this codec
+        return {};
+    }
+};
+```
+
+## Built-in Codecs
+
+Built-in Codecs are provided with MQTT-Thing, and can be referenced without a path or `.js` suffix. For example, to load the JSON Codec, use `"codec": "json"`.
+
+### JSON Codec (json)
+
+The JSON Codec aims to make JSON encoding and decoding, often implemented with _apply()_ functions, easier to configure. If is intended for accessories which encode multiple properties as a JSON object sent over a single topic, instead of sending separate parameters in separate topics.
+
+Mapping to and from JSON is configured using a jsonCodec object in the accessory configuration:
+
+```json
+"jsonCodec": {
+    "properties": {
+        "on": "state.power",
+        "RGB": "state.rgb"
+    },
+    "fixed": { fixed properties object (global/default) },
+    "fixedByTopic": {
+        "topic1": { fixed properties object for topic1 },
+        "topic2": { fixed properties object for topic2 }
+    },
+    "retain": true|false
+}
+```
+
+The `jsonCodec` configuration object should contain a `properties` object containing strings indicating the JSON location of each property (as listed in [Properties](#properties), above).
+
+By default, the JSON codec only publishes properties which have updated. To collect all published properties for each published topic, set `"retain": true`.
+
+Fixed values (published with every message) may be specified in a `fixed` object. If multiple topics are published which should have different fixed values, these may be specified through `fixedByTopic`. Fixed values are not required in received messages; only mapped properties are extracted.
+
+For example, the following accessory configuration:
+
+```json
+{
+    "accessory": "mqttthing",
+    "type": "lightbulb",
+    "name": "Test RGB Light",
+    "url": "http://192.168.10.35:1883",
+    "topics": {
+        "getRGB": "test/rgblight/get",
+        "setRGB": "test/rgblight/set",
+        "getOn": "test/rgblight/get",
+        "setOn": "test/rgblight/set"
+    },
+    "logMqtt": true,
+    "integerValue": false,
+    "codec": "json",
+    "jsonCodec": {
+        "properties": {
+            "on": "state.power",
+            "RGB": "state.rgb"
+        },
+        "fixed": {
+            "version": 1,
+            "sender": "MQTT-Thing"
+        }
+    }
+}
+```
+
+... sends and receives messages like:
+
+`{"version":1,"sender":"MQTT-Thing","state":{"power":true,"rgb":"125,82,255"}}`
