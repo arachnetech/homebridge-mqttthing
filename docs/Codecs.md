@@ -19,7 +19,7 @@ and generate additional messages as required.
    * [Properties](#properties)
    * [Example Codecs](#examples)
    * [Built-in Codecs](#built-in-codecs)
-      * [JSON Codec](#json-codec)
+      * [JSON Codec](#json-codec-json)
 
 ## Structure
 
