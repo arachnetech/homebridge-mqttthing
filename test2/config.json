@@ -97,24 +97,26 @@
             "codec": "toggle.js"
         },
         {
-			"accessory": "mqttthing",
-			"type": "doorbell",
-			"name": "Door Bell",
-			"url": "homebridge",
-			"caption": "Front Door Bell",
-			"topics": {
-				"getSwitch": {
-					"topic": "tele/RF/RESULT",
-					"apply": "return JSON.parse( message ).RfReceived.Data;"
-				}
-			},
-			"switchValues": [
-				["F1FB61"]
-			],
-			"restrictSwitchValues": [
-				0
-			],
-			"logMqtt": true
+            "accessory": "mqttthing",
+            "type": "doorbell",
+            "name": "Door Bell",
+            "url": "homebridge",
+            "caption": "Front Door Bell",
+            "topics": {
+                "getSwitch": {
+                    "topic": "tele/RF/RESULT",
+                    "apply": "return JSON.parse( message ).RfReceived.Data;"
+                }
+            },
+            "switchValues": [
+                [
+                    "F1FB61"
+                ]
+            ],
+            "restrictSwitchValues": [
+                0
+            ],
+            "logMqtt": true
         },
         {
             "accessory": "mqttthing",
@@ -140,6 +142,35 @@
                     "sender": "MQTT-Thing"
                 }
             }
-        }        
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "lightbulb-RGB",
+            "name": "Winter-Light",
+            "url": "homebridge",
+            "topics": {
+                "getRGB": { 
+                    "topic": "light/get",
+                    "apply": "return message.r + ',' + message.g + ',' + message.b;"
+                },
+                "setRGB": { 
+                    "topic": "light/set",
+                    "apply": "let rgb = message.split(',').map( v => parseInt(v) ); return { r: rgb[0], g: rgb[1], b: rgb[2] };"
+                },
+                "getOn": "light/get",
+                "setOn": "light/set"
+            },
+            "logMqtt": true,
+            "codec": "json",
+            "jsonCodec": {
+                "properties": {
+                    "on": "state",
+                    "RGB": "color"
+                },
+                "retain": true
+            },
+            "onValue": "ON",
+            "offValue": "OFF"
+        }
     ]
 }

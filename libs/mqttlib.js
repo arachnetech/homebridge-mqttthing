@@ -187,21 +187,6 @@ var mqttlib = new function() {
             return;
         }
 
-        // send through codec's decode function
-        let codecDecode = getCodecFunction( codec, property, 'decode' );
-        if( codecDecode ) {
-            let realHandler = handler;
-            let output = function( message ) {
-                return realHandler( topic, message );
-            };
-            handler = function( intopic, message ) {
-                let decoded = codecDecode( message, { topic, property }, output );
-                if( decoded !== undefined ) {
-                    return output( decoded );
-                }
-            };
-        }
-
         // send through any apply function
         if (typeof topic != 'string') {
             let extendedTopic = topic;
@@ -221,6 +206,21 @@ var mqttlib = new function() {
                     }
                 };
             }
+        }
+
+        // send through codec's decode function
+        let codecDecode = getCodecFunction( codec, property, 'decode' );
+        if( codecDecode ) {
+            let realHandler = handler;
+            let output = function( message ) {
+                return realHandler( topic, message );
+            };
+            handler = function( intopic, message ) {
+                let decoded = codecDecode( message, { topic, property }, output );
+                if( decoded !== undefined ) {
+                    return output( decoded );
+                }
+            };
         }
 
         // register property dispatch (codec only)
@@ -249,53 +249,54 @@ var mqttlib = new function() {
     };
 
     // Publish
-    this.publish = function( ctx, topic, property, inMessage ) {
+    this.publish = function( ctx, topic, property, message ) {
         let { config, log, mqttClient, codec } = ctx;
         if( ! mqttClient ) {
             log( 'ERROR: Call mqttlib.init() before mqttlib.publish()' );
             return;
         }
 
-        if( inMessage === null || topic === undefined ) {
+        if( message === null || topic === undefined ) {
             return; // don't publish if message is null or topic is undefined
         }
 
-        function publishImpl( message ) {
-            if (typeof topic != 'string') {
-                // encode data with user-supplied apply() function
-                var extendedTopic = topic;
-                topic = extendedTopic.topic;
-                if (extendedTopic.hasOwnProperty('apply')) {
-                    var applyFn = Function( "message", "state", extendedTopic['apply'] ); //eslint-disable-line
-                    try {
-                        message = applyFn( message, getApplyState( ctx, property ) );
-                    } catch( ex ) {
-                        log( 'Encode function apply( message ) { ' + extendedTopic.apply + ' } failed for topic ' + topic + ' with message ' + message + ' - ' + ex );
-                        message = null; // stop publish
-                    }
-                    if( message === null || message === undefined ) {
-                        return;
-                    }
+        // first of all, pass message through any user-supplied apply() function
+        if (typeof topic != 'string') {
+            // encode data with user-supplied apply() function
+            var extendedTopic = topic;
+            topic = extendedTopic.topic;
+            if (extendedTopic.hasOwnProperty('apply')) {
+                var applyFn = Function( "message", "state", extendedTopic['apply'] ); //eslint-disable-line
+                try {
+                    message = applyFn( message, getApplyState( ctx, property ) );
+                } catch( ex ) {
+                    log( 'Encode function apply( message ) { ' + extendedTopic.apply + ' } failed for topic ' + topic + ' with message ' + message + ' - ' + ex );
+                    message = null; // stop publish
+                }
+                if( message === null || message === undefined ) {
+                    return;
                 }
             }
-    
-            // publish
-            if( config.logMqtt ) {
-                log( 'Publishing MQTT: ' + topic + ' = ' + message );
-            }
-            mqttClient.publish(topic, message.toString(), config.mqttPubOptions );
         }
 
+        function publishImpl( finalMessage ) {
+            if( config.logMqtt ) {
+                log( 'Publishing MQTT: ' + topic + ' = ' + finalMessage );
+            }
+            mqttClient.publish( topic, finalMessage.toString(), config.mqttPubOptions );
+        }
+
+        // publish directly or through codec
         let codecEncode = getCodecFunction( codec, property, 'encode' );
         if( codecEncode ) {
             // send through codec's encode function
-            let encoded = codecEncode( inMessage, { topic, property }, publishImpl );
+            let encoded = codecEncode( message, { topic, property }, publishImpl );
             if( encoded !== undefined ) {
                 publishImpl( encoded );
             }
         } else {
             // publish as-is
-            publishImpl( inMessage );
+            publishImpl( message );
         }
     };
 
