@@ -1061,11 +1061,14 @@ function makeThing(log, config) {
                 let newState = mqttToHomekit[data];
                 if (newState !== undefined && ( eventOnly || state[property] != newState ) ) {
                     if( config.logMqtt ) {
-                        log( 'State ' + property + ' is now: ' + newState );
+                        log( `Received ${data} - ${property} state is now ${newState}` );
                     }
                     state[property] = newState;
                     charac.setValue(newState, undefined, c_mySetContext);
                     raiseEvent( property );
+                }
+                if( newState === undefined && config.logMqtt ) {
+                    log( `Warning: ${property} received [${data}] which is not in configured values ${JSON.stringify(mqttToHomekit)}` );
                 }
             });
         }

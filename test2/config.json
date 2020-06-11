@@ -149,11 +149,11 @@
             "name": "Winter-Light",
             "url": "homebridge",
             "topics": {
-                "getRGB": { 
+                "getRGB": {
                     "topic": "light/get",
                     "apply": "return message.r + ',' + message.g + ',' + message.b;"
                 },
-                "setRGB": { 
+                "setRGB": {
                     "topic": "light/set",
                     "apply": "let rgb = message.split(',').map( v => parseInt(v) ); return { r: rgb[0], g: rgb[1], b: rgb[2] };"
                 },
@@ -171,6 +171,34 @@
             },
             "onValue": "ON",
             "offValue": "OFF"
+        },
+        {
+            "type": "statelessProgrammableSwitch",
+            "name": "Hall Entry",
+            "url": "homebridge",
+            "topics": {
+                "getSwitch": "zigbee2mqtt/0x0017880104e6c096",
+                "getBatteryLevel": "zigbee2mqtt/0x0017880104e6c096",
+                "getStatusLowBattery": {
+                    "topic": "zigbee2mqtt/0x0017880104e6c096",
+                    "apply": "return message < 20;"
+                }
+            },
+            "switchValues": [
+                "on-press",
+                "up-press",
+                "down-press"
+            ],
+            "codec": "json",
+            "jsonCodec": {
+                "properties": {
+                    "switch": "action",
+                    "batteryLevel": "battery",
+                    "statusLowBattery": "battery"
+                }
+            },
+            "accessory": "mqttthing",
+            "logMqtt": true
         }
     ]
 }
