@@ -84,7 +84,7 @@ Lock physical controls state may be **DISABLED** or **ENABLED**. To use differen
 
 Swing mode state may be **DISABLED** or **ENABLED**. To use different values, specify an array of strings in **swingModeValues**.
 
-Filter life level must be in the range 0 to 100 percent with no decimal places.
+The filter life level is used to indicate remaining filter life level in percent. The value should be a integer between 0 and 100 with no decimal places. Related to this is the filter change indication which is used to indicate if it is time to replace the filter. It is a boolean value and true indicates that a replacement is needed. After a filter replacement this should be set to false. If the hardware device does not have a way to indicate that the filter has been replaced, the reset filter indication can be used. It is currently only supported in the Eve app. When triggered (by the user after a filter change), the MQTT device should reset FilterChangeIndication to false and FilterLifeTime to 100.
 
 ```javascript
 {
