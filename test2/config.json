@@ -33,14 +33,12 @@
             "topics": {
                 "getActive": "test/sprinkler/getActive",
                 "setActive": "test/sprinkler/setActive",
-                "getInUse": "test/sprinkler/getInUse",
-                "getDuration": "test/sprinkler/getDuration",
-                "setDuration": "test/sprinkler/setDuration",
-                "getRemainingDuration": "test/sprinkler/getRemainingDuration"
+                "getInUse": "test/sprinkler/getInUse"
             },
             "integerValue": true,
             "durationTimer": true,
-            "maxDuration": 180
+            "minDuration": 1,
+            "maxDuration": 30
         },
         {
             "type": "television",
