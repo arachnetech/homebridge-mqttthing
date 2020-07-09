@@ -5,7 +5,7 @@ module.exports = {
     },
     "extends": "eslint:recommended",
     "parserOptions": {
-        "ecmaVersion": 2015
+        "ecmaVersion": 9 /* otherwise object spread causes 'Parsing error: Unexpected token...' */
     },
     "rules": {
         "accessor-pairs": "error",

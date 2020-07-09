@@ -17,7 +17,7 @@ var mqttlib = require( './libs/mqttlib' );
 var Service, Characteristic, Eve, HistoryService;
 var homebridgePath;
 
-function makeThing(log, config) {
+function makeThing( log, config ) {
 
     // Migrate old-style history options
     if( config.hasOwnProperty( 'history' ) ) {
@@ -2273,622 +2273,646 @@ function makeThing(log, config) {
         return informationService;
     }
 
-    // Create service
+    // Create services
     function createServices() {
 
-        var name = config.name;
-        var svcNames = config.serviceNames || {}; // custom names for multi-service accessories
+        function configToServices() {
+            let name = config.name;
+            let svcNames = config.serviceNames || {}; // custom names for multi-service accessories
 
-        var service = null; // to return a single service
-        var services = null; // if returning multiple services
+            let service = null; // to return a single service
+            let services = null; // if returning multiple services
 
-        //  config.type may be 'type-subtype', e.g. 'lightbulb-OnOff'
-        let configType = config.type.split('-')[0]; // ignore configuration subtype
+            //  config.type may be 'type-subtype', e.g. 'lightbulb-OnOff'
+            let configType = config.type.split('-')[0]; // ignore configuration subtype
 
-        if (configType == "lightbulb") {
-            service = new Service.Lightbulb(name);
-            if( config.topics.setHSV ) {
-                characteristics_HSVLight(service);
-            } else if( config.topics.setRGB || config.topics.setRGBW || config.topics.setRGBWW ) {
-                characteristics_RGBLight(service);
-            } else if( config.topics.setWhite ) {
-                characteristics_WhiteLight( service );
-            } else {
+            if (configType == "lightbulb") {
+                service = new Service.Lightbulb(name);
+                if( config.topics.setHSV ) {
+                    characteristics_HSVLight(service);
+                } else if( config.topics.setRGB || config.topics.setRGBW || config.topics.setRGBWW ) {
+                    characteristics_RGBLight(service);
+                } else if( config.topics.setWhite ) {
+                    characteristics_WhiteLight( service );
+                } else {
+                    characteristic_On(service);
+                    if (config.topics.setBrightness) {
+                        characteristic_Brightness(service);
+                    }
+                    if (config.topics.setHue) {
+                        characteristic_Hue(service);
+                    }
+                    if (config.topics.setSaturation) {
+                        characteristic_Saturation(service);
+                    }
+                    if( config.topics.setColorTemperature ) {
+                        characteristic_ColorTemperature( service );
+                    }
+                }
+            } else if (configType == "switch") {
+                service = new Service.Switch(name);
                 characteristic_On(service);
-                if (config.topics.setBrightness) {
+                services = [service];
+                if (config.history) {
+                    let historyOptions = new HistoryOptions();
+                    let historySvc = new HistoryService('switch', {displayName: name, log: log}, historyOptions);
+                    history_On(historySvc, service);
+                    // return history service too
+                    services.push( historySvc );
+                }
+            } else if (configType == "outlet") {
+                service = new Service.Outlet(name);
+                characteristic_On(service);
+                if (config.topics.getInUse) {
+                    characteristic_OutletInUse(service);
+                }
+                if (config.topics.getWatts) {
+                    characteristic_CurrentConsumption(service);
+                }
+                if (config.topics.getVolts) {
+                    characteristic_Voltage(service);
+                }
+                if (config.topics.getAmperes) {
+                    characteristic_ElectricCurrent(service);
+                }
+                if (config.topics.getTotalConsumption) {
+                    characteristic_TotalConsumption(service);
+                }
+                services = [service];
+                if (config.history) {
+                    let historyOptions = new HistoryOptions();
+                    let historySvc = new HistoryService('energy', {displayName: name, log: log}, historyOptions);
+                    history_PowerConsumption(historySvc, service);
+                    // return history service too
+                    services.push( historySvc );
+                }
+            } else if (configType == "motionSensor") {
+                service = new Service.MotionSensor(name);
+                characteristic_MotionDetected(service);
+                services = [service];
+                if (config.history) {
+                    let historyOptions = new HistoryOptions(true);
+                    let historySvc = new HistoryService('motion', {displayName: name, log: log}, historyOptions);
+                    history_MotionDetected(historySvc, service);
+                    // return history service too
+                    services.push( historySvc );
+                }
+                addSensorOptionalCharacteristics(service);
+            } else if (configType == "occupancySensor") {
+                service = new Service.OccupancySensor(name);
+                characteristic_OccupancyDetected(service);
+                addSensorOptionalCharacteristics(service);
+            } else if (configType == "lightSensor") {
+                service = new Service.LightSensor(name);
+                characteristic_CurrentAmbientLightLevel(service);
+                addSensorOptionalCharacteristics(service);
+            } else if (configType == "temperatureSensor") {
+                service = new Service.TemperatureSensor(name);
+                characteristic_CurrentTemperature(service);
+                addSensorOptionalCharacteristics(service);
+                services = [service];
+                if (config.history) {
+                    let historyOptions = new HistoryOptions();
+                    let historySvc = new HistoryService('weather', {displayName: name, log: log}, historyOptions);
+                    history_CurrentTemperature(historySvc);
+                    // return history service too
+                    services.push( historySvc );
+                }
+            } else if (configType == "humiditySensor") {
+                service = new Service.HumiditySensor(name);
+                characteristic_CurrentRelativeHumidity(service);
+                addSensorOptionalCharacteristics(service);
+                services = [service];
+                if (config.history) {
+                    let historyOptions = new HistoryOptions();
+                    let historySvc = new HistoryService('weather', {displayName: name, log: log}, historyOptions);
+                    history_CurrentRelativeHumidity(historySvc);
+                    // return history service too
+                    services.push( historySvc );
+                }
+            } else if (configType == "airPressureSensor") {
+                service = new Eve.Services.AirPressureSensor(name);
+                characteristic_AirPressure(service);
+                addSensorOptionalCharacteristics(service);
+                services = [service];
+                if (config.history) {
+                    let historyOptions = new HistoryOptions();
+                    let historySvc = new HistoryService('weather', {displayName: name, log: log}, historyOptions);
+                    history_AirPressure(historySvc);
+                    // return history service too
+                    services.push( historySvc );
+                }
+            } else if (configType == "weatherStation") {
+                service = new Service.TemperatureSensor( svcNames.temperature || name + " Temperature");
+                characteristic_CurrentTemperature( service );
+                addSensorOptionalCharacteristics( service );
+                services = [service];
+                if( config.topics.getCurrentRelativeHumidity ) {
+                    let humSvc = new Service.HumiditySensor( svcNames.humidity || name + " Humidity" );
+                    characteristic_CurrentRelativeHumidity( humSvc );
+                    addSensorOptionalCharacteristics( humSvc );
+                    services.push( humSvc );
+                }
+                if( config.topics.getAirPressure ) {
+                    let presSvc = new Eve.Services.AirPressureSensor( svcNames.airPressure || name + " AirPressure" );
+                    characteristic_AirPressure( presSvc );
+                    addSensorOptionalCharacteristics( presSvc );
+                    services.push( presSvc );
+                }
+                // custom service UUID for optional Eve characteristics
+                let weatherSvc = new Service( svcNames.weather || name + " Weather", "D92D5391-92AF-4824-AF4A-356F25F25EA1");
+                let addWeatherSvc = false;
+                if( config.topics.getWeatherCondition ) {
+                    characteristic_WeatherCondition( weatherSvc );
+                    addWeatherSvc = true;
+                }
+                if( config.topics.getRain1h ) {
+                    characteristic_Rain1h( weatherSvc );
+                    addWeatherSvc = true;
+                }
+                if( config.topics.getRain24h ) {
+                    characteristic_Rain24h( weatherSvc );
+                    addWeatherSvc = true;
+                }
+                if( config.topics.getUVIndex ) {
+                    characteristic_UVIndex( weatherSvc );
+                    addWeatherSvc = true;
+                }
+                if( config.topics.getVisibility ) {
+                    characteristic_Visibility( weatherSvc );
+                    addWeatherSvc = true;
+                }
+                if( config.topics.getWindDirection ) {
+                    characteristic_WindDirection( weatherSvc );
+                    addWeatherSvc = true;
+                }
+                if( config.topics.getWindSpeed ) {
+                    characteristic_WindSpeed( weatherSvc );
+                    addWeatherSvc = true;
+                }
+                if ( addWeatherSvc ) {
+                    services.push( weatherSvc );
+                }
+                if (config.history) {
+                    let historyOptions = new HistoryOptions();
+                    let historySvc = new HistoryService('weather', {displayName: name, log: log}, historyOptions);
+                    history_CurrentTemperature( historySvc );
+                    history_CurrentRelativeHumidity( historySvc );
+                    history_AirPressure( historySvc );
+                    services.push( historySvc );
+                }
+            } else if (configType == "contactSensor") {
+                service = new Service.ContactSensor(name);
+                characteristic_ContactSensorState(service);
+                addSensorOptionalCharacteristics(service);
+                services = [service];
+                if (config.history) {
+                    let historyOptions = new HistoryOptions(true);
+                    let historySvc = new HistoryService('door', {displayName: name, log: log}, historyOptions);
+                    history_ContactSensorState(historySvc, service);
+                    // return history service too
+                    services.push( historySvc );
+                }
+            } else if (configType == "doorbell") {
+                service = new Service.Doorbell(name);
+                characteristic_ProgrammableSwitchEvent(service, 'switch', config.topics.getSwitch, config.switchValues, config.restrictSwitchValues);
+                if (config.topics.setBrightness || config.topics.getBrightness) {
                     characteristic_Brightness(service);
                 }
-                if (config.topics.setHue) {
-                    characteristic_Hue(service);
+                if (config.topics.setVolume || config.topics.getVolume) {
+                    characteristic_Volume(service);
                 }
-                if (config.topics.setSaturation) {
-                    characteristic_Saturation(service);
+                services = [service];
+                if( config.topics.getMotionDetected ) {
+                    // also create motion sensor
+                    let motionsvc = new Service.MotionSensor(svcNames.motion || name + '-motion' );
+                    characteristic_MotionDetected(motionsvc);
+                    // return motion sensor too
+                    services.push( motionsvc );
                 }
-                if( config.topics.setColorTemperature ) {
-                    characteristic_ColorTemperature( service );
-                }
-            }
-        } else if (configType == "switch") {
-            service = new Service.Switch(name);
-            characteristic_On(service);
-            services = [service];
-            if (config.history) {
-                let historyOptions = new HistoryOptions();
-                let historySvc = new HistoryService('switch', {displayName: name, log: log}, historyOptions);
-                history_On(historySvc, service);
-                // return history service too
-                services.push( historySvc );
-            }
-        } else if (configType == "outlet") {
-            service = new Service.Outlet(name);
-            characteristic_On(service);
-            if (config.topics.getInUse) {
-                characteristic_OutletInUse(service);
-            }
-            if (config.topics.getWatts) {
-                characteristic_CurrentConsumption(service);
-            }
-            if (config.topics.getVolts) {
-                characteristic_Voltage(service);
-            }
-            if (config.topics.getAmperes) {
-                characteristic_ElectricCurrent(service);
-            }
-            if (config.topics.getTotalConsumption) {
-                characteristic_TotalConsumption(service);
-            }
-            services = [service];
-            if (config.history) {
-                let historyOptions = new HistoryOptions();
-                let historySvc = new HistoryService('energy', {displayName: name, log: log}, historyOptions);
-                history_PowerConsumption(historySvc, service);
-                // return history service too
-                services.push( historySvc );
-            }
-        } else if (configType == "motionSensor") {
-            service = new Service.MotionSensor(name);
-            characteristic_MotionDetected(service);
-            services = [service];
-            if (config.history) {
-                let historyOptions = new HistoryOptions(true);
-                let historySvc = new HistoryService('motion', {displayName: name, log: log}, historyOptions);
-                history_MotionDetected(historySvc, service);
-                // return history service too
-                services.push( historySvc );
-            }
-            addSensorOptionalCharacteristics(service);
-        } else if (configType == "occupancySensor") {
-            service = new Service.OccupancySensor(name);
-            characteristic_OccupancyDetected(service);
-            addSensorOptionalCharacteristics(service);
-        } else if (configType == "lightSensor") {
-            service = new Service.LightSensor(name);
-            characteristic_CurrentAmbientLightLevel(service);
-            addSensorOptionalCharacteristics(service);
-        } else if (configType == "temperatureSensor") {
-            service = new Service.TemperatureSensor(name);
-            characteristic_CurrentTemperature(service);
-            addSensorOptionalCharacteristics(service);
-            services = [service];
-            if (config.history) {
-                let historyOptions = new HistoryOptions();
-                let historySvc = new HistoryService('weather', {displayName: name, log: log}, historyOptions);
-                history_CurrentTemperature(historySvc);
-                // return history service too
-                services.push( historySvc );
-            }
-        } else if (configType == "humiditySensor") {
-            service = new Service.HumiditySensor(name);
-            characteristic_CurrentRelativeHumidity(service);
-            addSensorOptionalCharacteristics(service);
-            services = [service];
-            if (config.history) {
-                let historyOptions = new HistoryOptions();
-                let historySvc = new HistoryService('weather', {displayName: name, log: log}, historyOptions);
-                history_CurrentRelativeHumidity(historySvc);
-                // return history service too
-                services.push( historySvc );
-            }
-        } else if (configType == "airPressureSensor") {
-            service = new Eve.Services.AirPressureSensor(name);
-            characteristic_AirPressure(service);
-            addSensorOptionalCharacteristics(service);
-            services = [service];
-            if (config.history) {
-                let historyOptions = new HistoryOptions();
-                let historySvc = new HistoryService('weather', {displayName: name, log: log}, historyOptions);
-                history_AirPressure(historySvc);
-                // return history service too
-                services.push( historySvc );
-            }
-        } else if (configType == "weatherStation") {
-            service = new Service.TemperatureSensor( svcNames.temperature || name + " Temperature");
-            characteristic_CurrentTemperature( service );
-            addSensorOptionalCharacteristics( service );
-            services = [service];
-            if( config.topics.getCurrentRelativeHumidity ) {
-                let humSvc = new Service.HumiditySensor( svcNames.humidity || name + " Humidity" );
-                characteristic_CurrentRelativeHumidity( humSvc );
-                addSensorOptionalCharacteristics( humSvc );
-                services.push( humSvc );
-            }
-            if( config.topics.getAirPressure ) {
-                let presSvc = new Eve.Services.AirPressureSensor( svcNames.airPressure || name + " AirPressure" );
-                characteristic_AirPressure( presSvc );
-                addSensorOptionalCharacteristics( presSvc );
-                services.push( presSvc );
-            }
-            // custom service UUID for optional Eve characteristics
-            let weatherSvc = new Service( svcNames.weather || name + " Weather", "D92D5391-92AF-4824-AF4A-356F25F25EA1");
-            let addWeatherSvc = false;
-            if( config.topics.getWeatherCondition ) {
-                characteristic_WeatherCondition( weatherSvc );
-                addWeatherSvc = true;
-            }
-            if( config.topics.getRain1h ) {
-                characteristic_Rain1h( weatherSvc );
-                addWeatherSvc = true;
-            }
-            if( config.topics.getRain24h ) {
-                characteristic_Rain24h( weatherSvc );
-                addWeatherSvc = true;
-            }
-            if( config.topics.getUVIndex ) {
-                characteristic_UVIndex( weatherSvc );
-                addWeatherSvc = true;
-            }
-            if( config.topics.getVisibility ) {
-                characteristic_Visibility( weatherSvc );
-                addWeatherSvc = true;
-            }
-            if( config.topics.getWindDirection ) {
-                characteristic_WindDirection( weatherSvc );
-                addWeatherSvc = true;
-            }
-            if( config.topics.getWindSpeed ) {
-                characteristic_WindSpeed( weatherSvc );
-                addWeatherSvc = true;
-            }
-            if ( addWeatherSvc ) {
-                services.push( weatherSvc );
-            }
-            if (config.history) {
-                let historyOptions = new HistoryOptions();
-                let historySvc = new HistoryService('weather', {displayName: name, log: log}, historyOptions);
-                history_CurrentTemperature( historySvc );
-                history_CurrentRelativeHumidity( historySvc );
-                history_AirPressure( historySvc );
-                services.push( historySvc );
-            }
-        } else if (configType == "contactSensor") {
-            service = new Service.ContactSensor(name);
-            characteristic_ContactSensorState(service);
-            addSensorOptionalCharacteristics(service);
-            services = [service];
-            if (config.history) {
-                let historyOptions = new HistoryOptions(true);
-                let historySvc = new HistoryService('door', {displayName: name, log: log}, historyOptions);
-                history_ContactSensorState(historySvc, service);
-                // return history service too
-                services.push( historySvc );
-            }
-        } else if (configType == "doorbell") {
-            service = new Service.Doorbell(name);
-            characteristic_ProgrammableSwitchEvent(service, 'switch', config.topics.getSwitch, config.switchValues, config.restrictSwitchValues);
-            if (config.topics.setBrightness || config.topics.getBrightness) {
-                characteristic_Brightness(service);
-            }
-            if (config.topics.setVolume || config.topics.getVolume) {
-                characteristic_Volume(service);
-            }
-            services = [service];
-            if( config.topics.getMotionDetected ) {
-                // also create motion sensor
-                let motionsvc = new Service.MotionSensor(svcNames.motion || name + '-motion' );
-                characteristic_MotionDetected(motionsvc);
-                // return motion sensor too
-                services.push( motionsvc );
-            }
-        } else if( configType == "statelessProgrammableSwitch" ) {
-            if (Array.isArray(config.topics.getSwitch)) {
-                service = new Service.ServiceLabel(name);
-                characteristic_ServiceLabelNamespace( service );
-                services = [service]
-                var i = 0;
-                for (i = 0; i < config.topics.getSwitch.length; i++) {
-                    let buttonTopic = config.topics.getSwitch[i];
-                    let switchValues = config.switchValues;
-                    if( switchValues ) {
-                        if (Array.isArray(config.switchValues[0])) {
-                            if (config.switchValues.length > i) {
-                                switchValues = config.switchValues[i];
-                            } else {
-                                // If array is not long enough, just use the first entry
-                                switchValues = config.switchValues[0];
+            } else if( configType == "statelessProgrammableSwitch" ) {
+                if (Array.isArray(config.topics.getSwitch)) {
+                    service = new Service.ServiceLabel(name);
+                    characteristic_ServiceLabelNamespace( service );
+                    services = [service]
+                    var i = 0;
+                    for (i = 0; i < config.topics.getSwitch.length; i++) {
+                        let buttonTopic = config.topics.getSwitch[i];
+                        let switchValues = config.switchValues;
+                        if( switchValues ) {
+                            if (Array.isArray(config.switchValues[0])) {
+                                if (config.switchValues.length > i) {
+                                    switchValues = config.switchValues[i];
+                                } else {
+                                    // If array is not long enough, just use the first entry
+                                    switchValues = config.switchValues[0];
+                                }
                             }
                         }
-                    }
-                    let restrictSwitchValues = config.restrictSwitchValues;
-                    if( restrictSwitchValues ) {
-                        if (Array.isArray(config.restrictSwitchValues[0])) {
-                            if (config.restrictSwitchValues.length > i) {
-                                restrictSwitchValues = config.restrictSwitchValues[i];
-                            } else {
-                                // If array is not long enough, just use the first entry
-                                restrictSwitchValues = config.restrictSwitchValues[0];
+                        let restrictSwitchValues = config.restrictSwitchValues;
+                        if( restrictSwitchValues ) {
+                            if (Array.isArray(config.restrictSwitchValues[0])) {
+                                if (config.restrictSwitchValues.length > i) {
+                                    restrictSwitchValues = config.restrictSwitchValues[i];
+                                } else {
+                                    // If array is not long enough, just use the first entry
+                                    restrictSwitchValues = config.restrictSwitchValues[0];
+                                }
                             }
                         }
+                        let buttonSvc = new Service.StatelessProgrammableSwitch( name + "_" + i, i + 1 );
+                        characteristic_ProgrammableSwitchEvent(buttonSvc, 'switch' + i, buttonTopic, switchValues, restrictSwitchValues);
+                        characteristic_ServiceLabelIndex( buttonSvc, i + 1 );
+                        services.push(buttonSvc)
                     }
-                    let buttonSvc = new Service.StatelessProgrammableSwitch( name + "_" + i, i + 1 );
-                    characteristic_ProgrammableSwitchEvent(buttonSvc, 'switch' + i, buttonTopic, switchValues, restrictSwitchValues);
-                    characteristic_ServiceLabelIndex( buttonSvc, i + 1 );
-                    services.push(buttonSvc)
+                } else {
+                    service = new Service.StatelessProgrammableSwitch( name );
+                    characteristic_ProgrammableSwitchEvent(service, 'switch', config.topics.getSwitch, config.switchValues, config.restrictSwitchValues);
                 }
-            } else {
-                service = new Service.StatelessProgrammableSwitch( name );
-                characteristic_ProgrammableSwitchEvent(service, 'switch', config.topics.getSwitch, config.switchValues, config.restrictSwitchValues);
-            }
-        } else if (configType == "securitySystem") {
-            service = new Service.SecuritySystem(name);
-            characteristic_SecuritySystemTargetState(service);
-            characteristic_SecuritySystemCurrentState(service);
-            if (config.topics.getStatusFault) {
-                characteristic_StatusFault(service);
-            }
-            if (config.topics.getStatusTampered) {
-                characteristic_StatusTampered(service);
-            }
-            // todo: SecuritySystemAlarmType
-        } else if (configType == "smokeSensor") {
-            service = new Service.SmokeSensor(name);
-            characteristic_SmokeDetected(service);
-            addSensorOptionalCharacteristics(service);
-        } else if( configType == "garageDoorOpener" ) {
-            service = new Service.GarageDoorOpener(name);
-            characteristic_TargetDoorState(service);
-            if( config.topics.getDoorMoving ) {
-                characteristic_DoorMoving(service);
-            } else {
-                characteristic_CurrentDoorState(service);
-            }
-            characteristic_ObstructionDetected(service);
-            if( config.topics.setLockTargetState ) {
-                characteristic_LockTargetState(service);
-            }
-            if( config.topics.getLockCurrentState ) {
-                characteristic_LockCurrentState(service);
-            }
-        } else if( configType == "lockMechanism" ) {
-            service = new Service.LockMechanism( name );
-            if( config.topics.setLockTargetState ) {
-                characteristic_LockTargetState( service );
-            }
-            if( config.topics.getLockCurrentState ) {
-                characteristic_LockCurrentState( service );
-            }
-        } else if( configType == "fan" ) {
-            service = new Service.Fan(name);
-            characteristic_On(service);
-            if( config.topics.getRotationDirection || config.topics.setRotationDirection ) {
-                characteristic_RotationDirection(service);
-            }
-            if( config.topics.getRotationSpeed || config.topics.setRotationSpeed ) {
-                characteristic_RotationSpeed(service);
-            }
-        } else if( configType == "leakSensor" ) { 
-            service = new Service.LeakSensor( name );
-            characteristic_LeakDetected( service );
-            addSensorOptionalCharacteristics(service);
-        } else if( configType == "microphone" ) {
-            service = new Service.Microphone( name );
-            characteristic_Mute( service );
-            if (config.topics.setVolume || config.topics.getVolume) {
-                characteristic_Volume(service);
-            }
-        } else if( configType == "speaker" ) {
-            service = new Service.Speaker( name );
-            characteristic_Mute( service );
-            if (config.topics.setVolume || config.topics.getVolume) {
-                characteristic_Volume(service);
-            }
-        } else if( configType == "windowCovering" ) {
-            service = new Service.WindowCovering( name );
-            characteristic_CurrentPosition( service );
-            characteristic_TargetPosition( service );
-            characteristic_PositionState( service );
-            if( config.topics.setHoldPosition ) {
-                characteristic_HoldPosition( service );
-            }
-            if( config.topics.getTargetHorizontalTiltAngle || config.topics.setTargetHorizontalTiltAngle ) {
-                Characteristic_TargetHorizontalTiltAngle( service );
-            }
-            if( config.topics.getTargetVerticalTiltAngle || config.topics.setTargetVerticalTiltAngle ) {
-                Characteristic_TargetVerticalTiltAngle( service );
-            }
-            if( config.topics.getCurrentHorizontalTiltAngle ) {
-                Characteristic_CurrentHorizontalTiltAngle( service );
-            }
-            if( config.topics.getCurrentVerticalTiltAngle ) {
-                Characteristic_CurrentVerticalTiltAngle( service );
-            }
-            if( config.topics.getObstructionDetected ) {
-                characteristic_ObstructionDetected( service );
-            }
-        } else if( configType == "window" ) {
-            service = new Service.Window( name );
-            characteristic_CurrentPosition( service );
-            characteristic_TargetPosition( service );
-            characteristic_PositionState( service );
-            if( config.topics.setHoldPosition ) {
-                characteristic_HoldPosition( service );
-            }
-            if( config.topics.getObstructionDetected ) {
-                characteristic_ObstructionDetected( service );
-            }
-        } else if( configType == "airQualitySensor" ) {
-            service = new Service.AirQualitySensor( svcNames.airQuality || name );
-            characteristic_AirQuality( service );
-            addSensorOptionalCharacteristics( service );
-            if( config.topics.getCarbonDioxideLevel ) {
-                characteristic_CarbonDioxideLevel( service );
-            }
-            if( config.topics.getPM10Density ) {
-                characteristic_PM10Density( service );
-            }
-            if( config.topics.getPM2_5Density ) {
-                characteristic_PM2_5Density( service );
-            }
-            if( config.topics.getOzoneDensity ) {
-                characteristic_OzoneDensity( service );
-            }
-            if( config.topics.getNitrogenDioxideDensity ) {
-                characteristic_NitrogenDioxideDensity( service );
-            }
-            if( config.topics.getSulphurDioxideDensity ) {
-                characteristic_SulphurDioxideDensity( service );
-            }
-            if( config.topics.getVOCDensity ) {
-                characteristic_VOCDensity( service );
-            }
-            if( config.topics.getCarbonMonoxideLevel ) {
-                characteristic_CarbonMonoxideLevel( service );
-            }
-            services = [service];
-            if( config.topics.getCurrentTemperature ) {
-                let tempSvc = new Service.TemperatureSensor( svcNames.temperature || name + "-Temperature" );
-                characteristic_CurrentTemperature( tempSvc );
-                addSensorOptionalCharacteristics( tempSvc );
-                services.push( tempSvc );
-            }
-            if( config.topics.getCurrentRelativeHumidity ) {
-                let humSvc = new Service.HumiditySensor( svcNames.humidity || name + "-Humidity" );
-                characteristic_CurrentRelativeHumidity( humSvc );
-                addSensorOptionalCharacteristics( humSvc );
-                services.push( humSvc );
-            }
-            if (config.history) {
-                let historyOptions = new HistoryOptions();
-                let historySvc = new HistoryService( 'room', {displayName: name, log: log}, historyOptions );
-                if( config.topics.getAirQualityPPM ) {
-                    characteristic_AirQualityPPM( service );
+            } else if (configType == "securitySystem") {
+                service = new Service.SecuritySystem(name);
+                characteristic_SecuritySystemTargetState(service);
+                characteristic_SecuritySystemCurrentState(service);
+                if (config.topics.getStatusFault) {
+                    characteristic_StatusFault(service);
                 }
-                history_AirQualityPPM( historySvc );
-                history_CurrentTemperature( historySvc );
-                history_CurrentRelativeHumidity( historySvc );
-                services.push( historySvc );
-            }
-        } else if( configType == 'carbonDioxideSensor' ) {
-            service = new Service.CarbonDioxideSensor( name );
-            characteristic_CarbonDioxideDetected( service );
-            addSensorOptionalCharacteristics(service);
-            if( config.topics.getCarbonDioxideLevel ) {
-                characteristic_CarbonDioxideLevel( service );
-            }
-            if( config.topics.getCarbonDioxidePeakLevel ) {
-                characteristic_CarbonDioxidePeakLevel( service );
-            }
-        } else if( configType == 'valve' ) {
-            service = new Service.Valve( name );
-            characteristic_ValveType( service );
-            characteristic_Active( service );
-            characteristic_InUse( service );
-            if ( config.topics.setDuration || config.durationTimer ) {
-                characteristic_SetDuration( service );
-                characteristic_RemainingDuration( service );
-            } else if ( config.topics.getRemainingDuration || config.turnOffAfterms ) {
-                characteristic_RemainingDuration( service );
-            }
-            addSensorOptionalCharacteristics( service );
-        } else if( configType == 'thermostat' ) {
-            service = new Service.Thermostat( name );
-            characteristic_CurrentHeatingCoolingState( service );
-            characteristic_TargetHeatingCoolingState( service );
-            characteristic_CurrentTemperature( service );
-            characteristic_TargetTemperature( service );
-            characteristic_TemperatureDisplayUnits( service );
-            if( config.topics.getCurrentRelativeHumidity ) {
-                characteristic_CurrentRelativeHumidity( service );
-            }
-            if( config.topics.getTargetRelativeHumidity || config.topics.setTargetRelativeHumidity ) {
-                characteristic_TargetRelativeHumidity( service );
-            }
-            if( config.topics.getCoolingThresholdTemperature || config.topics.setCoolingThresholdTemperature ) {
-                characteristic_CoolingThresholdTemperature( service );
-            }
-            if( config.topics.getHeatingThresholdTemperature || config.topics.setHeatingThresholdTemperature ) {
-                characteristic_HeatingThresholdTemperature( service );
-            }
-        } else if( configType == "heaterCooler" ) {
-            service = new Service.HeaterCooler( name );
-            characteristic_Active( service );
-            characteristic_CurrentHeaterCoolerState( service );
-            characteristic_TargetHeaterCoolerState( service );
-            characteristic_CurrentTemperature( service );
-            if( config.topics.setLockPhysicalControls || config.topics.getLockPhysicalControls ) {
-                characteristic_LockPhysicalControls( service );
-            }
-            if( config.topics.getSwingMode || config.topics.setSwingMode ) {
-                characteristic_SwingMode( service );
-            }
-            if( config.topics.getCoolingThresholdTemperature || config.topics.setCoolingThresholdTemperature ) {
-                characteristic_CoolingThresholdTemperature( service );
-            }
-            if( config.topics.getHeatingThresholdTemperature || config.topics.setHeatingThresholdTemperature ) {
-                characteristic_HeatingThresholdTemperature( service );
-            }
-            if( config.topics.getTemperatureDisplayUnits || config.topics.setTemperatureDisplayUnits ) {
+                if (config.topics.getStatusTampered) {
+                    characteristic_StatusTampered(service);
+                }
+                // todo: SecuritySystemAlarmType
+            } else if (configType == "smokeSensor") {
+                service = new Service.SmokeSensor(name);
+                characteristic_SmokeDetected(service);
+                addSensorOptionalCharacteristics(service);
+            } else if( configType == "garageDoorOpener" ) {
+                service = new Service.GarageDoorOpener(name);
+                characteristic_TargetDoorState(service);
+                if( config.topics.getDoorMoving ) {
+                    characteristic_DoorMoving(service);
+                } else {
+                    characteristic_CurrentDoorState(service);
+                }
+                characteristic_ObstructionDetected(service);
+                if( config.topics.setLockTargetState ) {
+                    characteristic_LockTargetState(service);
+                }
+                if( config.topics.getLockCurrentState ) {
+                    characteristic_LockCurrentState(service);
+                }
+            } else if( configType == "lockMechanism" ) {
+                service = new Service.LockMechanism( name );
+                if( config.topics.setLockTargetState ) {
+                    characteristic_LockTargetState( service );
+                }
+                if( config.topics.getLockCurrentState ) {
+                    characteristic_LockCurrentState( service );
+                }
+            } else if( configType == "fan" ) {
+                service = new Service.Fan(name);
+                characteristic_On(service);
+                if( config.topics.getRotationDirection || config.topics.setRotationDirection ) {
+                    characteristic_RotationDirection(service);
+                }
+                if( config.topics.getRotationSpeed || config.topics.setRotationSpeed ) {
+                    characteristic_RotationSpeed(service);
+                }
+            } else if( configType == "leakSensor" ) { 
+                service = new Service.LeakSensor( name );
+                characteristic_LeakDetected( service );
+                addSensorOptionalCharacteristics(service);
+            } else if( configType == "microphone" ) {
+                service = new Service.Microphone( name );
+                characteristic_Mute( service );
+                if (config.topics.setVolume || config.topics.getVolume) {
+                    characteristic_Volume(service);
+                }
+            } else if( configType == "speaker" ) {
+                service = new Service.Speaker( name );
+                characteristic_Mute( service );
+                if (config.topics.setVolume || config.topics.getVolume) {
+                    characteristic_Volume(service);
+                }
+            } else if( configType == "windowCovering" ) {
+                service = new Service.WindowCovering( name );
+                characteristic_CurrentPosition( service );
+                characteristic_TargetPosition( service );
+                characteristic_PositionState( service );
+                if( config.topics.setHoldPosition ) {
+                    characteristic_HoldPosition( service );
+                }
+                if( config.topics.getTargetHorizontalTiltAngle || config.topics.setTargetHorizontalTiltAngle ) {
+                    Characteristic_TargetHorizontalTiltAngle( service );
+                }
+                if( config.topics.getTargetVerticalTiltAngle || config.topics.setTargetVerticalTiltAngle ) {
+                    Characteristic_TargetVerticalTiltAngle( service );
+                }
+                if( config.topics.getCurrentHorizontalTiltAngle ) {
+                    Characteristic_CurrentHorizontalTiltAngle( service );
+                }
+                if( config.topics.getCurrentVerticalTiltAngle ) {
+                    Characteristic_CurrentVerticalTiltAngle( service );
+                }
+                if( config.topics.getObstructionDetected ) {
+                    characteristic_ObstructionDetected( service );
+                }
+            } else if( configType == "window" ) {
+                service = new Service.Window( name );
+                characteristic_CurrentPosition( service );
+                characteristic_TargetPosition( service );
+                characteristic_PositionState( service );
+                if( config.topics.setHoldPosition ) {
+                    characteristic_HoldPosition( service );
+                }
+                if( config.topics.getObstructionDetected ) {
+                    characteristic_ObstructionDetected( service );
+                }
+            } else if( configType == "airQualitySensor" ) {
+                service = new Service.AirQualitySensor( svcNames.airQuality || name );
+                characteristic_AirQuality( service );
+                addSensorOptionalCharacteristics( service );
+                if( config.topics.getCarbonDioxideLevel ) {
+                    characteristic_CarbonDioxideLevel( service );
+                }
+                if( config.topics.getPM10Density ) {
+                    characteristic_PM10Density( service );
+                }
+                if( config.topics.getPM2_5Density ) {
+                    characteristic_PM2_5Density( service );
+                }
+                if( config.topics.getOzoneDensity ) {
+                    characteristic_OzoneDensity( service );
+                }
+                if( config.topics.getNitrogenDioxideDensity ) {
+                    characteristic_NitrogenDioxideDensity( service );
+                }
+                if( config.topics.getSulphurDioxideDensity ) {
+                    characteristic_SulphurDioxideDensity( service );
+                }
+                if( config.topics.getVOCDensity ) {
+                    characteristic_VOCDensity( service );
+                }
+                if( config.topics.getCarbonMonoxideLevel ) {
+                    characteristic_CarbonMonoxideLevel( service );
+                }
+                services = [service];
+                if( config.topics.getCurrentTemperature ) {
+                    let tempSvc = new Service.TemperatureSensor( svcNames.temperature || name + "-Temperature" );
+                    characteristic_CurrentTemperature( tempSvc );
+                    addSensorOptionalCharacteristics( tempSvc );
+                    services.push( tempSvc );
+                }
+                if( config.topics.getCurrentRelativeHumidity ) {
+                    let humSvc = new Service.HumiditySensor( svcNames.humidity || name + "-Humidity" );
+                    characteristic_CurrentRelativeHumidity( humSvc );
+                    addSensorOptionalCharacteristics( humSvc );
+                    services.push( humSvc );
+                }
+                if (config.history) {
+                    let historyOptions = new HistoryOptions();
+                    let historySvc = new HistoryService( 'room', {displayName: name, log: log}, historyOptions );
+                    if( config.topics.getAirQualityPPM ) {
+                        characteristic_AirQualityPPM( service );
+                    }
+                    history_AirQualityPPM( historySvc );
+                    history_CurrentTemperature( historySvc );
+                    history_CurrentRelativeHumidity( historySvc );
+                    services.push( historySvc );
+                }
+            } else if( configType == 'carbonDioxideSensor' ) {
+                service = new Service.CarbonDioxideSensor( name );
+                characteristic_CarbonDioxideDetected( service );
+                addSensorOptionalCharacteristics(service);
+                if( config.topics.getCarbonDioxideLevel ) {
+                    characteristic_CarbonDioxideLevel( service );
+                }
+                if( config.topics.getCarbonDioxidePeakLevel ) {
+                    characteristic_CarbonDioxidePeakLevel( service );
+                }
+            } else if( configType == 'valve' ) {
+                service = new Service.Valve( name );
+                characteristic_ValveType( service );
+                characteristic_Active( service );
+                characteristic_InUse( service );
+                if ( config.topics.setDuration || config.durationTimer ) {
+                    characteristic_SetDuration( service );
+                    characteristic_RemainingDuration( service );
+                } else if ( config.topics.getRemainingDuration || config.turnOffAfterms ) {
+                    characteristic_RemainingDuration( service );
+                }
+                addSensorOptionalCharacteristics( service );
+            } else if( configType == 'thermostat' ) {
+                service = new Service.Thermostat( name );
+                characteristic_CurrentHeatingCoolingState( service );
+                characteristic_TargetHeatingCoolingState( service );
+                characteristic_CurrentTemperature( service );
+                characteristic_TargetTemperature( service );
                 characteristic_TemperatureDisplayUnits( service );
-            }
-            if( config.topics.getRotationSpeed || config.topics.setRotationSpeed ) {
-                characteristic_RotationSpeed(service);
-            }
-        } else if( configType == 'television' ) {
-            service = new Service.Television( name );
-            service.isPrimaryService = true;
-            characteristic_Active( service );
-            service.setCharacteristic(Characteristic.ActiveIdentifier, 0);
-            service.setCharacteristic(Characteristic.ConfiguredName, name);
-            service.setCharacteristic(Characteristic.SleepDiscoveryMode, Characteristic.SleepDiscoveryMode.ALWAYS_DISCOVERABLE);
-            // service.setCharacteristic(Characteristic.Brightness, XXX);  // no impact?
-            // service.setCharacteristic(Characteristic.ClosedCaptions, XXX);  // no impact?
-            // service.setCharacteristic(Characteristic.CurrentMediaState, XXX);  // no impact?
-            // service.setCharacteristic(Characteristic.TargetMediaState, XXX);  // no impact?
-            // service.setCharacteristic(Characteristic.PictureMode, XXX);  // no impact?
-            // service.addCharacteristic(Characteristic.PowerModeSelection);  // this would add a button in TV settings
-            characteristic_RemoteKey( service );
-
-            services = [ service ];
-
-            if (config.inputs) {
-                var inputValues = [ 'NONE' ];   // MQTT values for ActiveIdentifier
-                var displayOrderTlvArray = [];  // for specific order instead of default alphabetical ordering
-                config.inputs.forEach( function( input, index ) {
-                    let inputId = index + 1;
-                    let inputName = input.name || 'Input ' + inputId;
-                    let inputSvc = new Service.InputSource( inputName, inputId );
-                    inputSvc.isHiddenService = true;  // not sure if necessary
-                    service.addLinkedService(inputSvc);  // inputSvc must be linked to main service
-                    inputSvc.setCharacteristic(Characteristic.Identifier, inputId);
-                    inputSvc.setCharacteristic(Characteristic.ConfiguredName, inputName);
-                    inputSvc.setCharacteristic(Characteristic.IsConfigured, Characteristic.IsConfigured.CONFIGURED);  // necessary for input to appear
-                    inputSvc.setCharacteristic(Characteristic.InputDeviceType, Characteristic.InputDeviceType.OTHER); // no impact?
-                    inputSvc.setCharacteristic(Characteristic.InputSourceType, Characteristic.InputSourceType.OTHER); // no impact?
-                    var visibilityStateProperty = 'input' + inputId + '-visible';
-                    addCharacteristic(inputSvc, visibilityStateProperty, Characteristic.TargetVisibilityState, Characteristic.TargetVisibilityState.SHOWN, function() {
-                        // change CurrentVisibilityState when TargetVisibilityState changes
-                        inputSvc.setCharacteristic(Characteristic.CurrentVisibilityState, state[visibilityStateProperty]);
-                    });
-                    inputValues.push(input.value || inputId);
-                    displayOrderTlvArray.push(1, 1, inputId);  // type = 1 ("Identifier"), length = 1 Byte, Identifier value
-                    services.push(inputSvc);
-                });
-                characteristic_ActiveIdentifier( service, inputValues );  // for selecting inputs
-                var displayOrderTlv = Buffer.from(displayOrderTlvArray).toString('base64');
-                service.setCharacteristic(Characteristic.DisplayOrder, displayOrderTlv);
-            }
-        } else if( config.type == 'irrigationSystem' ) {
-            service = new Service.IrrigationSystem( name );
-            service.isPrimaryService = true;
-            if ( !config.topics ) {
-                config.topics = {};
-            }
-            characteristic_Active( service );
-            characteristic_InUse( service );
-            service.setCharacteristic( Characteristic.ProgramMode, Characteristic.ProgramMode.NO_PROGRAM_SCHEDULED );
-            if ( config.topics.getStatusFault ) {
-                characteristic_StatusFault( service );
-            }
-
-            services = [ service ];
-
-            if ( config.zones ) {
-                let serviceLabel = new Service.ServiceLabel();
-                serviceLabel.setCharacteristic( Characteristic.ServiceLabelNamespace, Characteristic.ServiceLabelNamespace.ARABIC_NUMERALS );
-                services.push( serviceLabel )
-                config.zones.forEach( function( zone, index ) {
-                    let zoneId = index + 1;
-                    let zoneName = zone.name || ''; // default name doesn't seem to work
-                    let valveSvc = new Service.Valve( zoneName, zoneId );
-                    characteristic_ValveType( valveSvc, Characteristic.ValveType.IRRIGATION);
-                    characteristic_ServiceLabelIndex( valveSvc, zoneId );
-                    characteristic_Active( valveSvc, zoneId, zone );
-                    characteristic_InUse( valveSvc, zoneId, zone );
-                    characteristic_SetDuration( valveSvc, zoneId, zone );
-                    characteristic_RemainingDuration( valveSvc, zoneId, zone );
-                    valveSvc.setCharacteristic( Characteristic.IsConfigured, Characteristic.IsConfigured.CONFIGURED );
-                    if ( zone.topics.getStatusFault ) {
-                        characteristic_StatusFault( valveSvc );
-                    }
-                    linkIrrigationCharacteristics( service, valveSvc, zoneId );  // valveSvc must be linked to main service
-                    services.push( valveSvc );
-                });
-            }
-        } else if( configType == "airPurifier" ) {
-            service = new Service.AirPurifier( name );
-            characteristic_Active( service );
-            characteristic_CurrentAirPurifierState( service );
-            characteristic_TargetAirPurifierState( service );
-            if( config.topics.getRotationSpeed || config.topics.setRotationSpeed ) {
-                characteristic_RotationSpeed( service );
-            }
-            if( config.topics.getSwingMode || config.topics.setSwingMode ) {
-                characteristic_SwingMode( service );
-            }
-            if( config.topics.setLockPhysicalControls || config.topics.getLockPhysicalControls ) {
-                characteristic_LockPhysicalControls( service );
-            }
-            services = [ service ];
-            if( config.topics.getFilterChangeIndication || config.topics.getFilterLifeLevel || config.topics.setResetFilterIndication ) {
-                let filterSvc = new Service.FilterMaintenance( svcNames.filter || name + "-Filter" );
-                service.addLinkedService( filterSvc );
-                characteristic_FilterChangeIndication( filterSvc ); // required
-                if( config.topics.getFilterLifeLevel ) {
-                    characteristic_FilterLifeLevel( filterSvc );
+                if( config.topics.getCurrentRelativeHumidity ) {
+                    characteristic_CurrentRelativeHumidity( service );
                 }
-                if( config.topics.setResetFilterIndication ) {
-                    characteristic_ResetFilterIndication( filterSvc );
+                if( config.topics.getTargetRelativeHumidity || config.topics.setTargetRelativeHumidity ) {
+                    characteristic_TargetRelativeHumidity( service );
                 }
-                services.push( filterSvc );
-            }
-        } else {
-            log("ERROR: Unrecognized type: " + configType);
-        }
+                if( config.topics.getCoolingThresholdTemperature || config.topics.setCoolingThresholdTemperature ) {
+                    characteristic_CoolingThresholdTemperature( service );
+                }
+                if( config.topics.getHeatingThresholdTemperature || config.topics.setHeatingThresholdTemperature ) {
+                    characteristic_HeatingThresholdTemperature( service );
+                }
+            } else if( configType == "heaterCooler" ) {
+                service = new Service.HeaterCooler( name );
+                characteristic_Active( service );
+                characteristic_CurrentHeaterCoolerState( service );
+                characteristic_TargetHeaterCoolerState( service );
+                characteristic_CurrentTemperature( service );
+                if( config.topics.setLockPhysicalControls || config.topics.getLockPhysicalControls ) {
+                    characteristic_LockPhysicalControls( service );
+                }
+                if( config.topics.getSwingMode || config.topics.setSwingMode ) {
+                    characteristic_SwingMode( service );
+                }
+                if( config.topics.getCoolingThresholdTemperature || config.topics.setCoolingThresholdTemperature ) {
+                    characteristic_CoolingThresholdTemperature( service );
+                }
+                if( config.topics.getHeatingThresholdTemperature || config.topics.setHeatingThresholdTemperature ) {
+                    characteristic_HeatingThresholdTemperature( service );
+                }
+                if( config.topics.getTemperatureDisplayUnits || config.topics.setTemperatureDisplayUnits ) {
+                    characteristic_TemperatureDisplayUnits( service );
+                }
+                if( config.topics.getRotationSpeed || config.topics.setRotationSpeed ) {
+                    characteristic_RotationSpeed(service);
+                }
+            } else if( configType == 'television' ) {
+                service = new Service.Television( name );
+                service.isPrimaryService = true;
+                characteristic_Active( service );
+                service.setCharacteristic(Characteristic.ActiveIdentifier, 0);
+                service.setCharacteristic(Characteristic.ConfiguredName, name);
+                service.setCharacteristic(Characteristic.SleepDiscoveryMode, Characteristic.SleepDiscoveryMode.ALWAYS_DISCOVERABLE);
+                // service.setCharacteristic(Characteristic.Brightness, XXX);  // no impact?
+                // service.setCharacteristic(Characteristic.ClosedCaptions, XXX);  // no impact?
+                // service.setCharacteristic(Characteristic.CurrentMediaState, XXX);  // no impact?
+                // service.setCharacteristic(Characteristic.TargetMediaState, XXX);  // no impact?
+                // service.setCharacteristic(Characteristic.PictureMode, XXX);  // no impact?
+                // service.addCharacteristic(Characteristic.PowerModeSelection);  // this would add a button in TV settings
+                characteristic_RemoteKey( service );
 
-        if (service) {
-            if (config.topics.getName) {
-                characteristic_Name(service);
-            }
-
-            if( config.topics.getOnline ) {
-                state_Online();
-            }
-        }
-
-        // always use services array
-        if( ! services ) {
-            if( service ) {
                 services = [ service ];
+
+                if (config.inputs) {
+                    var inputValues = [ 'NONE' ];   // MQTT values for ActiveIdentifier
+                    var displayOrderTlvArray = [];  // for specific order instead of default alphabetical ordering
+                    config.inputs.forEach( function( input, index ) {
+                        let inputId = index + 1;
+                        let inputName = input.name || 'Input ' + inputId;
+                        let inputSvc = new Service.InputSource( inputName, inputId );
+                        inputSvc.isHiddenService = true;  // not sure if necessary
+                        service.addLinkedService(inputSvc);  // inputSvc must be linked to main service
+                        inputSvc.setCharacteristic(Characteristic.Identifier, inputId);
+                        inputSvc.setCharacteristic(Characteristic.ConfiguredName, inputName);
+                        inputSvc.setCharacteristic(Characteristic.IsConfigured, Characteristic.IsConfigured.CONFIGURED);  // necessary for input to appear
+                        inputSvc.setCharacteristic(Characteristic.InputDeviceType, Characteristic.InputDeviceType.OTHER); // no impact?
+                        inputSvc.setCharacteristic(Characteristic.InputSourceType, Characteristic.InputSourceType.OTHER); // no impact?
+                        var visibilityStateProperty = 'input' + inputId + '-visible';
+                        addCharacteristic(inputSvc, visibilityStateProperty, Characteristic.TargetVisibilityState, Characteristic.TargetVisibilityState.SHOWN, function() {
+                            // change CurrentVisibilityState when TargetVisibilityState changes
+                            inputSvc.setCharacteristic(Characteristic.CurrentVisibilityState, state[visibilityStateProperty]);
+                        });
+                        inputValues.push(input.value || inputId);
+                        displayOrderTlvArray.push(1, 1, inputId);  // type = 1 ("Identifier"), length = 1 Byte, Identifier value
+                        services.push(inputSvc);
+                    });
+                    characteristic_ActiveIdentifier( service, inputValues );  // for selecting inputs
+                    var displayOrderTlv = Buffer.from(displayOrderTlvArray).toString('base64');
+                    service.setCharacteristic(Characteristic.DisplayOrder, displayOrderTlv);
+                }
+            } else if( config.type == 'irrigationSystem' ) {
+                service = new Service.IrrigationSystem( name );
+                service.isPrimaryService = true;
+                if ( !config.topics ) {
+                    config.topics = {};
+                }
+                characteristic_Active( service );
+                characteristic_InUse( service );
+                service.setCharacteristic( Characteristic.ProgramMode, Characteristic.ProgramMode.NO_PROGRAM_SCHEDULED );
+                if ( config.topics.getStatusFault ) {
+                    characteristic_StatusFault( service );
+                }
+
+                services = [ service ];
+
+                if ( config.zones ) {
+                    let serviceLabel = new Service.ServiceLabel();
+                    serviceLabel.setCharacteristic( Characteristic.ServiceLabelNamespace, Characteristic.ServiceLabelNamespace.ARABIC_NUMERALS );
+                    services.push( serviceLabel )
+                    config.zones.forEach( function( zone, index ) {
+                        let zoneId = index + 1;
+                        let zoneName = zone.name || ''; // default name doesn't seem to work
+                        let valveSvc = new Service.Valve( zoneName, zoneId );
+                        characteristic_ValveType( valveSvc, Characteristic.ValveType.IRRIGATION);
+                        characteristic_ServiceLabelIndex( valveSvc, zoneId );
+                        characteristic_Active( valveSvc, zoneId, zone );
+                        characteristic_InUse( valveSvc, zoneId, zone );
+                        characteristic_SetDuration( valveSvc, zoneId, zone );
+                        characteristic_RemainingDuration( valveSvc, zoneId, zone );
+                        valveSvc.setCharacteristic( Characteristic.IsConfigured, Characteristic.IsConfigured.CONFIGURED );
+                        if ( zone.topics.getStatusFault ) {
+                            characteristic_StatusFault( valveSvc );
+                        }
+                        linkIrrigationCharacteristics( service, valveSvc, zoneId );  // valveSvc must be linked to main service
+                        services.push( valveSvc );
+                    });
+                }
+            } else if( configType == "airPurifier" ) {
+                service = new Service.AirPurifier( name );
+                characteristic_Active( service );
+                characteristic_CurrentAirPurifierState( service );
+                characteristic_TargetAirPurifierState( service );
+                if( config.topics.getRotationSpeed || config.topics.setRotationSpeed ) {
+                    characteristic_RotationSpeed( service );
+                }
+                if( config.topics.getSwingMode || config.topics.setSwingMode ) {
+                    characteristic_SwingMode( service );
+                }
+                if( config.topics.setLockPhysicalControls || config.topics.getLockPhysicalControls ) {
+                    characteristic_LockPhysicalControls( service );
+                }
+                services = [ service ];
+                if( config.topics.getFilterChangeIndication || config.topics.getFilterLifeLevel || config.topics.setResetFilterIndication ) {
+                    let filterSvc = new Service.FilterMaintenance( svcNames.filter || name + "-Filter" );
+                    service.addLinkedService( filterSvc );
+                    characteristic_FilterChangeIndication( filterSvc ); // required
+                    if( config.topics.getFilterLifeLevel ) {
+                        characteristic_FilterLifeLevel( filterSvc );
+                    }
+                    if( config.topics.setResetFilterIndication ) {
+                        characteristic_ResetFilterIndication( filterSvc );
+                    }
+                    services.push( filterSvc );
+                }
             } else {
-                log( 'Error: No service(s) created for ' + name );
-                return;
+                log("ERROR: Unrecognized type: " + configType);
             }
+
+            if (service) {
+                if (config.topics.getName) {
+                    characteristic_Name(service);
+                }
+
+                if( config.topics.getOnline ) {
+                    state_Online();
+                }
+            }
+
+            // always use services array
+            if( ! services ) {
+                if( service ) {
+                    services = [ service ];
+                } else {
+                    log( 'Error: No service(s) created for ' + name );
+                    return;
+                }
+            }
+
+            return services;
         }
 
-        // optional battery service
-        if( config.topics.getBatteryLevel || config.topics.getChargingState ||
-            ( config.topics.getStatusLowBattery && ! service.testCharacteristic(Characteristic.StatusLowBattery) ) ) {
-            // also create battery service
-            let batsvc = new Service.BatteryService( name + '-battery' );
-            if( config.topics.getBatteryLevel ) {
-                characteristic_BatteryLevel( batsvc );
+        let services = null;
+        
+        if( config.type === "custom" && config.services ) {
+            // multi-service/custom configuration...
+            services = [];
+            let realConfig = config;
+            for( let svcCfg of realConfig.services ) {
+                config = { ...realConfig, ...svcCfg };
+                services = [ ...services, ...configToServices() ];
             }
-            if( config.topics.getChargingState ) {
-                characteristic_ChargingState( batsvc );
+            config = realConfig;
+        } else {
+            // single accessory
+            services = configToServices();
+        }
+
+        if( services.length > 0 ) {
+            // optional battery service
+            let service = services[ 0 ];
+            let name = config.name;
+            if( config.topics.getBatteryLevel || config.topics.getChargingState ||
+                ( config.topics.getStatusLowBattery && ! service.testCharacteristic(Characteristic.StatusLowBattery) ) ) {
+                // also create battery service
+                let batsvc = new Service.BatteryService( name + '-battery' );
+                if( config.topics.getBatteryLevel ) {
+                    characteristic_BatteryLevel( batsvc );
+                }
+                if( config.topics.getChargingState ) {
+                    characteristic_ChargingState( batsvc );
+                }
+                if( config.topics.getStatusLowBattery ) {
+                    characteristic_StatusLowBattery( batsvc );
+                }
+                services.push( batsvc );
             }
-            if( config.topics.getStatusLowBattery ) {
-                characteristic_StatusLowBattery( batsvc );
-            }
-            services.push( batsvc );
         }
 
         // accessory information service
@@ -2918,9 +2942,9 @@ function makeThing(log, config) {
     }
 
     // The service
-    var services = null;
+    var theServices = null;
     try {
-        services = createServices();
+        theServices = createServices();
     } catch( ex ) {
         log.error( 'Exception while creating services: ' + ex );
         log( ex.stack );
@@ -2931,19 +2955,19 @@ function makeThing(log, config) {
 
     // Return services
     thing.getServices = function () {
-        return services || [];
+        return theServices || [];
     };
 
     return thing;
 }
 
 // Homebridge Entry point
-module.exports = function (homebridge) {
+module.exports = function( homebridge ) {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
-    Eve = new homebridgeLib.EveHomeKitTypes(homebridge);
-    HistoryService = fakegatoHistory(homebridge);
+    Eve = new homebridgeLib.EveHomeKitTypes( homebridge );
+    HistoryService = fakegatoHistory( homebridge );
     homebridgePath = homebridge.user.storagePath();
 
-    homebridge.registerAccessory("homebridge-mqttthing", "mqttthing", makeThing);
+    homebridge.registerAccessory( "homebridge-mqttthing", "mqttthing", makeThing );
 }
