@@ -372,10 +372,10 @@ Mapping to and from JSON is configured using a jsonCodec object in the accessory
         "on": "state.power",
         "RGB": "state.rgb"
     },
-    "fixed": { fixed_properties: 'object (global/default)' },
+    "fixed": { "fixed properties": "object (global/default)" },
     "fixedByTopic": {
-        "topic1": { fixed_properties: 'object for topic1',
-        "topic2": { fixed_properties: 'object for topic2' }
+        "topic1": { "fixed properties": "object for topic1",
+        "topic2": { "fixed properties": "object for topic2" }
     },
     "retain": true|false
 }
