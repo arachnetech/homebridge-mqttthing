@@ -232,7 +232,8 @@
                         "getStatusFault": "home/get/pir/FAULT",
                         "getStatusLowBattery": "home/get/pir/BATLOW"
                     },
-                    "onValue": "MOTION"
+                    "onValue": "MOTION",
+                    "otherValueOff": true
                 }
             ]
         }
