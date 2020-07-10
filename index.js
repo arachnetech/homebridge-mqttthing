@@ -179,6 +179,14 @@ function makeThing( log, accessoryConfig ) {
 
             //! Test whether a value represents 'off'
             function isRecvValueOff( mqttval ) {
+
+                if( config.otherValueOff ) {
+                    if( !isRecvValueOn( mqttval ) ) {
+                        // it's not the on value and we consider any other value to be off
+                        return true;
+                    }
+                }
+
                 let offval = getOnOffPubValue( false );
 
                 if( offval === null ) {
@@ -189,13 +197,6 @@ function makeThing( log, accessoryConfig ) {
                 if( mqttval === offval || mqttval == ( offval + '' ) ) {
                     // off value match - it's definitely off
                     return true;
-                }
-
-                if( config.otherValueOff ) {
-                    if( !isRecvValueOn( mqttval ) ) {
-                        // it's not the on value and we consider any other value to be off
-                        return true;
-                    }
                 }
 
                 // not off
