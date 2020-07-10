@@ -197,6 +197,44 @@
             },
             "accessory": "mqttthing",
             "logMqtt": true
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "custom",
+            "name": "Composite",
+            "url": "homebridge",
+            "logMqtt": true,
+            "services": [
+                {
+                    "type": "switch",
+                    "name": "Switch 1",
+                    "topics": {
+                        "getOn": "home/get/switch1/POWER",
+                        "setOn": "home/set/switch1/POWER"
+                    },
+                    "integerValue": true
+                },
+                {
+                    "type": "switch",
+                    "name": "Switch 2",
+                    "topics": {
+                        "getOn": "home/get/switch2/POWER",
+                        "setOn": "home/set/switch2/POWER"
+                    },
+                    "integerValue": true
+                },
+                {
+                    "type": "motionSensor",
+                    "name": "My PIR",
+                    "topics": {
+                        "getMotionDetected": "home/get/pir/STATUS",
+                        "getStatusActive": "home/get/pir/ACTIVE",
+                        "getStatusFault": "home/get/pir/FAULT",
+                        "getStatusLowBattery": "home/get/pir/BATLOW"
+                    },
+                    "onValue": "MOTION"
+                }
+            ]
         }
     ]
 }

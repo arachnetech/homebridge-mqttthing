@@ -2278,6 +2278,7 @@ function makeThing( log, config ) {
 
         function configToServices() {
             let name = config.name;
+            let subtype = config.subtype;
             let svcNames = config.serviceNames || {}; // custom names for multi-service accessories
 
             let service = null; // to return a single service
@@ -2310,7 +2311,7 @@ function makeThing( log, config ) {
                     }
                 }
             } else if (configType == "switch") {
-                service = new Service.Switch(name);
+                service = new Service.Switch( name, subtype );
                 characteristic_On(service);
                 services = [service];
                 if (config.history) {
@@ -2875,29 +2876,7 @@ function makeThing( log, config ) {
                 }
             }
 
-            return services;
-        }
-
-        let services = null;
-        
-        if( config.type === "custom" && config.services ) {
-            // multi-service/custom configuration...
-            services = [];
-            let realConfig = config;
-            for( let svcCfg of realConfig.services ) {
-                config = { ...realConfig, ...svcCfg };
-                services = [ ...services, ...configToServices() ];
-            }
-            config = realConfig;
-        } else {
-            // single accessory
-            services = configToServices();
-        }
-
-        if( services.length > 0 ) {
             // optional battery service
-            let service = services[ 0 ];
-            let name = config.name;
             if( config.topics.getBatteryLevel || config.topics.getChargingState ||
                 ( config.topics.getStatusLowBattery && ! service.testCharacteristic(Characteristic.StatusLowBattery) ) ) {
                 // also create battery service
@@ -2913,6 +2892,27 @@ function makeThing( log, config ) {
                 }
                 services.push( batsvc );
             }
+
+            return services;
+        }
+
+        let services = null;
+        
+        if( config.type === "custom" && config.services ) {
+            // multi-service/custom configuration...
+            services = [];
+            let realConfig = config;
+            for( let svcCfg of realConfig.services ) {
+                config = { ...realConfig, ...svcCfg };
+                if( ! config.hasOwnProperty( 'subtype' ) ) {
+                    config.subtype = config.name;
+                }
+                services = [ ...services, ...configToServices() ];
+            }
+            config = realConfig;
+        } else {
+            // single accessory
+            services = configToServices();
         }
 
         // accessory information service
