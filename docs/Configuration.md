@@ -28,6 +28,7 @@ MQTT topics used fall into two categories:
    * [Confirmation](#confirmation)
    * [Codecs](#codecs)
    * [Accessories](#accessories)
+   * [Grouped Accessories](#grouped-accessories)
 
 ## Common Settings
 
@@ -232,3 +233,53 @@ For further details, please see [Codecs.md](Codecs.md).
 ## Accessories
 
 For configuration details of supported accessories, please see [Accessories.md](Accessories.md).
+
+## Grouped Accessories
+
+The services provided by multiple accessories may be grouped together by creating an accessory of type `custom` containing multiple service definitions in a `services` array. For example,
+the following configuration groups together two switches and a motion sensor:
+
+```json
+    {
+        "accessory": "mqttthing",
+        "type": "custom",
+        "name": "Composite",
+        "url": "mqttserver",
+        "logMqtt": true,
+        "integerValue": true,
+        "services": [
+            {
+                "type": "switch",
+                "name": "Switch 1",
+                "topics": {
+                    "getOn": "home/get/switch1/POWER",
+                    "setOn": "home/set/switch1/POWER"
+                }
+            },
+            {
+                "type": "switch",
+                "name": "Switch 2",
+                "topics": {
+                    "getOn": "home/get/switch2/POWER",
+                    "setOn": "home/set/switch2/POWER"
+                }
+            },
+            {
+                "type": "motionSensor",
+                "name": "My PIR",
+                "topics": {
+                    "getMotionDetected": "home/get/pir/STATUS",
+                    "getStatusActive": "home/get/pir/ACTIVE",
+                    "getStatusFault": "home/get/pir/FAULT",
+                    "getStatusLowBattery": "home/get/pir/BATLOW"
+                }
+            }
+        ]
+    }
+```
+
+Any settings which apply to all services may be defined within the custom-type accessory, e.g. `integerValue` above. Settings specified within individual services will override any defaults specified at the custom accessory level.
+
+Custom accessories are only intended for use with simple services, not with accessories like 'weather station' which already combine multiple services.
+
+Custom accessories cannot be configured through Config UI X.
