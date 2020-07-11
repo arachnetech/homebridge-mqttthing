@@ -6,7 +6,7 @@
 # Homebridge MQTT-Thing: Release Notes
 
 ### Version 1.1.17 (TEST BUILD)
-+ Added support for grouped accessories
++ Added support for grouped (custom) accessories (https://github.com/arachnetech/homebridge-mqttthing/issues/201)
 
 ### Version 1.1.16
 + Changed order of Codec and apply() used together so that on publishing values pass through apply function before codec, and on subscription values pass through codec before apply function. This allows manipulation of values like the red,green,blue string from the RGB light before codec encoding and after codec decoding. This makes the JSON codec more flexible.
