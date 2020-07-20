@@ -236,6 +236,67 @@
                     "otherValueOff": true
                 }
             ]
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "custom",
+            "name": "Flower Care",
+            "url": "homebridge",
+            "logMqtt": true,
+            "codec": "json",
+            "jsonCodec": {
+                "properties": {
+                    "currentRelativeHumidity": "moisture",
+                    "currentTemperature": "temperature",
+                    "currentAmbientLightLevel": "light",
+                    "statusLowBattery": "battery"
+                }
+            },
+            "services": [
+                {
+                    "type": "humiditySensor",
+                    "topics": {
+                        "getCurrentRelativeHumidity": "miflora/Limone",
+                        "getStatusLowBattery": { "topic": "miflora/Limone", "apply": "return message < 20;" }
+                    }
+                }, 
+                {
+                    "type": "temperatureSensor",
+                    "topics": {
+                        "getCurrentTemperature": "miflora/Limone",
+                        "getStatusLowBattery": { "topic": "miflora/Limone", "apply": "return message < 20;" }
+                    }
+                },
+                {
+                    "type": "lightSensor",
+                    "topics": {
+                        "getCurrentAmbientLightLevel": "miflora/Limone",
+                        "getStatusLowBattery": { "topic": "miflora/Limone", "apply": "return message < 20;" }
+                    }
+                }
+            ]
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "statelessProgrammableSwitch",
+            "name": "4 Way Switch",
+            "url": "homebridge",
+            "logMqtt": true,
+            "topics": {
+                "getOnline": "zigbee2mqtt/bridge/state",
+                "getSwitch": "zigbee2mqtt/0x04cf8cdf3c791ad9"
+            },
+            "switchValues": [
+                "button_1_single",
+                "button_1_double",
+                "button_1_hold"
+            ],
+            "codec": "json",
+            "jsonCodec": {
+                "properties": {
+                    "switch": "action"
+                }
+            }
         }
     ]
 }
