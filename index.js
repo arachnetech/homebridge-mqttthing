@@ -677,6 +677,7 @@ function makeThing( log, accessoryConfig ) {
                         bri = 0;
                     }
                     var rgb = ScaledHSVtoRGB( state.hue, state.sat, bri );
+                    let orig_rgb = { ww: 0, cw: 0, ...rgb };
 
                     if( wwcwComps ) {
                         //console.log( rgb );
@@ -710,6 +711,22 @@ function makeThing( log, accessoryConfig ) {
                         rgb.r -= min;
                         rgb.g -= min;
                         rgb.b -= min;
+
+                        if( config.whiteMix === false ) {
+                            if( ( rgb.ww > 0 || rgb.cw > 0 ) && ( rgb.r > 0 || rgb.g > 0 || rgb.b > 0 ) ) {
+                                // mixing white and colours is not allowed on some devices
+                                if( rgb.r > 15 || rgb.g > 15 || rgb.b > 15 ) {
+                                    // colour
+                                    rgb = orig_rgb;
+                                } else {
+                                    // white
+                                    rgb.r = 0;
+                                    rgb.g = 0;
+                                    rgb.b = 0;
+                                }
+                            }
+                        }
+
                         // store white state
                         state.warmWhite = rgb.ww;
                         state.coldWhite = rgb.cw;

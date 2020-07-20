@@ -297,6 +297,18 @@
                     "switch": "action"
                 }
             }
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "lightbulb-RGBWW",
+            "name": "Test RGBWW Light",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getRGBWW": "test/rgbwwlight/rgb",
+                "setRGBWW": "test/rgbwwlight/rgb/set"
+            },
+            "whiteMix": false,
+            "logMqtt": true
         }
     ]
 }
