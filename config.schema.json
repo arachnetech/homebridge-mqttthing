@@ -1240,7 +1240,7 @@
             },
             "offlineValue": {
                 "type": "string",
-                "title": "Online Value",
+                "title": "Offline Value",
                 "description": "Value representing that an accessory is offline (as received through 'getOnline') if different to 'offValue'",
                 "default": "",
                 "examples": [
