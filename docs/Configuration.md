@@ -85,6 +85,8 @@ The following settings apply to all device types:
 
 `mqttOptions` - Object containing all MQTT options passed to https://www.npmjs.com/package/mqtt#client, for MQTT configuration settings not supported above (optional). Any standard settings *not* specified in an **mqttOptions** option will be set by homebridge-mqttthing. Enable MQTT logging with **logMqtt** to check the options provided.
 
+When MQTTS (MQTT over TLS) is used, the `mqttOptions` object is passed through to tls.connect() so the options described at https://nodejs.org/api/tls.html#tls_tls_connect_options_callback may be used. `keyfile`, `certfile` and `cafile` may be used to read key, cert and ca pem files respectively.
+
 `mqttPubOptions` - Option containing any MQTT publishing options required. See https://www.npmjs.com/package/mqtt#publish for details.
 
 `logMqtt` - Set to true to enable MQTT logging for this accessory (optional, defaults to false)

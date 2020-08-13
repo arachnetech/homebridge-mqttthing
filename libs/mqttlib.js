@@ -65,6 +65,17 @@ var mqttlib = new function() {
             }
         }
 
+        // load ca/cert/key files
+        if( options.cafile ) {
+            options.ca = fs.readFileSync( options.cafile );
+        }
+        if( options.certfile ) {
+            options.cert = fs.readFileSync( options.certfile );
+        }
+        if( options.keyfile ) {
+            options.key = fs.readFileSync( options.keyfile );
+        }
+
         // add protocol to url string, if not yet available
         let brokerUrl = config.url;
         if( brokerUrl && ! brokerUrl.includes( '://' ) ) {
