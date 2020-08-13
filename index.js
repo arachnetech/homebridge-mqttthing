@@ -35,9 +35,16 @@ function makeThing( log, accessoryConfig ) {
     //  MQTT Wrappers
     //
 
+
     // Initialize MQTT client
     let ctx = { log, config: accessoryConfig, homebridgePath };
-    mqttlib.init( ctx );
+    try {
+        mqttlib.init( ctx );
+    }
+    catch( ex ) {
+        log.error( 'MQTT initialisation failed: ' + ex );
+        return { getServices: () => [] };
+    }
 
     // MQTT Subscribe
     function mqttSubscribe( topic, property, handler ) {

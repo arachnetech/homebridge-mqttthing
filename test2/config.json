@@ -322,7 +322,8 @@
                 "getRotationSpeed": "test/fan/getRotationSpeed",
                 "setRotationSpeed": "test/fan/setRotationSpeed"
             },
-            "integerValue": true
+            "integerValue": true,
+            "mqttOptions": { "cafile": "/tmp/mycafile.pem" }
         }
     ]
 }
