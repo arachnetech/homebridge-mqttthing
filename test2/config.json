@@ -309,6 +309,20 @@
             },
             "whiteMix": false,
             "logMqtt": true
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "fan",
+            "name": "Test Fan",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": true,
+            "topics": {
+                "getRotationDirection": "test/fan/getRotationDirection",
+                "setRotationDirection": "test/fan/setRotationDirection",
+                "getRotationSpeed": "test/fan/getRotationSpeed",
+                "setRotationSpeed": "test/fan/setRotationSpeed"
+            },
+            "integerValue": true
         }
     ]
 }
