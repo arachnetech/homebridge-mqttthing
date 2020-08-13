@@ -49,7 +49,7 @@ var mqttlib = new function() {
             connectTimeout: 30 * 1000,
             will: {
                 topic: 'WillMsg',
-                payload: 'Connection Closed abnormally..!',
+                payload: 'mqtt-thing [' + ctx.config.name + '] has stopped',
                 qos: 0,
                 retain: false
             },
