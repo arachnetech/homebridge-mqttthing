@@ -76,6 +76,13 @@ var mqttlib = new function() {
             options.key = fs.readFileSync( options.keyfile );
         }
 
+        // insecure
+        if( options.insecure ) {
+            options.checkServerIdentity = function( /* servername, cert */ ) { 
+                return undefined; /* servername and certificate are verified */ 
+            };
+        }
+
         // add protocol to url string, if not yet available
         let brokerUrl = config.url;
         if( brokerUrl && ! brokerUrl.includes( '://' ) ) {

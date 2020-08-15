@@ -5,8 +5,11 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.20
++ Added insecure option for TLS, disabling checking of certificate and server identity
+
 ### Version 1.1.19
-+ Allow TLS certificate, key and ca pem files to be loaded
++ Allowed TLS certificate, key and ca pem files to be loaded
 
 ### Version 1.1.18
 + Added whiteMix option for RGBWW lights. Set whiteMix to false to disable extraction of white components from colours - i.e. powering only RGB channels or WW,CW channels. (https://github.com/arachnetech/homebridge-mqttthing/issues/300)
