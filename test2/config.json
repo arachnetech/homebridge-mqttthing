@@ -324,6 +324,17 @@
             },
             "integerValue": true,
             "mqttOptions": { "insecure": true }
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "battery",
+            "name": "Test Battery",
+            "url": "http://192.168.10.35:1883",
+            "logMqtt": true,
+            "topics": {
+                "getBatteryLevel": "battery/level",
+                "getStatusLowBattery": "battery/low"
+            }
         }
     ]
 }
