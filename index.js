@@ -2937,8 +2937,7 @@ function makeThing( log, accessoryConfig ) {
             for( let svcCfg of accessoryConfig.services ) {
                 let config = { ...accessoryConfig, ...svcCfg };
                 if( !config.hasOwnProperty( 'subtype' ) ) {
-                    config.subtype     = config.name;
-                    config.subtypetype = svcCfg.type;
+                    config.subtype = config.name;
                 }
                 services = [ ...services, ...configToServices( config ) ];
             }
