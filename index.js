@@ -2317,6 +2317,25 @@ function makeThing( log, accessoryConfig ) {
                 }
             }
 
+            // Characteristic.WaterLevel
+            function characteristic_WaterLevel(service) {
+                floatCharacteristic(service, 'waterLevel', Characteristic.WaterLevel,
+                    null, config.topics.getWaterLevel, 0);
+            }
+
+            // Characteristic.RelativeHumidityDehumidifierThreshold
+            function characteristic_RelativeHumidityDehumidifierThreshold(service) {
+                floatCharacteristic(service, 'relativeHumidityDehumidifierThreshold', Characteristic.RelativeHumidityDehumidifierThreshold,
+                    config.topics.setRelativeHumidityDehumidifierThreshold, config.topics.getRelativeHumidityDehumidifierThreshold, 50);
+            }
+
+            // Characteristic.RelativeHumidityHumidifierThreshold
+            function characteristic_RelativeHumidityHumidifierThreshold(service) {
+                floatCharacteristic(service, 'relativeHumidityHumidifierThreshold', Characteristic.RelativeHumidityHumidifierThreshold,
+                    config.topics.setRelativeHumidityHumidifierThreshold, config.topics.getRelativeHumidityHumidifierThreshold, 50);
+            }
+
+
             let name = config.name;
             let subtype = config.subtype;
             let svcNames = config.serviceNames || {}; // custom names for multi-service accessories
@@ -2895,6 +2914,31 @@ function makeThing( log, accessoryConfig ) {
             } else if( configType == 'battery' ) {
                 service = new Service.BatteryService( name );
                 addBatteryCharacteristics( service );
+            } else if (configType == "humidifierDehumidifier") {
+                service = new Service.HumidifierDehumidifier(name, subtype);
+                characteristic_Active(service);
+                characteristic_CurrentHumidifierDehumidifierState(service);
+                characteristic_TargetHumidifierDehumidifierState(service);
+                characteristic_CurrentRelativeHumidity(service);
+                if (config.topics.setLockPhysicalControls || config.topics.getLockPhysicalControls) {
+                    characteristic_LockPhysicalControls(service);
+                }
+                if (config.topics.getSwingMode || config.topics.setSwingMode) {
+                    characteristic_SwingMode(service);
+                }
+                if (config.topics.getRelativeHumidityDehumidifierThreshold || config.topics.setRelativeHumidityDehumidifierThreshold) {
+                    characteristic_RelativeHumidityDehumidifierThreshold(service);
+                }
+                if (config.topics.getRelativeHumidityHumidifierThreshold || config.topics.setRelativeHumidityHumidifierThreshold) {
+                    characteristic_RelativeHumidityHumidifierThreshold(service);
+                }
+                if (config.topics.getRotationSpeed || config.topics.setRotationSpeed) {
+                    characteristic_RotationSpeed(service);
+                }
+                if (config.topics.getWaterLevel) {
+                    characteristic_WaterLevel(service)
+                }
+
             } else {
                 log( "ERROR: Unrecognized type: " + configType );
             }
