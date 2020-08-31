@@ -114,8 +114,8 @@ The filter life level is used to indicate remaining filter life level in percent
     "integerValue":                     "true to use 1|0 instead of true|false default onValue and offValue",
     "onValue":                          "<value representing on (optional)>",
     "offValue":                         "<value representing off (optional)>",
-    "targetAirPurifierValues":          "<array of values to be used to represent MANUAL, AUTO respectively (optional)>",
-    "currentAirPurifierValues":         "<array of values to be used to represent INACTIVE, IDLE, PURIFYING respectively (optional)>",
+    "targetAirPurifierStateValues":          "<array of values to be used to represent MANUAL, AUTO respectively (optional)>",
+    "currentAirPurifierStateValues":         "<array of values to be used to represent INACTIVE, IDLE, PURIFYING respectively (optional)>",
     "swingModeValues":                  "<array of values to be used to represent DISABLED and ENABLED respectively (optional)>",
     "lockPhysicalControlsValues":       "<array of values to be used to represent DISABLED and ENABLED respectively (optional)>"
 }
