@@ -2310,6 +2310,19 @@ function makeThing( log, accessoryConfig ) {
                 }
             }
 
+            // add battery characteristics
+            function addBatteryCharacteristics( service ) {
+                if( config.topics.getBatteryLevel ) {
+                    characteristic_BatteryLevel( service );
+                }
+                if( config.topics.getChargingState ) {
+                    characteristic_ChargingState( service );
+                }
+                if( config.topics.getStatusLowBattery ) {
+                    characteristic_StatusLowBattery( service );
+                }
+            }
+
             let name = config.name;
             let subtype = config.subtype;
             let svcNames = config.serviceNames || {}; // custom names for multi-service accessories
@@ -2885,6 +2898,9 @@ function makeThing( log, accessoryConfig ) {
                     }
                     services.push( filterSvc );
                 }
+            } else if( configType == 'battery' ) {
+                service = new Service.BatteryService( name );
+                addBatteryCharacteristics( service );
             } else {
                 log( "ERROR: Unrecognized type: " + configType );
             }
@@ -2910,20 +2926,14 @@ function makeThing( log, accessoryConfig ) {
             }
 
             // optional battery service
-            if( config.topics.getBatteryLevel || config.topics.getChargingState ||
-                ( config.topics.getStatusLowBattery && !service.testCharacteristic( Characteristic.StatusLowBattery ) ) ) {
-                // also create battery service
-                let batsvc = new Service.BatteryService( name + '-battery' );
-                if( config.topics.getBatteryLevel ) {
-                    characteristic_BatteryLevel( batsvc );
+            if( configType !== 'battery' ) {
+                if( config.topics.getBatteryLevel || config.topics.getChargingState ||
+                    ( config.topics.getStatusLowBattery && !service.testCharacteristic( Characteristic.StatusLowBattery ) ) ) {
+                    // also create battery service
+                    let batsvc = new Service.BatteryService( name + '-battery' );
+                    addBatteryCharacteristics( batsvc );
+                    services.push( batsvc );
                 }
-                if( config.topics.getChargingState ) {
-                    characteristic_ChargingState( batsvc );
-                }
-                if( config.topics.getStatusLowBattery ) {
-                    characteristic_StatusLowBattery( batsvc );
-                }
-                services.push( batsvc );
             }
 
             return services;
