@@ -40,8 +40,7 @@ function makeThing( log, accessoryConfig ) {
     let ctx = { log, config: accessoryConfig, homebridgePath };
     try {
         mqttlib.init( ctx );
-    }
-    catch( ex ) {
+    } catch( ex ) {
         log.error( 'MQTT initialisation failed: ' + ex );
         return { getServices: () => [] };
     }
