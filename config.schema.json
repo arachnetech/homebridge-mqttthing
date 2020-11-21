@@ -1527,6 +1527,15 @@
                     "functionBody": "return ['lightbulb','lightbulb-RGBWW'].includes(model.type);"
                 }
             },
+            "whiteMix": {
+                "type": "boolean",
+                "title": "Extract white components from colours",
+                "description": "In RGBWW mode, by default (whiteMix: true) white components are extracted from colours and both white and colour channels can be active together. Set whiteMix to false to disable extraction of white components from colours - i.e. powering only RGB channels or WW/CW channels.",
+                "default": true,
+                "condition": {
+                    "functionBody": "return ['lightbulb','lightbulb-RGBWW'].includes(model.type);"
+                }
+            },
             "targetStateValues": {
                 "type": "array",
                 "items": {
@@ -1782,6 +1791,7 @@
                 "hexPrefix",
                 "warmWhite",
                 "coldWhite",
+                "whiteMix",
                 "durationTimer",
                 "minDuration",
                 "maxDuration",
