@@ -5,6 +5,11 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.21
++ Updated fakegato-history dependency version
++ Added whiteMix option to configuration schema
++ Fixed publishing confirmation with Boolean values (https://github.com/arachnetech/homebridge-mqttthing/issues/363)
+
 ### Version 1.1.20
 + Added insecure option for TLS, disabling checking of certificate and server identity
 
