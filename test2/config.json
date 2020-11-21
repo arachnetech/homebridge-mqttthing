@@ -335,6 +335,19 @@
                 "getBatteryLevel": "battery/level",
                 "getStatusLowBattery": "battery/low"
             }
+        },
+        {
+            "type": "lightbulb-RGB",
+            "name": "Color Light",
+            "url": "http://192.168.10.35:1883",
+            "topics": {
+                "getOnline": "getOnline",
+                "getOn": "getState",
+                "setOn": "setState"
+            },
+            "accessory": "mqttthing",
+            "logMqtt": "true",
+            "confirmationPeriodms": 2000
         }
     ]
 }

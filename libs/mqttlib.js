@@ -338,7 +338,7 @@ var mqttlib = new function() {
 
         // subscribe to our get topic
         mqttlib.subscribe( ctx, getTopic, property, function( topic, message ) {
-            if( message == expected && timer ) {
+            if( ( message === expected || message == ( expected + '' ) ) && timer ) {
                 clearTimeout( timer );
                 timer = null;
             }
