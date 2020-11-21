@@ -22,6 +22,7 @@
                 "getOn": "light/get",
                 "setOn": "light/set"
             },
+            "whiteMix": true,
             "accessory": "mqttthing"
         },
         {
@@ -257,21 +258,30 @@
                     "type": "humiditySensor",
                     "topics": {
                         "getCurrentRelativeHumidity": "miflora/Limone",
-                        "getStatusLowBattery": { "topic": "miflora/Limone", "apply": "return message < 20;" }
+                        "getStatusLowBattery": {
+                            "topic": "miflora/Limone",
+                            "apply": "return message < 20;"
+                        }
                     }
-                }, 
+                },
                 {
                     "type": "temperatureSensor",
                     "topics": {
                         "getCurrentTemperature": "miflora/Limone",
-                        "getStatusLowBattery": { "topic": "miflora/Limone", "apply": "return message < 20;" }
+                        "getStatusLowBattery": {
+                            "topic": "miflora/Limone",
+                            "apply": "return message < 20;"
+                        }
                     }
                 },
                 {
                     "type": "lightSensor",
                     "topics": {
                         "getCurrentAmbientLightLevel": "miflora/Limone",
-                        "getStatusLowBattery": { "topic": "miflora/Limone", "apply": "return message < 20;" }
+                        "getStatusLowBattery": {
+                            "topic": "miflora/Limone",
+                            "apply": "return message < 20;"
+                        }
                     }
                 }
             ]
@@ -323,7 +333,9 @@
                 "setRotationSpeed": "test/fan/setRotationSpeed"
             },
             "integerValue": true,
-            "mqttOptions": { "insecure": true }
+            "mqttOptions": {
+                "insecure": true
+            }
         },
         {
             "accessory": "mqttthing",
@@ -348,6 +360,18 @@
             "accessory": "mqttthing",
             "logMqtt": "true",
             "confirmationPeriodms": 2000
+        },
+        {
+            "type": "lightbulb-RGBWW",
+            "name": "Test RGBWW",
+            "url": "192.168.10.35",
+            "logMqtt": true,
+            "topics": {
+                "setRGBWW": "rgbww/rgbww",
+                "setOn": "rgbww/on"
+            },
+            "whiteMix": true,
+            "accessory": "mqttthing"
         }
     ]
 }
