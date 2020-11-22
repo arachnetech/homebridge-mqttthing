@@ -721,7 +721,10 @@ function makeThing( log, accessoryConfig ) {
                         if( config.whiteMix === false ) {
                             if( ( rgb.ww > 0 || rgb.cw > 0 ) && ( rgb.r > 0 || rgb.g > 0 || rgb.b > 0 ) ) {
                                 // mixing white and colours is not allowed on some devices
-                                if( rgb.r > 15 || rgb.g > 15 || rgb.b > 15 ) {
+                                let redThreshold = ( config.redThreshold === undefined ) ? 15 : config.redThreshold;
+                                let greenThreshold = ( config.greenThreshold === undefined ) ? 15 : config.greenThreshold;
+                                let blueThreshold = ( config.blueThreshold === undefined ) ? 15 : config.blueThreshold;
+                                if( rgb.r > redThreshold || rgb.g > greenThreshold || rgb.b > blueThreshold ) {
                                     // colour
                                     rgb = orig_rgb;
                                 } else {

@@ -5,6 +5,9 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.22
++ Light: Added redThreshold, greenThreshold, blueThreshold for when whiteMix is false in an RGBWW light
+
 ### Version 1.1.21
 + Updated fakegato-history dependency version
 + Added whiteMix option to configuration schema
