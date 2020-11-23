@@ -536,6 +536,8 @@ If `topics.setRGBWW` is populated, a combined value is used in the format red,gr
 
 Set `confirmationPeriodms` to enable publishing confirmation for `setOn`/`getOn`. The accessory must echo messages it receives through the `setOn` subject to the `getOn` subject, otherwise homebridge-mqttthing will mark it as unresponsive and republish on the `setOn` subject.
 
+When using colour temperature directly (through the `setColorTemperature` topic), `minColorTemperature` and `maxColorTemperature` may be configured to change Homekits default range of 140-500.
+
 ```javascript
 {
     "accessory": "mqttthing",
@@ -575,7 +577,9 @@ Set `confirmationPeriodms` to enable publishing confirmation for `setOn`/`getOn`
     "hexPrefix": "format combined RGB/RGBW in hexadecimal with specified prefix (typically '#') instead of as comma-separated decimals",
     "turnOffAfterms": "<milliseconds after which to turn off automatically (optional)>",
     "warmWhite": "in RGBWW mode, RGB value of warm white in format red,green,blue (optional)",
-    "coldWhite": "in RGBWW mode, RGB value of cold white in format red,green,blue (optional)"
+    "coldWhite": "in RGBWW mode, RGB value of cold white in format red,green,blue (optional)",
+    "minColorTemperature": 140,
+    "maxColorTemperature": 500
 }
 ```
 

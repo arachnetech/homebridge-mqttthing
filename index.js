@@ -342,12 +342,22 @@ function makeThing( log, accessoryConfig ) {
                 booleanState( 'online', config.topics.getOnline, true, isRecvValueOnline, isRecvValueOffline );
             }
 
-            function integerCharacteristic( service, property, characteristic, setTopic, getTopic, initialValue ) {
+            function integerCharacteristic( service, property, characteristic, setTopic, getTopic, initialValue, minValue, maxValue ) {
                 // default state
                 state[ property ] = initialValue || 0;
 
                 // set up characteristic
                 var charac = service.getCharacteristic( characteristic );
+
+                // min/max
+                if( Number.isInteger( minValue ) ) {
+                    charac.props.minValue = minValue;
+                }
+                if( Number.isInteger( maxValue ) ) {
+                    charac.props.maxValue = maxValue;
+                }
+
+                // get/set
                 charac.on( 'get', function( callback ) {
                     handleGetStateCallback( callback, state[ property ] );
                 } );
@@ -1160,7 +1170,8 @@ function makeThing( log, accessoryConfig ) {
 
             // Characteristic.ColorTemperature
             function characteristic_ColorTemperature( service ) {
-                integerCharacteristic( service, 'colorTemperature', Characteristic.ColorTemperature, config.topics.setColorTemperature, config.topics.getColorTemperature );
+                integerCharacteristic( service, 'colorTemperature', Characteristic.ColorTemperature, config.topics.setColorTemperature, config.topics.getColorTemperature, undefined, 
+                                       config.minColorTemperature, config.maxColorTemperature );
             }
 
             // Characteristic.OutletInUse
@@ -1279,7 +1290,7 @@ function makeThing( log, accessoryConfig ) {
                 // configured temperature ranges
                 if( !tempRange( service, Characteristic.CurrentTemperature ) ) {
                     // or (old behaviour) allow negative temperatures (down to -100)
-                    var characteristic = service.getCharacteristic( Characteristic.CurrentTemperature );
+                    let characteristic = service.getCharacteristic( Characteristic.CurrentTemperature );
                     characteristic.props.minValue = -100;
                 }
             }

@@ -1536,6 +1536,22 @@
                     "functionBody": "return ['lightbulb','lightbulb-RGBWW'].includes(model.type);"
                 }
             },
+            "minColorTemperature": {
+                "type": "integer",
+                "title": "Minimum colour temperature value",
+                "description": "When using colour temperature directly through the setColorTemperature topic, modify the minimum colour temperature value from its defaul to 140.",
+                "condition": {
+                    "functionBody": "return ['lightbulb','lightbulb-ColTemp'].includes(model.type);"
+                }
+            },
+            "maxColorTemperature": {
+                "type": "integer",
+                "title": "Maximum colour temperature value",
+                "description": "When using colour temperature directly through the setColorTemperature topic, modify the maximum colour temperature value from its defaul to 500.",
+                "condition": {
+                    "functionBody": "return ['lightbulb','lightbulb-ColTemp'].includes(model.type);"
+                }
+            },
             "targetStateValues": {
                 "type": "array",
                 "items": {
@@ -1792,6 +1808,8 @@
                 "warmWhite",
                 "coldWhite",
                 "whiteMix",
+                "minColorTemperature",
+                "maxColorTemperature",
                 "durationTimer",
                 "minDuration",
                 "maxDuration",

@@ -372,6 +372,21 @@
             },
             "whiteMix": true,
             "accessory": "mqttthing"
+        },
+        {
+            "type": "lightbulb-ColTemp",
+            "name": "Light-Temp",
+            "url": "192.168.10.35",
+            "logMqtt": true,
+            "topics": {
+                "setOn": "testTempLight/setOn",
+                "setBrightness": "testTempLight/setBrightness",
+                "setColorTemperature": "testTempLight/setColorTemperature"
+            },
+            "whiteMix": true,
+            "accessory": "mqttthing",
+            "minColorTemperature": 130,
+            "maxColorTemperature": 450
         }
     ]
 }
