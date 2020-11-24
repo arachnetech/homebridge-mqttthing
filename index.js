@@ -17,7 +17,7 @@ var mqttlib = require( './libs/mqttlib' );
 var Service, Characteristic, Eve, HistoryService;
 var homebridgePath;
 
-function makeThing( log, accessoryConfig ) {
+function makeThing( log, accessoryConfig, api ) {
 
     // Create accessory information service
     function makeAccessoryInformationService() {
@@ -1172,6 +1172,18 @@ function makeThing( log, accessoryConfig ) {
             function characteristic_ColorTemperature( service ) {
                 integerCharacteristic( service, 'colorTemperature', Characteristic.ColorTemperature, config.topics.setColorTemperature, config.topics.getColorTemperature, undefined, 
                                        config.minColorTemperature, config.maxColorTemperature );
+                // TEST make it adaptive...
+                if( api.version === 2.7 && api.versionGreaterOrEqual('1.3.0-beta.27') ) {
+                    log( 'Homebridge supports adaptive lighting (but mqttthing does not)' );
+                    /*
+                    log( '*** Enabling adaptive lighting' );
+                    //log( Homebridge.hap.AdaptiveLightingControllerEvents );
+                    let adapativeLightingController = new Homebridge.hap.AdaptiveLightingController( service, {
+                        controllerMode: Homebridge.hap.AdaptiveLightingControllerMode.AUTOMATIC } );
+                    // todo: this.accessory.configureController(this.adaptiveLightingController);
+                    */
+                }
+                // TEST
             }
 
             // Characteristic.OutletInUse
