@@ -35,7 +35,6 @@ function makeThing( log, accessoryConfig, api ) {
     //  MQTT Wrappers
     //
 
-
     // Initialize MQTT client
     let ctx = { log, config: accessoryConfig, homebridgePath };
     try {
@@ -67,11 +66,26 @@ function makeThing( log, accessoryConfig, api ) {
         }, timeout );
     }
 
+    // Controllers
+    let controllers = [];
+
     // Create services
     function createServices() {
 
         function configToServices( config ) {
 
+            // Do we support adaptive lighting?
+            let supportAdaptiveLighting = function() {
+                return ( config.adaptiveLighting !== false ) && api.versionGreaterOrEqual && api.versionGreaterOrEqual( '1.3.0-beta.27' );
+            };
+
+            // Create adaptive lighting controller
+            let addAdaptiveLightingController = function( service ) {
+                log( 'Enabling adaptive lighting' );
+                let adapativeLightingController = new api.hap.AdaptiveLightingController( service, {
+                    controllerMode: api.hap.AdaptiveLightingControllerMode.AUTOMATIC } );
+                controllers.push( adapativeLightingController );
+            };
 
             // Migrate old-style history options
             if( config.hasOwnProperty( 'history' ) ) {
@@ -1172,18 +1186,10 @@ function makeThing( log, accessoryConfig, api ) {
             function characteristic_ColorTemperature( service ) {
                 integerCharacteristic( service, 'colorTemperature', Characteristic.ColorTemperature, config.topics.setColorTemperature, config.topics.getColorTemperature, undefined, 
                                        config.minColorTemperature, config.maxColorTemperature );
-                // TEST make it adaptive...
-                if( api.version === 2.7 && api.versionGreaterOrEqual('1.3.0-beta.27') ) {
-                    log( 'Homebridge supports adaptive lighting (but mqttthing does not)' );
-                    /*
-                    log( '*** Enabling adaptive lighting' );
-                    //log( Homebridge.hap.AdaptiveLightingControllerEvents );
-                    let adapativeLightingController = new Homebridge.hap.AdaptiveLightingController( service, {
-                        controllerMode: Homebridge.hap.AdaptiveLightingControllerMode.AUTOMATIC } );
-                    // todo: this.accessory.configureController(this.adaptiveLightingController);
-                    */
+
+                if( supportAdaptiveLighting() ) {
+                    addAdaptiveLightingController( service );
                 }
-                // TEST
             }
 
             // Characteristic.OutletInUse
@@ -3016,6 +3022,11 @@ function makeThing( log, accessoryConfig, api ) {
     // Return services
     thing.getServices = function() {
         return theServices || [];
+    };
+
+    // Return controllers
+    thing.getControllers = function() {
+        return controllers;
     };
 
     return thing;
