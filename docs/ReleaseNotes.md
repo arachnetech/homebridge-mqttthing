@@ -8,6 +8,7 @@
 ### Version 1.1.22
 + Light: Added redThreshold, greenThreshold, blueThreshold for when whiteMix is false in an RGBWW light
 + Light: Added minColorTemperature and maxColorTemperature configuration settings
++ Light: Added switchWhites setting for RGBWW light
 
 ### Version 1.1.21
 + Updated fakegato-history dependency version

@@ -770,7 +770,11 @@ function makeThing( log, accessoryConfig ) {
                         if( whiteComp ) {
                             msg += ',' + rgb.w;
                         } else if( wwcwComps ) {
-                            msg += ',' + rgb.ww + ',' + rgb.cw;
+                            if( config.switchWhites ) {
+                                msg += ',' + rgb.cw + ',' + rgb.ww;
+                            } else {
+                                msg += ',' + rgb.ww + ',' + rgb.cw;
+                            }
                         }
                     } else {
                         // hex
@@ -778,7 +782,11 @@ function makeThing( log, accessoryConfig ) {
                         if( whiteComp ) {
                             msg += toHex( rgb.w );
                         } else if( wwcwComps ) {
-                            msg += toHex( rgb.ww ) + toHex( rgb.cw );
+                            if( config.switchWhites ) {
+                                msg += toHex( rgb.cw ) + toHex( rgb.ww );
+                            } else {
+                                msg += toHex( rgb.ww ) + toHex( rgb.cw );
+                            }
                         }
                     }
                     if( msg != lastpubmsg ) {
@@ -880,6 +888,11 @@ function makeThing( log, accessoryConfig ) {
                                 } else if( wwcwComps ) {
                                     warmWhite = parseInt( comps[ 3 ] );
                                     coldWhite = parseInt( comps[ 4 ] );
+                                    if( config.switchWhites ) {
+                                        let temp = warmWhite;
+                                        warmWhite = coldWhite;
+                                        coldWhite = temp;
+                                    }
                                 }
                                 ok = true;
                             }
@@ -896,6 +909,11 @@ function makeThing( log, accessoryConfig ) {
                                     } else if( wwcwComps ) {
                                         warmWhite = parseInt( message.substr( hexPrefix.length + 6, 2 ), 16 );
                                         coldWhite = parseInt( message.substr( hexPrefix.length + 8, 2 ), 16 );
+                                        if( config.switchWhites ) {
+                                            let temp = warmWhite;
+                                            warmWhite = coldWhite;
+                                            coldWhite = temp;
+                                        }
                                     }
                                     ok = true;
                                 }

@@ -1536,6 +1536,14 @@
                     "functionBody": "return ['lightbulb','lightbulb-RGBWW'].includes(model.type);"
                 }
             },
+            "switchWhites": {
+                "type": "boolean",
+                "title": "Switch warm white/cold white",
+                "description": "RGBWW WW is warm_white,cold_white by default. Set switchWhites to true to use cold_white,warm_white instead.",
+                "condition": {
+                    "functionBody": "return ['lightbulb','lightbulb-RGBWW'].includes(model.type);"
+                }
+            },
             "minColorTemperature": {
                 "type": "integer",
                 "title": "Minimum colour temperature value",
@@ -1808,6 +1816,7 @@
                 "warmWhite",
                 "coldWhite",
                 "whiteMix",
+                "switchWhites",
                 "minColorTemperature",
                 "maxColorTemperature",
                 "durationTimer",
