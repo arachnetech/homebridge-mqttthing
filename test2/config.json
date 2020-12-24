@@ -30,7 +30,7 @@
             "type": "valve",
             "valveType": "sprinkler",
             "name": "Sprinkler",
-            "url": "http://192.168.10.35:1883",
+            "url": "mqtt://192.168.10.35:1883",
             "topics": {
                 "getActive": "test/sprinkler/getActive",
                 "setActive": "test/sprinkler/setActive",
@@ -121,7 +121,7 @@
             "accessory": "mqttthing",
             "type": "lightbulb",
             "name": "Test RGB Light",
-            "url": "http://192.168.10.35:1883",
+            "url": "mqtt://192.168.10.35:1883",
             "topics": {
                 "getRGB": "test/rgblight/get",
                 "setRGB": "test/rgblight/set",
@@ -312,7 +312,7 @@
             "accessory": "mqttthing",
             "type": "lightbulb-RGBWW",
             "name": "Test RGBWW Light",
-            "url": "http://192.168.10.35:1883",
+            "url": "mqtt://192.168.10.35:1883",
             "topics": {
                 "getRGBWW": "test/rgbwwlight/rgb",
                 "setRGBWW": "test/rgbwwlight/rgb/set"
@@ -324,7 +324,7 @@
             "accessory": "mqttthing",
             "type": "fan",
             "name": "Test Fan",
-            "url": "http://192.168.10.35:1883",
+            "url": "mqtt://192.168.10.35:1883",
             "logMqtt": true,
             "topics": {
                 "getRotationDirection": "test/fan/getRotationDirection",
@@ -341,7 +341,7 @@
             "accessory": "mqttthing",
             "type": "battery",
             "name": "Test Battery",
-            "url": "http://192.168.10.35:1883",
+            "url": "mqtt://192.168.10.35:1883",
             "logMqtt": true,
             "topics": {
                 "getBatteryLevel": "battery/level",
@@ -351,7 +351,7 @@
         {
             "type": "lightbulb-RGB",
             "name": "Color Light",
-            "url": "http://192.168.10.35:1883",
+            "url": "mqtt://192.168.10.35:1883",
             "topics": {
                 "getOnline": "getOnline",
                 "getOn": "getState",

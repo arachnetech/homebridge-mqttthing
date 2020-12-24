@@ -256,8 +256,8 @@
             "url": {
                 "type": "string",
                 "title": "URL",
-                "description": "URL of MQTT server (optional), default: http://localhost:1883",
-                "placeholder": "http://localhost:1883"
+                "description": "URL of MQTT server (optional), default: mqtt://localhost:1883",
+                "placeholder": "mqtt://localhost:1883"
             },
             "username": {
                 "type": "string",
