@@ -39,7 +39,7 @@ The following settings apply to all device types:
     "accessory": "mqttthing",
     "type": "lightbulb",
     "name": "My lightbulb",
-    "url": "http://192.168.1.235:1883",
+    "url": "mqtt://192.168.1.235:1883",
     "username": "MQTT_username",
     "password": "MQTT_password",
     "mqttOptions": { "keepalive": 30 },
@@ -77,7 +77,7 @@ The following settings apply to all device types:
 
 ### MQTT Settings
 
-`url` - URL of MQTT server if not localhost port 1883 (optional)
+`url` - URL of MQTT server if not localhost port 1883 (optional). The URL can be one of the following protocols: 'mqtt', 'mqtts', 'tcp', 'tls', 'ws', 'wss'. The url is passed to [mqtt.connect()](https://github.com/mqttjs/MQTT.js#connect).
 
 `username` - Username for MQTT server (optional)
 
