@@ -15,12 +15,13 @@
     ],
     "accessories": [
         {
-            "type": "lightbulb-OnOff",
+            "type": "lightbulb-Dimmable",
             "name": "Light",
             "url": "homebridge",
+            "logMqtt": true,
             "topics": {
-                "getOn": "light/get",
-                "setOn": "light/set"
+                "getBrightness": "dimlight/get",
+                "setBrightness": "dimlight/set"
             },
             "whiteMix": true,
             "accessory": "mqttthing"
@@ -410,6 +411,18 @@
             },
             "confirmationPeriodms": 1500,
             "logMqtt": true,
+            "accessory": "mqttthing"
+        },
+        {
+            "type": "lightbulb-White",
+            "name": "LightDim255",
+            "url": "192.168.10.35",
+            "logMqtt": true,
+            "topics": {
+                "getWhite": "light255/get",
+                "setWhite": "light255/set"
+            },
+            "whiteMix": true,
             "accessory": "mqttthing"
         }
     ]

@@ -1174,6 +1174,17 @@ function makeThing( log, accessoryConfig ) {
             // Characteristic.Brightness
             function characteristic_Brightness( service ) {
                 integerCharacteristic( service, 'brightness', Characteristic.Brightness, config.topics.setBrightness, config.topics.getBrightness );
+
+                // if there isn't a separate on topic configured, implement on/off by publishing brightness
+                if( ! config.topics.setOn ) {
+                    addCharacteristic( service, 'on', Characteristic.On, 0, function() {
+                        if( state.on && state.brightness == 0 ) {
+                            state.brightness = 100;
+                        }
+                        let msg = state.on ? state.brightness : 0;
+                        mqttPublish( config.topics.setBrightness, 'brightness', msg );
+                    } );
+                }
             }
 
             // Characteristic.Hue
@@ -2367,7 +2378,9 @@ function makeThing( log, accessoryConfig ) {
                 } else if( config.topics.setWhite ) {
                     characteristics_WhiteLight( service );
                 } else {
-                    characteristic_On( service );
+                    if( config.topics.setOn || ! config.topics.setBrightness ) {
+                        characteristic_On( service );
+                    }
                     if( config.topics.setBrightness ) {
                         characteristic_Brightness( service );
                     }

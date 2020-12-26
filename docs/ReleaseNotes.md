@@ -5,6 +5,9 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.24
++ Lightbulb: Allow lightbulb-Dimmable to use setBrightness only (0 brightness for off) when no setOn topic configured
+
 ### Version 1.1.23
 + Thermostat: Fixed target relative humidity
 + Changed incorrect 'http' protocol in MQTT server configuration to 'mqtt' (thanks, Nicholas Humfrey)
