@@ -1375,8 +1375,8 @@ function makeThing( log, accessoryConfig ) {
 
             // Characteristic.TargetRelativeHumidity
             function characteristic_TargetRelativeHumidity( service ) {
-                floatCharacteristic( service, 'targetRelativeHumidity', Characteristic.TargetRelativeHumitity,
-                    config.topics.setTargetRelativeHumidity, config.toipcs.getTargetRelativeHumidity, 0 );
+                floatCharacteristic( service, 'targetRelativeHumidity', Characteristic.TargetRelativeHumidity,
+                    config.topics.setTargetRelativeHumidity, config.topics.getTargetRelativeHumidity, 0 );
             }
 
             // History for CurrentRelativeHumidity (Eve-only)

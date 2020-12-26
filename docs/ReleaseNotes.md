@@ -5,6 +5,10 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.23
++ Thermostat: Fixed target relative humidity
++ Changed incorrect 'http' protocol in MQTT server configuration to 'mqtt' (thanks, Nicholas Humfrey)
+
 ### Version 1.1.22
 + Light: Added redThreshold, greenThreshold, blueThreshold for when whiteMix is false in an RGBWW light
 + Light: Added minColorTemperature and maxColorTemperature configuration settings
