@@ -25,7 +25,7 @@
             },
             "noWhiteMix": false,
             "accessory": "mqttthing",
-            "debounceRecvms": 1000
+            "debounceRecvms": 250
         },
         {
             "accessory": "mqttthing",
@@ -330,11 +330,8 @@
             "topics": {
                 "getRotationDirection": "test/fan/getRotationDirection",
                 "setRotationDirection": "test/fan/setRotationDirection",
-                "setOn": "test/fan/setOn",
-                "setRotationSpeed": {
-                    "topic": "test/fan/setRotationSpeed",
-                    "apply": "return 1 + Math.round(message/20)"
-                }
+                "xsetOn": "test/fan/setOn",
+                "setRotationSpeed": "test/fan/setRotationSpeed"
             },
             "integerValue": true,
             "accessory": "mqttthing"

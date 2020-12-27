@@ -1173,16 +1173,50 @@ function makeThing( log, accessoryConfig ) {
 
             // Characteristic.Brightness
             function characteristic_Brightness( service ) {
-                integerCharacteristic( service, 'brightness', Characteristic.Brightness, config.topics.setBrightness, config.topics.getBrightness );
 
-                // if there isn't a separate on topic configured, implement on/off by publishing brightness
-                if( ! config.topics.setOn ) {
+                if( config.topics.setOn ) {
+                    // separate On topic, so implement standard brightness characteristic
+                    integerCharacteristic( service, 'brightness', Characteristic.Brightness, config.topics.setBrightness, config.topics.getBrightness );
+                } else {
+                    // no separate On topic, so use Brightness 0 to indicate Off state...
+
+                    // subscription
+                    if( config.topics.getBrightness ) {
+                        mqttSubscribe( config.topics.getBrightness, 'brightness', function( topic, message ) {
+                            let newState = parseInt( message );
+                            if( state.brightness != newState ) {
+                                state.brightness = newState;
+                                service.getCharacteristic( Characteristic.Brightness ).setValue( newState, undefined, c_mySetContext );
+                                service.getCharacteristic( Characteristic.On ).setValue( newState != 0, undefined, c_mySetContext );
+                            }
+                        } );
+                    }
+
+                    // publishing (throttled)
+                    let publishNow = function() {
+                        let bri = state.brightness;
+                        if( ! config.topics.setOn && ! state.on ) {
+                            bri = 0;
+                        }
+                        mqttPublish( config.topics.setBrightness, 'brightness', bri );
+                    };
+    
+                    let publish = () => throttledCall( publishNow, 'brightness_pub', 20 );
+    
+                    // Brightness characteristic
+                    addCharacteristic( service, 'brightness', Characteristic.Brightness, 0, () => {
+                        if( state.brightness > 0 && ! state.on ) {
+                            state.on = true;
+                        }
+                        publish();
+                    } );
+
+                    // On Characteristic
                     addCharacteristic( service, 'on', Characteristic.On, 0, function() {
                         if( state.on && state.brightness == 0 ) {
                             state.brightness = 100;
                         }
-                        let msg = state.on ? state.brightness : 0;
-                        mqttPublish( config.topics.setBrightness, 'brightness', msg );
+                        publish();
                     } );
                 }
             }
