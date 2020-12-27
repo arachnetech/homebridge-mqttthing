@@ -5,6 +5,9 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.25
++ Fan: When setRotationSpeed is configured but not setOn, turn fan off with zero rotation speed (https://github.com/arachnetech/homebridge-mqttthing/issues/358 and https://github.com/arachnetech/homebridge-mqttthing/issues/310)
+
 ### Version 1.1.24
 + Lightbulb: Allow lightbulb-Dimmable to use setBrightness only (0 brightness for off) when no setOn topic configured
 

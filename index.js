@@ -1696,8 +1696,27 @@ function makeThing( log, accessoryConfig ) {
             }
 
             // Characteristic.RotationSpeed
-            function characteristic_RotationSpeed( service ) {
+            function characteristic_RotationSpeed( service, activeChar ) {
                 integerCharacteristic( service, 'rotationSpeed', Characteristic.RotationSpeed, config.topics.setRotationSpeed, config.topics.getRotationSpeed );
+
+                // if there isn't a separate On/Active topic configured, implement on/off by publishing rotation speed
+                if( activeChar === 'on' && ! config.topics.setOn ) {
+                    addCharacteristic( service, 'on', Characteristic.On, 0, function() {
+                        if( state.on && state.rotationSpeed == 0 ) {
+                            state.rotationSpeed = 100;
+                        }
+                        let msg = state.on ? state.rotationSpeed : 0;
+                        mqttPublish( config.topics.setRotationSpeed, 'rotationSpeed', msg );
+                    } );
+                } else if( activeChar === 'active' && ! config.topics.setActive ) {
+                    addCharacteristic( service, 'active', Characteristic.Active, Characteristic.Active.INACTIVE, function() {
+                        if( state.active === Characteristic.Active.ACTIVE && state.rotationSpeed == 0 ) {
+                            state.rotationSpeed = 100;
+                        }
+                        let msg = state.active === Characteristic.Active.ACTIVE ? state.rotationSpeed : 0;
+                        mqttPublish( config.topics.setRotationSpeed, 'rotationSpeed', msg );
+                    } );
+                }
             }
 
             // Characteristic.BatteryLevel
@@ -2654,12 +2673,14 @@ function makeThing( log, accessoryConfig ) {
                 }
             } else if( configType == "fan" ) {
                 service = new Service.Fan( name, subtype );
-                characteristic_On( service );
+                if( config.topics.setOn || ! config.topics.setRotationSpeed ) {
+                    characteristic_On( service );
+                }
                 if( config.topics.getRotationDirection || config.topics.setRotationDirection ) {
                     characteristic_RotationDirection( service );
                 }
                 if( config.topics.getRotationSpeed || config.topics.setRotationSpeed ) {
-                    characteristic_RotationSpeed( service );
+                    characteristic_RotationSpeed( service, 'on' );
                 }
             } else if( configType == "leakSensor" ) {
                 service = new Service.LeakSensor( name, subtype );

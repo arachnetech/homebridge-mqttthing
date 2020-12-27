@@ -322,7 +322,6 @@
             "logMqtt": true
         },
         {
-            "accessory": "mqttthing",
             "type": "fan",
             "name": "Test Fan",
             "url": "mqtt://192.168.10.35:1883",
@@ -334,9 +333,8 @@
                 "setRotationSpeed": "test/fan/setRotationSpeed"
             },
             "integerValue": true,
-            "mqttOptions": {
-                "insecure": true
-            }
+            "whiteMix": true,
+            "accessory": "mqttthing"
         },
         {
             "accessory": "mqttthing",
