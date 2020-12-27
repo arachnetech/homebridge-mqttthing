@@ -24,7 +24,8 @@
                 "setBrightness": "dimlight/set"
             },
             "noWhiteMix": false,
-            "accessory": "mqttthing"
+            "accessory": "mqttthing",
+            "debounceRecvms": 1000
         },
         {
             "accessory": "mqttthing",

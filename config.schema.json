@@ -306,6 +306,11 @@
                 "title": "Codec",
                 "description": "Filename of JavaScript file implementing codec"
             },
+            "debounceRecvms": {
+                "type": "integer",
+                "title": "Receive Debounce (ms)",
+                "description": "Whenever receiving a message on any configured topic, wait for the number of milliseconds specified before notifying Homekit. If a subsequent message is received during the debounce period, the debounce timer is restarted. This can be useful to filter extraneous notification messages from accessories."
+            },
             "topics": {
                 "type": "object",
                 "title": "Topics",
@@ -1651,7 +1656,8 @@
                 "logMqtt",
                 "mqttOptions.keepalive",
                 "mqttPubOptions.retain",
-                "codec"
+                "codec",
+                "debounceRecvms"
             ]
         },
         {

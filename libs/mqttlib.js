@@ -199,10 +199,24 @@ var mqttlib = new function() {
     // Subscribe
     this.subscribe = function( ctx, topic, property, handler ) {
         let rawHandler = handler;
-        let { mqttDispatch, log, mqttClient, codec, propDispatch } = ctx;
+        let { mqttDispatch, log, mqttClient, codec, propDispatch, config } = ctx;
         if( ! mqttClient ) {
             log( 'ERROR: Call mqttlib.init() before mqttlib.subscribe()' );
             return;
+        }
+
+        // debounce
+        if( config.debounceRecvms ) {
+            let origHandler = handler;
+            let debounceTimeout = null;
+            handler = function( intopic, message ) {
+                if( debounceTimeout ) {
+                    clearTimeout( debounceTimeout );
+                }
+                debounceTimeout = setTimeout( function() {
+                    origHandler( intopic, message );
+                }, config.debounceRecvms );
+            }
         }
 
         // send through any apply function

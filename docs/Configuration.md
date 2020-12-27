@@ -61,7 +61,8 @@ The following settings apply to all device types:
         { "topic": "topic2", "message": "message2" }
     ],
     "confirmationPeriodms": 1000,
-    "retryLimit": 5
+    "retryLimit": 5,
+    "debounceRecvms": 200
 }
 ```
 
@@ -90,6 +91,8 @@ When MQTTS (MQTT over TLS) is used, the `mqttOptions` object is passed through t
 `mqttPubOptions` - Option containing any MQTT publishing options required. See https://www.npmjs.com/package/mqtt#publish for details.
 
 `logMqtt` - Set to true to enable MQTT logging for this accessory (optional, defaults to false)
+
+`debounceRecvms` - Whenever receiving a message on any configured topic, wait for the number of milliseconds specified before notifying Homekit. If a subsequent message is received during the debounce period, the debounce timer is restarted. This can be useful to filter extraneous notification messages from accessories.
 
 ### MQTT Topics
 
