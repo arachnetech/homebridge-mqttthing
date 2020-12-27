@@ -329,12 +329,14 @@
             "topics": {
                 "getRotationDirection": "test/fan/getRotationDirection",
                 "setRotationDirection": "test/fan/setRotationDirection",
-                "getRotationSpeed": "test/fan/getRotationSpeed",
-                "setRotationSpeed": "test/fan/setRotationSpeed"
+                "setOn": "test/fan/setOn",
+                "setRotationSpeed": {
+                    "topic": "test/fan/setRotationSpeed",
+                    "apply": "return 1 + Math.round(message/20)"
+                }
             },
             "integerValue": true,
-            "accessory": "mqttthing",
-            "maxRotationSpeed": 60
+            "accessory": "mqttthing"
         },
         {
             "accessory": "mqttthing",
