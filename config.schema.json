@@ -1527,11 +1527,10 @@
                     "functionBody": "return ['lightbulb','lightbulb-RGBWW'].includes(model.type);"
                 }
             },
-            "whiteMix": {
+            "noWhiteMix": {
                 "type": "boolean",
-                "title": "Extract white components from colours",
-                "description": "In RGBWW mode, by default (whiteMix: true) white components are extracted from colours and both white and colour channels can be active together. Set whiteMix to false to disable extraction of white components from colours - i.e. powering only RGB channels or WW/CW channels.",
-                "default": true,
+                "title": "Do not extract white components from colours",
+                "description": "In RGBWW mode, by default (noWhiteMix: false) white components are extracted from colours and both white and colour channels can be active together. Set noWhiteMix to true to disable extraction of white components from colours - i.e. powering only RGB channels or WW/CW channels.",
                 "condition": {
                     "functionBody": "return ['lightbulb','lightbulb-RGBWW'].includes(model.type);"
                 }
@@ -1815,7 +1814,7 @@
                 "hexPrefix",
                 "warmWhite",
                 "coldWhite",
-                "whiteMix",
+                "noWhiteMix",
                 "switchWhites",
                 "minColorTemperature",
                 "maxColorTemperature",

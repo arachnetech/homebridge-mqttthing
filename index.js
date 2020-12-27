@@ -728,7 +728,7 @@ function makeThing( log, accessoryConfig ) {
                         rgb.g -= min;
                         rgb.b -= min;
 
-                        if( config.whiteMix === false ) {
+                        if( config.whiteMix === false || config.noWhiteMix === true ) {
                             if( ( rgb.ww > 0 || rgb.cw > 0 ) && ( rgb.r > 0 || rgb.g > 0 || rgb.b > 0 ) ) {
                                 // mixing white and colours is not allowed on some devices
                                 let redThreshold = ( config.redThreshold === undefined ) ? 15 : config.redThreshold;

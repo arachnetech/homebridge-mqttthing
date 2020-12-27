@@ -23,7 +23,7 @@
                 "getBrightness": "dimlight/get",
                 "setBrightness": "dimlight/set"
             },
-            "whiteMix": true,
+            "noWhiteMix": false,
             "accessory": "mqttthing"
         },
         {
@@ -310,16 +310,16 @@
             }
         },
         {
-            "accessory": "mqttthing",
             "type": "lightbulb-RGBWW",
             "name": "Test RGBWW Light",
             "url": "mqtt://192.168.10.35:1883",
+            "logMqtt": true,
             "topics": {
                 "getRGBWW": "test/rgbwwlight/rgb",
                 "setRGBWW": "test/rgbwwlight/rgb/set"
             },
-            "whiteMix": false,
-            "logMqtt": true
+            "noWhiteMix": true,
+            "accessory": "mqttthing"
         },
         {
             "type": "fan",
@@ -333,7 +333,6 @@
                 "setRotationSpeed": "test/fan/setRotationSpeed"
             },
             "integerValue": true,
-            "whiteMix": true,
             "accessory": "mqttthing"
         },
         {
@@ -369,7 +368,6 @@
                 "setRGBWW": "rgbww/rgbww",
                 "setOn": "rgbww/on"
             },
-            "whiteMix": true,
             "switchWhites": true,
             "accessory": "mqttthing"
         },
