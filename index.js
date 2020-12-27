@@ -1697,23 +1697,24 @@ function makeThing( log, accessoryConfig ) {
 
             // Characteristic.RotationSpeed
             function characteristic_RotationSpeed( service, activeChar ) {
-                integerCharacteristic( service, 'rotationSpeed', Characteristic.RotationSpeed, config.topics.setRotationSpeed, config.topics.getRotationSpeed );
+                integerCharacteristic( service, 'rotationSpeed', Characteristic.RotationSpeed, config.topics.setRotationSpeed, config.topics.getRotationSpeed, 
+                                       undefined, config.minRotationSpeed, config.maxRotationSpeed );
 
                 // if there isn't a separate On/Active topic configured, implement on/off by publishing rotation speed
                 if( activeChar === 'on' && ! config.topics.setOn ) {
                     addCharacteristic( service, 'on', Characteristic.On, 0, function() {
                         if( state.on && state.rotationSpeed == 0 ) {
-                            state.rotationSpeed = 100;
+                            state.rotationSpeed = config.maxRotationSpeed || 100;
                         }
-                        let msg = state.on ? state.rotationSpeed : 0;
+                        let msg = state.on ? state.rotationSpeed : config.minRotationSpeed || 0;
                         mqttPublish( config.topics.setRotationSpeed, 'rotationSpeed', msg );
                     } );
                 } else if( activeChar === 'active' && ! config.topics.setActive ) {
                     addCharacteristic( service, 'active', Characteristic.Active, Characteristic.Active.INACTIVE, function() {
                         if( state.active === Characteristic.Active.ACTIVE && state.rotationSpeed == 0 ) {
-                            state.rotationSpeed = 100;
+                            state.rotationSpeed = config.maxRotationSpeed || 100;
                         }
-                        let msg = state.active === Characteristic.Active.ACTIVE ? state.rotationSpeed : 0;
+                        let msg = state.active === Characteristic.Active.ACTIVE ? state.rotationSpeed : config.minRotationSpeed || 0;
                         mqttPublish( config.topics.setRotationSpeed, 'rotationSpeed', msg );
                     } );
                 }
