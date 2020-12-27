@@ -1184,9 +1184,13 @@ function makeThing( log, accessoryConfig ) {
                     if( config.topics.getBrightness ) {
                         mqttSubscribe( config.topics.getBrightness, 'brightness', function( topic, message ) {
                             let newState = parseInt( message );
-                            if( state.brightness != newState ) {
-                                state.brightness = newState;
-                                service.getCharacteristic( Characteristic.Brightness ).setValue( newState, undefined, c_mySetContext );
+                            let newOn = ( newState != 0 );
+                            if( state.brightness != newState || state.on != newOn ) {
+                                if( newOn ) {
+                                    state.brightness = newState;
+                                    service.getCharacteristic( Characteristic.Brightness ).setValue( newState, undefined, c_mySetContext );
+                                }
+                                state.on = newOn;
                                 service.getCharacteristic( Characteristic.On ).setValue( newState != 0, undefined, c_mySetContext );
                             }
                         } );
@@ -1730,26 +1734,56 @@ function makeThing( log, accessoryConfig ) {
             }
 
             // Characteristic.RotationSpeed
-            function characteristic_RotationSpeed( service, activeChar ) {
-                integerCharacteristic( service, 'rotationSpeed', Characteristic.RotationSpeed, config.topics.setRotationSpeed, config.topics.getRotationSpeed, 
-                                       undefined, config.minRotationSpeed, config.maxRotationSpeed );
+            function characteristic_RotationSpeed( service, handleOn ) {
 
-                // if there isn't a separate On/Active topic configured, implement on/off by publishing rotation speed
-                if( activeChar === 'on' && ! config.topics.setOn ) {
+                if( config.topics.setOn || ! handleOn ) {
+                    // separate On topic, or we're not handling 'On', so implement standard rotationSpeed characteristic
+                    integerCharacteristic( service, 'rotationSpeed', Characteristic.RotationSpeed, config.topics.setRotationSpeed, config.topics.getRotationSpeed, 
+                                           undefined, config.minRotationSpeed, config.maxRotationSpeed );
+                } else {
+                    // no separate On topic, so use RotationSpeed 0 to indicate Off state...
+
+                    // subscription
+                    if( config.topics.getRotationSpeed ) {
+                        mqttSubscribe( config.topics.getRotationSpeed, 'rotationSpeed', ( topic, message ) => {
+                            let newState = parseInt( message );
+                            let newOn = ( newState != 0 );
+                            if( state.rotationSpeed != newState || state.on != newOn ) {
+                                if( newOn ) {
+                                    state.rotationSpeed = newState;
+                                    service.getCharacteristic( Characteristic.RotationSpeed ).setValue( newState, undefined, c_mySetContext );
+                                }
+                                state.on = newOn;
+                                service.getCharacteristic( Characteristic.On ).setValue( newState != 0, undefined, c_mySetContext );
+                            }
+                        } );
+                    }
+
+                    // publishing (throttled)
+                    let publishNow = function() {
+                        let rot = state.rotationSpeed;
+                        if( ! config.topics.setOn && ! state.on ) {
+                            rot = 0;
+                        }
+                        mqttPublish( config.topics.setRotationSpeed, 'rotationSpeed', rot );
+                    };
+    
+                    let publish = () => throttledCall( publishNow, 'rotationSpeed_pub', 20 );
+    
+                    // RotationSpeed characteristic
+                    addCharacteristic( service, 'rotationSpeed', Characteristic.RotationSpeed, 0, () => {
+                        if( state.rotationSpeed > 0 && ! state.on ) {
+                            state.on = true;
+                        }
+                        publish();
+                    } );
+
+                    // On Characteristic
                     addCharacteristic( service, 'on', Characteristic.On, 0, function() {
                         if( state.on && state.rotationSpeed == 0 ) {
-                            state.rotationSpeed = config.maxRotationSpeed || 100;
+                            state.rotationSpeed = 100;
                         }
-                        let msg = state.on ? state.rotationSpeed : config.minRotationSpeed || 0;
-                        mqttPublish( config.topics.setRotationSpeed, 'rotationSpeed', msg );
-                    } );
-                } else if( activeChar === 'active' && ! config.topics.setActive ) {
-                    addCharacteristic( service, 'active', Characteristic.Active, Characteristic.Active.INACTIVE, function() {
-                        if( state.active === Characteristic.Active.ACTIVE && state.rotationSpeed == 0 ) {
-                            state.rotationSpeed = config.maxRotationSpeed || 100;
-                        }
-                        let msg = state.active === Characteristic.Active.ACTIVE ? state.rotationSpeed : config.minRotationSpeed || 0;
-                        mqttPublish( config.topics.setRotationSpeed, 'rotationSpeed', msg );
+                        publish();
                     } );
                 }
             }
@@ -2715,7 +2749,7 @@ function makeThing( log, accessoryConfig ) {
                     characteristic_RotationDirection( service );
                 }
                 if( config.topics.getRotationSpeed || config.topics.setRotationSpeed ) {
-                    characteristic_RotationSpeed( service, 'on' );
+                    characteristic_RotationSpeed( service, true );
                 }
             } else if( configType == "leakSensor" ) {
                 service = new Service.LeakSensor( name, subtype );

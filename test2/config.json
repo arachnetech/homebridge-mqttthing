@@ -330,8 +330,8 @@
             "topics": {
                 "getRotationDirection": "test/fan/getRotationDirection",
                 "setRotationDirection": "test/fan/setRotationDirection",
-                "xsetOn": "test/fan/setOn",
-                "setRotationSpeed": "test/fan/setRotationSpeed"
+                "setRotationSpeed": "test/fan/setRotationSpeed",
+                "getRotationSpeed": "test/fan/getRotationSpeed"
             },
             "integerValue": true,
             "accessory": "mqttthing"
