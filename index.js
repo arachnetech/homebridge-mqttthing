@@ -2592,6 +2592,12 @@ function makeThing( log, accessoryConfig ) {
                     addSensorOptionalCharacteristics( presSvc );
                     services.push( presSvc );
                 }
+                if( config.topics.getCurrentAmbientLightLevel ) {
+                    let lightSvc = new Service.LightSensor( svcNames.ambientLightLevel || name + " Light Level", subtype );
+                    characteristic_CurrentAmbientLightLevel( lightSvc );
+                    addSensorOptionalCharacteristics( lightSvc );
+                    services.push( lightSvc );
+                }
                 // custom service UUID for optional Eve characteristics
                 let weatherSvc = new Service( svcNames.weather || name + " Weather", "D92D5391-92AF-4824-AF4A-356F25F25EA1" );
                 let addWeatherSvc = false;
