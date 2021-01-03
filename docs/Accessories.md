@@ -1149,6 +1149,7 @@ Weather condition and wind direction are custom string values.
     {
         "getCurrentTemperature":        "<topic used to provide 'current temperature'>",
         "getCurrentRelativeHumidity":   "<topic used to provide 'current relative humidity (optional)'>",
+        "getCurrentAmbientLightLevel":  "<topic used to provide 'current ambient light level (optional)'>",
         "getAirPressure":               "<topic used to provide 'air pressure' (optional, Eve-only)>",
         "getWeatherCondition":          "<topic used to provide 'weather condition' (optional, Eve-only)>",
         "getRain1h":                    "<topic used to provide 'rain [mm] in last 1h' (optional, Eve-only)>",

@@ -655,7 +655,7 @@
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'current ambient light level'",
                         "condition": {
-                            "functionBody": "return ['lightSensor'].includes(model.type);"
+                            "functionBody": "return ['lightSensor','weatherStation'].includes(model.type);"
                         }
                     },
                     "getCurrentDoorState": {

@@ -395,6 +395,7 @@
             },
             "url": "mqtt://192.168.179.5:1883",
             "topics": {
+                "getCurrentAmbientLightLevel": "test/weather/level",
                 "getCurrentTemperature": "test/weather/temperature",
                 "getCurrentRelativeHumidity": "test/weather/humidity",
                 "getAirPressure": "test/weather/airpressure",
