@@ -247,6 +247,51 @@ function makeThing( log, accessoryConfig ) {
                 }
             }
 
+            function isValid( charac, value ) {
+                const format = charac.props.format;
+                if( format === 'int' ) {
+                    if( ! Number.isInteger( value ) ) {
+                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - not integer` );
+                        return false;
+                    }
+                    if( charac.props.minValue !== undefined && value < charac.props.minValue ) {
+                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - below minimum (${charac.props.minValue})` );
+                        return false;
+                    }
+                    if( charac.props.maxValue !== undefined && value > charac.props.maxValue ) {
+                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - above maximum (${charac.props.maxValue})` );
+                        return false;
+                    }
+                } else if( format === 'float' ) {
+                    if( typeof value !== 'number' || isNaN( value ) ) {
+                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - not number` );
+                        return false;
+                    }
+                    if( charac.props.minValue !== undefined && value < charac.props.minValue ) {
+                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - below minimum (${charac.props.minValue})` );
+                        return false;
+                    }
+                    if( charac.props.maxValue !== undefined && value > charac.props.maxValue ) {
+                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - above maximum (${charac.props.maxValue})` );
+                        return false;
+                    }
+                } else if( format === 'bool' ) {
+                    if( value !== true && value !== false ) {
+                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - not Boolean` );
+                        return false;
+                    }
+                } else {
+                    log( `Unable to validate ${charac.displayName}, format [${charac.props.format}] - ${JSON.stringify(charac)}` );
+                }
+                return true;
+            }
+
+            function setCharacteristic( charac, value ) {
+                if( isValid( charac, value ) ) {
+                    charac.setValue( value, undefined, c_mySetContext );
+                }
+            }
+
             function booleanCharacteristic( service, property, characteristic, setTopic, getTopic, initialValue, mapValueFunc, turnOffAfterms, resetStateAfterms, enableConfirmation ) {
 
                 var publish = makeConfirmedPublisher( setTopic, getTopic, property, enableConfirmation );
@@ -281,14 +326,14 @@ function makeThing( log, accessoryConfig ) {
 
                                 state[ property ] = false;
                                 publish( getOnOffPubValue( false ) );
-                                charac.setValue( mapValueForHomebridge( false, mapValueFunc ), undefined, c_mySetContext );
+                                setCharacteristic( charac, mapValueForHomebridge( false, mapValueFunc ) );
 
                             }, turnOffAfterms );
                         }
                     } );
                 }
                 if( initialValue ) {
-                    charac.setValue( mapValueForHomebridge( initialValue, mapValueFunc ), undefined, c_mySetContext );
+                    setCharacteristic( charac, mapValueForHomebridge( initialValue, mapValueFunc ) );
                 }
 
                 // subscribe to get topic
@@ -305,7 +350,7 @@ function makeThing( log, accessoryConfig ) {
                         // if it changed, set characteristic
                         if( state[ property ] != newState ) {
                             state[ property ] = newState;
-                            charac.setValue( mapValueForHomebridge( newState, mapValueFunc ), undefined, c_mySetContext );
+                            setCharacteristic( charac, mapValueForHomebridge( newState, mapValueFunc ) );
                         }
                         // optionally reset state to OFF after a timeout
                         if( newState && resetStateAfterms ) {
@@ -315,7 +360,7 @@ function makeThing( log, accessoryConfig ) {
                             autoResetStateTimer = setTimeout( function() {
                                 autoResetStateTimer = null;
                                 state[ property ] = false;
-                                charac.setValue( mapValueForHomebridge( false, mapValueFunc ), undefined, c_mySetContext );
+                                setCharacteristic( charac, mapValueForHomebridge( false, mapValueFunc ) );
                             }, resetStateAfterms );
                         }
                     } );
@@ -371,7 +416,7 @@ function makeThing( log, accessoryConfig ) {
                     } );
                 }
                 if( initialValue ) {
-                    charac.setValue( initialValue, undefined, c_mySetContext );
+                    setCharacteristic( charac, initialValue );
                 }
 
                 // subscribe to get topic
@@ -380,7 +425,7 @@ function makeThing( log, accessoryConfig ) {
                         var newState = parseInt( message );
                         if( state[ property ] != newState ) {
                             state[ property ] = newState;
-                            charac.setValue( newState, undefined, c_mySetContext );
+                            setCharacteristic( charac, newState );
                         }
                     } );
                 }
@@ -392,7 +437,7 @@ function makeThing( log, accessoryConfig ) {
 
                 var charac = service.getCharacteristic( characteristic );
 
-                charac.setValue( defaultValue, undefined, c_mySetContext );
+                setCharacteristic( charac, defaultValue );
 
                 charac.on( 'get', function( callback ) {
                     handleGetStateCallback( callback, state[ property ] );
@@ -1043,7 +1088,7 @@ function makeThing( log, accessoryConfig ) {
                     } );
                 }
                 if( initialValue ) {
-                    charac.setValue( initialValue, undefined, c_mySetContext );
+                    setCharacteristic( charac, initialValue );
                 }
 
                 // subscribe to get topic
@@ -1052,7 +1097,7 @@ function makeThing( log, accessoryConfig ) {
                         var newState = parseFloat( message );
                         if( state[ property ] != newState ) {
                             state[ property ] = newState;
-                            charac.setValue( newState, undefined, c_mySetContext );
+                            setCharacteristic( charac, newState );
                         }
                     } );
                 }
@@ -1124,7 +1169,7 @@ function makeThing( log, accessoryConfig ) {
                 }
 
                 if( initialValue ) {
-                    charac.setValue( initialValue, undefined, c_mySetContext );
+                    setCharacteristic( charac, initialValue );
                 }
 
                 // MQTT set (Homekit get)
@@ -1137,7 +1182,7 @@ function makeThing( log, accessoryConfig ) {
                                 log( `Received ${data} - ${property} state is now ${newState}` );
                             }
                             state[ property ] = newState;
-                            charac.setValue( newState, undefined, c_mySetContext );
+                            setCharacteristic( charac, newState );
                             raiseEvent( property );
                         }
                         if( newState === undefined && config.logMqtt ) {
@@ -1648,7 +1693,7 @@ function makeThing( log, accessoryConfig ) {
                 // property-changed handler
                 let propChangedHandler = events.targetDoorState = function() {
                     setTimeout( () => {
-                        charac.setValue( mapValueFunc( state[ property ] ), undefined, c_mySetContext );
+                        setCharacteristic( charac, mapValueFunc( state[ property ] ) );
                     }, 1000 );
                 };
 
@@ -1751,7 +1796,8 @@ function makeThing( log, accessoryConfig ) {
                             if( state.rotationSpeed != newState || state.on != newOn ) {
                                 if( newOn ) {
                                     state.rotationSpeed = newState;
-                                    service.getCharacteristic( Characteristic.RotationSpeed ).setValue( newState, undefined, c_mySetContext );
+                                    setCharacteristic( service.getCharacteristic( Characteristic.RotationSpeed ), newState );
+                                    //service.getCharacteristic( Characteristic.RotationSpeed ).setValue( newState, undefined, c_mySetContext );
                                 }
                                 state.on = newOn;
                                 service.getCharacteristic( Characteristic.On ).setValue( newState != 0, undefined, c_mySetContext );
