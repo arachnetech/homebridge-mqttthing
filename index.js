@@ -251,7 +251,7 @@ function makeThing( log, accessoryConfig ) {
                 const format = charac.props.format;
                 if( format === 'int' ) {
                     if( ! Number.isInteger( value ) ) {
-                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - not integer` );
+                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - not an integer` );
                         return false;
                     }
                     if( charac.props.minValue !== undefined && value < charac.props.minValue ) {
@@ -264,7 +264,7 @@ function makeThing( log, accessoryConfig ) {
                     }
                 } else if( format === 'float' ) {
                     if( typeof value !== 'number' || isNaN( value ) ) {
-                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - not number` );
+                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - not a number` );
                         return false;
                     }
                     if( charac.props.minValue !== undefined && value < charac.props.minValue ) {
@@ -277,7 +277,12 @@ function makeThing( log, accessoryConfig ) {
                     }
                 } else if( format === 'bool' ) {
                     if( value !== true && value !== false ) {
-                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - not Boolean` );
+                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - not a Boolean` );
+                        return false;
+                    }
+                } else if( format === 'string' ) {
+                    if( typeof value !== 'string' ) {
+                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - not a string` );
                         return false;
                     }
                 } else {
@@ -1159,7 +1164,7 @@ function makeThing( log, accessoryConfig ) {
                         if( context !== c_mySetContext ) {
                             
                             if (typeof value === "boolean") {
-                                value = value? 1: 0;
+                                value = value ? 1: 0;
                             }
                             
                             state[ property ] = value;
