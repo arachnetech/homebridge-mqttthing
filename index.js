@@ -1112,6 +1112,11 @@ function makeThing( log, accessoryConfig ) {
                 if( setTopic ) {
                     charac.on( 'set', function( value, callback, context ) {
                         if( context !== c_mySetContext ) {
+                            
+                            if (typeof value === "boolean") {
+                                value = value? 1: 0;
+                            }
+                            
                             state[ property ] = value;
                             let mqttVal = values[ value ];
                             if( mqttVal !== undefined ) {
