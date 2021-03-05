@@ -5,9 +5,10 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
-### Version 1.1.26
+### Version 1.1.26 (Beta)
 + Weather Station: added ambient light level (thanks, Matt Kirman)
 + Validate characteristics when setting to avoid Homebridge 1.3 warnings
++ Lock/unlock fix with Siri and Homebridge 1.3.x (thanks, @tasict)
 
 ### Version 1.1.25
 + Fan: When setRotationSpeed is configured but not setOn, turn fan off with zero rotation speed (https://github.com/arachnetech/homebridge-mqttthing/issues/358 and https://github.com/arachnetech/homebridge-mqttthing/issues/310)
