@@ -520,11 +520,11 @@ and False (or 0) maps to `LEAK_NOT_DETECTED`. To use different MQTT values, conf
 
 ## Light bulb
 
-Light bulb can either use separate topics (for on, brightness, hue and saturation), or it can be configured to use a combined value holding comma-separated hue,sat,val or red,green,blue.
+Light bulb can either use separate topics (for on, brightness, hue and saturation), or it can be configured to use a combined value holding comma-separated hue,sat,val or red,green,blue. Using a topic with combined values disables most of the other topics according to this [line](https://github.com/arachnetech/homebridge-mqttthing/blob/c2abf22dbef27bd329a038bd394a6ab112681fd6/index.js#L2462).
 
 Hue is 0-360. Saturation is 0-100. Brightness is 0-100. Red, green and blue are 0-255. Colour temperature ranges from 140 (cold white) to 500 (warm white), centred at about 151.
 
-If `topics.setHSV` is populated, a combined value is used and any individual brightness, hue and saturation topics are ignored. On/off is sent with `setOn` if configured, or by setting V to 0 when off.
+If `topics.setHSV` is populated, a combined value is used and any individual brightness, hue, saturation and color temperature topics are ignored. On/off is sent with `setOn` if configured, or by setting V to 0 when off.
 
 If `topics.setRGB` is populated, a combined value is used in the format red,green,blue (ranging from 0-255). On/off may be sent with `setOn`; brightness, hue and saturation topics are ignored. If `topics.setWhite` is also populated, the white level is extracted and sent separately to the combined RGB value.
 
