@@ -74,6 +74,19 @@ function makeThing( log, accessoryConfig, api ) {
 
         function configToServices( config ) {
 
+            // Adaptive lighting support...
+
+            // Our controller
+            let adaptiveLightingController = null;
+
+            // Disable adaptive lighting (when user sets hue/saturation explicitly)
+            let disableAdaptiveLighting = function( what ) {
+                if( adaptiveLightingController && adaptiveLightingController.isAdaptiveLightingActive() ) {
+                    log( `External control (${what}) disabling adaptive lighting` );
+                    adaptiveLightingController.disableAdaptiveLighting();
+                }
+            };
+
             // Do we support adaptive lighting?
             let supportAdaptiveLighting = function() {
                 return ( config.adaptiveLighting !== false ) && api.versionGreaterOrEqual && api.versionGreaterOrEqual( '1.3.0-beta.27' );
@@ -81,10 +94,19 @@ function makeThing( log, accessoryConfig, api ) {
 
             // Create adaptive lighting controller
             let addAdaptiveLightingController = function( service ) {
+                if( adaptiveLightingController ) {
+                    log.error( 'Logic error: Duplicate call to addAdaptiveLightingController() - ignoring' );
+                    return;
+                }
                 log( 'Enabling adaptive lighting' );
-                let adapativeLightingController = new api.hap.AdaptiveLightingController( service, {
+                adaptiveLightingController = new api.hap.AdaptiveLightingController( service, {
                     controllerMode: api.hap.AdaptiveLightingControllerMode.AUTOMATIC } );
-                controllers.push( adapativeLightingController );
+                controllers.push( adaptiveLightingController );
+
+                // testing...
+                setInterval( () => {
+                    log( `Adaptive lighting controller ${adaptiveLightingController.isAdaptiveLightingActive() ? "active" : "inactive"}` )
+                }, 3000 );
             };
 
             // Migrate old-style history options
@@ -443,6 +465,11 @@ function makeThing( log, accessoryConfig, api ) {
                     mqttSubscribe( getTopic, property, function( topic, message ) {
                         var newState = parseInt( message );
                         if( state[ property ] != newState ) {
+                            // check for adaptive lighting disabling properties
+                            if( property === 'hue' || property === 'saturation' || property === 'colorTemperature' ) {
+                                disableAdaptiveLighting( property );
+                            }
+                            // update state and characteristic
                             state[ property ] = newState;
                             setCharacteristic( charac, newState );
                         }
@@ -516,6 +543,7 @@ function makeThing( log, accessoryConfig, api ) {
                     mqttSubscribe( config.topics.getHSV, 'HSV', function( topic, message ) {
                         var comps = ( '' + message ).split( ',' );
                         if( comps.length == 3 ) {
+
                             var hue = parseInt( comps[ 0 ] );
                             var sat = parseInt( comps[ 1 ] );
                             var bri = parseInt( comps[ 2 ] );
@@ -531,12 +559,16 @@ function makeThing( log, accessoryConfig, api ) {
                             }
 
                             if( hue != state.hue ) {
+                                disableAdaptiveLighting( 'HSV hue' );
+
                                 state.hue = hue;
                                 //log( 'hue ' + hue );
                                 service.getCharacteristic( Characteristic.Hue ).setValue( hue, undefined, c_mySetContext );
                             }
 
                             if( sat != state.sat ) {
+                                disableAdaptiveLighting( 'HSV saturation' );
+
                                 state.sat = sat;
                                 //log( 'sat ' + sat );
                                 service.getCharacteristic( Characteristic.Saturation ).setValue( sat, undefined, c_mySetContext );
@@ -918,12 +950,16 @@ function makeThing( log, accessoryConfig, api ) {
                     }
 
                     if( hue != state.hue ) {
+                        disableAdaptiveLighting( 'calculated hue' );
+
                         state.hue = hue;
                         //log( 'hue ' + hue );
                         service.getCharacteristic( Characteristic.Hue ).setValue( hue, undefined, c_mySetContext );
                     }
 
                     if( sat != state.sat ) {
+                        disableAdaptiveLighting( 'calculated saturation' );
+
                         state.sat = sat;
                         //log( 'sat ' + sat );
                         service.getCharacteristic( Characteristic.Saturation ).setValue( sat, undefined, c_mySetContext );
