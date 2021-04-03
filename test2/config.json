@@ -380,7 +380,9 @@
             "topics": {
                 "setOn": "testTempLight/setOn",
                 "setBrightness": "testTempLight/setBrightness",
-                "setColorTemperature": "testTempLight/setColorTemperature"
+                "setColorTemperature": "testTempLight/setColorTemperature",
+                "getColorTemperature": "testTempLight/getColorTemperature",
+                "getBrightness": "testTempLight/getBrightness"
             },
             "whiteMix": true,
             "accessory": "mqttthing",
