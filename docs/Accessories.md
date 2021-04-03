@@ -520,11 +520,11 @@ and False (or 0) maps to `LEAK_NOT_DETECTED`. To use different MQTT values, conf
 
 ## Light bulb
 
-Light bulb can either use separate topics (for on, brightness, hue and saturation), or it can be configured to use a combined value holding comma-separated hue,sat,val or red,green,blue.
+Light bulb can either use separate topics (for on, brightness, hue and saturation), or it can be configured to use a combined value holding comma-separated hue,sat,val or red,green,blue. Using a topic with combined values disables most of the other topics according to this [line](https://github.com/arachnetech/homebridge-mqttthing/blob/c2abf22dbef27bd329a038bd394a6ab112681fd6/index.js#L2462).
 
 Hue is 0-360. Saturation is 0-100. Brightness is 0-100. Red, green and blue are 0-255. Colour temperature ranges from 140 (cold white) to 500 (warm white), centred at about 151.
 
-If `topics.setHSV` is populated, a combined value is used and any individual brightness, hue and saturation topics are ignored. On/off is sent with `setOn` if configured, or by setting V to 0 when off.
+If `topics.setHSV` is populated, a combined value is used and any individual brightness, hue, saturation and color temperature topics are ignored. On/off is sent with `setOn` if configured, or by setting V to 0 when off.
 
 If `topics.setRGB` is populated, a combined value is used in the format red,green,blue (ranging from 0-255). On/off may be sent with `setOn`; brightness, hue and saturation topics are ignored. If `topics.setWhite` is also populated, the white level is extracted and sent separately to the combined RGB value.
 
@@ -532,7 +532,7 @@ Configuring `topics.setWhite` without `topics.setRGB` will give a dimmable white
 
 If `topics.setRGBW` is populated, a combined value is used in the format red,green,blue,white (ranging from 0-255). The minimum of red, green and blue is subtracted from all three colour channels and sent to the white channel instead. On/off may be set with `setOn` (otherwise "0,0,0,0" indicates off); brightness, hue, saturation and temperature topics are ignored.
 
-If `topics.setRGBWW` is populated, a combined value is used in the format red,green,blue,warm_white,cold_white (each component ranging from 0-255). Warm and cold white components are set based on the colour values published by Homekit from the _Temperature_ control, and after warm and cold white are extracted any remaining white level in the RGB values is sent equally to both white channels. The RGB values used for warm white and cold white extraction can be configured with `warmWhite` and `coldWhite`, allowing calibration to RGBWW LED colours. (Homekit's warm white and cold white colours are used by default.) On/off may be set with `setOn` (otherwise "0,0,0,0,0" indicates off); brightness, hue, saturation and temperature topics are ignored. (Homekit's behaviour when a coloured (hue/saturation-supporting) light also attempts to support temperature can be unpredictable - so the RGBWW implementation does not use Homekit colour temperature.) RGBWW lights support a `whiteMix` option which when set to false disables extraction of white components from colours - i.e. powering only RGB channels or WW,CW channels. When `whiteMix` is *false*, `redThreshold`, `greenThreshold` and `blueThreshold` may optionally be configured with the colour offsets above which RGB is used instead of WW; their default value is 15.
+If `topics.setRGBWW` is populated, a combined value is used in the format red,green,blue,warm_white,cold_white (each component ranging from 0-255). Warm and cold white components are set based on the colour values published by Homekit from the _Temperature_ control, and after warm and cold white are extracted any remaining white level in the RGB values is sent equally to both white channels. The RGB values used for warm white and cold white extraction can be configured with `warmWhite` and `coldWhite`, allowing calibration to RGBWW LED colours. (Homekit's warm white and cold white colours are used by default.) On/off may be set with `setOn` (otherwise "0,0,0,0,0" indicates off); brightness, hue, saturation and temperature topics are ignored. (Homekit's behaviour when a coloured (hue/saturation-supporting) light also attempts to support temperature can be unpredictable - so the RGBWW implementation does not use Homekit colour temperature.) RGBWW lights support a `noWhiteMix` option which when set to true disables extraction of white components from colours - i.e. powering only RGB channels or WW,CW channels. When `noWhiteMix` is *true*, `redThreshold`, `greenThreshold` and `blueThreshold` may optionally be configured with the colour offsets above which RGB is used instead of WW; their default value is 15. To order by cold_white,warm_white, set `switchWhites` to *true*.
 
 Set `confirmationPeriodms` to enable publishing confirmation for `setOn`/`getOn`. The accessory must echo messages it receives through the `setOn` subject to the `getOn` subject, otherwise homebridge-mqttthing will mark it as unresponsive and republish on the `setOn` subject.
 
@@ -783,9 +783,11 @@ Configure `restrictTargetState` to an array of integers to restrict the target s
     "password": "<password for MQTT (optional)>",
     "caption": "<label (optional)>",
     "topics": {
-        "setTargetState":  "<topic used to set 'target state'>",
-        "getTargetState":  "<topic used to get 'target state'>",
-        "getCurrentState": "<topic used to get 'current state'>"
+        "setTargetState":    "<topic used to set 'target state'>",
+        "getTargetState":    "<topic used to get 'target state'>",
+        "getCurrentState":   "<topic used to get 'current state'>",
+        "getStatusFault":    "<topic used to provide 'fault' status (optional)>",
+        "getStatusTampered": "<topic used to provide 'tampered' status (optional)>"
     },
     "targetStateValues": [ "StayArm", "AwayArm", "NightArm", "Disarmed" ],
     "currentStateValues": [ "StayArm", "AwayArm", "NightArm", "Disarmed", "Triggered" ],
@@ -1147,6 +1149,7 @@ Weather condition and wind direction are custom string values.
     {
         "getCurrentTemperature":        "<topic used to provide 'current temperature'>",
         "getCurrentRelativeHumidity":   "<topic used to provide 'current relative humidity (optional)'>",
+        "getCurrentAmbientLightLevel":  "<topic used to provide 'current ambient light level (optional)'>",
         "getAirPressure":               "<topic used to provide 'air pressure' (optional, Eve-only)>",
         "getWeatherCondition":          "<topic used to provide 'weather condition' (optional, Eve-only)>",
         "getRain1h":                    "<topic used to provide 'rain [mm] in last 1h' (optional, Eve-only)>",

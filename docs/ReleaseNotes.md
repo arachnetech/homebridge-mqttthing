@@ -5,9 +5,28 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.26 (Beta)
++ Weather Station: added ambient light level (thanks, Matt Kirman)
++ Validate characteristics when setting to avoid Homebridge 1.3 warnings
++ Lock/unlock fix with Siri and Homebridge 1.3.x (thanks, @tasict)
+
+### Version 1.1.25
++ Fan: When setRotationSpeed is configured but not setOn, turn fan off with zero rotation speed (https://github.com/arachnetech/homebridge-mqttthing/issues/358 and https://github.com/arachnetech/homebridge-mqttthing/issues/310)
++ Lightbulb: Change `whiteMix` to `noWhiteMix` for configuration schema as items defaulting to true are populated when irrelevant
++ Fan: Tested minRotationSpeed/maxRotationSpeed - Homekit apparently doesn't like this changed
++ Added debounceRecvms setting
+
+### Version 1.1.24
++ Lightbulb: Allow lightbulb-Dimmable to use setBrightness only (0 brightness for off) when no setOn topic configured
+
+### Version 1.1.23
++ Thermostat: Fixed target relative humidity
++ Changed incorrect 'http' protocol in MQTT server configuration to 'mqtt' (thanks, Nicholas Humfrey)
+
 ### Version 1.1.22
 + Light: Added redThreshold, greenThreshold, blueThreshold for when whiteMix is false in an RGBWW light
 + Light: Added minColorTemperature and maxColorTemperature configuration settings
++ Light: Added switchWhites setting for RGBWW light
 
 ### Version 1.1.21
 + Updated fakegato-history dependency version
