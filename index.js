@@ -1342,7 +1342,7 @@ function makeThing( log, accessoryConfig, api ) {
 
             // Characteristic.ColorTemperature
             function characteristic_ColorTemperature( service ) {
-                integerCharacteristic( service, 'colorTemperature', Characteristic.ColorTemperature, config.topics.setColorTemperature, config.topics.getColorTemperature, undefined, 
+                integerCharacteristic( service, 'colorTemperature', Characteristic.ColorTemperature, config.topics.setColorTemperature, config.topics.getColorTemperature, ( config.minColorTemperature || 130 ), 
                                        config.minColorTemperature, config.maxColorTemperature );
 
                 if( supportAdaptiveLighting() ) {
@@ -1503,7 +1503,7 @@ function makeThing( log, accessoryConfig, api ) {
             // Characteristic.TargetTemperature
             function characteristic_TargetTemperature( service ) {
                 floatCharacteristic( service, 'targetTemperature', Characteristic.TargetTemperature,
-                    config.topics.setTargetTemperature, config.topics.getTargetTemperature, 0 );
+                    config.topics.setTargetTemperature, config.topics.getTargetTemperature, 10 );
 
                 // custom min/max
                 tempRange( service, Characteristic.TargetTemperature );
@@ -2355,11 +2355,11 @@ function makeThing( log, accessoryConfig, api ) {
                 }
                 if( !topic_setDuration ) {
                     /* no topic specified, but propery is still created internally */
-                    addCharacteristic( service, property_setDuration, Characteristic.SetDuration, 10 * 60, function() {
+                    addCharacteristic( service, property_setDuration, Characteristic.SetDuration, 30, function() {
                         log.debug( 'set "' + property_setDuration + '" to ' + state[ property_setDuration ] + 's.' );
                     } );
                 } else {
-                    integerCharacteristic( service, property_setDuration, Characteristic.SetDuration, topic_setDuration, topic_getDuration, 10 * 60 );
+                    integerCharacteristic( service, property_setDuration, Characteristic.SetDuration, topic_setDuration, topic_getDuration, 30 );
                 }
                 // minimum/maximum duration
                 if( config.minDuration !== undefined || config.maxDuration !== undefined ) {
