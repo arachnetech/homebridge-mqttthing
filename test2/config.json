@@ -15,17 +15,37 @@
     ],
     "accessories": [
         {
-            "type": "lightbulb-Dimmable",
-            "name": "Light",
-            "url": "homebridge",
+            "type": "lightbulb-ColTemp",
+            "name": "Light-Temp",
+            "url": "192.168.10.35",
             "logMqtt": true,
             "topics": {
-                "getBrightness": "dimlight/get",
-                "setBrightness": "dimlight/set"
+                "setOn": "testTempLight/setOn",
+                "setBrightness": "testTempLight/setBrightness",
+                "setColorTemperature": "testTempLight/setColorTemperature",
+                "getColorTemperature": "testTempLight/getColorTemperature",
+                "getBrightness": "testTempLight/getBrightness"
+            },
+            "whiteMix": true,
+            "accessory": "mqttthing",
+            "minColorTemperature": 130,
+            "maxColorTemperature": 450
+        },
+        {
+            "type": "lightbulb-Colour",
+            "name": "Light-Colour",
+            "url": "192.168.10.35",
+            "logMqtt": true,
+            "debounceRecvms": 250,
+            "topics": {
+                "setOn": "colour/setOn",
+                "setHue": "colour/setHue",
+                "setSaturation": "colour/setSaturation",
+                "setBrightness": "colour/setBrightness",
+                "xxsetColorTemperature": "colour/setTemperature"
             },
             "noWhiteMix": false,
-            "accessory": "mqttthing",
-            "debounceRecvms": 250
+            "accessory": "mqttthing"
         },
         {
             "accessory": "mqttthing",
@@ -348,19 +368,6 @@
             }
         },
         {
-            "type": "lightbulb-RGB",
-            "name": "Color Light",
-            "url": "mqtt://192.168.10.35:1883",
-            "topics": {
-                "getOnline": "getOnline",
-                "getOn": "getState",
-                "setOn": "setState"
-            },
-            "accessory": "mqttthing",
-            "logMqtt": "true",
-            "confirmationPeriodms": 2000
-        },
-        {
             "type": "lightbulb-RGBWW",
             "name": "Test RGBWW",
             "url": "192.168.10.35",
@@ -371,21 +378,6 @@
             },
             "switchWhites": true,
             "accessory": "mqttthing"
-        },
-        {
-            "type": "lightbulb-ColTemp",
-            "name": "Light-Temp",
-            "url": "192.168.10.35",
-            "logMqtt": true,
-            "topics": {
-                "setOn": "testTempLight/setOn",
-                "setBrightness": "testTempLight/setBrightness",
-                "setColorTemperature": "testTempLight/setColorTemperature"
-            },
-            "whiteMix": true,
-            "accessory": "mqttthing",
-            "minColorTemperature": 130,
-            "maxColorTemperature": 450
         },
         {
             "type": "thermostat",
@@ -408,6 +400,30 @@
             },
             "confirmationPeriodms": 1500,
             "logMqtt": true,
+            "accessory": "mqttthing"
+        },
+        {
+            "type": "lightbulb-RGBWW",
+            "name": "Office Lamp 1",
+            "url": "192.168.10.35",
+            "topics": {
+                "setRGBWW": "15858303/RGBWW",
+                "setOn": "15858303/State"
+            },
+            "integerValue": true,
+            "whiteMix": false,
+            "accessory": "mqttthing"
+        },
+        {
+            "type": "lightbulb-RGBWW",
+            "name": "Office Lamp 2",
+            "url": "192.168.10.35",
+            "topics": {
+                "setRGBWW": "8387/RGBWW",
+                "setOn": "8387/State"
+            },
+            "integerValue": true,
+            "whiteMix": false,
             "accessory": "mqttthing"
         },
         {
