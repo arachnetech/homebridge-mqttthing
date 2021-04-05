@@ -583,6 +583,8 @@ When using colour temperature directly (through the `setColorTemperature` topic)
 }
 ```
 
+Coloured lights and lights with a setColorTemperature topic support adaptive lighting by default. This may change behaviour when setting colour temperature manually on a bulb without a setColorTemperature topic, as calculation of appropriate hue and saturation values must be done within Homebridge instead of by Homekit. Adaptive lighting support can be disabled by setting `adaptiveLighting` to `false`.
+
 When using config-ui-x, multiple lightbulb types are available. The generic 'lightbulb' allows all possible settings to be entered. Serveral sub-types ('lightbulb-OnOff', 'lightbulb-Dimmable' etc.) show the configuration settings relevant for specific light types only. This can greatly simplify the configuration process.
 
 ## Light Sensor

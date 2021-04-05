@@ -5,6 +5,9 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.27
++ Added support for adaptive lighting
+
 ### Version 1.1.26 (Beta)
 + Weather Station: added ambient light level (thanks, Matt Kirman)
 + Validate characteristics when setting to avoid Homebridge 1.3 warnings
