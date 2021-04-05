@@ -403,6 +403,30 @@
             "accessory": "mqttthing"
         },
         {
+            "type": "lightbulb-RGBWW",
+            "name": "Office Lamp 1",
+            "url": "192.168.10.35",
+            "topics": {
+                "setRGBWW": "15858303/RGBWW",
+                "setOn": "15858303/State"
+            },
+            "integerValue": true,
+            "whiteMix": false,
+            "accessory": "mqttthing"
+        },
+        {
+            "type": "lightbulb-RGBWW",
+            "name": "Office Lamp 2",
+            "url": "192.168.10.35",
+            "topics": {
+                "setRGBWW": "8387/RGBWW",
+                "setOn": "8387/State"
+            },
+            "integerValue": true,
+            "whiteMix": false,
+            "accessory": "mqttthing"
+        },
+        {
             "type": "lightbulb-White",
             "name": "LightDim255",
             "url": "192.168.10.35",

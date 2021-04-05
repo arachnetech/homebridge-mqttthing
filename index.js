@@ -1400,14 +1400,12 @@ function makeThing( log, accessoryConfig, api ) {
                 integerCharacteristic( service, 'colorTemperature', Characteristic.ColorTemperature, null, null, {
                     initialValue: 140,
                     onSet: ( value, context ) => {
-                        if( isAdaptiveLightingActive() ) {
-                            // update saturation and hue to match
-                            let calc = api.hap.ColorUtils.colorTemperatureToHueAndSaturation( value );
-                            service.getCharacteristic( Characteristic.Saturation ).updateValue( calc.saturation );
-                            service.getCharacteristic( Characteristic.Hue ).updateValue( calc.hue );
-                            adaptiveLightingEmitter.emit( 'saturation', calc.saturation );
-                            adaptiveLightingEmitter.emit( 'hue', calc.hue );
-                        }
+                        // update saturation and hue to match
+                        let calc = api.hap.ColorUtils.colorTemperatureToHueAndSaturation( value );
+                        service.getCharacteristic( Characteristic.Saturation ).updateValue( calc.saturation );
+                        service.getCharacteristic( Characteristic.Hue ).updateValue( calc.hue );
+                        adaptiveLightingEmitter.emit( 'saturation', calc.saturation );
+                        adaptiveLightingEmitter.emit( 'hue', calc.hue );
                     }
                 } );
 
