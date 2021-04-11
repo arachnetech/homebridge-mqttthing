@@ -13,11 +13,12 @@ var fakegatoHistory = require( 'fakegato-history' );
 var fs = require( "fs" );
 var path = require( "path" );
 var mqttlib = require( './libs/mqttlib' );
+const EventEmitter = require( 'events' );
 
 var Service, Characteristic, Eve, HistoryService;
 var homebridgePath;
 
-function makeThing( log, accessoryConfig ) {
+function makeThing( log, accessoryConfig, api ) {
 
     // Create accessory information service
     function makeAccessoryInformationService() {
@@ -35,13 +36,11 @@ function makeThing( log, accessoryConfig ) {
     //  MQTT Wrappers
     //
 
-
     // Initialize MQTT client
     let ctx = { log, config: accessoryConfig, homebridgePath };
     try {
         mqttlib.init( ctx );
-    }
-    catch( ex ) {
+    } catch( ex ) {
         log.error( 'MQTT initialisation failed: ' + ex );
         return { getServices: () => [] };
     }
@@ -72,11 +71,47 @@ function makeThing( log, accessoryConfig ) {
         }, timeout );
     }
 
+    // Controllers
+    let controllers = [];
+
     // Create services
     function createServices() {
 
         function configToServices( config ) {
 
+            // Adaptive lighting support...
+
+            // Our controller
+            let adaptiveLightingController = null;
+            let adaptiveLightingEmitter = new EventEmitter();
+
+            // Test whether adaptive lighting is active
+            let isAdaptiveLightingActive = () => adaptiveLightingController && adaptiveLightingController.isAdaptiveLightingActive();
+
+            // Disable adaptive lighting (when user sets hue/saturation explicitly)
+            let disableAdaptiveLighting = function( what ) {
+                if( isAdaptiveLightingActive() ) {
+                    log( `External control (${what}) disabling adaptive lighting` );
+                    adaptiveLightingController.disableAdaptiveLighting();
+                }
+            };
+
+            // Do we support adaptive lighting?
+            let supportAdaptiveLighting = function() {
+                return ( config.adaptiveLighting !== false ) && api.versionGreaterOrEqual && api.versionGreaterOrEqual( '1.3.0-beta.27' );
+            };
+
+            // Create adaptive lighting controller
+            let addAdaptiveLightingController = function( service ) {
+                if( adaptiveLightingController ) {
+                    log.error( 'Logic error: Duplicate call to addAdaptiveLightingController() - ignoring' );
+                    return;
+                }
+                log( 'Enabling adaptive lighting' );
+                adaptiveLightingController = new api.hap.AdaptiveLightingController( service, {
+                    controllerMode: api.hap.AdaptiveLightingControllerMode.AUTOMATIC } );
+                controllers.push( adaptiveLightingController );            
+            };
 
             // Migrate old-style history options
             if( config.hasOwnProperty( 'history' ) ) {
@@ -119,7 +154,7 @@ function makeThing( log, accessoryConfig ) {
                 return counterFile;
             }
 
-            var c_mySetContext = '---my-set-context--';
+            const c_mySetContext = { mqttthing: '---my-set-context--' };
 
             // constructor for fakegato-history options
             function HistoryOptions( isEventSensor = false ) {
@@ -254,6 +289,56 @@ function makeThing( log, accessoryConfig ) {
                 }
             }
 
+            function isValid( charac, value ) {
+                const format = charac.props.format;
+                if( format === 'int' ) {
+                    if( ! Number.isInteger( value ) ) {
+                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - not an integer` );
+                        return false;
+                    }
+                    if( charac.props.minValue !== undefined && value < charac.props.minValue ) {
+                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - below minimum (${charac.props.minValue})` );
+                        return false;
+                    }
+                    if( charac.props.maxValue !== undefined && value > charac.props.maxValue ) {
+                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - above maximum (${charac.props.maxValue})` );
+                        return false;
+                    }
+                } else if( format === 'float' ) {
+                    if( typeof value !== 'number' || isNaN( value ) ) {
+                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - not a number` );
+                        return false;
+                    }
+                    if( charac.props.minValue !== undefined && value < charac.props.minValue ) {
+                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - below minimum (${charac.props.minValue})` );
+                        return false;
+                    }
+                    if( charac.props.maxValue !== undefined && value > charac.props.maxValue ) {
+                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - above maximum (${charac.props.maxValue})` );
+                        return false;
+                    }
+                } else if( format === 'bool' ) {
+                    if( value !== true && value !== false ) {
+                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - not a Boolean` );
+                        return false;
+                    }
+                } else if( format === 'string' ) {
+                    if( typeof value !== 'string' ) {
+                        log( `Ignoring invalid value [${value}] for ${charac.displayName} - not a string` );
+                        return false;
+                    }
+                } else {
+                    log( `Unable to validate ${charac.displayName}, format [${charac.props.format}] - ${JSON.stringify(charac)}` );
+                }
+                return true;
+            }
+
+            function setCharacteristic( charac, value ) {
+                if( isValid( charac, value ) ) {
+                    charac.setValue( value, undefined, c_mySetContext );
+                }
+            }
+
             function booleanCharacteristic( service, property, characteristic, setTopic, getTopic, initialValue, mapValueFunc, turnOffAfterms, resetStateAfterms, enableConfirmation ) {
 
                 var publish = makeConfirmedPublisher(service, setTopic, getTopic, property, enableConfirmation );
@@ -288,14 +373,14 @@ function makeThing( log, accessoryConfig ) {
 
                                 state[ property ] = false;
                                 publish( getOnOffPubValue( false ) );
-                                charac.setValue( mapValueForHomebridge( false, mapValueFunc ), undefined, c_mySetContext );
+                                setCharacteristic( charac, mapValueForHomebridge( false, mapValueFunc ) );
 
                             }, turnOffAfterms );
                         }
                     } );
                 }
                 if( initialValue ) {
-                    charac.setValue( mapValueForHomebridge( initialValue, mapValueFunc ), undefined, c_mySetContext );
+                    setCharacteristic( charac, mapValueForHomebridge( initialValue, mapValueFunc ) );
                 }
 
                 // subscribe to get topic
@@ -312,7 +397,7 @@ function makeThing( log, accessoryConfig ) {
                         // if it changed, set characteristic
                         if( state[ property ] != newState ) {
                             state[ property ] = newState;
-                            charac.setValue( mapValueForHomebridge( newState, mapValueFunc ), undefined, c_mySetContext );
+                            setCharacteristic( charac, mapValueForHomebridge( newState, mapValueFunc ) );
                         }
                         // optionally reset state to OFF after a timeout
                         if( newState && resetStateAfterms ) {
@@ -322,7 +407,7 @@ function makeThing( log, accessoryConfig ) {
                             autoResetStateTimer = setTimeout( function() {
                                 autoResetStateTimer = null;
                                 state[ property ] = false;
-                                charac.setValue( mapValueForHomebridge( false, mapValueFunc ), undefined, c_mySetContext );
+                                setCharacteristic( charac, mapValueForHomebridge( false, mapValueFunc ) );
                             }, resetStateAfterms );
                         }
                     } );
@@ -349,26 +434,50 @@ function makeThing( log, accessoryConfig ) {
                 booleanState( 'online', config.topics.getOnline, true, isRecvValueOnline, isRecvValueOffline );
             }
 
-            function integerCharacteristic( service, property, characteristic, setTopic, getTopic, initialValue ) {
+            function integerCharacteristic( service, property, characteristic, setTopic, getTopic, options ) {
+
+                let initialValue = options && options.initialValue;
+                let minValue = options && options.minValue;
+                let maxValue = options && options.maxValue;
+
                 // default state
                 state[ property ] = initialValue || 0;
 
                 // set up characteristic
                 var charac = service.getCharacteristic( characteristic );
+
+                // min/max
+                if( Number.isInteger( minValue ) ) {
+                    charac.props.minValue = minValue;
+                }
+                if( Number.isInteger( maxValue ) ) {
+                    charac.props.maxValue = maxValue;
+                }
+
+                // get/set
                 charac.on( 'get', function( callback ) {
                     handleGetStateCallback( callback, state[ property ] );
                 } );
-                if( setTopic ) {
-                    charac.on( 'set', function( value, callback, context ) {
-                        if( context !== c_mySetContext ) {
-                            state[ property ] = value;
+                let onSet = function( value, context ) {
+                    if( context !== c_mySetContext ) {
+                        state[ property ] = value;
+                        if( setTopic ) {
                             mqttPublish( service, setTopic, property, value );
                         }
+                    }
+                    if( options && options.onSet ) {
+                        options.onSet( value, context );
+                    }
+                };
+
+                if( setTopic || ( options && options.onSet ) ) {
+                    charac.on( 'set', function( value, callback, context ) {
+                        onSet( value, context );
                         callback();
                     } );
                 }
                 if( initialValue ) {
-                    charac.setValue( initialValue, undefined, c_mySetContext );
+                    setCharacteristic( charac, initialValue );
                 }
 
                 // subscribe to get topic
@@ -376,20 +485,26 @@ function makeThing( log, accessoryConfig ) {
                     mqttSubscribe( service, getTopic, property, function( topic, message ) {
                         var newState = parseInt( message );
                         if( state[ property ] != newState ) {
+                            if( options && options.onMqtt ) {
+                                options.onMqtt( newState );
+                            }
+                            // update state and characteristic
                             state[ property ] = newState;
-                            charac.setValue( newState, undefined, c_mySetContext );
+                            setCharacteristic( charac, newState );
                         }
                     } );
                 }
+
+                return { onSet };
             }
 
-            function addCharacteristic( service, property, characteristic, defaultValue, characteristicChanged ) {
+            function addCharacteristic( service, property, characteristic, defaultValue, characteristicChanged, adaptiveEventName ) {
 
                 state[ property ] = defaultValue;
 
                 var charac = service.getCharacteristic( characteristic );
 
-                charac.setValue( defaultValue, undefined, c_mySetContext );
+                setCharacteristic( charac, defaultValue );
 
                 charac.on( 'get', function( callback ) {
                     handleGetStateCallback( callback, state[ property ] );
@@ -403,6 +518,13 @@ function makeThing( log, accessoryConfig ) {
                         }
                         callback();
                     } );
+
+                    if( adaptiveEventName ) {
+                        adaptiveLightingEmitter.addListener( adaptiveEventName, ( value ) => {
+                            state[ property ] = value;
+                            characteristicChanged();
+                        } );
+                    }
                 }
             }
 
@@ -436,8 +558,8 @@ function makeThing( log, accessoryConfig ) {
                         publish();
                     } );
                 }
-                addCharacteristic( service, 'hue', Characteristic.Hue, 0, publish );
-                addCharacteristic( service, 'sat', Characteristic.Saturation, 0, publish );
+                addCharacteristic( service, 'hue', Characteristic.Hue, 0, publish, 'hue' );
+                addCharacteristic( service, 'sat', Characteristic.Saturation, 0, publish, 'saturation' );
                 addCharacteristic( service, 'bri', Characteristic.Brightness, 100, function() {
                     if( state.bri > 0 && !state.on ) {
                         state.on = true;
@@ -449,6 +571,7 @@ function makeThing( log, accessoryConfig ) {
                     mqttSubscribe( service, config.topics.getHSV, 'HSV', function( topic, message ) {
                         var comps = ( '' + message ).split( ',' );
                         if( comps.length == 3 ) {
+
                             var hue = parseInt( comps[ 0 ] );
                             var sat = parseInt( comps[ 1 ] );
                             var bri = parseInt( comps[ 2 ] );
@@ -464,12 +587,16 @@ function makeThing( log, accessoryConfig ) {
                             }
 
                             if( hue != state.hue ) {
+                                disableAdaptiveLighting( 'HSV hue' );
+
                                 state.hue = hue;
                                 //log( 'hue ' + hue );
                                 service.getCharacteristic( Characteristic.Hue ).setValue( hue, undefined, c_mySetContext );
                             }
 
                             if( sat != state.sat ) {
+                                disableAdaptiveLighting( 'HSV saturation' );
+
                                 state.sat = sat;
                                 //log( 'sat ' + sat );
                                 service.getCharacteristic( Characteristic.Saturation ).setValue( sat, undefined, c_mySetContext );
@@ -482,6 +609,10 @@ function makeThing( log, accessoryConfig ) {
                             }
                         }
                     } );
+                }
+
+                if( supportAdaptiveLighting() ) {
+                    characteristic_ColorTemperature_Internal( service );
                 }
             }
 
@@ -725,10 +856,13 @@ function makeThing( log, accessoryConfig ) {
                         rgb.g -= min;
                         rgb.b -= min;
 
-                        if( config.whiteMix === false ) {
+                        if( config.whiteMix === false || config.noWhiteMix === true ) {
                             if( ( rgb.ww > 0 || rgb.cw > 0 ) && ( rgb.r > 0 || rgb.g > 0 || rgb.b > 0 ) ) {
                                 // mixing white and colours is not allowed on some devices
-                                if( rgb.r > 15 || rgb.g > 15 || rgb.b > 15 ) {
+                                let redThreshold = ( config.redThreshold === undefined ) ? 15 : config.redThreshold;
+                                let greenThreshold = ( config.greenThreshold === undefined ) ? 15 : config.greenThreshold;
+                                let blueThreshold = ( config.blueThreshold === undefined ) ? 15 : config.blueThreshold;
+                                if( rgb.r > redThreshold || rgb.g > greenThreshold || rgb.b > blueThreshold ) {
                                     // colour
                                     rgb = orig_rgb;
                                 } else {
@@ -764,7 +898,11 @@ function makeThing( log, accessoryConfig ) {
                         if( whiteComp ) {
                             msg += ',' + rgb.w;
                         } else if( wwcwComps ) {
-                            msg += ',' + rgb.ww + ',' + rgb.cw;
+                            if( config.switchWhites ) {
+                                msg += ',' + rgb.cw + ',' + rgb.ww;
+                            } else {
+                                msg += ',' + rgb.ww + ',' + rgb.cw;
+                            }
                         }
                     } else {
                         // hex
@@ -772,7 +910,11 @@ function makeThing( log, accessoryConfig ) {
                         if( whiteComp ) {
                             msg += toHex( rgb.w );
                         } else if( wwcwComps ) {
-                            msg += toHex( rgb.ww ) + toHex( rgb.cw );
+                            if( config.switchWhites ) {
+                                msg += toHex( rgb.cw ) + toHex( rgb.ww );
+                            } else {
+                                msg += toHex( rgb.ww ) + toHex( rgb.cw );
+                            }
                         }
                     }
                     if( msg != lastpubmsg ) {
@@ -800,8 +942,8 @@ function makeThing( log, accessoryConfig ) {
                         publish();
                     } );
                 }
-                addCharacteristic( service, 'hue', Characteristic.Hue, 0, publish );
-                addCharacteristic( service, 'sat', Characteristic.Saturation, 0, publish );
+                addCharacteristic( service, 'hue', Characteristic.Hue, 0, publish, 'hue' );
+                addCharacteristic( service, 'sat', Characteristic.Saturation, 0, publish, 'saturation' );
                 addCharacteristic( service, 'bri', Characteristic.Brightness, 100, function() {
                     if( state.bri > 0 && !state.on ) {
                         state.on = true;
@@ -840,12 +982,16 @@ function makeThing( log, accessoryConfig ) {
                     }
 
                     if( hue != state.hue ) {
+                        disableAdaptiveLighting( 'calculated hue' );
+
                         state.hue = hue;
                         //log( 'hue ' + hue );
                         service.getCharacteristic( Characteristic.Hue ).setValue( hue, undefined, c_mySetContext );
                     }
 
                     if( sat != state.sat ) {
+                        disableAdaptiveLighting( 'calculated saturation' );
+
                         state.sat = sat;
                         //log( 'sat ' + sat );
                         service.getCharacteristic( Characteristic.Saturation ).setValue( sat, undefined, c_mySetContext );
@@ -874,6 +1020,11 @@ function makeThing( log, accessoryConfig ) {
                                 } else if( wwcwComps ) {
                                     warmWhite = parseInt( comps[ 3 ] );
                                     coldWhite = parseInt( comps[ 4 ] );
+                                    if( config.switchWhites ) {
+                                        let temp = warmWhite;
+                                        warmWhite = coldWhite;
+                                        coldWhite = temp;
+                                    }
                                 }
                                 ok = true;
                             }
@@ -890,6 +1041,11 @@ function makeThing( log, accessoryConfig ) {
                                     } else if( wwcwComps ) {
                                         warmWhite = parseInt( message.substr( hexPrefix.length + 6, 2 ), 16 );
                                         coldWhite = parseInt( message.substr( hexPrefix.length + 8, 2 ), 16 );
+                                        if( config.switchWhites ) {
+                                            let temp = warmWhite;
+                                            warmWhite = coldWhite;
+                                            coldWhite = temp;
+                                        }
                                     }
                                     ok = true;
                                 }
@@ -920,6 +1076,10 @@ function makeThing( log, accessoryConfig ) {
                         state.white = parseInt( message );
                         updateColour( state.red, state.green, state.blue, state.white );
                     } );
+                }
+
+                if( supportAdaptiveLighting() ) {
+                    characteristic_ColorTemperature_Internal( service );
                 }
             }
 
@@ -1019,7 +1179,7 @@ function makeThing( log, accessoryConfig ) {
                     } );
                 }
                 if( initialValue ) {
-                    charac.setValue( initialValue, undefined, c_mySetContext );
+                    setCharacteristic( charac, initialValue );
                 }
 
                 // subscribe to get topic
@@ -1028,7 +1188,7 @@ function makeThing( log, accessoryConfig ) {
                         var newState = parseFloat( message );
                         if( state[ property ] != newState ) {
                             state[ property ] = newState;
-                            charac.setValue( newState, undefined, c_mySetContext );
+                            setCharacteristic( charac, newState );
                         }
                     } );
                 }
@@ -1088,6 +1248,11 @@ function makeThing( log, accessoryConfig ) {
                 if( setTopic ) {
                     charac.on( 'set', function( value, callback, context ) {
                         if( context !== c_mySetContext ) {
+                            
+                            if (typeof value === "boolean") {
+                                value = value ? 1: 0;
+                            }
+                            
                             state[ property ] = value;
                             let mqttVal = values[ value ];
                             if( mqttVal !== undefined ) {
@@ -1100,7 +1265,7 @@ function makeThing( log, accessoryConfig ) {
                 }
 
                 if( initialValue ) {
-                    charac.setValue( initialValue, undefined, c_mySetContext );
+                    setCharacteristic( charac, initialValue );
                 }
 
                 // MQTT set (Homekit get)
@@ -1113,7 +1278,7 @@ function makeThing( log, accessoryConfig ) {
                                 log( `Received ${data} - ${property} state is now ${newState}` );
                             }
                             state[ property ] = newState;
-                            charac.setValue( newState, undefined, c_mySetContext );
+                            setCharacteristic( charac, newState );
                             raiseEvent( property );
                         }
                         if( newState === undefined && config.logMqtt ) {
@@ -1149,22 +1314,109 @@ function makeThing( log, accessoryConfig ) {
 
             // Characteristic.Brightness
             function characteristic_Brightness( service ) {
-                integerCharacteristic( service, 'brightness', Characteristic.Brightness, config.topics.setBrightness, config.topics.getBrightness );
+
+                if( config.topics.setOn ) {
+                    // separate On topic, so implement standard brightness characteristic
+                    integerCharacteristic( service, 'brightness', Characteristic.Brightness, config.topics.setBrightness, config.topics.getBrightness );
+                } else {
+                    // no separate On topic, so use Brightness 0 to indicate Off state...
+
+                    // subscription
+                    if( config.topics.getBrightness ) {
+                        mqttSubscribe( config.topics.getBrightness, 'brightness', function( topic, message ) {
+                            let newState = parseInt( message );
+                            let newOn = ( newState != 0 );
+                            if( state.brightness != newState || state.on != newOn ) {
+                                if( newOn ) {
+                                    state.brightness = newState;
+                                    service.getCharacteristic( Characteristic.Brightness ).setValue( newState, undefined, c_mySetContext );
+                                }
+                                state.on = newOn;
+                                service.getCharacteristic( Characteristic.On ).setValue( newState != 0, undefined, c_mySetContext );
+                            }
+                        } );
+                    }
+
+                    // publishing (throttled)
+                    let publishNow = function() {
+                        let bri = state.brightness;
+                        if( ! config.topics.setOn && ! state.on ) {
+                            bri = 0;
+                        }
+                        mqttPublish( config.topics.setBrightness, 'brightness', bri );
+                    };
+    
+                    let publish = () => throttledCall( publishNow, 'brightness_pub', 20 );
+    
+                    // Brightness characteristic
+                    addCharacteristic( service, 'brightness', Characteristic.Brightness, 0, () => {
+                        if( state.brightness > 0 && ! state.on ) {
+                            state.on = true;
+                        }
+                        publish();
+                    } );
+
+                    // On Characteristic
+                    addCharacteristic( service, 'on', Characteristic.On, 0, function() {
+                        if( state.on && state.brightness == 0 ) {
+                            state.brightness = 100;
+                        }
+                        publish();
+                    } );
+                }
             }
 
             // Characteristic.Hue
             function characteristic_Hue( service ) {
-                integerCharacteristic( service, 'hue', Characteristic.Hue, config.topics.setHue, config.topics.getHue );
+                let char = integerCharacteristic( service, 'hue', Characteristic.Hue, config.topics.setHue, config.topics.getHue, {
+                    onMqtt: () => disableAdaptiveLighting( 'hue' )
+                } );
+                if( supportAdaptiveLighting() ) {
+                    adaptiveLightingEmitter.addListener( 'hue', ( value ) => char.onSet( value ) );
+                }
             }
 
             // Characteristic.Saturation
             function characteristic_Saturation( service ) {
-                integerCharacteristic( service, 'saturation', Characteristic.Saturation, config.topics.setSaturation, config.topics.getSaturation );
+                let char = integerCharacteristic( service, 'saturation', Characteristic.Saturation, config.topics.setSaturation, config.topics.getSaturation, {
+                    onMqtt: () => disableAdaptiveLighting( 'saturation' )
+                } );
+                if( supportAdaptiveLighting() ) {
+                    adaptiveLightingEmitter.addListener( 'saturation', ( value ) => char.onSet( value ) );
+                }
             }
 
             // Characteristic.ColorTemperature
             function characteristic_ColorTemperature( service ) {
-                integerCharacteristic( service, 'colorTemperature', Characteristic.ColorTemperature, config.topics.setColorTemperature, config.topics.getColorTemperature );
+                integerCharacteristic( service, 'colorTemperature', Characteristic.ColorTemperature, config.topics.setColorTemperature, config.topics.getColorTemperature, {
+                    initialValue: ( config.minColorTemperature || 140 ), 
+                    minValue: config.minColorTemperature, 
+                    maxValue: config.maxColorTemperature,
+                    onMqtt: () => disableAdaptiveLighting( 'colorTemperature' )
+                } );
+
+                if( supportAdaptiveLighting() ) {
+                    addAdaptiveLightingController( service );
+                }
+            }
+
+            // 'Internal' Characteristic.ColorTemperature for adaptive lighting implementation
+            function characteristic_ColorTemperature_Internal( service ) {
+                integerCharacteristic( service, 'colorTemperature', Characteristic.ColorTemperature, null, null, {
+                    initialValue: 140,
+                    onSet: ( value, context ) => {
+                        // update saturation and hue to match
+                        let calc = api.hap.ColorUtils.colorTemperatureToHueAndSaturation( value );
+                        service.getCharacteristic( Characteristic.Saturation ).updateValue( calc.saturation );
+                        service.getCharacteristic( Characteristic.Hue ).updateValue( calc.hue );
+                        adaptiveLightingEmitter.emit( 'saturation', calc.saturation );
+                        adaptiveLightingEmitter.emit( 'hue', calc.hue );
+                    }
+                } );
+
+                if( supportAdaptiveLighting() ) {
+                    addAdaptiveLightingController( service );
+                }
             }
 
             // Characteristic.OutletInUse
@@ -1283,7 +1535,7 @@ function makeThing( log, accessoryConfig ) {
                 // configured temperature ranges
                 if( !tempRange( service, Characteristic.CurrentTemperature ) ) {
                     // or (old behaviour) allow negative temperatures (down to -100)
-                    var characteristic = service.getCharacteristic( Characteristic.CurrentTemperature );
+                    let characteristic = service.getCharacteristic( Characteristic.CurrentTemperature );
                     characteristic.props.minValue = -100;
                 }
             }
@@ -1320,7 +1572,7 @@ function makeThing( log, accessoryConfig ) {
             // Characteristic.TargetTemperature
             function characteristic_TargetTemperature( service ) {
                 floatCharacteristic( service, 'targetTemperature', Characteristic.TargetTemperature,
-                    config.topics.setTargetTemperature, config.topics.getTargetTemperature, 0 );
+                    config.topics.setTargetTemperature, config.topics.getTargetTemperature, 10 );
 
                 // custom min/max
                 tempRange( service, Characteristic.TargetTemperature );
@@ -1350,8 +1602,8 @@ function makeThing( log, accessoryConfig ) {
 
             // Characteristic.TargetRelativeHumidity
             function characteristic_TargetRelativeHumidity( service ) {
-                floatCharacteristic( service, 'targetRelativeHumidity', Characteristic.TargetRelativeHumitity,
-                    config.topics.setTargetRelativeHumidity, config.toipcs.getTargetRelativeHumidity, 0 );
+                floatCharacteristic( service, 'targetRelativeHumidity', Characteristic.TargetRelativeHumidity,
+                    config.topics.setTargetRelativeHumidity, config.topics.getTargetRelativeHumidity, 0 );
             }
 
             // History for CurrentRelativeHumidity (Eve-only)
@@ -1574,7 +1826,7 @@ function makeThing( log, accessoryConfig ) {
                 // property-changed handler
                 let propChangedHandler = events.targetDoorState = function() {
                     setTimeout( () => {
-                        charac.setValue( mapValueFunc( state[ property ] ), undefined, c_mySetContext );
+                        setCharacteristic( charac, mapValueFunc( state[ property ] ) );
                     }, 1000 );
                 };
 
@@ -1660,8 +1912,58 @@ function makeThing( log, accessoryConfig ) {
             }
 
             // Characteristic.RotationSpeed
-            function characteristic_RotationSpeed( service ) {
-                integerCharacteristic( service, 'rotationSpeed', Characteristic.RotationSpeed, config.topics.setRotationSpeed, config.topics.getRotationSpeed );
+            function characteristic_RotationSpeed( service, handleOn ) {
+
+                if( config.topics.setOn || ! handleOn ) {
+                    // separate On topic, or we're not handling 'On', so implement standard rotationSpeed characteristic
+                    integerCharacteristic( service, 'rotationSpeed', Characteristic.RotationSpeed, config.topics.setRotationSpeed, config.topics.getRotationSpeed, 
+                                            { minValue: config.minRotationSpeed, maxValue: config.maxRotationSpeed } );
+                } else {
+                    // no separate On topic, so use RotationSpeed 0 to indicate Off state...
+
+                    // subscription
+                    if( config.topics.getRotationSpeed ) {
+                        mqttSubscribe( config.topics.getRotationSpeed, 'rotationSpeed', ( topic, message ) => {
+                            let newState = parseInt( message );
+                            let newOn = ( newState != 0 );
+                            if( state.rotationSpeed != newState || state.on != newOn ) {
+                                if( newOn ) {
+                                    state.rotationSpeed = newState;
+                                    setCharacteristic( service.getCharacteristic( Characteristic.RotationSpeed ), newState );
+                                }
+                                state.on = newOn;
+                                service.getCharacteristic( Characteristic.On ).setValue( newState != 0, undefined, c_mySetContext );
+                            }
+                        } );
+                    }
+
+                    // publishing (throttled)
+                    let publishNow = function() {
+                        let rot = state.rotationSpeed;
+                        if( ! config.topics.setOn && ! state.on ) {
+                            rot = 0;
+                        }
+                        mqttPublish( config.topics.setRotationSpeed, 'rotationSpeed', rot );
+                    };
+    
+                    let publish = () => throttledCall( publishNow, 'rotationSpeed_pub', 20 );
+    
+                    // RotationSpeed characteristic
+                    addCharacteristic( service, 'rotationSpeed', Characteristic.RotationSpeed, 0, () => {
+                        if( state.rotationSpeed > 0 && ! state.on ) {
+                            state.on = true;
+                        }
+                        publish();
+                    } );
+
+                    // On Characteristic
+                    addCharacteristic( service, 'on', Characteristic.On, 0, function() {
+                        if( state.on && state.rotationSpeed == 0 ) {
+                            state.rotationSpeed = 100;
+                        }
+                        publish();
+                    } );
+                }
             }
 
             // Characteristic.BatteryLevel
@@ -2121,11 +2423,11 @@ function makeThing( log, accessoryConfig ) {
                 }
                 if( !topic_setDuration ) {
                     /* no topic specified, but propery is still created internally */
-                    addCharacteristic( service, property_setDuration, Characteristic.SetDuration, 10 * 60, function() {
+                    addCharacteristic( service, property_setDuration, Characteristic.SetDuration, 30, function() {
                         log.debug( 'set "' + property_setDuration + '" to ' + state[ property_setDuration ] + 's.' );
                     } );
                 } else {
-                    integerCharacteristic( service, property_setDuration, Characteristic.SetDuration, topic_setDuration, topic_getDuration, 10 * 60 );
+                    integerCharacteristic( service, property_setDuration, Characteristic.SetDuration, topic_setDuration, topic_getDuration, { initialValue: 30 } );
                 }
                 // minimum/maximum duration
                 if( config.minDuration !== undefined || config.maxDuration !== undefined ) {
@@ -2342,7 +2644,9 @@ function makeThing( log, accessoryConfig ) {
                 } else if( config.topics.setWhite ) {
                     characteristics_WhiteLight( service );
                 } else {
-                    characteristic_On( service );
+                    if( config.topics.setOn || ! config.topics.setBrightness ) {
+                        characteristic_On( service );
+                    }
                     if( config.topics.setBrightness ) {
                         characteristic_Brightness( service );
                     }
@@ -2354,6 +2658,9 @@ function makeThing( log, accessoryConfig ) {
                     }
                     if( config.topics.setColorTemperature ) {
                         characteristic_ColorTemperature( service );
+                    } else if( supportAdaptiveLighting() && config.topics.setHue && config.topics.setSaturation ) {
+                        // no color temperature topic, but support color - so add temperature for adaptive lighting
+                        characteristic_ColorTemperature_Internal( service );
                     }
                 }
             } else if( configType == "switch" ) {
@@ -2465,6 +2772,12 @@ function makeThing( log, accessoryConfig ) {
                     characteristic_AirPressure( presSvc );
                     addSensorOptionalCharacteristics( presSvc );
                     services.push( presSvc );
+                }
+                if( config.topics.getCurrentAmbientLightLevel ) {
+                    let lightSvc = new Service.LightSensor( svcNames.ambientLightLevel || name + " Light Level", subtype );
+                    characteristic_CurrentAmbientLightLevel( lightSvc );
+                    addSensorOptionalCharacteristics( lightSvc );
+                    services.push( lightSvc );
                 }
                 // custom service UUID for optional Eve characteristics
                 let weatherSvc = new Service( svcNames.weather || name + " Weather", "D92D5391-92AF-4824-AF4A-356F25F25EA1" );
@@ -2616,12 +2929,14 @@ function makeThing( log, accessoryConfig ) {
                 }
             } else if( configType == "fan" ) {
                 service = new Service.Fan( name, subtype );
-                characteristic_On( service );
+                if( config.topics.setOn || ! config.topics.setRotationSpeed ) {
+                    characteristic_On( service );
+                }
                 if( config.topics.getRotationDirection || config.topics.setRotationDirection ) {
                     characteristic_RotationDirection( service );
                 }
                 if( config.topics.getRotationSpeed || config.topics.setRotationSpeed ) {
-                    characteristic_RotationSpeed( service );
+                    characteristic_RotationSpeed( service, true );
                 }
             } else if( configType == "leakSensor" ) {
                 service = new Service.LeakSensor( name, subtype );
@@ -2997,6 +3312,11 @@ function makeThing( log, accessoryConfig ) {
     // Return services
     thing.getServices = function() {
         return theServices || [];
+    };
+
+    // Return controllers
+    thing.getControllers = function() {
+        return controllers;
     };
 
     return thing;

@@ -256,8 +256,8 @@
             "url": {
                 "type": "string",
                 "title": "URL",
-                "description": "URL of MQTT server (optional), default: http://localhost:1883",
-                "placeholder": "http://localhost:1883"
+                "description": "URL of MQTT server (optional), default: mqtt://localhost:1883",
+                "placeholder": "mqtt://localhost:1883"
             },
             "username": {
                 "type": "string",
@@ -305,6 +305,11 @@
                 "type": "string",
                 "title": "Codec",
                 "description": "Filename of JavaScript file implementing codec"
+            },
+            "debounceRecvms": {
+                "type": "integer",
+                "title": "Receive Debounce (ms)",
+                "description": "Whenever receiving a message on any configured topic, wait for the number of milliseconds specified before notifying Homekit. If a subsequent message is received during the debounce period, the debounce timer is restarted. This can be useful to filter extraneous notification messages from accessories."
             },
             "topics": {
                 "type": "object",
@@ -650,7 +655,7 @@
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'current ambient light level'",
                         "condition": {
-                            "functionBody": "return ['lightSensor'].includes(model.type);"
+                            "functionBody": "return ['lightSensor','weatherStation'].includes(model.type);"
                         }
                     },
                     "getCurrentDoorState": {
@@ -1527,6 +1532,38 @@
                     "functionBody": "return ['lightbulb','lightbulb-RGBWW'].includes(model.type);"
                 }
             },
+            "noWhiteMix": {
+                "type": "boolean",
+                "title": "Do not extract white components from colours",
+                "description": "In RGBWW mode, by default (noWhiteMix: false) white components are extracted from colours and both white and colour channels can be active together. Set noWhiteMix to true to disable extraction of white components from colours - i.e. powering only RGB channels or WW/CW channels.",
+                "condition": {
+                    "functionBody": "return ['lightbulb','lightbulb-RGBWW'].includes(model.type);"
+                }
+            },
+            "switchWhites": {
+                "type": "boolean",
+                "title": "Switch warm white/cold white",
+                "description": "RGBWW WW is warm_white,cold_white by default. Set switchWhites to true to use cold_white,warm_white instead.",
+                "condition": {
+                    "functionBody": "return ['lightbulb','lightbulb-RGBWW'].includes(model.type);"
+                }
+            },
+            "minColorTemperature": {
+                "type": "integer",
+                "title": "Minimum colour temperature value",
+                "description": "When using colour temperature directly through the setColorTemperature topic, modify the minimum colour temperature value from its defaul to 140.",
+                "condition": {
+                    "functionBody": "return ['lightbulb','lightbulb-ColTemp'].includes(model.type);"
+                }
+            },
+            "maxColorTemperature": {
+                "type": "integer",
+                "title": "Maximum colour temperature value",
+                "description": "When using colour temperature directly through the setColorTemperature topic, modify the maximum colour temperature value from its defaul to 500.",
+                "condition": {
+                    "functionBody": "return ['lightbulb','lightbulb-ColTemp'].includes(model.type);"
+                }
+            },
             "targetStateValues": {
                 "type": "array",
                 "items": {
@@ -1619,7 +1656,8 @@
                 "logMqtt",
                 "mqttOptions.keepalive",
                 "mqttPubOptions.retain",
-                "codec"
+                "codec",
+                "debounceRecvms"
             ]
         },
         {
@@ -1782,6 +1820,10 @@
                 "hexPrefix",
                 "warmWhite",
                 "coldWhite",
+                "noWhiteMix",
+                "switchWhites",
+                "minColorTemperature",
+                "maxColorTemperature",
                 "durationTimer",
                 "minDuration",
                 "maxDuration",

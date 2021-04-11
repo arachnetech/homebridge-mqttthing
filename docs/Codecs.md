@@ -396,7 +396,7 @@ For example, the following accessory configuration:
     "accessory": "mqttthing",
     "type": "lightbulb",
     "name": "Test RGB Light",
-    "url": "http://192.168.10.35:1883",
+    "url": "mqtt://192.168.10.35:1883",
     "topics": {
         "getRGB": "test/rgblight/get",
         "setRGB": "test/rgblight/set",

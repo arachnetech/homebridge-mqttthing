@@ -15,13 +15,36 @@
     ],
     "accessories": [
         {
-            "type": "lightbulb-OnOff",
-            "name": "Light",
-            "url": "homebridge",
+            "type": "lightbulb-ColTemp",
+            "name": "Light-Temp",
+            "url": "192.168.10.35",
+            "logMqtt": true,
             "topics": {
-                "getOn": "light/get",
-                "setOn": "light/set"
+                "setOn": "testTempLight/setOn",
+                "setBrightness": "testTempLight/setBrightness",
+                "setColorTemperature": "testTempLight/setColorTemperature",
+                "getColorTemperature": "testTempLight/getColorTemperature",
+                "getBrightness": "testTempLight/getBrightness"
             },
+            "whiteMix": true,
+            "accessory": "mqttthing",
+            "minColorTemperature": 130,
+            "maxColorTemperature": 450
+        },
+        {
+            "type": "lightbulb-Colour",
+            "name": "Light-Colour",
+            "url": "192.168.10.35",
+            "logMqtt": true,
+            "debounceRecvms": 250,
+            "topics": {
+                "setOn": "colour/setOn",
+                "setHue": "colour/setHue",
+                "setSaturation": "colour/setSaturation",
+                "setBrightness": "colour/setBrightness",
+                "xxsetColorTemperature": "colour/setTemperature"
+            },
+            "noWhiteMix": false,
             "accessory": "mqttthing"
         },
         {
@@ -29,7 +52,7 @@
             "type": "valve",
             "valveType": "sprinkler",
             "name": "Sprinkler",
-            "url": "http://192.168.10.35:1883",
+            "url": "mqtt://192.168.10.35:1883",
             "topics": {
                 "getActive": "test/sprinkler/getActive",
                 "setActive": "test/sprinkler/setActive",
@@ -120,7 +143,7 @@
             "accessory": "mqttthing",
             "type": "lightbulb",
             "name": "Test RGB Light",
-            "url": "http://192.168.10.35:1883",
+            "url": "mqtt://192.168.10.35:1883",
             "topics": {
                 "getRGB": "test/rgblight/get",
                 "setRGB": "test/rgblight/set",
@@ -257,21 +280,30 @@
                     "type": "humiditySensor",
                     "topics": {
                         "getCurrentRelativeHumidity": "miflora/Limone",
-                        "getStatusLowBattery": { "topic": "miflora/Limone", "apply": "return message < 20;" }
+                        "getStatusLowBattery": {
+                            "topic": "miflora/Limone",
+                            "apply": "return message < 20;"
+                        }
                     }
-                }, 
+                },
                 {
                     "type": "temperatureSensor",
                     "topics": {
                         "getCurrentTemperature": "miflora/Limone",
-                        "getStatusLowBattery": { "topic": "miflora/Limone", "apply": "return message < 20;" }
+                        "getStatusLowBattery": {
+                            "topic": "miflora/Limone",
+                            "apply": "return message < 20;"
+                        }
                     }
                 },
                 {
                     "type": "lightSensor",
                     "topics": {
                         "getCurrentAmbientLightLevel": "miflora/Limone",
-                        "getStatusLowBattery": { "topic": "miflora/Limone", "apply": "return message < 20;" }
+                        "getStatusLowBattery": {
+                            "topic": "miflora/Limone",
+                            "apply": "return message < 20;"
+                        }
                     }
                 }
             ]
@@ -299,42 +331,112 @@
             }
         },
         {
-            "accessory": "mqttthing",
             "type": "lightbulb-RGBWW",
             "name": "Test RGBWW Light",
-            "url": "http://192.168.10.35:1883",
+            "url": "mqtt://192.168.10.35:1883",
+            "logMqtt": true,
             "topics": {
                 "getRGBWW": "test/rgbwwlight/rgb",
                 "setRGBWW": "test/rgbwwlight/rgb/set"
             },
-            "whiteMix": false,
-            "logMqtt": true
+            "noWhiteMix": true,
+            "accessory": "mqttthing"
         },
         {
-            "accessory": "mqttthing",
             "type": "fan",
             "name": "Test Fan",
-            "url": "http://192.168.10.35:1883",
+            "url": "mqtt://192.168.10.35:1883",
             "logMqtt": true,
             "topics": {
                 "getRotationDirection": "test/fan/getRotationDirection",
                 "setRotationDirection": "test/fan/setRotationDirection",
-                "getRotationSpeed": "test/fan/getRotationSpeed",
-                "setRotationSpeed": "test/fan/setRotationSpeed"
+                "setRotationSpeed": "test/fan/setRotationSpeed",
+                "getRotationSpeed": "test/fan/getRotationSpeed"
             },
             "integerValue": true,
-            "mqttOptions": { "insecure": true }
+            "accessory": "mqttthing"
         },
         {
             "accessory": "mqttthing",
             "type": "battery",
             "name": "Test Battery",
-            "url": "http://192.168.10.35:1883",
+            "url": "mqtt://192.168.10.35:1883",
             "logMqtt": true,
             "topics": {
                 "getBatteryLevel": "battery/level",
                 "getStatusLowBattery": "battery/low"
             }
+        },
+        {
+            "type": "lightbulb-RGBWW",
+            "name": "Test RGBWW",
+            "url": "192.168.10.35",
+            "logMqtt": true,
+            "topics": {
+                "setRGBWW": "rgbww/rgbww",
+                "setOn": "rgbww/on"
+            },
+            "switchWhites": true,
+            "accessory": "mqttthing"
+        },
+        {
+            "type": "thermostat",
+            "name": "Termostat",
+            "url": "192.168.10.35",
+            "topics": {
+                "getCoolingThresholdTemperature": "/termostat/espSogutmaEsik",
+                "setCoolingThresholdTemperature": "/termostat/homekitSogutmaEsik",
+                "getCurrentHeatingCoolingState": "/termostat/espIsitiliyorSogutuluyor",
+                "getCurrentRelativeHumidity": "/termostat/espnem",
+                "getTargetRelativeHumidity": "/termostat/gettarghum",
+                "setTargetRelativeHumidity": "/termostat/settarghum",
+                "getCurrentTemperature": "/termostat/espSicaklik",
+                "getHeatingThresholdTemperature": "/termostat/espIsitmaEsik",
+                "setHeatingThresholdTemperature": "/termostat/homekitIsitmaEsik",
+                "getTargetHeatingCoolingState": "/termostat/espDurumu",
+                "setTargetHeatingCoolingState": "/termostat/homekitDurumu",
+                "getTargetTemperature": "/termostat/espHedefSicaklik",
+                "setTargetTemperature": "/termostat/homekitHedefSicaklik"
+            },
+            "confirmationPeriodms": 1500,
+            "logMqtt": true,
+            "accessory": "mqttthing"
+        },
+        {
+            "type": "lightbulb-RGBWW",
+            "name": "Office Lamp 1",
+            "url": "192.168.10.35",
+            "topics": {
+                "setRGBWW": "15858303/RGBWW",
+                "setOn": "15858303/State"
+            },
+            "integerValue": true,
+            "whiteMix": false,
+            "accessory": "mqttthing"
+        },
+        {
+            "type": "lightbulb-RGBWW",
+            "name": "Office Lamp 2",
+            "url": "192.168.10.35",
+            "topics": {
+                "setRGBWW": "8387/RGBWW",
+                "setOn": "8387/State"
+            },
+            "integerValue": true,
+            "whiteMix": false,
+            "accessory": "mqttthing"
+        },
+        {
+            "type": "lightbulb-White",
+            "name": "LightDim255",
+            "url": "192.168.10.35",
+            "logMqtt": true,
+            "topics": {
+                "getWhite": "light255/get",
+                "setWhite": "light255/set"
+            },
+            "whiteMix": true,
+            "accessory": "mqttthing"
         }
     ]
 }
