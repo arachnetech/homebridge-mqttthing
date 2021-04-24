@@ -284,8 +284,14 @@ function makeThing( log, accessoryConfig, api ) {
             }
 
             function isValid( charac, value ) {
+
+                // if validation is disabled, accept anything
+                if( config.validate === false ) {
+                    return true;
+                }
+
                 const format = charac.props.format;
-                if( format === 'int' ) {
+                if( format === 'int' || format === "uint8" || format == "uint16" ) {
                     if( ! Number.isInteger( value ) ) {
                         log( `Ignoring invalid value [${value}] for ${charac.displayName} - not an integer` );
                         return false;

@@ -27,6 +27,7 @@ MQTT topics used fall into two categories:
    * [History Service](#history-service)
    * [Confirmation](#confirmation)
    * [Codecs](#codecs)
+   * [Validation](#validation)
    * [Accessories](#accessories)
    * [Grouped Accessories](#grouped-accessories)
 
@@ -62,7 +63,8 @@ The following settings apply to all device types:
     ],
     "confirmationPeriodms": 1000,
     "retryLimit": 5,
-    "debounceRecvms": 200
+    "debounceRecvms": 200,
+    "validate": true
 }
 ```
 
@@ -234,6 +236,22 @@ Rather like [apply functions](#apply-functions), a codec can be used to apply tr
 in a separate JavaScript file which is referenced by the configuration.
 
 For further details, please see [Codecs.md](Codecs.md).
+
+### Validation
+
+Following recent advice from Homebridge, MQTT-Thing attempts to validate that properties are only set to values of the correct types. Attempting to set a value to the wrong type or outside valid ranges will result in it being rejected with an error like "Ignoring invalid values [x] for <property> - not an integer".
+
+You may also see validation messages like "Unable to validate x, format [y]" which indicate gaps in the validation logic. Please report these through Github issues or on the Discord channel.
+
+If validation causes issues for your configuration, it can be disabled for an accessory by setting set `validate` configuration setting to `false`.
+
+```json
+    {
+        "accessory": "mqttthing",
+        ...
+        "validate": false
+    }
+```
 
 ## Accessories
 

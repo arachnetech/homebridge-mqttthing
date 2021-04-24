@@ -5,6 +5,10 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.28
++ Validation fixes
++ Allow validation to be disabled
+
 ### Version 1.1.27
 + Added support for adaptive lighting
 
