@@ -437,6 +437,26 @@
             },
             "whiteMix": true,
             "accessory": "mqttthing"
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "airQualitySensor",
+            "name": "Air Quality",
+            "url": "192.168.10.35",
+            "logMqtt": true,
+            "topics": {
+                "getAirQuality": "test/airquality"
+            }
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "occupancySensor",
+            "name": "Occupancy Sensor",
+            "url": "192.168.10.35",
+            "logMqtt": true,
+            "topics": {
+                "getOccupancyDetected": "test/occupancy"
+            }
         }
     ]
 }

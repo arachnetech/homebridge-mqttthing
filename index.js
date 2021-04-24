@@ -291,7 +291,7 @@ function makeThing( log, accessoryConfig, api ) {
                 }
 
                 const format = charac.props.format;
-                if( format === 'int' || format === "uint8" || format == "uint16" ) {
+                if( format === 'int' || format === "uint8" || format == "uint16" || format == "uint32" ) {
                     if( ! Number.isInteger( value ) ) {
                         log( `Ignoring invalid value [${value}] for ${charac.displayName} - not an integer` );
                         return false;
@@ -508,7 +508,11 @@ function makeThing( log, accessoryConfig, api ) {
                 setCharacteristic( charac, defaultValue );
 
                 charac.on( 'get', function( callback ) {
-                    handleGetStateCallback( callback, state[ property ] );
+                    let valReturned = state[ property ];
+                    if( ! isValid( charac, valReturned ) ) {
+                        valReturned = defaultValue;
+                    }
+                    handleGetStateCallback( callback, valReturned );
                 } );
 
                 if( characteristicChanged ) {
@@ -552,7 +556,7 @@ function makeThing( log, accessoryConfig, api ) {
                 if( config.topics.setOn ) {
                     characteristic_On( service );
                 } else {
-                    addCharacteristic( service, 'on', Characteristic.On, 0, function() {
+                    addCharacteristic( service, 'on', Characteristic.On, false, function() {
                         if( state.on && state.bri == 0 ) {
                             state.bri = 100;
                         }
@@ -582,8 +586,7 @@ function makeThing( log, accessoryConfig, api ) {
 
                                 if( on != state.on ) {
                                     state.on = on;
-                                    //log( 'on ' + on );
-                                    service.getCharacteristic( Characteristic.On ).setValue( on, undefined, c_mySetContext );
+                                    setCharacteristic( service.getCharacteristic( Characteristic.On ), on );
                                 }
                             }
 
@@ -592,7 +595,7 @@ function makeThing( log, accessoryConfig, api ) {
 
                                 state.hue = hue;
                                 //log( 'hue ' + hue );
-                                service.getCharacteristic( Characteristic.Hue ).setValue( hue, undefined, c_mySetContext );
+                                setCharacteristic( service.getCharacteristic( Characteristic.Hue ), hue );
                             }
 
                             if( sat != state.sat ) {
@@ -600,13 +603,13 @@ function makeThing( log, accessoryConfig, api ) {
 
                                 state.sat = sat;
                                 //log( 'sat ' + sat );
-                                service.getCharacteristic( Characteristic.Saturation ).setValue( sat, undefined, c_mySetContext );
+                                setCharacteristic( service.getCharacteristic( Characteristic.Saturation ), sat );
                             }
 
                             if( bri != state.bri ) {
                                 state.bri = bri;
                                 //log( 'bri ' + bri );
-                                service.getCharacteristic( Characteristic.Brightness ).setValue( bri, undefined, c_mySetContext );
+                                setCharacteristic( service.getCharacteristic( Characteristic.Brightness ), bri );
                             }
                         }
                     } );
@@ -936,7 +939,7 @@ function makeThing( log, accessoryConfig, api ) {
                 if( config.topics.setOn ) {
                     characteristic_On( service );
                 } else {
-                    addCharacteristic( service, 'on', Characteristic.On, 0, function() {
+                    addCharacteristic( service, 'on', Characteristic.On, false, function() {
                         if( state.on && state.bri == 0 ) {
                             state.bri = 100;
                         }
@@ -978,7 +981,7 @@ function makeThing( log, accessoryConfig, api ) {
                         if( on != state.on ) {
                             state.on = on;
                             //log( 'on ' + on );
-                            service.getCharacteristic( Characteristic.On ).setValue( on, undefined, c_mySetContext );
+                            setCharacteristic( service.getCharacteristic( Characteristic.On ), on );
                         }
                     }
 
@@ -987,7 +990,7 @@ function makeThing( log, accessoryConfig, api ) {
 
                         state.hue = hue;
                         //log( 'hue ' + hue );
-                        service.getCharacteristic( Characteristic.Hue ).setValue( hue, undefined, c_mySetContext );
+                        setCharacteristic( service.getCharacteristic( Characteristic.Hue ), hue );
                     }
 
                     if( sat != state.sat ) {
@@ -995,13 +998,13 @@ function makeThing( log, accessoryConfig, api ) {
 
                         state.sat = sat;
                         //log( 'sat ' + sat );
-                        service.getCharacteristic( Characteristic.Saturation ).setValue( sat, undefined, c_mySetContext );
+                        setCharacteristic( service.getCharacteristic( Characteristic.Saturation ), sat );
                     }
 
                     if( bri != state.bri ) {
                         state.bri = bri;
                         //log( 'bri ' + bri );
-                        service.getCharacteristic( Characteristic.Brightness ).setValue( bri, undefined, c_mySetContext );
+                        setCharacteristic( service.getCharacteristic( Characteristic.Brightness ), bri );
                     }
                 }
 
@@ -1108,7 +1111,7 @@ function makeThing( log, accessoryConfig, api ) {
                     mqttPublish( config.topics.setWhite, 'white', msg );
                 }
 
-                addCharacteristic( service, 'on', Characteristic.On, 0, function() {
+                addCharacteristic( service, 'on', Characteristic.On, false, function() {
                     if( state.on && state.bri == 0 ) {
                         state.bri = 100;
                     }
@@ -1145,16 +1148,16 @@ function makeThing( log, accessoryConfig, api ) {
                         }
                         if( ok ) {
                             let bri = Math.min( Math.floor( white / 2.55 ), 100 );
-                            var on = bri > 0 ? 1 : 0;
+                            let on = bri > 0 ? true : false;
 
                             if( on != state.on ) {
                                 state.on = on;
-                                service.getCharacteristic( Characteristic.On ).setValue( on, undefined, c_mySetContext );
+                                setCharacteristic( service.getCharacteristic( Characteristic.On ), on );
                             }
 
                             if( bri != state.bri ) {
                                 state.bri = bri;
-                                service.getCharacteristic( Characteristic.Brightness ).setValue( bri, undefined, c_mySetContext );
+                                setCharacteristic( service.getCharacteristic( Characteristic.Brightness ), bri );
                             }
                         }
                     } );
@@ -1220,7 +1223,7 @@ function makeThing( log, accessoryConfig, api ) {
                         var newState = message.toString();
                         if( state[ property ] !== newState ) {
                             state[ property ] = newState;
-                            charac.setValue( newState, undefined, c_mySetContext );
+                            setCharacteristic( charac, newState );
                         }
                     } );
                 }
@@ -1330,10 +1333,10 @@ function makeThing( log, accessoryConfig, api ) {
                             if( state.brightness != newState || state.on != newOn ) {
                                 if( newOn ) {
                                     state.brightness = newState;
-                                    service.getCharacteristic( Characteristic.Brightness ).setValue( newState, undefined, c_mySetContext );
+                                    setCharacteristic( service.getCharacteristic( Characteristic.Brightness ), newState );
                                 }
                                 state.on = newOn;
-                                service.getCharacteristic( Characteristic.On ).setValue( newState != 0, undefined, c_mySetContext );
+                                setCharacteristic( service.getCharacteristic( Characteristic.On ), newState != 0 );
                             }
                         } );
                     }
@@ -1358,7 +1361,7 @@ function makeThing( log, accessoryConfig, api ) {
                     } );
 
                     // On Characteristic
-                    addCharacteristic( service, 'on', Characteristic.On, 0, function() {
+                    addCharacteristic( service, 'on', Characteristic.On, false, function() {
                         if( state.on && state.brightness == 0 ) {
                             state.brightness = 100;
                         }
@@ -1933,7 +1936,7 @@ function makeThing( log, accessoryConfig, api ) {
                                     setCharacteristic( service.getCharacteristic( Characteristic.RotationSpeed ), newState );
                                 }
                                 state.on = newOn;
-                                service.getCharacteristic( Characteristic.On ).setValue( newState != 0, undefined, c_mySetContext );
+                                setCharacteristic( service.getCharacteristic( Characteristic.On ), newState != 0 );
                             }
                         } );
                     }
@@ -1958,7 +1961,7 @@ function makeThing( log, accessoryConfig, api ) {
                     } );
 
                     // On Characteristic
-                    addCharacteristic( service, 'on', Characteristic.On, 0, function() {
+                    addCharacteristic( service, 'on', Characteristic.On, false, function() {
                         if( state.on && state.rotationSpeed == 0 ) {
                             state.rotationSpeed = 100;
                         }
