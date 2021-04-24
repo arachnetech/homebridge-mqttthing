@@ -1405,7 +1405,7 @@ function makeThing( log, accessoryConfig, api ) {
             function characteristic_ColorTemperature_Internal( service ) {
                 integerCharacteristic( service, 'colorTemperature', Characteristic.ColorTemperature, null, null, {
                     initialValue: 140,
-                    onSet: ( value, context ) => {
+                    onSet: ( value ) => {
                         // update saturation and hue to match
                         let calc = api.hap.ColorUtils.colorTemperatureToHueAndSaturation( value );
                         service.getCharacteristic( Characteristic.Saturation ).updateValue( calc.saturation );
