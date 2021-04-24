@@ -446,7 +446,8 @@
             "logMqtt": true,
             "topics": {
                 "getAirQuality": "test/airquality"
-            }
+            },
+            "airQualityValues": [ "0", "1", "2", "3", "4", "5" ]
         },
         {
             "accessory": "mqttthing",
