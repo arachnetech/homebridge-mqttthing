@@ -1991,6 +1991,12 @@ function makeThing( log, accessoryConfig, api ) {
                 }, undefined, config.resetStateAfterms );
             }
 
+            // Characteristic.WaterLevel
+            function characteristic_WaterLevel( service ) {
+              let options = { minValue: 0, maxValue: 100 }
+              integerCharacteristic( service, 'waterLevel', Characteristic.WaterLevel, config.topics.setWaterLevel, config.topics.getWaterLevel, options);
+            }
+
             // Characteristic.TargetPosition
             function characteristic_TargetPosition( service ) {
                 integerCharacteristic( service, 'targetPosition', Characteristic.TargetPosition, config.topics.setTargetPosition, config.topics.getTargetPosition );
@@ -2945,6 +2951,9 @@ function makeThing( log, accessoryConfig, api ) {
             } else if( configType == "leakSensor" ) {
                 service = new Service.LeakSensor( name, subtype );
                 characteristic_LeakDetected( service );
+                if( config.topics.setWaterLevel || config.topics.getWaterLevel ) {
+                    characteristic_WaterLevel( service );
+                }
                 addSensorOptionalCharacteristics( service );
             } else if( configType == "microphone" ) {
                 service = new Service.Microphone( name, subtype );
