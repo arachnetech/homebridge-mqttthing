@@ -15,6 +15,18 @@
     ],
     "accessories": [
         {
+            "type": "outlet",
+            "name": "Test Outlet",
+            "url": "192.168.10.35",
+            "topics": {
+                "setOn": "test/outlet/on",
+                "getWatts": "test/outlet/watts",
+                "getVolts": "test/outlet/voltage"
+            },
+            "accessory": "mqttthing",
+            "logMqtt": true
+        },
+        {
             "type": "lightbulb-ColTemp",
             "name": "Light-Temp",
             "url": "192.168.10.35",

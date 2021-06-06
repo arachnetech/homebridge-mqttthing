@@ -2234,7 +2234,7 @@ function makeThing( log, accessoryConfig, api ) {
             // Eve.Characteristics.Voltage [Volts] (Eve-only)
             function characteristic_Voltage( service ) {
                 service.addOptionalCharacteristic( Eve.Characteristics.Voltage ); // to avoid warnings
-                floatCharacteristic( service, 'voltage', Eve.Characteristics.Voltage, null, config.topics.getVolts, 0 );
+                floatCharacteristic( service, 'voltage', Eve.Characteristics.Voltage, null, config.topics.getVolts, 100 );
             }
 
             // Eve.Characteristics.ElectricCurrent [Amperes] (Eve-only)

@@ -63,3 +63,18 @@ So, the plan is:
 3. Release initial config-ui-x support. [Done - Version 1.1.2]
 4. Add lightbulb sub-types for easier configuration. [Done]
 5. Add configuration profiles.
+
+
+--
+
+Issues, 6th June 2021
+
+Validation - errors like these in issue 447:
+
+[5/28/2021, 8:12:27 PM] [Consumi Generali] Received MQTT: sdomotica/energy/now/1 = 589
+[5/28/2021, 8:12:27 PM] [Consumi Generali] Ignoring invalid value [220] for Voltage - above maximum (null)
+[5/28/2021, 8:12:27 PM] [Consumi Generali] Ignoring invalid value [2.6772727272727272] for Electric Current - above maximum (null)
+[5/28/2021, 8:12:27 PM] [Consumi Generali] Ignoring invalid value [589] for Total Consumption - above maximum (null)
+
+Don't try to validate against a null maximum (or minimum, presumably).
+
