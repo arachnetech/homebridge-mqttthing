@@ -283,6 +283,10 @@ function makeThing( log, accessoryConfig, api ) {
                 }
             }
 
+            function isSet( val ) {
+                return val !== undefined && val !== null;
+            }
+
             function isValid( charac, value ) {
 
                 // if validation is disabled, accept anything
@@ -296,11 +300,11 @@ function makeThing( log, accessoryConfig, api ) {
                         log( `Ignoring invalid value [${value}] for ${charac.displayName} - not an integer` );
                         return false;
                     }
-                    if( charac.props.minValue !== undefined && value < charac.props.minValue ) {
+                    if( isSet( charac.props.minValue ) && value < charac.props.minValue ) {
                         log( `Ignoring invalid value [${value}] for ${charac.displayName} - below minimum (${charac.props.minValue})` );
                         return false;
                     }
-                    if( charac.props.maxValue !== undefined && value > charac.props.maxValue ) {
+                    if( isSet( charac.props.maxValue ) && value > charac.props.maxValue ) {
                         log( `Ignoring invalid value [${value}] for ${charac.displayName} - above maximum (${charac.props.maxValue})` );
                         return false;
                     }
@@ -309,11 +313,11 @@ function makeThing( log, accessoryConfig, api ) {
                         log( `Ignoring invalid value [${value}] for ${charac.displayName} - not a number` );
                         return false;
                     }
-                    if( charac.props.minValue !== undefined && value < charac.props.minValue ) {
+                    if( isSet( charac.props.minValue ) && value < charac.props.minValue ) {
                         log( `Ignoring invalid value [${value}] for ${charac.displayName} - below minimum (${charac.props.minValue})` );
                         return false;
                     }
-                    if( charac.props.maxValue !== undefined && value > charac.props.maxValue ) {
+                    if( isSet( charac.props.maxValue ) && value > charac.props.maxValue ) {
                         log( `Ignoring invalid value [${value}] for ${charac.displayName} - above maximum (${charac.props.maxValue})` );
                         return false;
                     }

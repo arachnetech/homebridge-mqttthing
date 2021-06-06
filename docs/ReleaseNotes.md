@@ -5,6 +5,10 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.30
++ Fixed out of range default voltage
++ Validation tweaks
+
 ### Version 1.1.29
 + Update Node.js dependencies - homebridge-lib now requires Node.js 14 
 
