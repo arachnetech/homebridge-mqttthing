@@ -5,6 +5,9 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.29
++ Update Node.js dependencies - homebridge-lib now requires Node.js 14 
+
 ### Version 1.1.28
 + Validation fixes
 + Allow validation to be disabled
