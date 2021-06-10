@@ -152,6 +152,25 @@
             "logMqtt": true
         },
         {
+            "url": "homebridge",
+            "type": "switch",
+            "name": "Tasmota05s",
+            "username": "admin",
+            "password": "admin",
+            "topics": {
+                "getOnline": "tele/tasmota05s/STATE",
+                "getOn": {
+                    "topic": "stat/tasmota05s/RESULT",
+                    "apply": "return JSON.parse( message ).POWER"
+                },
+                "setOn": "cmnd/tasmota05s/POWER"
+            },
+            "integerValue": false,
+            "onValue": "ON",
+            "offValue": "OFF",
+            "accessory": "mqttthing"
+        },        
+        {
             "accessory": "mqttthing",
             "type": "lightbulb",
             "name": "Test RGB Light",

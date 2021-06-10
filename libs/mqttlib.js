@@ -29,7 +29,7 @@ var mqttlib = new function() {
     this.init = function( ctx ) {
         // MQTT message dispatch
         let mqttDispatch = ctx.mqttDispatch = {}; // map of topic to [ function( topic, message ) ] to handle
-        let propDispatch = ctx.propDispatch = {}; // map of proerty to [ rawhandler( topic, message ) ]
+        let propDispatch = ctx.propDispatch = {}; // map of property to [ rawhandler( topic, message ) ]
 
         let { config, log } = ctx;
         let logmqtt = config.logMqtt;
