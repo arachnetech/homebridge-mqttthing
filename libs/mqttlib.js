@@ -199,7 +199,7 @@ var mqttlib = new function() {
     // Subscribe
     this.subscribe = function( ctx, topic, property, handler ) {
         let rawHandler = handler;
-        let { mqttDispatch, log, mqttClient, codec, propDispatch, config } = ctx;
+        let { mqttDispatch, log, mqttClient, codec, propDispatch, config, service } = ctx;
         if( ! mqttClient ) {
             log( 'ERROR: Call mqttlib.init() before mqttlib.subscribe()' );
             return;
@@ -248,7 +248,7 @@ var mqttlib = new function() {
                 return realHandler( topic, message );
             };
             handler = function( intopic, message ) {
-                let decoded = codecDecode( message, { topic, property }, output );
+                let decoded = codecDecode( message, { topic, property, service: ctx.service }, output );
                 if( decoded !== undefined ) {
                     return output( decoded );
                 }
@@ -282,7 +282,7 @@ var mqttlib = new function() {
 
     // Publish
     this.publish = function( ctx, topic, property, message ) {
-        let { config, log, mqttClient, codec } = ctx;
+        let { config, log, mqttClient, codec, service } = ctx;
         if( ! mqttClient ) {
             log( 'ERROR: Call mqttlib.init() before mqttlib.publish()' );
             return;
@@ -322,7 +322,7 @@ var mqttlib = new function() {
         let codecEncode = getCodecFunction( codec, property, 'encode' );
         if( codecEncode ) {
             // send through codec's encode function
-            let encoded = codecEncode( message, { topic, property }, publishImpl );
+            let encoded = codecEncode( message, { topic, property, service: ctx.service }, publishImpl );
             if( encoded !== undefined ) {
                 publishImpl( encoded );
             }

@@ -46,13 +46,17 @@ function makeThing( log, accessoryConfig, api ) {
     }
 
     // MQTT Subscribe
-    function mqttSubscribe( topic, property, handler ) {
-        mqttlib.subscribe( ctx, topic, property, handler );
+    function mqttSubscribe( service, topic, property, handler ) {
+        var service_ctx = { ...ctx };
+        service_ctx.service = service;
+        mqttlib.subscribe( service_ctx, topic, property, handler );
     }
 
     // MQTT Publish
-    function mqttPublish( topic, property, message ) {
-        mqttlib.publish( ctx, topic, property, message );
+    function mqttPublish( service, topic, property, message ) {
+        var service_ctx = { ...ctx };
+        service_ctx.service = service;
+        mqttlib.publish( service_ctx, topic, property, message );
     }
 
     // Delayed one-shot function call
@@ -190,8 +194,10 @@ function makeThing( log, accessoryConfig, api ) {
                 }
             }
 
-            function makeConfirmedPublisher( setTopic, getTopic, property, makeConfirmed ) {
-                return mqttlib.makeConfirmedPublisher( ctx, setTopic, getTopic, property, makeConfirmed );
+            function makeConfirmedPublisher(service, setTopic, getTopic, property, makeConfirmed ) {
+                var local_ctx = { ...ctx };
+                local_ctx.service = service;
+                return mqttlib.makeConfirmedPublisher( local_ctx, setTopic, getTopic, property, makeConfirmed );
             }
 
             //! Determine appropriate on/off value for Boolean property (not forced to string) for MQTT publishing.
@@ -345,7 +351,7 @@ function makeThing( log, accessoryConfig, api ) {
 
             function booleanCharacteristic( service, property, characteristic, setTopic, getTopic, initialValue, mapValueFunc, turnOffAfterms, resetStateAfterms, enableConfirmation ) {
 
-                var publish = makeConfirmedPublisher( setTopic, getTopic, property, enableConfirmation );
+                var publish = makeConfirmedPublisher(service, setTopic, getTopic, property, enableConfirmation );
 
                 // auto-turn-off and reset-state timers
                 var autoOffTimer = null;
@@ -389,7 +395,7 @@ function makeThing( log, accessoryConfig, api ) {
 
                 // subscribe to get topic
                 if( getTopic ) {
-                    mqttSubscribe( getTopic, property, function( topic, message ) {
+                    mqttSubscribe( service, getTopic, property, function( topic, message ) {
                         // determine whether this is an on or off value
                         let newState = false; // assume off
                         if( isRecvValueOn( message ) ) {
@@ -424,7 +430,7 @@ function makeThing( log, accessoryConfig, api ) {
 
                 // MQTT subscription
                 if( getTopic ) {
-                    mqttSubscribe( getTopic, property, function( topic, message ) {
+                    mqttSubscribe( service, getTopic, property, function( topic, message ) {
                         if( isOnFunc( message ) ) {
                             state[ property ] = true;
                         } else if( isOffFunc( message ) ) {
@@ -462,12 +468,11 @@ function makeThing( log, accessoryConfig, api ) {
                 charac.on( 'get', function( callback ) {
                     handleGetStateCallback( callback, state[ property ] );
                 } );
-
                 let onSet = function( value, context ) {
                     if( context !== c_mySetContext ) {
                         state[ property ] = value;
                         if( setTopic ) {
-                            mqttPublish( setTopic, property, value );
+                            mqttPublish( service, setTopic, property, value );
                         }
                     }
                     if( options && options.onSet ) {
@@ -487,7 +492,7 @@ function makeThing( log, accessoryConfig, api ) {
 
                 // subscribe to get topic
                 if( getTopic ) {
-                    mqttSubscribe( getTopic, property, function( topic, message ) {
+                    mqttSubscribe( service, getTopic, property, function( topic, message ) {
                         var newState = parseInt( message );
                         if( state[ property ] != newState ) {
                             if( options && options.onMqtt ) {
@@ -548,7 +553,7 @@ function makeThing( log, accessoryConfig, api ) {
                     }
                     var msg = state.hue + ',' + state.sat + ',' + bri;
                     if( msg != lastpubmsg ) {
-                        mqttPublish( config.topics.setHSV, 'HSV', msg );
+                        mqttPublish( service, config.topics.setHSV, 'HSV', msg );
                         lastpubmsg = msg;
                     }
                 }
@@ -577,7 +582,7 @@ function makeThing( log, accessoryConfig, api ) {
                 } );
 
                 if( config.topics.getHSV ) {
-                    mqttSubscribe( config.topics.getHSV, 'HSV', function( topic, message ) {
+                    mqttSubscribe( service, config.topics.getHSV, 'HSV', function( topic, message ) {
                         var comps = ( '' + message ).split( ',' );
                         if( comps.length == 3 ) {
 
@@ -926,12 +931,12 @@ function makeThing( log, accessoryConfig, api ) {
                         }
                     }
                     if( msg != lastpubmsg ) {
-                        mqttPublish( setTopic, property, msg );
+                        mqttPublish( service, setTopic, property, msg );
                         lastpubmsg = msg;
                     }
 
                     if( whiteSep ) {
-                        mqttPublish( config.topics.setWhite, 'white', rgb.w );
+                        mqttPublish( service, config.topics.setWhite, 'white', rgb.w );
                     }
                 }
 
@@ -1013,7 +1018,7 @@ function makeThing( log, accessoryConfig, api ) {
                 }
 
                 if( getTopic ) {
-                    mqttSubscribe( getTopic, property, function( topic, message ) {
+                    mqttSubscribe( service, getTopic, property, function( topic, message ) {
                         var ok = false;
                         var red, green, blue, white, warmWhite, coldWhite;
                         if( hexPrefix == null ) {
@@ -1080,7 +1085,7 @@ function makeThing( log, accessoryConfig, api ) {
                 }
 
                 if( whiteSep ) {
-                    mqttSubscribe( config.topics.getWhite, 'white', function( topic, message ) {
+                    mqttSubscribe( service, config.topics.getWhite, 'white', function( topic, message ) {
                         state.white = parseInt( message );
                         updateColour( state.red, state.green, state.blue, state.white );
                     } );
@@ -1112,7 +1117,7 @@ function makeThing( log, accessoryConfig, api ) {
                     } else {
                         msg = hexPrefix + toHex( white );
                     }
-                    mqttPublish( config.topics.setWhite, 'white', msg );
+                    mqttPublish( service, config.topics.setWhite, 'white', msg );
                 }
 
                 addCharacteristic( service, 'on', Characteristic.On, false, function() {
@@ -1131,7 +1136,7 @@ function makeThing( log, accessoryConfig, api ) {
                 } );
 
                 if( config.topics.getWhite ) {
-                    mqttSubscribe( config.topics.getWhite, 'white', function( topic, message ) {
+                    mqttSubscribe( service, config.topics.getWhite, 'white', function( topic, message ) {
                         var ok = false;
                         var white;
                         if( hexPrefix == null ) {
@@ -1181,7 +1186,7 @@ function makeThing( log, accessoryConfig, api ) {
                     charac.on( 'set', function( value, callback, context ) {
                         if( context !== c_mySetContext ) {
                             state[ property ] = value;
-                            mqttPublish( setTopic, property, value );
+                            mqttPublish( service, setTopic, property, value );
                         }
                         callback();
                     } );
@@ -1192,7 +1197,7 @@ function makeThing( log, accessoryConfig, api ) {
 
                 // subscribe to get topic
                 if( getTopic ) {
-                    mqttSubscribe( getTopic, property, function( topic, message ) {
+                    mqttSubscribe( service, getTopic, property, function( topic, message ) {
                         var newState = parseFloat( message );
                         if( state[ property ] != newState ) {
                             state[ property ] = newState;
@@ -1215,7 +1220,7 @@ function makeThing( log, accessoryConfig, api ) {
                     charac.on( 'set', function( value, callback, context ) {
                         if( context !== c_mySetContext ) {
                             state[ property ] = value;
-                            mqttPublish( setTopic, property, value );
+                            mqttPublish( service, setTopic, property, value );
                         }
                         callback();
                     } );
@@ -1223,7 +1228,7 @@ function makeThing( log, accessoryConfig, api ) {
 
                 // subscribe to get topic
                 if( getTopic ) {
-                    mqttSubscribe( getTopic, property, function( topic, message ) {
+                    mqttSubscribe( service, getTopic, property, function( topic, message ) {
                         var newState = message.toString();
                         if( state[ property ] !== newState ) {
                             state[ property ] = newState;
@@ -1264,7 +1269,7 @@ function makeThing( log, accessoryConfig, api ) {
                             state[ property ] = value;
                             let mqttVal = values[ value ];
                             if( mqttVal !== undefined ) {
-                                mqttPublish( setTopic, property, mqttVal );
+                                mqttPublish( service, setTopic, property, mqttVal );
                             }
                             raiseEvent( property );
                         }
@@ -1278,7 +1283,7 @@ function makeThing( log, accessoryConfig, api ) {
 
                 // MQTT set (Homekit get)
                 if( getTopic ) {
-                    mqttSubscribe( getTopic, property, function( topic, message ) {
+                    mqttSubscribe( service, getTopic, property, function( topic, message ) {
                         let data = message.toString();
                         let newState = mqttToHomekit[ data ];
                         if( newState !== undefined && ( eventOnly || state[ property ] != newState ) ) {
@@ -1552,7 +1557,7 @@ function makeThing( log, accessoryConfig, api ) {
             function history_CurrentTemperature( historySvc ) {
                 if( config.topics.getCurrentTemperature ) {
                     // additional MQTT subscription instead of set-callback due to correct averaging:
-                    mqttSubscribe( config.topics.getCurrentTemperature, 'currentTemperature', function( topic, message ) {
+                    mqttSubscribe( service, config.topics.getCurrentTemperature, 'currentTemperature', function( topic, message ) {
                         var logEntry = {
                             time: Math.floor( Date.now() / 1000 ),  // seconds (UTC)
                             temp: parseFloat( message )  // fakegato-history logProperty 'temp' for temperature sensor
@@ -1618,7 +1623,7 @@ function makeThing( log, accessoryConfig, api ) {
             function history_CurrentRelativeHumidity( historySvc ) {
                 if( config.topics.getCurrentRelativeHumidity ) {
                     // additional MQTT subscription instead of set-callback due to correct averaging:
-                    mqttSubscribe( config.topics.getCurrentRelativeHumidity, 'currentRelativeHumidity', function( topic, message ) {
+                    mqttSubscribe( service, config.topics.getCurrentRelativeHumidity, 'currentRelativeHumidity', function( topic, message ) {
                         var logEntry = {
                             time: Math.floor( Date.now() / 1000 ),  // seconds (UTC)
                             humidity: parseFloat( message )  // fakegato-history logProperty 'humidity' for humidity sensor
@@ -1639,7 +1644,7 @@ function makeThing( log, accessoryConfig, api ) {
             function history_AirPressure( historySvc ) {
                 if( config.topics.getAirPressure ) {
                     // additional MQTT subscription instead of set-callback due to correct averaging:
-                    mqttSubscribe( config.topics.getAirPressure, 'airPressure', function( topic, message ) {
+                    mqttSubscribe( service, config.topics.getAirPressure, 'airPressure', function( topic, message ) {
                         var logEntry = {
                             time: Math.floor( Date.now() / 1000 ),  // seconds (UTC)
                             pressure: parseFloat( message )  // fakegato-history logProperty 'pressure' for air pressure sensor
@@ -1844,7 +1849,7 @@ function makeThing( log, accessoryConfig, api ) {
 
                 // subscribe to get topic
                 if( getTopic ) {
-                    mqttSubscribe( getTopic, property, function( topic, message ) {
+                    mqttSubscribe( service, getTopic, property, function( topic, message ) {
                         // determine whether this is an on or off value
                         let newState = false; // assume off
                         if( isRecvValueOn( message ) ) {
@@ -2093,7 +2098,7 @@ function makeThing( log, accessoryConfig, api ) {
             function history_AirQualityPPM( historySvc ) {
                 if( config.topics.getAirQualityPPM ) {
                     // additional MQTT subscription instead of set-callback due to correct averaging:
-                    mqttSubscribe( config.topics.getAirQualityPPM, 'airQualityPPM', function( topic, message ) {
+                    mqttSubscribe( service, config.topics.getAirQualityPPM, 'airQualityPPM', function( topic, message ) {
                         var logEntry = {
                             time: Math.floor( Date.now() / 1000 ),  // seconds (UTC)
                             ppm: parseFloat( message )  // fakegato-history logProperty 'ppm' for air quality sensor
@@ -2295,7 +2300,7 @@ function makeThing( log, accessoryConfig, api ) {
 
                 if( config.topics.getWatts ) {
                     // additional MQTT subscription instead of set-callback due to correct averaging:
-                    mqttSubscribe( config.topics.getWatts, 'watts', function( topic, message ) {
+                    mqttSubscribe( service, config.topics.getWatts, 'watts', function( topic, message ) {
                         var logEntry = {
                             time: Math.floor( Date.now() / 1000 ),  // seconds (UTC)
                             power: parseFloat( message )  // fakegato-history logProperty 'power' for energy meter
@@ -2542,7 +2547,7 @@ function makeThing( log, accessoryConfig, api ) {
 
                 // subscribe to get topic, update remainingDuration
                 if( topic_getRemainingDuration ) {
-                    mqttSubscribe( topic_getRemainingDuration, 'remainingDuration', function( topic, message ) {
+                    mqttSubscribe( service, topic_getRemainingDuration, 'remainingDuration', function( topic, message ) {
                         let remainingDuration = parseInt( message );
                         state[ property_durationEndTime ] = Math.floor( Date.now() / 1000 ) + remainingDuration;
                         charac.updateValue( remainingDuration );
@@ -3288,7 +3293,7 @@ function makeThing( log, accessoryConfig, api ) {
                 // new format - [ { topic: x, message: y }, ... ]
                 for( let entry of accessoryConfig.startPub ) {
                     if( entry.topic ) {
-                        mqttPublish( entry.topic, 'startPub', entry.message || '' );
+                        mqttPublish( accessoryConfig, entry.topic, 'startPub', entry.message || '' );
                     }
                 }
             } else {
@@ -3296,7 +3301,7 @@ function makeThing( log, accessoryConfig, api ) {
                 for( let topic in accessoryConfig.startPub ) {
                     if( accessoryConfig.startPub.hasOwnProperty( topic ) ) {
                         let msg = accessoryConfig.startPub[ topic ];
-                        mqttPublish( topic, 'startPub', msg );
+                        mqttPublish( accessoryConfig, topic, 'startPub', msg );
                     }
                 }
             }

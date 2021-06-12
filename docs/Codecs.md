@@ -111,6 +111,7 @@ The `encode()` function is called to encode a message before publishing it to MQ
    * `info` is an object holding:
       * `info.topic` - the MQTT topic to be published
       * `info.property` - the property associated with the publishing operation
+      * `info.service` - the entry from the "services" section of a "custom" accessory
    * `output` is a function which may be called to deliver the encoded value asynchronously
 
 The `encode()` function may either return the encoded message, or it may deliver it asynchronously by passing it as a parameter to the provided `output` function. It if does neither, no value will be published.
@@ -123,6 +124,7 @@ The `decode`() function is called to decode a message received from MQTT before 
    * `info` is an object holding:
       * `info.topic` - the MQTT topic received
       * `info.property` the property associated with the received message
+      * `info.service` - the entry from the "services" section of a "custom" accessory
    * `output` is a function which may be called to deliver the decoded value asynchronously
 
 The `decode()` function may either return the decoded message, or it may deliver it asynchronously by passing it as a parameter to the provided `output` function. If it does neither, no notification will be passed on to MQTT-Thing.
