@@ -532,6 +532,20 @@
                             "functionBody": "return ['weatherStation'].includes(model.type);"
                         }
                     },
+                     "getmaxWind": {
+                        "type": "string",
+                        "description": "Topic used to notify mqttthing of 'wind speed [km/h]' (optional, Eve-only)",
+                        "condition": {
+                            "functionBody": "return ['weatherStation'].includes(model.type);"
+                        }
+                    },
+                     "getDewPoint": {
+                        "type": "string",
+                        "description": "Topic used to notify mqttthing of 'DewPoint' (optional, Eve-only)",
+                        "condition": {
+                            "functionBody": "return ['weatherStation'].includes(model.type);"
+                        }
+                    },
                     "getActive": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'active'",
