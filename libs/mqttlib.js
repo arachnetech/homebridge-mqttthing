@@ -35,6 +35,55 @@ var mqttlib = new function() {
         let logmqtt = config.logMqtt;
         var clientId = 'mqttthing_' + config.name.replace(/[^\x20-\x7F]/g, "") + '_' + Math.random().toString(16).substr(2, 8);
 
+        // Load any codec
+        if( config.codec ) {
+            let codecPath = makeCodecPath( config.codec, ctx.homebridgePath );
+            if( fs.existsSync( codecPath ) ) {
+                // load codec
+                log( 'Loading codec from ' + codecPath );
+                let codecMod = require( codecPath );
+                if( typeof codecMod.init === "function" ) {
+
+                    // direct publishing
+                    let directPub = function( topic, message ) {
+                        if( config.logMqtt ) {
+                            log( 'Publishing MQTT: ' + topic + ' = ' + message );
+                        }
+                        mqttClient.publish( topic, message.toString(), config.mqttPubOptions );
+                    };
+
+                    // notification by property
+                    let notifyByProp = function( property, message ) {
+                        let handlers = propDispatch[ property ];
+                        if( handlers ) {
+                            for( let i = 0; i < handlers.length; i++ ) {
+                                handlers[ i ]( '_prop-' + property, message );
+                            }
+                        }
+                    };
+                    
+                    // initialise codec
+                    let codec = ctx.codec = codecMod.init( { log, config, publish: directPub, notify: notifyByProp } );
+                    if( codec ) {
+                        // encode/decode must be functions
+                        if( typeof codec.encode !== "function" ) {
+                            log.warn( 'No codec encode() function' );
+                            codec.encode = null;
+                        }
+                        if( typeof codec.decode !== "function" ) {
+                            log.warn( 'No codec decode() function' );
+                            codec.decode = null;
+                        }
+                    }
+                } else {
+                    // no initialisation function
+                    log.error( 'ERROR: No codec initialisation function returned from ' + codecPath );
+                }
+            } else {
+                log.error( 'ERROR: Codec file [' + codecPath + '] does not exist' );
+            }
+        }
+
         // start with any configured options object
         var options = config.mqttOptions || {};
 
@@ -119,55 +168,6 @@ var mqttlib = new function() {
                 log('Warning: No MQTT dispatch handler for topic [' + topic + ']');
             }
         });
-
-        // Load any codec
-        if( config.codec ) {
-            let codecPath = makeCodecPath( config.codec, ctx.homebridgePath );
-            if( fs.existsSync( codecPath ) ) {
-                // load codec
-                log( 'Loading codec from ' + codecPath );
-                let codecMod = require( codecPath );
-                if( typeof codecMod.init === "function" ) {
-
-                    // direct publishing
-                    let directPub = function( topic, message ) {
-                        if( config.logMqtt ) {
-                            log( 'Publishing MQTT: ' + topic + ' = ' + message );
-                        }
-                        mqttClient.publish( topic, message.toString(), config.mqttPubOptions );
-                    };
-
-                    // notification by property
-                    let notifyByProp = function( property, message ) {
-                        let handlers = propDispatch[ property ];
-                        if( handlers ) {
-                            for( let i = 0; i < handlers.length; i++ ) {
-                                handlers[ i ]( '_prop-' + property, message );
-                            }
-                        }
-                    };
-                    
-                    // initialise codec
-                    let codec = ctx.codec = codecMod.init( { log, config, publish: directPub, notify: notifyByProp } );
-                    if( codec ) {
-                        // encode/decode must be functions
-                        if( typeof codec.encode !== "function" ) {
-                            log.warn( 'No codec encode() function' );
-                            codec.encode = null;
-                        }
-                        if( typeof codec.decode !== "function" ) {
-                            log.warn( 'No codec decode() function' );
-                            codec.decode = null;
-                        }
-                    }
-                } else {
-                    // no initialisation function
-                    log.error( 'ERROR: No codec initialisation function returned from ' + codecPath );
-                }
-            } else {
-                log.error( 'ERROR: Codec file [' + codecPath + '] does not exist' );
-            }
-        }
 
         ctx.mqttClient = mqttClient;
         return mqttClient;
