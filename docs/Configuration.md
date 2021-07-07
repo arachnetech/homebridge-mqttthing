@@ -224,7 +224,7 @@ Avoid the use of "/" in characteristics of the Information Service (e.g. serial 
 
 ### Confirmation
 
-Some accessories support confirmation for some of their 'set' topics. When enabled by configuring `confirmationPeriodms`, the accessory *must* echo anything sent to appropriate `setX` subject(s) to the corresponding `getX` subject(s). Where homebridge-mqttthing doesn't see a confirmation within the configured configuration period (specified in milliseconds), it will publish the set message again. Messages will be republished up to 3 times by default, but this can be changed by also specifying `retryLimit`.
+Some accessories support confirmation for some of their 'set' topics. When enabled by configuring `confirmationPeriodms`, the accessory *must* echo anything sent to appropriate `setX` subject(s) to the corresponding `getX` subject(s). Where homebridge-mqttthing doesn't see a confirmation within the configured confirmation period (specified in milliseconds), it will publish the set message again. Messages will be republished up to 3 times by default, but this can be changed by also specifying `retryLimit`.
 
 Accessories supporting message confirmation list the topics supporting message confirmation below.
 
