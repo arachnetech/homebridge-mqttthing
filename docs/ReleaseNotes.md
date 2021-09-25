@@ -5,6 +5,10 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.31
++ Improve null handling (multicharacteristic) (thanks, Jakub Samek)
++ Added optimizePublishing option
+
 ### Version 1.1.30
 + Fixed out of range default voltage
 + Validation tweaks

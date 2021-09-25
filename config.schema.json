@@ -311,6 +311,11 @@
                 "title": "Receive Debounce (ms)",
                 "description": "Whenever receiving a message on any configured topic, wait for the number of milliseconds specified before notifying Homekit. If a subsequent message is received during the debounce period, the debounce timer is restarted. This can be useful to filter extraneous notification messages from accessories."
             },
+            "optimizePublishing": {
+                "type": "boolean",
+                "title": "Optimize Publishing",
+                "description": "Set to true to suppress republishing of the previously-published value (on each topic)"
+            },
             "topics": {
                 "type": "object",
                 "title": "Topics",
@@ -1657,7 +1662,8 @@
                 "mqttOptions.keepalive",
                 "mqttPubOptions.retain",
                 "codec",
-                "debounceRecvms"
+                "debounceRecvms",
+                "optimizePublishing"
             ]
         },
         {

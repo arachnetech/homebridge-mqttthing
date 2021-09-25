@@ -24,14 +24,37 @@ var mqttlib = new function() {
         return codecPath;
     }
 
+    function optimizedPublish( topic, message, ctx ) {
+        const { config, log, mqttClient } = ctx;
+        const messageString = message.toString();
+        if( config.optimizePublishing && ctx.lastPubValues ) {
+            if( ctx.lastPubValues[ topic ] == messageString ) {
+                // optimized - don't publish
+                return;
+            }
+            // store what we're about to publish
+            ctx.lastPubValues[ topic ] = messageString;
+        }
+        if( config.logMqtt ) {
+            log( 'Publishing MQTT: ' + topic + ' = ' + messageString );
+        }
+        mqttClient.publish( topic, messageString, config.mqttPubOptions );
+    }
+
     //! Initialise MQTT. Requires context ( { log, config } ).
-    //! Context populated with mqttClient and mqttDispatch.
+    //! Context populated with mqttClient and mqttDispatch, and if publishing optimization is enabled lastPubValues.
     this.init = function( ctx ) {
         // MQTT message dispatch
         let mqttDispatch = ctx.mqttDispatch = {}; // map of topic to [ function( topic, message ) ] to handle
         let propDispatch = ctx.propDispatch = {}; // map of property to [ rawhandler( topic, message ) ]
 
         let { config, log } = ctx;
+
+        // create cache of last-published values for publishing optimization
+        if( config.optimizePublishing ) {
+            ctx.lastPubValues = {};
+        }
+
         let logmqtt = config.logMqtt;
         var clientId = 'mqttthing_' + config.name.replace(/[^\x20-\x7F]/g, "") + '_' + Math.random().toString(16).substr(2, 8);
 
@@ -131,10 +154,7 @@ var mqttlib = new function() {
 
                     // direct publishing
                     let directPub = function( topic, message ) {
-                        if( config.logMqtt ) {
-                            log( 'Publishing MQTT: ' + topic + ' = ' + message );
-                        }
-                        mqttClient.publish( topic, message.toString(), config.mqttPubOptions );
+                        optimizedPublish( topic, message, ctx );
                     };
 
                     // notification by property
@@ -312,10 +332,7 @@ var mqttlib = new function() {
         }
 
         function publishImpl( finalMessage ) {
-            if( config.logMqtt ) {
-                log( 'Publishing MQTT: ' + topic + ' = ' + finalMessage );
-            }
-            mqttClient.publish( topic, finalMessage.toString(), config.mqttPubOptions );
+            optimizedPublish( topic, finalMessage, ctx );
         }
 
         // publish directly or through codec

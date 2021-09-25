@@ -382,10 +382,13 @@
                 "getRotationDirection": "test/fan/getRotationDirection",
                 "setRotationDirection": "test/fan/setRotationDirection",
                 "setRotationSpeed": "test/fan/setRotationSpeed",
-                "getRotationSpeed": "test/fan/getRotationSpeed"
+                "getRotationSpeed": "test/fan/getRotationSpeed",
+                "setOn": "test/fan/setOn",
+                "getOn": "test/fan/getOn"
             },
             "integerValue": true,
-            "accessory": "mqttthing"
+            "accessory": "mqttthing",
+            "optimizePublishing": true
         },
         {
             "accessory": "mqttthing",
