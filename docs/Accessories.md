@@ -126,7 +126,9 @@ The filter life level is used to indicate remaining filter life level in percent
 
 Air quality state can be `UNKNOWN`, `EXCELLENT`, `GOOD`, `FAIR`, `INFERIOR` or `POOR`. To use different values, specify them in **airQualityValues** in that order.
 
-For Air Quality History (in the Eve-App) you have to use `getAirQualityPPM`.
+For Air Quality History (in the Eve-App) you have to use `getVOCDensity` (Eve Room 2) or `getAirQualityPPM` (Eve Room 1).
+
+History records need to be cleared when Migrating from Room 1 to Room 2 because they are not compatible.
 
 ```javascript
 {
@@ -157,7 +159,8 @@ For Air Quality History (in the Eve-App) you have to use `getAirQualityPPM`.
         "getCurrentRelativeHumidity": "<topic used to provide 'current relative humidity' (optional)>"
     },
     "airQualityValues": [ "unknown-value", "excellent-value", "good-value", "fair-value", "inferior-value", "poor-value" ],
-    "history": "<true to enable History service for Eve App (optional)>"
+    "history": "<true to enable History service for Eve App (optional)>",
+    "room2": "<true to enable Room 2 support for Eve App (optional)>"
 }
 ```
 
