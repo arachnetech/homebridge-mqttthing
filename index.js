@@ -1279,7 +1279,7 @@ function makeThing( log, accessoryConfig, api ) {
                 // MQTT set (Homekit get)
                 if( getTopic ) {
                     mqttSubscribe( getTopic, property, function( topic, message ) {
-                        let data = message?.toString() ?? '';
+                        let data = message ? message.toString() : '';
                         let newState = mqttToHomekit[ data ];
                         if( newState !== undefined && ( eventOnly || state[ property ] != newState ) ) {
                             if( config.logMqtt ) {

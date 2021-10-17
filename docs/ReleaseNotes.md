@@ -5,6 +5,9 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.32
++ Improve compatibility with older Node.js versions
+
 ### Version 1.1.31
 + Improve null handling (multicharacteristic) (thanks, Jakub Samek)
 + Added optimizePublishing option
