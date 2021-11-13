@@ -44,7 +44,7 @@ The following settings apply to all device types:
     "username": "MQTT_username",
     "password": "MQTT_password",
     "mqttOptions": { "keepalive": 30 },
-    "mqttPubOptions": { "retain": true },
+    "mqttPubOptions": { "retain": false },
     "logMqtt": true,
     "topics": {
         "getName": 	        "my/get/name/topic",
