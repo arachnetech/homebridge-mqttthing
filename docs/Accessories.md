@@ -790,6 +790,7 @@ Configure `restrictTargetState` to an array of integers to restrict the target s
         "getCurrentState":   "<topic used to get 'current state'>",
         "getStatusFault":    "<topic used to provide 'fault' status (optional)>",
         "getStatusTampered": "<topic used to provide 'tampered' status (optional)>"
+        "getAltStatusTriggered": "<topic used to provide an alternative 'triggered' boolean status (optional)>"
     },
     "targetStateValues": [ "StayArm", "AwayArm", "NightArm", "Disarmed" ],
     "currentStateValues": [ "StayArm", "AwayArm", "NightArm", "Disarmed", "Triggered" ],
