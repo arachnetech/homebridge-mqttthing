@@ -2662,7 +2662,6 @@ function makeThing( log, accessoryConfig, api ) {
                 if( config.topics.getAltStatusTriggered ) {
                     characteristic_AltStatusTriggered( service );
                 }
-                
                 if( config.topics.getStatusLowBattery ) {
                     characteristic_StatusLowBattery( service );
                 }
