@@ -69,6 +69,7 @@
   "dependencies": {
     "fakegato-history": "^0.6.1",
     "homebridge-lib": "~5.1.4",
+    "jsonpath": "^1.1.1",
     "mqtt": "^4.2.6"
   }
 }
