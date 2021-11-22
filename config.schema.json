@@ -1019,6 +1019,13 @@
                             "functionBody": "return ['airPressureSensor','airQualitySensor','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','securitySystem','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
                         }
                     },
+                    "getAltStatusTriggered": {
+                        "type": "string",
+                        "description": "Topic used to notify mqttthing that an alarm Triggered has been achieved. HomeKit will expect current state to end up matching target state.",
+                        "condition": {
+                            "functionBody": "return ['securitySystem'].includes(model.type);"
+                        }
+                    },
                     "getSulphurDioxideDensity": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'sulphur dioxide density'",
@@ -1811,6 +1818,7 @@
                 "topics.getStatusLowBattery",
                 "topics.getChargingState",
                 "topics.getStatusTampered",
+                "topics.getAltStatusTriggered",
                 "topics.getOnline",
                 "topics.getFilterChangeIndication",
                 "topics.getFilterLifeLevel",
