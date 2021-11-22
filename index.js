@@ -1540,7 +1540,7 @@ function makeThing( log, accessoryConfig, api ) {
             
             // Characteristic.AltStatusTriggered : This helps to use multisensor securitySystem (one for the ARMED/DISARMED and on another for the triggered sensor)
             function characteristic_AltStatusTriggered ( service ) {
-                multiCharacteristic( service, 'altStatusTriggered', Characteristic.AltStatusTriggered, null, config.topics.getAltStatusTriggered );
+                booleanCharacteristic( service, 'altStatusTriggered', Characteristic.AltStatusTriggered, null, config.topics.getAltStatusTriggered );
             }
 
             // Characteristic.StatusLowBattery
