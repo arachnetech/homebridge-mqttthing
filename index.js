@@ -1537,6 +1537,11 @@ function makeThing( log, accessoryConfig, api ) {
             function characteristic_StatusTampered( service ) {
                 booleanCharacteristic( service, 'statusTampered', Characteristic.StatusTampered, null, config.topics.getStatusTampered );
             }
+            
+            // Characteristic.AltStatusTriggered : This helps to use multisensor securitySystem (one for the ARMED/DISARMED and on another for the triggered sensor)
+            function characteristic_AltStatusTriggered ( service ) {
+                booleanCharacteristic( service, 'altStatusTriggered', Characteristic.AltStatusTriggered, null, config.topics.getAltStatusTriggered );
+            }
 
             // Characteristic.StatusLowBattery
             function characteristic_StatusLowBattery( service ) {
@@ -2654,6 +2659,10 @@ function makeThing( log, accessoryConfig, api ) {
                 if( config.topics.getStatusTampered ) {
                     characteristic_StatusTampered( service );
                 }
+                if( config.topics.getAltStatusTriggered ) {
+                    characteristic_AltStatusTriggered( service );
+                }
+                
                 if( config.topics.getStatusLowBattery ) {
                     characteristic_StatusLowBattery( service );
                 }
@@ -2953,6 +2962,9 @@ function makeThing( log, accessoryConfig, api ) {
                 }
                 if( config.topics.getStatusTampered ) {
                     characteristic_StatusTampered( service );
+                }
+                if( config.topics.getAltStatusTriggered ) {
+                    characteristic_AltStatusTriggered( service );
                 }
                 // todo: SecuritySystemAlarmType
             } else if( configType == "smokeSensor" ) {
