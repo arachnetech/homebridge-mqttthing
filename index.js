@@ -1691,6 +1691,18 @@ function makeThing( log, accessoryConfig, api ) {
                 floatCharacteristic( service, 'windSpeed', Eve.Characteristics.WindSpeed, null, config.topics.getWindSpeed, 0 );
             }
 
+            // Characteristic.maxWind (Eve-only)
+            function characteristic_MaximumWindSpeed( service ) {
+                service.addOptionalCharacteristic( Eve.Characteristics.MaximumWindSpeed ); // to avoid warnings
+                floatCharacteristic( service, 'maxWind', Eve.Characteristics.MaximumWindSpeed, null, config.topics.getmaxWind, 0 );
+            }
+            
+            // Characteristic.Dewpoint(Eve-only)
+            function characteristic_DewPoint( service ) {
+                service.addOptionalCharacteristic( Eve.Characteristics.DewPoint ); // to avoid warnings
+                floatCharacteristic( service, 'DewPoint', Eve.Characteristics.DewPoint, null, config.topics.getDewPoint, 0 );
+            }
+            
             // Characteristic.ContactSensorState
             function characteristic_ContactSensorState( service ) {
                 booleanCharacteristic( service, 'contactSensorState', Characteristic.ContactSensorState,
@@ -2822,6 +2834,14 @@ function makeThing( log, accessoryConfig, api ) {
                 }
                 if( config.topics.getWindSpeed ) {
                     characteristic_WindSpeed( weatherSvc );
+                    addWeatherSvc = true;
+                }
+                 if( config.topics.getmaxWind ) {
+                    characteristic_MaximumWindSpeed( weatherSvc );
+                    addWeatherSvc = true;
+                }
+                if( config.topics.getDewPoint ) {
+                    characteristic_DewPoint( weatherSvc );
                     addWeatherSvc = true;
                 }
                 if( addWeatherSvc ) {
