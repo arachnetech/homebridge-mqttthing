@@ -1,5 +1,6 @@
 /**
-Un codec pour convertir un simple switch en control d'AMAX
+A codec to use Shellies Gen1 or Gen2 swith and sensors to control a Bosh AMAX securitySystem
+Eloi Primaux - 
 
 Place this file alongside your
 config.json file, and add the following simple config:
