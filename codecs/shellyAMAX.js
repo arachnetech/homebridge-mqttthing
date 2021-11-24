@@ -1,6 +1,5 @@
 /**
 A codec to use Shellies Gen1 or Gen2 swith and sensors to control a Bosh AMAX securitySystem
-Eloi Primaux - 
 
 Place this file alongside your
 config.json file, and add the following simple config:
@@ -57,7 +56,7 @@ function init( params ) {
        	Switch_ARM_Topic = "/rcp",
     	Switch_DISARM_Topic = Switch_ARM_Topic ;
     
-    // definition des topics 
+    // Topics definition
     if (config.ShellyGen == 1) {
     	Switch_ARM_Topic = config.AMAXswitch_ARM + "/relay/" + config.AMAXswitch_ARM_ID.toString() + "/command";
     	Switch_DISARM_Topic = config.AMAXswitch_DISARM + "/relay/" + config.AMAXswitch_DISARM_ID.toString() + "/command";
@@ -67,7 +66,7 @@ function init( params ) {
     	TRIGTopic = "/input/" + config.AMAXsensor_TRIG_ID.toString();
 
 	config.topics = {
-		"getCurrentState":config.AMAXsensor_ARM + ARMTopic,
+	"getCurrentState":config.AMAXsensor_ARM + ARMTopic,
         "getTargetState":config.AMAXsensor_ARM + ARMTopic,
         "setTargetState":Switch_ARM_Topic, // Caution, two methods could exist
         "getAltSensorState":config.AMAXsensor_TRIG + TRIGTopic
@@ -91,11 +90,11 @@ function init( params ) {
             //getTargetState return targetState
             if (msg == 0) {
             	target_state = "AA";
-				notify(config.targetState,1);        	
+		notify(config.targetState,1);        	
             }
             else {
             	target_state = "D";
-          		notify(config.targetState,3);
+          	notify(config.targetState,3);
             }
             output(target_state);
         }
@@ -105,17 +104,16 @@ function init( params ) {
             	if (trigger_state === true ) {current_state = "T"; current_state_id = 4;}
             	else {current_state = "AA"; current_state_id = 1;}	
             	log(`Notifying currentState = ${current_state_id}`);
-          		notify(config.currentState,current_state_id);        	
+          	notify(config.currentState,current_state_id);	
             }
             else {
             	current_state = "D";
-          		notify(config.currentState,3);        	
+          	notify(config.currentState,3);        	
             }
-			output(current_state);
-		}
+		output(current_state);
+	}
 
         if (info.property == "getAltSensorState") {
-        // je retourne l'état du capteur sans délais quelque soit la demande
             if (msg == config.AMAXsensor_TriggeredState && current_state == "AA") {
             	trigger_state = true;
             	log("Trigger detected , notifying !!!");
@@ -124,9 +122,9 @@ function init( params ) {
             else {
             	trigger_state = false;
             	log("Trigger not detected, nothing to do");     	
-            	}
-			return trigger_state;
-		}
+            }
+		return trigger_state;
+	}
 
 /** TODO
         if (info.property == "statusTampered") {
@@ -158,13 +156,13 @@ function init( params ) {
 				// et on envoie un pulse unique
 				if (config.ShellyGen == 1) {
 					publish(Switch, "on");
-	//				publish(Switch, false);
+//					publish(Switch, false);
 				}
 				else {
         			publish(Switch, JSON.stringify({id: 123, src: 'user_1',
         				method: 'Switch.Set', params: {id: Switch_ID, on: true}}));
   //      			setTimeout(publish(Switch, JSON.stringify({id: 123, src: 'user_1',
-  //      				method: 'Switch.Set', params: {id: Switch_ID, on: false}})),100);
+  //      				method: 'Switch.Set', params: {id: Switch_ID, on: false}})),1000);
 				}
 			}
 		}
