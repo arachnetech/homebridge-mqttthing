@@ -1,5 +1,5 @@
 /**
-A codec to use Shellies Gen1 or Gen2 swith and sensors to control a Bosh AMAX securitySystem
+A codec to use Shellies Gen1 or Gen2 switch and sensors to control a Bosh AMAX securitySystem
 
 Place this file alongside your
 config.json file, and add the following simple config:
@@ -56,7 +56,7 @@ function init( params ) {
        	Switch_ARM_Topic = "/rcp",
     	Switch_DISARM_Topic = Switch_ARM_Topic ;
     
-    // Topics definition
+    // Topics settings, could be better coded inside the let declaration
     if (config.ShellyGen == 1) {
     	Switch_ARM_Topic = config.AMAXswitch_ARM + "/relay/" + config.AMAXswitch_ARM_ID.toString() + "/command";
     	Switch_DISARM_Topic = config.AMAXswitch_DISARM + "/relay/" + config.AMAXswitch_DISARM_ID.toString() + "/command";
@@ -68,8 +68,8 @@ function init( params ) {
 	config.topics = {
 	"getCurrentState":config.AMAXsensor_ARM + ARMTopic,
         "getTargetState":config.AMAXsensor_ARM + ARMTopic,
-        "setTargetState":Switch_ARM_Topic, // Caution, two methods could exist
-        "getAltSensorState":config.AMAXsensor_TRIG + TRIGTopic
+        "setTargetState":Switch_ARM_Topic, // Caution, two methods could exist, this only set one
+        "getAltSensorState":config.AMAXsensor_TRIG + TRIGTopic // change "getAltSensorState" to "getFaultState" if you use mqtthing 1.32
     };
     
     log(`Starting Bosh AMAX key switch Codec for ${config.name} with sensors:
@@ -90,11 +90,11 @@ function init( params ) {
             //getTargetState return targetState
             if (msg == 0) {
             	target_state = "AA";
-		notify(config.targetState,1);        	
+		notify(config.targetState,1); // not sure it works, i may not undestand well this function	
             }
             else {
             	target_state = "D";
-          	notify(config.targetState,3);
+          	notify(config.targetState,3); // but if it works, that's a cool way to speed up things
             }
             output(target_state);
         }
@@ -108,11 +108,12 @@ function init( params ) {
             }
             else {
             	current_state = "D";
-          	notify(config.currentState,3);        	
+          	notify(config.currentState,3);
             }
 		output(current_state);
 	}
-
+	    
+//	Here we use the AltSensorState, if the topic is not available you could use the Tampered/FaultState instead
         if (info.property == "getAltSensorState") {
             if (msg == config.AMAXsensor_TriggeredState && current_state == "AA") {
             	trigger_state = true;
@@ -126,23 +127,32 @@ function init( params ) {
 		return trigger_state;
 	}
 
-/** TODO
-        if (info.property == "statusTampered") {
-
-		}
+/** Use this one if you use mqtthing 1.32
+        if (info.property == "getFaultState") {
+            if (msg == config.AMAXsensor_TriggeredState && current_state == "AA") {
+            	trigger_state = true;
+            	log("Trigger detected , notifying !!!");
+            	notify(config.currentState,4);        	
+            }
+            else {
+            	trigger_state = false;
+            	log("Trigger not detected, nothing to do");     	
+            }
+		return trigger_state;
+	}
 **/
 	}
 
 	function encodeAMAX(message, info, output) {
     	log(`encoding + [${info.property}] with message [${message}]`);
         if (info.property == "targetState") {
-        	if (message == target_state ) { return undefined;} // RAS l'info est déja passée
+        	if (message == target_state ) { return undefined;} // nothing to do, things going on
         	if (message == "AA" || message == "D") {
-        		// si nécessaire on publie le changement d'état
+        		// if needed we publish the changing state
         		if (message == "AA") {
         			State = true; Switch = Switch_ARM_Topic;
         			Switch_ID = config.AMAXswitch_ARM_ID;
-        			notify(config.target_state,1);
+        			notify(config.target_state,1); // not sure it works
         			notify(config.current_state,1);
         		}
         		else {
@@ -151,12 +161,11 @@ function init( params ) {
         			notify(config.target_state,3);
         			notify(config.current_state,3);
         		}
-				// on enregistre la requête
-				target_state = message; target_time = d;
-				// et on envoie un pulse unique
+				target_state = message;
+				// sending a pulse, check you Shelly setting to enable auto-off if needed
 				if (config.ShellyGen == 1) {
 					publish(Switch, "on");
-//					publish(Switch, false);
+//					setTimeOut(publish(Switch, false),1000);
 				}
 				else {
         			publish(Switch, JSON.stringify({id: 123, src: 'user_1',
