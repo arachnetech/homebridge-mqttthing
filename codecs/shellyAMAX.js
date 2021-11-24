@@ -1,8 +1,8 @@
 /**
-Un codec pour convertir un simple switch en control d'AMAX
+A codec to control an Bosch AMAX with Shellies switchs
 
 Place this file alongside your
-config.json file, and add the following simple config:
+config.json file, and add the following config:
        {
              
             "name": "AMAX",
@@ -23,7 +23,7 @@ config.json file, and add the following simple config:
             "AMAXsensor_TRIG": "shellies/shellyuni-98CDAC2XXXX",
             "AMAXsensor_TRIG_ID": 1,
             "AMAXsensor_TriggeredState": 0,
-            "AMAXsensor_Alt": "shellies/shellyuni-98CDAC2XXXX",
+            "AMAXsensor_Alt": "shellies/shellyuni-98CDAC2XXXX", // for silent or medical trigger
             "AMAXsensor_Alt_ID": 1,
             "AMAXsensor_AltState": 0,
             "targetStateValues": [
@@ -59,7 +59,7 @@ function init( params ) {
     	Switch_DISARM_Topic = Switch_ARM_Topic,
     	ARMTopic = "/status/input:" + config.AMAXsensor_ARM_ID.toString(),
     	TRIGTopic = "/status/input:" + config.AMAXsensor_TRIG_ID.toString();
-   // 	AltTopic="/status/input:" + config.AMAXsensor_Alt_ID; uncomment to add AltSensorState
+   // let AltTopic="/status/input:" + config.AMAXsensor_Alt_ID; uncomment to add AltSensorState
     
     // topics definition 
     if (config.ShellyGen == 1) {
@@ -67,7 +67,7 @@ function init( params ) {
     	Switch_DISARM_Topic = config.AMAXswitch_DISARM + "/relay/" + config.AMAXswitch_DISARM_ID.toString() + "/command";
     	ARMTopic = "/input/" + config.AMAXsensor_ARM_ID.toString();
     	TRIGTopic = "/input/" + config.AMAXsensor_TRIG_ID.toString();
- //   	AltTopic = "/input/" + config.AMAXsensor_Alt_ID; // uncomment to add AltSensorState
+ //   	AltTopic = "/input/" + config.AMAXsensor_Alt_ID.toString; // uncomment to use it
     }
     
 
