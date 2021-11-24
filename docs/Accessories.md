@@ -771,6 +771,8 @@ Homebridge publishes a value to the **setTargetState** topic to indicate the sta
 
 Additionally, the alarm system may change its own target state by publishing to **getTargetState**. As with a homekit-controlled state change, this must be followed by a publish to **getCurrentState** to confirm that the change is complete. It is possible to set **getTargetState** and **getCurrentState** to the same MQTT topic, allowing the alarm system to change the target state and confirm that it has been achieved with a single MQTT message.
 
+If your system need an aditionnal sensor to detect the current states, you could set the **getAltSensorState** to the required sensor, and make your own rules in a codec.
+
 Configure `restrictTargetState` to an array of integers to restrict the target states made available by Homekit, where 0 represents STAY_ARM, 1 AWAY_ARM, 2 NIGHT_ARM and 3 DISARM, for example:
 
    * `"restrictTargetState": [0, 1, 3]` - for STAY_ARM, AWAY_ARM and DISARM (but no NIGHT_ARM)
@@ -804,6 +806,11 @@ Configure `restrictTargetState` to an array of integers to restrict the target s
 `getTargetState` - Topic that may be published to notify HomeKit that the target alarm state has been changed externally. Values are `targetStateValues`. May use same topic as `getCurrentState` as above. Omit if all control is through HomeKit.
 
 `getCurrentState` - Topic published to notify HomeKit that an alarm state has been achieved. HomeKit will expect current state to end up matching target state. Values are `currentStateValues`.
+
+### Addition topics
+
+`getAltSensorState` - Topic published to help discovery alarm states. Values are the alternate sensor values see the ShellyAMAX codec to know how to use it.
+
 
 ### Values
 
