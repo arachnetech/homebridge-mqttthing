@@ -2,7 +2,7 @@
 A codec to use Shellies Gen1 or Gen2 switch and sensors to control a Bosh AMAX securitySystem
 
 Place this file alongside your
-config.json file, and add the following simple config:
+config.json file, and add the following config:
        {
              
             "name": "AMAX",
@@ -12,7 +12,7 @@ config.json file, and add the following simple config:
             "password": "passwd",
             "type": "securitySystem",
             "codec": "ShellyAMAX.js",
-            "ShellyGen": 1,
+            "ShellyGen": 1,  // 1 for gen1 and 2 for gen2
             "AMAXswitch_ARM": "shellies/shellyuni-98CDAC25XXXX",
             "AMAXswitch_ARM_ID": 0,
             "AMAXswitch_DISARM": "shellies/shellyuni-98CDAC2XXXX",
