@@ -17,3 +17,4 @@ test2/.uix-secrets
 test2/auth.json
 test2/config.json.*
 test2/persist/ControllerStorage.*.json
+test2/backups/*

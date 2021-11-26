@@ -152,11 +152,10 @@
             "logMqtt": true
         },
         {
-            "url": "homebridge",
+            "url": "homebridge2",
             "type": "switch",
             "name": "Tasmota05s",
-            "username": "admin",
-            "password": "admin",
+            "logMqtt": true,
             "topics": {
                 "getOnline": "tele/tasmota05s/STATE",
                 "getOn": {
@@ -359,6 +358,22 @@
                 "properties": {
                     "switch": "action"
                 }
+            }
+        },
+        {
+            "accessory": "mqttthing",
+            "type": "statelessProgrammableSwitch",
+            "name": "Multi-switch",
+            "url": "homebridge2",
+            "logMqtt": true,
+            "topics": {
+                "getSwitch": [ {
+                    "topic": "test/multiswitch",
+                    "apply": "let msg = JSON.parse( message ); if( msg.id === 1 ) { return msg.state; } return null;"
+                }, {
+                    "topic": "test/multiswitch",
+                    "apply": "let msg = JSON.parse( message ); if( msg.id === 2 ) { return msg.state; }"
+                } ]
             }
         },
         {
