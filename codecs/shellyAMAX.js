@@ -1,6 +1,8 @@
 /**
 A codec to control an Bosch AMAX with Shellies switchs
-
+based on ikeaBlindZ2M codec by J.D. Smith
+(c) Ferme de Pommerieux
+License: Apache 2.0
 Place this file alongside your
 config.json file, and add the following config:
        {
