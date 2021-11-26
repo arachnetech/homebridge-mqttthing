@@ -250,6 +250,9 @@ var mqttlib = new function() {
                     let decoded;
                     try {
                         decoded = applyFn( message, getApplyState( ctx, property ) );
+                        if( config.logMqtt ) {
+                            log( 'apply() function decoded message to [' + decoded + ']' );
+                        }
                     } catch( ex ) {
                         log( 'Decode function apply( message) { ' + extendedTopic.apply + ' } failed for topic ' + topic + ' with message ' + message + ' - ' + ex );
                     }
