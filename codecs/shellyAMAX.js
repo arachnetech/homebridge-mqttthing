@@ -13,19 +13,37 @@ config.json file, and add the following config:
             "type": "securitySystem",
             "codec": "ShellyAMAX.js",
             "ShellyGen": 1,
-            "AMAXswitch_ARM": "shellies/shellyuni-98CDAC25XXXX",
-            "AMAXswitch_ARM_ID": 0,
-            "AMAXswitch_DISARM": "shellies/shellyuni-98CDAC2XXXX",
-            "AMAXswitch_DISARM_ID": 0,
-            "AMAXsensor_ARM": "shellies/shellyuni-98CDACXXXX",
-            "AMAXsensor_ARM_ID": 0,
-            "AMAXsensor_ARMEDState": 1,
-            "AMAXsensor_TRIG": "shellies/shellyuni-98CDAC2XXXX",
-            "AMAXsensor_TRIG_ID": 1,
-            "AMAXsensor_TriggeredState": 0,
-            "AMAXsensor_Alt": "shellies/shellyuni-98CDAC2XXXX", // for silent or medical trigger
-            "AMAXsensor_Alt_ID": 1,
-            "AMAXsensor_AltState": 0,
+            "AMAX": {
+            	"setState": {
+            		"Armed": {
+            			"name": "shellies/shellyuni-98CDAC25XXXX",
+            			"id": 0,
+            			"ACTIVE": "on"
+            			},
+            		"Disarmed": {
+            			"name":"shellies/shellyuni-98CDAC25XXXX",
+            			"id": 0,
+            			"ACTIVE": "on"
+            			}
+            	},
+            	"getState": {
+            		"Armed": {
+            			"name": "shellies/shellyuni-98CDAC25XXXX",
+            			"id": 0,
+            			"ACTIVE": 1
+            			},
+            		"Triggered": {
+            			"name": "shellies/shellyuni-98CDAC25XXXX",
+            			"id": 1,
+            			"ACTIVE": 0
+            			},
+            		"AltTriggered": {
+            			"name": "shellies/shellyuni-98CDAC25XXXX",
+            			"id": 1,
+            			"ACTIVE": 1
+            			}
+            	}
+            },
             "targetStateValues": [
                 "SA",
                 "AA",
@@ -51,69 +69,77 @@ config.json file, and add the following config:
 **/
 
 function init( params ) {
-    let { log, config, publish, notify } = params;
-    let target_state=null,
-        current_state=null,
-        alt_trigger_state=null,
-       	Switch_ARM_Topic = "/rcp",
-    	Switch_DISARM_Topic = Switch_ARM_Topic,
-    	ARMTopic = "/status/input:" + config.AMAXsensor_ARM_ID.toString(),
-    	TRIGTopic = "/status/input:" + config.AMAXsensor_TRIG_ID.toString();
-   // let AltTopic="/status/input:" + config.AMAXsensor_Alt_ID; uncomment to add AltSensorState
-    
+    let { log, config, publish, notify } = params;   
+    let target_state="?", target_time=Date.now(), current_state="?",
+    	alt_trigger_state=null, AltTopic = null, msg = null,
+       	relay_Arm_Topic = "/rcp",
+    	relay_Disarm_Topic = relay_Arm_Topic
+    	ArmTopic = "/status/input:" + config.AMAX.getState.Armed.id,
+    	TrigTopic = "/status/input:" + config.AMAX.getState.Triggered.id,
+   		AltTopic="/status/input:" + config.AMAX.getState.AltTriggered.id;
+
     // topics definition 
     if (config.ShellyGen == 1) {
-    	Switch_ARM_Topic = config.AMAXswitch_ARM + "/relay/" + config.AMAXswitch_ARM_ID.toString() + "/command";
-    	Switch_DISARM_Topic = config.AMAXswitch_DISARM + "/relay/" + config.AMAXswitch_DISARM_ID.toString() + "/command";
-    	ARMTopic = "/input/" + config.AMAXsensor_ARM_ID.toString();
-    	TRIGTopic = "/input/" + config.AMAXsensor_TRIG_ID.toString();
- //   	AltTopic = "/input/" + config.AMAXsensor_Alt_ID.toString; // uncomment to use it
-    }
+    	relay_Arm_Topic = config.AMAX.setState.Armed.name + "/relay/" +
+    		config.AMAX.setState.Armed.id + "/command";
+    	relay_Disarm_Topic = config.AMAX.setState.Disarmed.name + "/relay/" +
+    		config.AMAX.setState.Disarmed.id + "/command";
+    	ArmTopic = "/input/" + config.AMAX.getState.Armed.id;
+    	TrigTopic = "/input/" + config.AMAX.getState.Triggered.id;
+   		AltTopic = "/input/" + config.AMAX.getState.AltTriggered.id;
+	}	
     
+	
+	 config.topics = {
+			"getCurrentState": config.AMAX.getState.Triggered.name + TrigTopic,
+        	"getTargetState": config.AMAX.getState.Armed.name + ArmTopic,
+        	"setTargetState": relay_Arm_Topic,
+        	"getAltSensorState": config.AMAX.getState.AltTriggered.name + AltTopic
+    };
 
-	config.topics = {
-		"getCurrentState":config.AMAXsensor_TRIG + TRIGTopic,
-        "getTargetState":config.AMAXsensor_ARM + ARMTopic,
-        "setTargetState":Switch_ARM_Topic }; // Caution, two methods could exist
-    
-/* uncomment to add AltSensorState
-    if (typeof config.AMAXsensor_Alt != 'undefined' ) {
-		config.topics = Object.assign({},config.topics,"getAltSensorState":config.AMAXsensor_Alt + AltTopic);
-    }
-*/
-    
-    log(`Starting Bosh AMAX key switch Codec for ${config.name} with sensors:
-    	ARMED : ${config.AMAXsensor_ARM + ARMTopic}
-    	TRIGGERING : ${config.AMAXsensor_TRIG + TRIGTopic}
-    	and controls :
-    	ARM ${Switch_ARM_Topic}
-    	DISARM ${Switch_DISARM_Topic}`);    
+
+    log(`Starting Bosh AMAX key switch Codec for ${config.name}
+    getCurrentState: ${config.topics.getCurrentState}
+    getTargetState: ${config.topics.getTargetState}
+    setTargetState: ${config.topics.setTargetState}
+    getAltSensorState ${config.topics.getAltSensorState}
+    `);    
+
 
     function decodeAMAX( message, info, output ) { 
-    	log(`decoding + [${info.property}] with message [${message}]`);
-    	let msg = JSON.parse(message).state;
+    	if (config.logMqtt) {
+    		log(`decoding : [${info.property}] with message [${message}]`);
+    	}
+    	let msg = JSON.parse(message).state, d = Date.now();
         if (config.ShellyGen == 1) {
        		msg = message;
         }
-    
+   
         if (info.property == "targetState") {
             //getTargetState return targetState
-            if (msg == 0) {
+            if (msg == config.AMAX.getState.Armed.ACTIVE ) {
             	target_state = "AA";
 				notify(config.targetState,1);        	
             }
             else {
-            	target_state = "D";
-          		notify(config.targetState,3);
+            // wait until AMAX get ready and wait more 5s
+            	if (d - target_time > (config.AMAX.ArmingDelay + 5)*1000) {
+            		target_state = "D";
+          			notify(config.targetState,3);
+          		}
             }
             output(target_state);
         }
 
         // in this case we use getCurrentState to probe triggered state
         if (info.property == "currentState") {
-       		if (msg == config.AMAXsensor_TriggeredState || alt_trigger_state == true ) {
+        log(`Checking if message = ${config.AMAX.getState.Triggered.ACTIVE}`)
+       		if (msg == config.AMAX.getState.Triggered.ACTIVE ||
+       			alt_trigger_state == true ) {
 				current_state = "T"; current_state_id = 4;	
-            	log(`Notifying currentState = ${current_state_id}`);
+            	if (config.logMqtt) {
+            		log(`Notifying currentState = ${current_state_id}`);
+            	}
           		notify(config.currentState,current_state_id);        	
             }
             else {
@@ -123,65 +149,63 @@ function init( params ) {
 			output(current_state);
 		}
 
-/* uncomment to add AltSensorState
-// Here we use an alternate sensor to probe triggered state (like medical or silent trigger)
-        if (info.property == "getAltSensorState") {
-            if (msg == config.AMAXsensor_AltState) {
+		// Here we use an alternate sensor to probe triggered state (like medical or silent trigger)
+       if (info.property == "getAltSensorState") {
+            if (msg == config.AMAX.getState.AltTriggered.ACTIVE) {
             	alt_trigger_state = true;
-            	log("Alternative Trigger detected , notifying !!!");
+            	if (config.logMqtt) {log("Alternative Trigger detected , notifying !!!");}
             	notify(config.currentState,4);        	
             }
             else {
             	alt_trigger_state = false;
-            	log("Trigger not detected, nothing to do");     	
+            	if (config.logMqtt) {log("Trigger not detected, nothing to do");}   	
             	}
 			return alt_trigger_state;
 		}
 
-*/
-/** TODO
-        if (info.property == "statusTampered") {
-
-		}
-**/
 	}
 
 	function encodeAMAX(message, info, output) {
-    	log(`encoding + [${info.property}] with message [${message}]`);
-        if (info.property == "targetState") {
-        	if (message == target_state ) { return undefined;} // RAS l'info est déja passée
+    	if (config.logMqtt) {
+    		log(`encoding : [${info.property}] with message [${message}]`);
+    		}
+    	let d = Date.now(), relay=null, relay_id=null;
+    	
+    	if (info.property == "targetState") {
+        	if (message == target_state ) { return undefined;} // Nothing to do
         	if (message == "AA" || message == "D") {
         		// si nécessaire on publie le changement d'état
         		if (message == "AA") {
-        			State = true; Switch = Switch_ARM_Topic;
-        			Switch_ID = config.AMAXswitch_ARM_ID;
+        			relay = relay_Arm_Topic;
+        			relay_id = config.AMAX.setState.Armed.id;
         			notify(config.target_state,1);
         			notify(config.current_state,1);
         		}
         		else {
-        			State = false; Switch = Switch_DISARM_Topic;
-        			Switch_ID = config.AMAXswitch_DISARM_ID;
+        			relay = relay_Disarm_Topic;
+        			relay_id = config.AMAX.setState.Disarmed.id;
         			notify(config.target_state,3);
         			notify(config.current_state,3);
         		}
-				// on enregistre la requête
-				target_state = message;
-				// et on envoie un pulse unique
+				// save the request and keep time
+				target_state = message; target_time = d;
+				// Send a pulse
 				if (config.ShellyGen == 1) {
-					publish(Switch, "on");
-	//				publish(Switch, false);
+					publish(relay, config.AMAX.setState.Armed.ACTIVE);
+	//				publish(Switch, config.AMAX.setState.Disarmed.ACTIVE);
 				}
 				else {
-        			publish(Switch, JSON.stringify({id: 123, src: 'user_1',
-        				method: 'Switch.Set', params: {id: Switch_ID, on: true}}));
+        			publish(Switch, JSON.stringify({'id': 123, src: 'user_1',
+        				method: 'Switch.Set', params: {'id': relay_id, 'on': config.AMAX.setState.Armed.ACTIVE}}));
   //      			setTimeout(publish(Switch, JSON.stringify({id: 123, src: 'user_1',
-  //      				method: 'Switch.Set', params: {id: Switch_ID, on: false}})),100);
+  //      				method: 'Switch.Set', params: {id: relay_ID, on: config.AMAX.setState.Disarmed.ACTIVE}})),100);
 				}
 			}
 		}
 		return undefined;
+
 	}
-	
+
   return {
         encode: encodeAMAX,
         decode: decodeAMAX
