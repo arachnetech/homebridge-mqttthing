@@ -251,7 +251,7 @@ This section lists the properties available for each accessory type. All accesso
 
 ### Weather Station
 
-`currentTemperature`, `statusActive`, `statusFault`, `statusTampered`, `statusLowBattery`, `currentRelativeHumidity`, `airPressure`, `weatherCondition`, `rain1h`, `rain24h`, `uvIndex`, `visibility`, `windDirection`, `windSpeed`
+`currentTemperature`, `statusActive`, `statusFault`, `statusTampered`, `statusLowBattery`, `currentRelativeHumidity`, `airPressure`, `weatherCondition`, `rain1h`, `rain24h`, `uvIndex`, `visibility`, `windDirection`, `windSpeed`, `maxwindSpeed`, `Dewpoint`
 
 ### Window
 

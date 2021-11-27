@@ -13,6 +13,8 @@
 
 ## Compatibility with previous versions
 
+**From version 1.1.33, MQTT-Thing requires Node.js 14 or later.**
+
 **From version 1.1.x, raw JavaScript values for Boolean properties are passed to MQTT apply functions.** This may change published message formats, e.g. when apply functions are used to build JSON strings.
 
 For full details of changes please see the [Release notes](docs/ReleaseNotes.md).

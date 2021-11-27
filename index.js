@@ -12,6 +12,7 @@ var homebridgeLib = require( 'homebridge-lib' );
 var fakegatoHistory = require( 'fakegato-history' );
 var fs = require( "fs" );
 var path = require( "path" );
+var jp = require( "jsonpath" );
 var mqttlib = require( './libs/mqttlib' );
 const EventEmitter = require( 'events' );
 
@@ -46,8 +47,28 @@ function makeThing( log, accessoryConfig, api ) {
     }
 
     // MQTT Subscribe
-    function mqttSubscribe( topic, property, handler ) {
-        mqttlib.subscribe( ctx, topic, property, handler );
+    function mqttSubscribe( topicWithJsonpath, property, handler ) {
+        let jsonpathIndex = topicWithJsonpath.indexOf('$');
+        let topic = jsonpathIndex > 0 ? topicWithJsonpath.substring(0, jsonpathIndex) : topicWithJsonpath
+        let query = topicWithJsonpath.substring(jsonpathIndex);
+
+        mqttlib.subscribe( ctx, topic, property, function( topic, message ) {
+            log.debug(topic, String(message));
+
+            if (jsonpathIndex > 0 && query.length > 0) {
+                try {
+                    let json = JSON.parse(message);
+                    let values = jp.query(json, query);
+                    log.debug(topic, query, values);
+                    handler(topic, values.shift());
+                } catch(error) {
+                    log.error(topic, "error:", error, "message:", message);
+                    handler(topic, message);
+                }
+            } else {
+                handler(topic, message);
+            }
+        });
     }
 
     // MQTT Publish
@@ -1691,6 +1712,18 @@ function makeThing( log, accessoryConfig, api ) {
                 floatCharacteristic( service, 'windSpeed', Eve.Characteristics.WindSpeed, null, config.topics.getWindSpeed, 0 );
             }
 
+            // Characteristic.maxWind (Eve-only)
+            function characteristic_MaximumWindSpeed( service ) {
+                service.addOptionalCharacteristic( Eve.Characteristics.MaximumWindSpeed ); // to avoid warnings
+                floatCharacteristic( service, 'maxWind', Eve.Characteristics.MaximumWindSpeed, null, config.topics.getmaxWind, 0 );
+            }
+            
+            // Characteristic.Dewpoint(Eve-only)
+            function characteristic_DewPoint( service ) {
+                service.addOptionalCharacteristic( Eve.Characteristics.DewPoint ); // to avoid warnings
+                floatCharacteristic( service, 'DewPoint', Eve.Characteristics.DewPoint, null, config.topics.getDewPoint, 0 );
+            }
+            
             // Characteristic.ContactSensorState
             function characteristic_ContactSensorState( service ) {
                 booleanCharacteristic( service, 'contactSensorState', Characteristic.ContactSensorState,
@@ -1993,6 +2026,12 @@ function makeThing( log, accessoryConfig, api ) {
                 booleanCharacteristic( service, 'leakDetected', Characteristic.LeakDetected, null, config.topics.getLeakDetected, false, function( val ) {
                     return val ? Characteristic.LeakDetected.LEAK_DETECTED : Characteristic.LeakDetected.LEAK_NOT_DETECTED;
                 }, undefined, config.resetStateAfterms );
+            }
+
+            // Characteristic.WaterLevel
+            function characteristic_WaterLevel( service ) {
+              let options = { minValue: 0, maxValue: 100 }
+              integerCharacteristic( service, 'waterLevel', Characteristic.WaterLevel, config.topics.setWaterLevel, config.topics.getWaterLevel, options);
             }
 
             // Characteristic.TargetPosition
@@ -2450,11 +2489,11 @@ function makeThing( log, accessoryConfig, api ) {
                 }
                 if( !topic_setDuration ) {
                     /* no topic specified, but propery is still created internally */
-                    addCharacteristic( service, property_setDuration, Characteristic.SetDuration, 30, function() {
+                    addCharacteristic( service, property_setDuration, Characteristic.SetDuration, 1200, function() {
                         log.debug( 'set "' + property_setDuration + '" to ' + state[ property_setDuration ] + 's.' );
                     } );
                 } else {
-                    integerCharacteristic( service, property_setDuration, Characteristic.SetDuration, topic_setDuration, topic_getDuration, { initialValue: 30 } );
+                    integerCharacteristic( service, property_setDuration, Characteristic.SetDuration, topic_setDuration, topic_getDuration, { initialValue: 1200 } );
                 }
                 // minimum/maximum duration
                 if( config.minDuration !== undefined || config.maxDuration !== undefined ) {
@@ -2837,6 +2876,14 @@ function makeThing( log, accessoryConfig, api ) {
                     characteristic_WindSpeed( weatherSvc );
                     addWeatherSvc = true;
                 }
+                 if( config.topics.getmaxWind ) {
+                    characteristic_MaximumWindSpeed( weatherSvc );
+                    addWeatherSvc = true;
+                }
+                if( config.topics.getDewPoint ) {
+                    characteristic_DewPoint( weatherSvc );
+                    addWeatherSvc = true;
+                }
                 if( addWeatherSvc ) {
                     services.push( weatherSvc );
                 }
@@ -2968,6 +3015,9 @@ function makeThing( log, accessoryConfig, api ) {
             } else if( configType == "leakSensor" ) {
                 service = new Service.LeakSensor( name, subtype );
                 characteristic_LeakDetected( service );
+                if( config.topics.setWaterLevel || config.topics.getWaterLevel ) {
+                    characteristic_WaterLevel( service );
+                }
                 addSensorOptionalCharacteristics( service );
             } else if( configType == "microphone" ) {
                 service = new Service.Microphone( name, subtype );

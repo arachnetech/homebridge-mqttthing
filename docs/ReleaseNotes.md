@@ -5,6 +5,19 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.33
++ Revert change in 1.1.32. MQTT-Thing now requires Node.js 14 or later.
++ Engines updated to require Homebridge 1.3.5 and Node.js 14 (thanks, Donavan Becker)
++ Fixed typo in documentation (thanks, Brian White)
++ Fixed duration characteristic validation error message (thanks, Thomas Vandahl)
++ Moved codec loading earlier to allow codecs to manipulate the configuration (thanks, Martin)
++ Added water level characteristic to leak sensor (thanks, Moritz)
++ Added max wind and dewpoint characteristics to weather station (thanks, 2610)
++ Added jsonpath support (thanks, Antonio Yip)
+
+### Version 1.1.32
++ Improve compatibility with older Node.js versions
+
 ### Version 1.1.31
 + Improve null handling (multicharacteristic) (thanks, Jakub Samek)
 + Added optimizePublishing option
