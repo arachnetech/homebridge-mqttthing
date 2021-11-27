@@ -2128,6 +2128,11 @@ function makeThing( log, accessoryConfig, api ) {
                 floatCharacteristic( service, 'airQualityPPM', Eve.Characteristics.AirParticulateDensity, null, config.topics.getAirQualityPPM );
             }
 
+            // Eve.Characteristics.TemperatureDisplayUnits (Eve Room 2 only)
+            function characteristic_TemperatureDisplayUnits( service ) {
+                stringCharacteristic( service, 'temperatureDisplayUnits', Characteristic.TemperatureDisplayUnits, null, 'Celsius' )
+            }
+
             // History for Air Quality (Eve-only)
             function history_AirQualityPPM( historySvc ) {
                 if( config.topics.getAirQualityPPM ) {
@@ -2136,6 +2141,20 @@ function makeThing( log, accessoryConfig, api ) {
                         var logEntry = {
                             time: Math.floor( Date.now() / 1000 ),  // seconds (UTC)
                             ppm: parseFloat( message )  // fakegato-history logProperty 'ppm' for air quality sensor
+                        };
+                        historySvc.addEntry( logEntry );
+                    } );
+                }
+            }
+
+            // History for Air Quality (Eve Room 2 only)
+            function history_VOCDensity( historySvc ) {
+                if( config.topics.getVOCDensity ) {
+                    // additional MQTT subscription instead of set-callback due to correct averaging:
+                    mqttSubscribe( config.topics.getVOCDensity, 'VOCDensity', function( topic, message ) {
+                        var logEntry = {
+                            time: Math.floor( Date.now() / 1000 ),  // seconds (UTC)
+                            voc: parseFloat( message )  // fakegato-history logProperty 'voc' for air quality sensor
                         };
                         historySvc.addEntry( logEntry );
                     } );
@@ -3087,7 +3106,15 @@ function makeThing( log, accessoryConfig, api ) {
                     addSensorOptionalCharacteristics( humSvc );
                     services.push( humSvc );
                 }
-                if( config.history ) {
+                if( config.history && config.room2 ) {
+                    let historyOptions = new HistoryOptions();
+                    let historySvc = new HistoryService( 'room2', { displayName: name, log: log }, historyOptions );
+                    characteristic_TemperatureDisplayUnits( tempSvc );
+                    history_VOCDensity( historySvc );
+                    history_CurrentTemperature( historySvc );
+                    history_CurrentRelativeHumidity( historySvc );
+                    services.push( historySvc );
+                } else if( config.history ) {
                     let historyOptions = new HistoryOptions();
                     let historySvc = new HistoryService( 'room', { displayName: name, log: log }, historyOptions );
                     if( config.topics.getAirQualityPPM ) {
