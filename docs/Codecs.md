@@ -20,6 +20,7 @@ and generate additional messages as required.
    * [Example Codecs](#examples)
    * [Built-in Codecs](#built-in-codecs)
       * [JSON Codec](#json-codec-json)
+      * [Shelly AMAX Codec](#shelly-amax-codec-shellyamax)
 
 ## Structure
 
@@ -420,3 +421,71 @@ For example, the following accessory configuration:
 ... sends and receives messages like:
 
 `{"version":1,"sender":"MQTT-Thing","state":{"power":true,"rgb":"125,82,255"}}`
+
+### Shelly AMAX Codec (shellyAMAX)
+
+The shellyAMAX Codec, created by Ferme de Pommerieux, allows the use of a Bosch AMAX alarm system with Shelly switches.
+
+Example configuration:
+
+```json
+{
+    "name": "AMAX",
+    "accessory": "mqttthing",
+    "url": "url",
+    "username": "user",
+    "password": "passwd",
+    "type": "securitySystem",
+    "codec": "shellyAMAX",
+    "ShellyGen": 1,
+    "AMAX": {
+        "setState": {
+            "Armed": {
+                "name": "shellies/shellyuni-98CDAC25XXXX",
+                "id": 0,
+                "ACTIVE": "on"
+            },
+            "Disarmed": {
+                "name": "shellies/shellyuni-98CDAC25XXXX",
+                "id": 0,
+                "ACTIVE": "on"
+            }
+        },
+        "getState": {
+            "Armed": {
+                "name": "shellies/shellyuni-98CDAC25XXXX",
+                "id": 0,
+                "ACTIVE": 1
+            },
+            "Triggered": {
+                "name": "shellies/shellyuni-98CDAC25XXXX",
+                "id": 1,
+                "ACTIVE": 0
+            },
+            "AltTriggered": {
+                "name": "shellies/shellyuni-98CDAC25XXXX",
+                "id": 1,
+                "ACTIVE": 1
+            }
+        }
+    },
+    "targetStateValues": [
+        "SA",
+        "AA",
+        "NA",
+        "D"
+    ],
+    "currentStateValues": [
+        "SA",
+        "AA",
+        "NA",
+        "D",
+        "T"
+    ],
+    "restrictTargetState": [
+        1,
+        3
+    ],
+    "logMqtt": true
+}
+```
