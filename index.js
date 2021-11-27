@@ -1537,6 +1537,27 @@ function makeThing( log, accessoryConfig, api ) {
             function characteristic_StatusTampered( service ) {
                 booleanCharacteristic( service, 'statusTampered', Characteristic.StatusTampered, null, config.topics.getStatusTampered );
             }
+            
+            // Characteristic.AltSensorState to help detecting triggered state with multiple sensors
+            function characteristic_AltSensorState( service ) {
+            // additional MQTT subscription instead of set-callback due to correct averaging:
+            	mqttSubscribe( config.topics.getAltSensorState, 'AltSensorState', function( topic, message ) {
+ 						// determine whether this is an on or off value
+                        let newState = false; // assume off
+                        if( isRecvValueOn( message ) ) {
+                            newState = true; // received on value so on
+                        } else if( !isRecvValueOff( message ) ) {
+                            // received value NOT acceptable as 'off' so ignore message
+                            return;
+                        }
+
+                        // if changed, set
+                        if( state[ property ] != newState ) {
+                            state[ property ] = newState;
+                            propChangedHandler();
+                        }
+                    } );
+            }
 
             // Characteristic.StatusLowBattery
             function characteristic_StatusLowBattery( service ) {
@@ -2972,6 +2993,9 @@ function makeThing( log, accessoryConfig, api ) {
                 }
                 if( config.topics.getStatusTampered ) {
                     characteristic_StatusTampered( service );
+                }
+                if( config.topics.getAltSensorState ) {
+                    characteristic_AltSensorState( service );
                 }
                 // todo: SecuritySystemAlarmType
             } else if( configType == "smokeSensor" ) {
