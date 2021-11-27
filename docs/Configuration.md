@@ -27,6 +27,7 @@ MQTT topics used fall into two categories:
    * [History Service](#history-service)
    * [Confirmation](#confirmation)
    * [Codecs](#codecs)
+   * [JSONPath](#jsonpath)
    * [Validation](#validation)
    * [Accessories](#accessories)
    * [Grouped Accessories](#grouped-accessories)
@@ -115,7 +116,8 @@ MQTT Topics are configured within a `topics` object. Most topics are optional (i
 
 ### Apply Functions
 
-User functions may be applied to MQTT messages for custom payload encoding/decoding. Apply functions do this within the main configuration file, but are not supported by config-ui-x. Alternatively, an external codec may be used (see [Codecs](#codecs)).
+User functions may be applied to MQTT messages for custom payload encoding/decoding. Apply functions do this within the main configuration file, but are not supported by config-ui-x. Alternatively, an external codec may be used (see [Codecs](#codecs)). When parsing JSON from messages, the [JSONPath](#jsonpath) support
+may be useful.
 
 If an MQTT message is not a simple value or does not match the expected syntax, it is possible to specify a JavaScript function that is called for the message every time it is received/published. For this, the topic string in the configuration can be replaced with an object with these properties:
 
@@ -239,6 +241,46 @@ Rather like [apply functions](#apply-functions), a codec can be used to apply tr
 in a separate JavaScript file which is referenced by the configuration.
 
 For further details, please see [Codecs.md](Codecs.md).
+
+### JSONPath
+
+As a simple alternative to [apply functions](#apply-functions) or [Codecs](#codecs), [JSONPath syntax](https://github.com/dchester/jsonpath#jsonpath-syntax) 
+may now be used - introduced with a `$` at the topic name.
+
+For example, using the following configuration:
+
+```json
+    {
+    "type": "humiditySensor",
+    "name": "Sonoff-sv-humidity",
+    "topics": {
+        "getCurrentRelativeHumidity": "tele/sonoff-sv/SENSOR$.DHT11.Humidity"
+    },
+    "accessory": "mqttthing"
+    },
+    {
+    "type": "temperatureSensor",
+    "name": "Sonoff-sv-temperature",
+    "topics": {
+        "getCurrentTemperature": "tele/sonoff-sv/SENSOR$.DHT11.Temperature"
+    },
+    "accessory": "mqttthing"
+    }
+```
+
+Published message:
+
+```
+topic: tele/sonoff-sv/SENSOR
+message: {"Time":"2021-08-26T15:35:01","DHT11":{"Temperature":19.0,"Humidity":35.0},"TempUnit":"C"}
+```
+
+Results:
+
+```
+Sonoff-sv-humidity : 35
+Sonoff-sv-temperature: 19
+```
 
 ### Validation
 
