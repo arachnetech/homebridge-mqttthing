@@ -14,6 +14,10 @@
 + Added water level characteristic to leak sensor (thanks, Moritz)
 + Added max wind and dewpoint characteristics to weather station (thanks, 2610)
 + Added jsonpath support (thanks, Antonio Yip)
++ Added Eve Room 2 support for air quality sensor (thanks, D4rk)
++ Don't set MQTT retain in example config (thanks, iGod42)
++ Added AltSensorState to alarm system (thanks, Ferme de Pommerieux)
++ Added codec for Bosch AMAX with Shelly switches (thanks, Ferme de Pommerieux)
 
 ### Version 1.1.32
 + Improve compatibility with older Node.js versions
