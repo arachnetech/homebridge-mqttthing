@@ -2488,13 +2488,21 @@ function makeThing( log, accessoryConfig, api ) {
                         topic_getDuration = subConfig.topics.getDuration;
                     }
                 }
+
+                let initialValue = 1200;
+                if( config.minDuration !== undefined && initialValue < config.minDuration ) {
+                    initialValue = config.minDuration;
+                } else if( config.maxDuration !== undefined && initialValue > config.maxDuration ) {
+                    initialValue = config.maxDuration;
+                }
+
                 if( !topic_setDuration ) {
                     /* no topic specified, but propery is still created internally */
-                    addCharacteristic( service, property_setDuration, Characteristic.SetDuration, 1200, function() {
+                    addCharacteristic( service, property_setDuration, Characteristic.SetDuration, initialValue, function() {
                         log.debug( 'set "' + property_setDuration + '" to ' + state[ property_setDuration ] + 's.' );
                     } );
                 } else {
-                    integerCharacteristic( service, property_setDuration, Characteristic.SetDuration, topic_setDuration, topic_getDuration, { initialValue: 1200 } );
+                    integerCharacteristic( service, property_setDuration, Characteristic.SetDuration, topic_setDuration, topic_getDuration, { initialValue } );
                 }
                 // minimum/maximum duration
                 if( config.minDuration !== undefined || config.maxDuration !== undefined ) {
