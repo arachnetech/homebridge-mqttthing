@@ -5,7 +5,8 @@
 
 const mqtt = require( "mqtt" );
 const path = require( "path" );
-const fs = require("fs");
+const fs = require( "fs" );
+const jsonpath = require( "jsonpath" );
 
 var mqttlib = new function() {
 
@@ -272,6 +273,9 @@ var mqttlib = new function() {
             };
             handler = function( intopic, message ) {
                 let decoded = codecDecode( message, { topic, property }, output );
+                if( config.logMqtt ) {
+                    log( 'codec decoded message to [' + decoded + ']' );
+                }
                 if( decoded !== undefined ) {
                     return output( decoded );
                 }
@@ -289,6 +293,24 @@ var mqttlib = new function() {
                 if( ctx.config.logMqtt ) {
                     log( 'Avalable codec notification property: ' + property );
                 }
+            }
+        }
+
+        // JSONPath
+        const jsonpathIndex = topic?.indexOf( '$' ) ?? -1;
+        if( jsonpathIndex > 0 ) {
+            let jsonpathQuery = topic.substring( jsonpathIndex );
+            topic = topic.substring( 0, jsonpathIndex );
+
+            const lastHandler = handler;
+            handler = function( intopic, message ) {
+                const json = JSON.parse( message );
+                const values = jsonpath.query( json, jsonpathQuery );
+                const output = values.shift();
+                if( config.logMqtt ) {
+                    log( `jsonpath ${jsonpathQuery} decoded message to [${output}]` );
+                }
+                return lastHandler( topic, output );
             }
         }
 

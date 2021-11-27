@@ -12,9 +12,9 @@ var homebridgeLib = require( 'homebridge-lib' );
 var fakegatoHistory = require( 'fakegato-history' );
 var fs = require( "fs" );
 var path = require( "path" );
-var jp = require( "jsonpath" );
 var mqttlib = require( './libs/mqttlib' );
 const EventEmitter = require( 'events' );
+const { config } = require( "process" );
 
 var Service, Characteristic, Eve, HistoryService;
 var homebridgePath;
@@ -47,28 +47,8 @@ function makeThing( log, accessoryConfig, api ) {
     }
 
     // MQTT Subscribe
-    function mqttSubscribe( topicWithJsonpath, property, handler ) {
-        let jsonpathIndex = topicWithJsonpath.indexOf('$');
-        let topic = jsonpathIndex > 0 ? topicWithJsonpath.substring(0, jsonpathIndex) : topicWithJsonpath
-        let query = topicWithJsonpath.substring(jsonpathIndex);
-
-        mqttlib.subscribe( ctx, topic, property, function( topic, message ) {
-            log.debug(topic, String(message));
-
-            if (jsonpathIndex > 0 && query.length > 0) {
-                try {
-                    let json = JSON.parse(message);
-                    let values = jp.query(json, query);
-                    log.debug(topic, query, values);
-                    handler(topic, values.shift());
-                } catch(error) {
-                    log.error(topic, "error:", error, "message:", message);
-                    handler(topic, message);
-                }
-            } else {
-                handler(topic, message);
-            }
-        });
+    function mqttSubscribe( topic, property, handler ) {
+        mqttlib.subscribe( ctx, topic, property, handler );
     }
 
     // MQTT Publish

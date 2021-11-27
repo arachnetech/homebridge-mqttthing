@@ -369,11 +369,12 @@
             "topics": {
                 "getSwitch": [ {
                     "topic": "test/multiswitch",
-                    "apply": "let msg = JSON.parse( message ); if( msg.id === 1 ) { return msg.state; } return null;"
+                    "apply": "let msg = JSON.parse( message ); if( msg.id === 1 ) { return msg.state; }"
                 }, {
                     "topic": "test/multiswitch",
                     "apply": "let msg = JSON.parse( message ); if( msg.id === 2 ) { return msg.state; }"
-                } ]
+                },
+                "test/multiswitch3$.state" ]
             }
         },
         {
