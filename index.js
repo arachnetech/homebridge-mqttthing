@@ -3077,6 +3077,17 @@ function makeThing( log, accessoryConfig, api ) {
                 if( config.topics.getObstructionDetected ) {
                     characteristic_ObstructionDetected( service );
                 }
+            } else if( configType == "door" ) {
+                service = new Service.Door( name, subtype );
+                characteristic_CurrentPosition( service );
+                characteristic_TargetPosition( service );
+                characteristic_PositionState( service );
+                if( config.topics.setHoldPosition ) {
+                    characteristic_HoldPosition( service );
+                }
+                if( config.topics.getObstructionDetected ) {
+                    characteristic_ObstructionDetected( service );
+                }
             } else if( configType == "airQualitySensor" ) {
                 service = new Service.AirQualitySensor( svcNames.airQuality || name, subtype );
                 characteristic_AirQuality( service );

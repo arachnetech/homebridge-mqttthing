@@ -5,6 +5,9 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.34
++ Added Door
+
 ### Version 1.1.33
 + Revert change in 1.1.32. MQTT-Thing now requires Node.js 14 or later.
 + Engines updated to require Homebridge 1.3.5 and Node.js 14 (thanks, Donavan Becker)

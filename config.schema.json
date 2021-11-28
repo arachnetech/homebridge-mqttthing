@@ -41,6 +41,12 @@
                         ]
                     },
                     {
+                        "title": "Door",
+                        "enum": [
+                            "door"
+                        ]
+                    },
+                    {
                         "title": "Doorbell",
                         "enum": [
                             "doorbell"
