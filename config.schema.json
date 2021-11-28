@@ -1596,6 +1596,22 @@
                     "functionBody": "return ['lightbulb','lightbulb-ColTemp'].includes(model.type);"
                 }
             },
+            "minPosition": {
+                "type": "integer",
+                "title": "Minimum position value",
+                "description": "Minimum position value for target position and current position",
+                "condition": {
+                    "functionBody": "return ['windowCovering','window','door'].includes(model.type);"
+                }
+            },
+            "maxPosition": {
+                "type": "integer",
+                "title": "Maximum position value",
+                "description": "Maximum position value for target position and current position",
+                "condition": {
+                    "functionBody": "return ['windowCovering','window','door'].includes(model.type);"
+                }
+            },
             "targetStateValues": {
                 "type": "array",
                 "items": {
@@ -1858,6 +1874,8 @@
                 "switchWhites",
                 "minColorTemperature",
                 "maxColorTemperature",
+                "minPosition",
+                "maxPosition",
                 "durationTimer",
                 "minDuration",
                 "maxDuration",

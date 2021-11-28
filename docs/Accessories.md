@@ -12,6 +12,7 @@ The following Homekit accessory types are supported by MQTT-Thing:
    * [Air Quality Sensor](#air-quality-sensor)
    * [Carbon Dioxide Sensor](#carbon-dioxide-sensor)
    * [Contact Sensor](#contact-sensor)
+   * [Door](#door)
    * [Doorbell](#doorbell)
    * [Fan](#fan)
    * [Garage door opener](#garage-door-opener)
@@ -220,6 +221,33 @@ If `history` is enabled, this plugin will count the number of openings and offer
     "history": "<true to enable History service for Eve App (optional)>"
 }
 ```
+
+
+## Door
+
+Door position state can be **DECREASING**, **INCREASING** or **STOPPED**. By default, these use values of `DECREASING`, `INCREASING`, and `STOPPED` respectively; these defaults can be changed using the **positionStateValues** setting.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "door",
+    "name": "<name of device>",
+    "topics":
+    {
+        "getCurrentPosition":           "<topic used to report current position (integer 0-100)>",
+        "setTargetPosition":            "<topic used to control target position (integer 0-100)>",
+        "getTargetPosition":            "<topic used to report target position (optional)>",
+        "getPositionState":             "<topic used to report position state>",
+        "setHoldPosition":              "<topic used to control hold position (Boolean)>",
+        "getObstructionDetected":       "<topic used to report whether an obstruction is detected (Boolean)>"
+    },
+    "positionStateValues": [ "decreasing-value", "increasing-value", "stopped-value" ],
+    "minPosition": 0,
+    "maxPosition": 100
+}
+```
+
+The optional `minPosition` and `maxPosition` allow the minimum and maximum position values to be changed from their defaults of 0 and 100 respectively.
 
 
 ## Doorbell
@@ -1198,9 +1226,13 @@ Window position state can be **DECREASING**, **INCREASING** or **STOPPED**. By d
         "setHoldPosition":              "<topic used to control hold position (Boolean)>",
         "getObstructionDetected":       "<topic used to report whether an obstruction is detected (Boolean)>"
     },
-    "positionStateValues": [ "decreasing-value", "increasing-value", "stopped-value" ]
+    "positionStateValues": [ "decreasing-value", "increasing-value", "stopped-value" ],
+    "minPosition": 0,
+    "maxPosition": 100
 }
 ```
+
+The optional `minPosition` and `maxPosition` allow the minimum and maximum position values to be changed from their defaults of 0 and 100 respectively.
 
 
 ## Window Covering
@@ -1227,6 +1259,10 @@ Window covering position state can be **DECREASING**, **INCREASING** or **STOPPE
         "getCurrentVerticalTiltAngle":   "<topic used to report current vertical tilt angle>",
         "getObstructionDetected":        "<topic used to report whether an obstruction is detected (Boolean)>"
     },
-    "positionStateValues": [ "decreasing-value", "increasing-value", "stopped-value" ]
+    "positionStateValues": [ "decreasing-value", "increasing-value", "stopped-value" ],
+    "minPosition": 0,
+    "maxPosition": 100
 }
 ```
+
+The optional `minPosition` and `maxPosition` allow the minimum and maximum position values to be changed from their defaults of 0 and 100 respectively.

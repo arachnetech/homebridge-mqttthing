@@ -2037,12 +2037,20 @@ function makeThing( log, accessoryConfig, api ) {
 
             // Characteristic.TargetPosition
             function characteristic_TargetPosition( service ) {
-                integerCharacteristic( service, 'targetPosition', Characteristic.TargetPosition, config.topics.setTargetPosition, config.topics.getTargetPosition );
+                integerCharacteristic( service, 'targetPosition', Characteristic.TargetPosition, config.topics.setTargetPosition, config.topics.getTargetPosition, {
+                    initialValue: config.minPosition || 0,
+                    minValue: config.minPosition,
+                    maxValue: config.maxPosition
+                } );
             }
 
             // Characteristic.CurrentPosition
             function characteristic_CurrentPosition( service ) {
-                integerCharacteristic( service, 'currentPosition', Characteristic.CurrentPosition, null, config.topics.getCurrentPosition );
+                integerCharacteristic( service, 'currentPosition', Characteristic.CurrentPosition, null, config.topics.getCurrentPosition, {
+                    initialValue: config.minPosition || 0,
+                    minValue: config.minPosition,
+                    maxValue: config.maxPosition
+                } );
             }
 
             // Characteristic.PositionState
