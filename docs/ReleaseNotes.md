@@ -7,6 +7,7 @@
 
 ### Version 1.1.34
 + Added Door
++ Add minimum and maximum position for window, door and windowCovering
 
 ### Version 1.1.33
 + Revert change in 1.1.32. MQTT-Thing now requires Node.js 14 or later.
