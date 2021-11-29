@@ -566,6 +566,20 @@
                 3
             ],
             "logMqtt": true
+        }, {
+            "accessory": "mqttthing",
+            "type": "door",
+            "name": "Door",
+            "url": "homebridge2",
+            "logMqtt": "true",
+            "topics": {
+                "getCurrentPosition": "test/door/getCurrentPosition",
+                "setTargetPosition": "test/door/setTargetPosition",
+                "getPositionState": "test/door/getPositionState"
+            },
+            "minPosition": 10,
+            "maxPosition": 60
         }
+
     ]
 }
