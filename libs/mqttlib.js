@@ -82,7 +82,7 @@ var mqttlib = new function() {
                             }
                         }
                     };
-                    
+
                     // initialise codec
                     let codec = ctx.codec = codecMod.init( { log, config, publish: directPub, notify: notifyByProp } );
                     if( codec ) {
@@ -103,7 +103,7 @@ var mqttlib = new function() {
             } else {
                 log.error( 'ERROR: Codec file [' + codecPath + '] does not exist' );
             }
-        }        
+        }
 
         // start with any configured options object
         var options = config.mqttOptions || {};
@@ -123,8 +123,8 @@ var mqttlib = new function() {
                 qos: 0,
                 retain: false
             },
-            username: config.username,
-            password: config.password,
+            username: config.username || process.env.MQTTTHING_USERNAME,
+            password: config.password || process.env.MQTTTHING_PASSWORD,
             rejectUnauthorized: false
         };
 
@@ -148,13 +148,13 @@ var mqttlib = new function() {
 
         // insecure
         if( options.insecure ) {
-            options.checkServerIdentity = function( /* servername, cert */ ) { 
-                return undefined; /* servername and certificate are verified */ 
+            options.checkServerIdentity = function( /* servername, cert */ ) {
+                return undefined; /* servername and certificate are verified */
             };
         }
 
         // add protocol to url string, if not yet available
-        let brokerUrl = config.url;
+        let brokerUrl = config.url || process.env.MQTTTHING_URL;
         if( brokerUrl && ! brokerUrl.includes( '://' ) ) {
             brokerUrl = 'mqtt://' + brokerUrl;
         }

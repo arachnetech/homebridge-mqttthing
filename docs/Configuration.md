@@ -100,6 +100,15 @@ When MQTTS (MQTT over TLS) is used, the `mqttOptions` object is passed through t
 
 `optimizePublishing` - Whenever publishing a message on any topic, don't republish the previously-published value.
 
+#### Env var overrides
+In addition to setting the MQTT settings in config, you can also set them using environment variable overrides. Configured values in the config.json will take prescendence over any environment variables.
+
+| Environment variable | Config key |
+|----------------------|------------|
+| MQTTTHING_USERNAME   | `username` |
+| MQTTTHING_PASSWORD   | `password` |
+| MQTTTHING_URL        | `url`      |
+
 ### MQTT Topics
 
 MQTT Topics are configured within a `topics` object. Most topics are optional (including all of the topics described in this section).
