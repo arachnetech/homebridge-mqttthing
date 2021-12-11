@@ -5,6 +5,9 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.35
++ Added support for MQTTTHING_ environment variables providing default MQTT settings (thanks, Robert Redgwell)
+
 ### Version 1.1.34
 + Added Door
 + Add minimum and maximum position for window, door and windowCovering
