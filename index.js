@@ -14,7 +14,6 @@ var fs = require( "fs" );
 var path = require( "path" );
 var mqttlib = require( './libs/mqttlib' );
 const EventEmitter = require( 'events' );
-const { config } = require( "process" );
 
 var Service, Characteristic, Eve, HistoryService;
 var homebridgePath;
@@ -1519,24 +1518,30 @@ function makeThing( log, accessoryConfig, api ) {
             }
             
             // Characteristic.AltSensorState to help detecting triggered state with multiple sensors
-            function characteristic_AltSensorState( service ) {
-            // additional MQTT subscription instead of set-callback due to correct averaging:
-            	mqttSubscribe( config.topics.getAltSensorState, 'AltSensorState', function( topic, message ) {
- 						// determine whether this is an on or off value
-                        let newState = false; // assume off
-                        if( isRecvValueOn( message ) ) {
-                            newState = true; // received on value so on
-                        } else if( !isRecvValueOff( message ) ) {
-                            // received value NOT acceptable as 'off' so ignore message
-                            return;
-                        }
+            function characteristic_AltSensorState( /*service*/ ) {
+                // additional MQTT subscription instead of set-callback due to correct averaging:
+                mqttSubscribe( config.topics.getAltSensorState, 'AltSensorState', function( topic, message ) {
+                     // determine whether this is an on or off value
+                    let newState = false; // assume off
+                    if( isRecvValueOn( message ) ) {
+                        newState = true; // received on value so on
+                    } else if( !isRecvValueOff( message ) ) {
+                        // received value NOT acceptable as 'off' so ignore message
+                        return;
+                    }
 
-                        // if changed, set
-                        if( state[ property ] != newState ) {
-                            state[ property ] = newState;
-                            propChangedHandler();
-                        }
-                    } );
+                    // not a real property/state ??? - no property/propChangedHandler so disabling code below...
+                    //  TODO: check with Ferme de Pommerieux
+                    log.warn( `AltSensorState now ${newState?'on':'off'} - TODO: update state and set characteristic??` );
+
+                    /*
+                    // if changed, set
+                    if( state[ property ] != newState ) {
+                        state[ property ] = newState;
+                        propChangedHandler();
+                    }
+                    */
+                } );
             }
 
             // Characteristic.StatusLowBattery
@@ -2137,10 +2142,15 @@ function makeThing( log, accessoryConfig, api ) {
                 floatCharacteristic( service, 'airQualityPPM', Eve.Characteristics.AirParticulateDensity, null, config.topics.getAirQualityPPM );
             }
 
-            // Eve.Characteristics.TemperatureDisplayUnits (Eve Room 2 only)
-            function characteristic_TemperatureDisplayUnits( service ) {
-                stringCharacteristic( service, 'temperatureDisplayUnits', Characteristic.TemperatureDisplayUnits, null, 'Celsius' )
+            // Eve.Characteristics.EveTemperatureDisplayUnits (Eve Room 2 only)
+            // Defined with airQualitySensor support for room2 by D4rk (used if config.history && config.room2) but gives warning so removing for now and calling original characteristic_TemperatureDisplayUnits instead...
+            // > This plugin generated a warning from the characteristic 'Temperature Display Units': characteristic value expected valid finite number and received "NaN" (number). See https://git.io/JtMGR for more info.
+            // TODO: confirm with D4rk
+            /*
+            function characteristic_EveTemperatureDisplayUnits( service ) {
+                stringCharacteristic( service, 'eveTemperatureDisplayUnits', Characteristic.TemperatureDisplayUnits, null, null, 'Celsius' )
             }
+            */
 
             // History for Air Quality (Eve-only)
             function history_AirQualityPPM( historySvc ) {
@@ -3140,7 +3150,7 @@ function makeThing( log, accessoryConfig, api ) {
                 if( config.history && config.room2 ) {
                     let historyOptions = new HistoryOptions();
                     let historySvc = new HistoryService( 'room2', { displayName: name, log: log }, historyOptions );
-                    characteristic_TemperatureDisplayUnits( tempSvc );
+                    characteristic_TemperatureDisplayUnits( historySvc ); // TODO: is this what was intended by D4rk? Originally referenced undefined tempSvc.
                     history_VOCDensity( historySvc );
                     history_CurrentTemperature( historySvc );
                     history_CurrentRelativeHumidity( historySvc );

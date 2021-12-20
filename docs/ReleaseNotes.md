@@ -5,6 +5,9 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.36
++ Miscellaneous fixes to pull requests merged in version 1.1.33
+
 ### Version 1.1.35
 + Added support for MQTTTHING_ environment variables providing default MQTT settings (thanks, Robert Redgwell)
 

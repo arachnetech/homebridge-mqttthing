@@ -495,9 +495,12 @@
             "url": "homebridge2",
             "logMqtt": true,
             "topics": {
-                "getAirQuality": "test/airquality"
+                "getAirQuality": "test/airquality",
+                "getCurrentTemperature": "test/aqTemp"
             },
-            "airQualityValues": [ "0", "1", "2", "3", "4", "5" ]
+            "airQualityValues": [ "0", "1", "2", "3", "4", "5" ],
+            "history": true,
+            "room2": true
         },
         {
             "accessory": "mqttthing",
