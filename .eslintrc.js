@@ -1,3 +1,5 @@
+'use strict'; // eslint-disable-line
+
 module.exports = {
     "env": {
         "es6": true,
@@ -5,7 +7,7 @@ module.exports = {
     },
     "extends": "eslint:recommended",
     "parserOptions": {
-        "ecmaVersion": 9 /* otherwise object spread causes 'Parsing error: Unexpected token...' */
+        "ecmaVersion": 2020
     },
     "rules": {
         "accessor-pairs": "error",
