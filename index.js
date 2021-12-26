@@ -3138,6 +3138,7 @@ function makeThing( log, accessoryConfig, api ) {
                 if( config.topics.getCurrentTemperature ) {
                     let tempSvc = new Service.TemperatureSensor( svcNames.temperature || name + "-Temperature", subtype );
                     characteristic_CurrentTemperature( tempSvc );
+                    characteristic_TemperatureDisplayUnits( tempSvc );
                     addSensorOptionalCharacteristics( tempSvc );
                     services.push( tempSvc );
                 }
@@ -3150,7 +3151,6 @@ function makeThing( log, accessoryConfig, api ) {
                 if( config.history && config.room2 ) {
                     let historyOptions = new HistoryOptions();
                     let historySvc = new HistoryService( 'room2', { displayName: name, log: log }, historyOptions );
-                    characteristic_TemperatureDisplayUnits( historySvc ); // TODO: is this what was intended by D4rk? Originally referenced undefined tempSvc.
                     history_VOCDensity( historySvc );
                     history_CurrentTemperature( historySvc );
                     history_CurrentRelativeHumidity( historySvc );
