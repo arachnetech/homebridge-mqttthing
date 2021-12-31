@@ -5,6 +5,9 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.38
++ Fix to use valid initial value for airPressure (0 invalid)
+
 ### Version 1.1.37
 + Update to MQTT 4.3.2
 + Fixed characteristic_TemperatureDisplayUnits for airQualitySensor
