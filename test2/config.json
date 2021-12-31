@@ -582,7 +582,20 @@
             },
             "minPosition": 10,
             "maxPosition": 60
+        }, {
+            "type": "weatherStation",
+            "name": "WeatherPI",
+            "topics": {
+                "getAirPressure": "weatherstation/getAirPressure",
+                "getRain1h": "weatherstation/getRain1h",
+                "getRain24h": "weatherstation/getRain24h",
+                "getWindDirection": "weatherstation/getWindDirection",
+                "getWindSpeed": "weatherstation/getWindSpeed",
+                "getCurrentRelativeHumidity": "weatherstation/getCurrentRelativeHumidity",
+                "getCurrentTemperature": "weatherstation/getCurrentTemperature"
+            },
+            "history": true,
+            "accessory": "mqttthing"
         }
-
     ]
 }

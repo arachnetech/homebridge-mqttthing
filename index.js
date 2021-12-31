@@ -1657,7 +1657,7 @@ function makeThing( log, accessoryConfig, api ) {
 
             // Characteristic.characteristic_AirPressure (Eve-only)
             function characteristic_AirPressure( service ) {
-                floatCharacteristic( service, 'airPressure', Eve.Characteristics.AirPressure, null, config.topics.getAirPressure, 0 );
+                floatCharacteristic( service, 'airPressure', Eve.Characteristics.AirPressure, null, config.topics.getAirPressure, 700 );
                 // set characteristic Elevation for air pressure calibration (not used yet with MQTT)
                 service.updateCharacteristic( Eve.Characteristics.Elevation, 100 );
             }
