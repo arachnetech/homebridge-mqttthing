@@ -5,6 +5,10 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.37
++ Update to MQTT 4.3.2
++ Fixed characteristic_TemperatureDisplayUnits for airQualitySensor
+
 ### Version 1.1.36
 + Miscellaneous fixes to pull requests merged in version 1.1.33
 
