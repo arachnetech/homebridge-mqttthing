@@ -514,7 +514,7 @@
         }, {
             "name": "AMAX",
             "accessory": "mqttthing",
-            "url": "url",
+            "url": "homebridge2",
             "username": "user",
             "password": "passwd",
             "type": "securitySystem",

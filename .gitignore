@@ -18,3 +18,4 @@ test2/auth.json
 test2/config.json.*
 test2/persist/ControllerStorage.*.json
 test2/backups/*
+test2/accessories/uiAccessoriesLayout.json
