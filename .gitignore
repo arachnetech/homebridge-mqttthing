@@ -19,3 +19,5 @@ test2/config.json.*
 test2/persist/ControllerStorage.*.json
 test2/backups/*
 test2/accessories/uiAccessoriesLayout.json
+test/backups/instance-backups/homebridge-backup-DA7CA324AA69.1641052363984.tar.gz
+test/persist/ControllerStorage.DA7CA324AA69.json

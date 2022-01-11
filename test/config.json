@@ -1,10 +1,10 @@
 {
     "bridge": {
         "name": "Homebridge",
-        "username": "DA:7C:A3:24:AA:69",
+        "username": "DB:7D:A3:24:AA:69",
         "_username": "DA:7C:A6:27:A7:69",
         "port": 55555,
-        "pin": "884-65-462",
+        "pin": "884-67-467",
         "_pin": "813-65-465"
     },
     "description": "This is an example configuration file. You can use this as a template for creating your own configuration file.",
@@ -16,7 +16,7 @@
             "sudo": false
         }
     ],
-    "accessories": [
+    "disabledAccessories": [
         {
             "type": "lightbulb-Colour",
             "name": "Test lightbulb",
@@ -393,7 +393,7 @@
                 "airPressure": "WS-AirPressure",
                 "weather": "WS-WeatherData"
             },
-            "url": "mqtt://192.168.179.5:1883",
+            "url": "homebridge2",
             "topics": {
                 "getCurrentAmbientLightLevel": "test/weather/level",
                 "getCurrentTemperature": "test/weather/temperature",
@@ -582,22 +582,6 @@
                 "Jammed",
                 "Unknown"
             ]
-        },
-        {
-            "accessory": "mqttthing",
-            "type": "fan",
-            "name": "Test Fan",
-            "url": "homebridge2",
-            "logMqtt": true,
-            "topics": {
-                "getOn": "test/fan/getOn",
-                "setOn": "test/fan/setOn",
-                "getRotationDirection": "test/fan/getRotationDirection",
-                "setRotationDirection": "test/fan/setRotationDirection",
-                "getRotationSpeed": "test/fan/getRotationSpeed",
-                "setRotationSpeed": "test/fan/setRotationSpeed"
-            },
-            "integerValue": true
         },
         {
             "accessory": "mqttthing",
@@ -991,6 +975,26 @@
                 "getRotationSpeed": "test/airpurifier/getRotationSpeed",
                 "getSwingMode": "test/airpurifier/getSwingMode",
                 "setLockPhysicalControls": "test/airpurifier/setLockPhysicalControls"
+            },
+            "integerValue": true
+        }
+    ],
+    "accessories": [
+        {
+            "accessory": "mqttthing",
+            "type": "fan",
+            "name": "Test Fan",
+            "url": "homebridge2",
+            "logMqtt": true,
+            "topics": {
+                "getOn": "test/fan/getOn",
+                "setOn": "test/fan/setOn",
+                "getRotationDirection": "test/fan/getRotationDirection",
+                "setRotationDirection": "test/fan/setRotationDirection",
+                "getRotationSpeed": { "topic": "test/fan/getRotationSpeed", "apply": "return Math.floor((message+10)/20)*20" },
+                "setRotationSpeed": { "topic": "test/fan/setRotationSpeed", "apply": "return Math.floor((message+10)/20)*20" },
+                "xgetRotationSpeed": "test/fan/getRotationSpeed",
+                "xsetRotationSpeed": "test/fan/setRotationSpeed"
             },
             "integerValue": true
         }
