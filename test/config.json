@@ -997,6 +997,33 @@
                 "xsetRotationSpeed": "test/fan/setRotationSpeed"
             },
             "integerValue": true
+        }, {
+            "accessory": "mqttthing",
+            "type": "lightbulb-OnOff",
+            "name": "Toggle-Light",
+            "url": "homebridge2",
+            "logMqtt": true,
+            "topics": {
+                "getOn": "test/toggleLight/getOn",
+                "setOn": {
+                    "topic": "test/toggleLight/setOn",
+                    "apply": "return 1;"
+                }
+            },
+            "integerValue": true
+        }, {
+            "accessory": "mqttthing",
+            "type": "lightbulb",
+            "url": "homebridge2",
+            "topics": {
+                "getOn": "test/DimmerRgb1",
+                "setOn": "test/DimmerRgb1",
+                "getRGB": "test/DimmerRgb1/rgb",
+                "setRGB": "test/DimmerRgb1/rgb"
+            },
+            "onValue": "on",
+            "offValue": "off",
+            "name": "RGBTest"
         }
     ]
 }

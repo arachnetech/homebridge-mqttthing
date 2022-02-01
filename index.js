@@ -975,9 +975,9 @@ function makeThing( log, accessoryConfig, api ) {
                     blue = Math.min( blue + white, 255 );
 
                     var hsv = RGBtoScaledHSV( red, green, blue );
-                    var hue = hsv.h;
-                    var sat = hsv.s;
-                    var bri = hsv.v;
+                    var hue = Math.floor( hsv.h );
+                    var sat = Math.floor( hsv.s );
+                    var bri = Math.floor( hsv.v );
 
                     if( !config.topics.setOn ) {
                         var on = bri > 0 ? 1 : 0;

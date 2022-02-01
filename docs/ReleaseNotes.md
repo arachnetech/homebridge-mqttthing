@@ -5,6 +5,9 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.39
++ Fix RGB light validation errors (issue #510)
+
 ### Version 1.1.38
 + Fix to use valid initial value for airPressure (0 invalid)
 
