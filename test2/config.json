@@ -13,7 +13,7 @@
             "sudo": false
         }
     ],
-    "accessories": [
+    "disabledAccessories": [
         {
             "type": "outlet",
             "name": "Test Outlet",
@@ -596,6 +596,32 @@
             },
             "history": true,
             "accessory": "mqttthing"
+        }
+    ],
+    "accessories": [
+        {
+            "accessory": "mqttthing",
+            "type": "lightbulb",
+            "url": "homebridge2",
+            "name": "Escalier",
+            "topics": {
+                "getOn": {
+                    "topic": "test/Escalier",
+                    "apply": "return JSON.parse(message).state_right"
+                },
+                "setOn": "test/Escalier/right/set",
+                "getOnline": {
+                    "topic": "zigbee2mqtt/boutonentree2/availability",
+                    "apply": "return message == 'online' ? 'ON' : 'OFF';"
+                }
+            },
+            "logMqtt": true,
+            "integerValue": false,
+            "onValue": "ON",
+            "offValue": "OFF",
+            "turnOffAfterms": "120000",
+            "onlineValue": "ON",
+            "offlineValue": "OFF"
         }
     ]
 }
