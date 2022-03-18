@@ -1168,12 +1168,38 @@ function makeThing( log, accessoryConfig, api ) {
                 }
             }
 
-            function floatCharacteristic( service, property, characteristic, setTopic, getTopic, initialValue ) {
-                // default state
-                state[ property ] = initialValue;
+            function floatCharacteristic( service, property, characteristic, setTopic, getTopic, options ) {
+
+                if( options === undefined ) {
+                    options = {};
+                } else if( typeof options === 'number' ) {
+                    options = { initialValue: options };
+                }
+                let initialValue = options.initialValue || 0;
 
                 // set up characteristic
                 var charac = service.getCharacteristic( characteristic );
+
+                if( options.minValue !== undefined ) {
+                    charac.props.minValue = options.minValue;
+                }
+
+                if( options.maxValue !== undefined ) {
+                    charac.props.maxValue = options.maxValue;
+                }
+
+                if( initialValue < charac.props.minValue ) {
+                    initialValue = charac.props.minValue;
+                }
+
+                if( initialValue > charac.props.maxValue ) {
+                    initialValue = charac.props.maxValue;
+                }
+
+                // default state
+                state[ property ] = initialValue;
+
+                // get/set
                 charac.on( 'get', function( callback ) {
                     handleGetStateCallback( callback, state[ property ] );
                 } );
@@ -2315,7 +2341,9 @@ function makeThing( log, accessoryConfig, api ) {
             // Eve.Characteristics.Voltage [Volts] (Eve-only)
             function characteristic_Voltage( service ) {
                 service.addOptionalCharacteristic( Eve.Characteristics.Voltage ); // to avoid warnings
-                floatCharacteristic( service, 'voltage', Eve.Characteristics.Voltage, null, config.topics.getVolts, 100 );
+                floatCharacteristic( service, 'voltage', Eve.Characteristics.Voltage, null, config.topics.getVolts, {
+                    minValue: config.minVolts, maxValue: config.maxVolts
+                } );
             }
 
             // Eve.Characteristics.ElectricCurrent [Amperes] (Eve-only)

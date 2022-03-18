@@ -787,7 +787,9 @@ Set `confirmationPeriodms` to enable publishing confirmation for `setOn`/`getOn`
     "onValue": "<value representing on (optional)>",
     "offValue": "<value representing off (optional)>",
     "turnOffAfterms": "<milliseconds after which to turn off automatically (optional)>",
-    "history": "<true to enable History service for Eve App (optional)>"
+    "history": "<true to enable History service for Eve App (optional)>",
+    "minVolts": "<minumum voltage (optional)>",
+    "maxVolts": "<maximum voltage (optional)>"
 }
 ```
 

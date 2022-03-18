@@ -5,6 +5,9 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.40
++ Added configurable minimum and maximum voltage for outlet (minVolts, maxVolts)
+
 ### Version 1.1.39
 + Fix RGB light validation errors (issue #510)
 

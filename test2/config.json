@@ -15,18 +15,6 @@
     ],
     "disabledAccessories": [
         {
-            "type": "outlet",
-            "name": "Test Outlet",
-            "url": "homebridge2",
-            "topics": {
-                "setOn": "test/outlet/on",
-                "getWatts": "test/outlet/watts",
-                "getVolts": "test/outlet/voltage"
-            },
-            "accessory": "mqttthing",
-            "logMqtt": true
-        },
-        {
             "type": "lightbulb-ColTemp",
             "name": "Light-Temp",
             "url": "homebridge2",
@@ -600,6 +588,22 @@
     ],
     "accessories": [
         {
+            "type": "outlet",
+            "name": "Test Outlet",
+            "url": "homebridge2",
+            "topics": {
+                "setOn": "test/outlet/on",
+                "getInUse": "test/outlet/inuse",
+                "getWatts": "test/outlet/watts",
+                "getVolts": "test/outlet/voltage",
+                "getAmperes": "test/outlet/amps"
+            },
+            "accessory": "mqttthing",
+            "logMqtt": true,
+            "minVolts": 0,
+            "maxVolts": 30
+        },
+        {
             "accessory": "mqttthing",
             "type": "lightbulb",
             "url": "homebridge2",
@@ -622,6 +626,17 @@
             "turnOffAfterms": "120000",
             "onlineValue": "ON",
             "offlineValue": "OFF"
+        }, {
+            "accessory": "mqttthing",
+            "type": "lightbulb",
+            "url": "homebridge2",
+            "name": "Simple light",
+            "topics": {
+                "getOn": "fake/light/getOn",
+                "setOn": "fake/light/setOn"
+            },
+            "integerValue": true,
+            "logMqtt": true
         }
     ]
 }
