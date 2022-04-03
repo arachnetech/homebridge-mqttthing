@@ -11,6 +11,10 @@
    * [Supported Accessories](#supported-accessories)
    * [Release notes](docs/ReleaseNotes.md)
 
+## Alternatives
+
+MQTT-Thing allows a wide range of Homekit accessory types to be integrated using MQTT, and has some quite flexible configuration options which are very helpful in many scenarios. However, if you want quick and simple integration with Zigbee devices exposed through Zigbee2MQTT you should also consider the [z2m plugin](https://z2m.dev/).
+
 ## Compatibility with previous versions
 
 **From version 1.1.33, MQTT-Thing requires Node.js 14 or later.**
