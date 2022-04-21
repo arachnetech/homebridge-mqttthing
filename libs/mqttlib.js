@@ -240,9 +240,10 @@ var mqttlib = new function() {
             }
         }
 
+        let extendedTopic = null
         // send through any apply function
         if (typeof topic != 'string') {
-            let extendedTopic = topic;
+            extendedTopic = topic;
             topic = extendedTopic.topic;
             if (extendedTopic.hasOwnProperty('apply')) {
                 let previous = handler;
@@ -272,7 +273,7 @@ var mqttlib = new function() {
                 return realHandler( topic, message );
             };
             handler = function( intopic, message ) {
-                let decoded = codecDecode( message, { topic, property }, output );
+                let decoded = codecDecode( message, { topic, property, extendedTopic }, output );
                 if( config.logMqtt ) {
                     log( 'codec decoded message to [' + decoded + ']' );
                 }
@@ -337,10 +338,11 @@ var mqttlib = new function() {
             return; // don't publish if message is null or topic is undefined
         }
 
+        let extendedTopic = null
         // first of all, pass message through any user-supplied apply() function
         if (typeof topic != 'string') {
             // encode data with user-supplied apply() function
-            var extendedTopic = topic;
+            extendedTopic = topic;
             topic = extendedTopic.topic;
             if (extendedTopic.hasOwnProperty('apply')) {
                 var applyFn = Function( "message", "state", extendedTopic['apply'] ); //eslint-disable-line
@@ -364,7 +366,7 @@ var mqttlib = new function() {
         let codecEncode = getCodecFunction( codec, property, 'encode' );
         if( codecEncode ) {
             // send through codec's encode function
-            let encoded = codecEncode( message, { topic, property }, publishImpl );
+            let encoded = codecEncode( message, { topic, property, extendedTopic }, publishImpl );
             if( encoded !== undefined ) {
                 publishImpl( encoded );
             }
