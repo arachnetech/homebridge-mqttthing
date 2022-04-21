@@ -5,6 +5,9 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.41
++ Added extendedTopic info to codec calls (thanks, Flavio De Stefano)
+
 ### Version 1.1.40
 + Added configurable minimum and maximum voltage for outlet (minVolts, maxVolts)
 
