@@ -237,10 +237,10 @@ var mqttlib = new function() {
                 debounceTimeout = setTimeout( function() {
                     origHandler( intopic, message );
                 }, config.debounceRecvms );
-            }
+            };
         }
 
-        let extendedTopic = null
+        let extendedTopic = null;
         // send through any apply function
         if (typeof topic != 'string') {
             extendedTopic = topic;
@@ -312,7 +312,7 @@ var mqttlib = new function() {
                     log( `jsonpath ${jsonpathQuery} decoded message to [${output}]` );
                 }
                 return lastHandler( topic, output );
-            }
+            };
         }
 
         // register MQTT dispatch and subscribe
@@ -328,7 +328,7 @@ var mqttlib = new function() {
 
     // Publish
     this.publish = function( ctx, topic, property, message ) {
-        let { config, log, mqttClient, codec } = ctx;
+        let { log, mqttClient, codec } = ctx;
         if( ! mqttClient ) {
             log( 'ERROR: Call mqttlib.init() before mqttlib.publish()' );
             return;
@@ -338,7 +338,7 @@ var mqttlib = new function() {
             return; // don't publish if message is null or topic is undefined
         }
 
-        let extendedTopic = null
+        let extendedTopic = null;
         // first of all, pass message through any user-supplied apply() function
         if (typeof topic != 'string') {
             // encode data with user-supplied apply() function
@@ -386,7 +386,7 @@ var mqttlib = new function() {
             // no confirmation - return generic publishing function
             return function( message ) {
                 mqttlib.publish( ctx, setTopic, property, message );
-            }
+            };
         }
 
         var timer = null;

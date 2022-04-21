@@ -65,7 +65,7 @@ function makeThing( log, accessoryConfig, api ) {
             throttledCallTimers[ identifier ] = null;
             func();
         }, timeout );
-    }
+    };
 
     // Controllers
     let controllers = [];
@@ -1784,7 +1784,7 @@ function makeThing( log, accessoryConfig, api ) {
                 // load TimesOpened counter from counterFile
                 fs.readFile( counterFile, 'utf8', function( err, data ) {
                     let cnt = 0;
-                    let res = Math.floor( Date.now() / 1000 ) - 978307200  // seconds since 01.01.2001
+                    let res = Math.floor( Date.now() / 1000 ) - 978307200;  // seconds since 01.01.2001
                     if( err ) {
                         log.debug( 'No data loaded for TimesOpened' );
                     } else {
@@ -2062,7 +2062,7 @@ function makeThing( log, accessoryConfig, api ) {
 
             // Characteristic.WaterLevel
             function characteristic_WaterLevel( service ) {
-              let options = { minValue: 0, maxValue: 100 }
+              let options = { minValue: 0, maxValue: 100 };
               integerCharacteristic( service, 'waterLevel', Characteristic.WaterLevel, config.topics.setWaterLevel, config.topics.getWaterLevel, options);
             }
 
@@ -2379,7 +2379,7 @@ function makeThing( log, accessoryConfig, api ) {
                     // load TotalConsumption counter from counterFile
                     fs.readFile( counterFile, 'utf8', function( err, data ) {
                         let cnt = 0;
-                        let res = Math.floor( Date.now() / 1000 ) - 978307200  // seconds since 01.01.2001
+                        let res = Math.floor( Date.now() / 1000 ) - 978307200;  // seconds since 01.01.2001
                         if( err ) {
                             log.debug( 'No data loaded for totalConsumption' );
                         } else {
@@ -2983,7 +2983,7 @@ function makeThing( log, accessoryConfig, api ) {
                 if( Array.isArray( config.topics.getSwitch ) ) {
                     service = new Service.ServiceLabel( name );
                     characteristic_ServiceLabelNamespace( service );
-                    services = [ service ]
+                    services = [ service ];
                     var i = 0;
                     for( i = 0; i < config.topics.getSwitch.length; i++ ) {
                         let buttonTopic = config.topics.getSwitch[ i ];
@@ -3012,7 +3012,7 @@ function makeThing( log, accessoryConfig, api ) {
                         let buttonSvc = new Service.StatelessProgrammableSwitch( name + "_" + i, i + 1 );
                         characteristic_ProgrammableSwitchEvent( buttonSvc, 'switch' + i, buttonTopic, switchValues, restrictSwitchValues );
                         characteristic_ServiceLabelIndex( buttonSvc, i + 1 );
-                        services.push( buttonSvc )
+                        services.push( buttonSvc );
                     }
                 } else {
                     service = new Service.StatelessProgrammableSwitch( name, subtype );
@@ -3321,7 +3321,7 @@ function makeThing( log, accessoryConfig, api ) {
                 if( config.zones ) {
                     let serviceLabel = new Service.ServiceLabel();
                     serviceLabel.setCharacteristic( Characteristic.ServiceLabelNamespace, Characteristic.ServiceLabelNamespace.ARABIC_NUMERALS );
-                    services.push( serviceLabel )
+                    services.push( serviceLabel );
                     config.zones.forEach( function( zone, index ) {
                         let zoneId = index + 1;
                         let zoneName = zone.name || ''; // default name doesn't seem to work
@@ -3485,4 +3485,4 @@ module.exports = function( homebridge ) {
     homebridgePath = homebridge.user.storagePath();
 
     homebridge.registerAccessory( "homebridge-mqttthing", "mqttthing", makeThing );
-}
+};

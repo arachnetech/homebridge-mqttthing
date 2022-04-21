@@ -75,6 +75,7 @@ module.exports = {
         "key-spacing": "error",
         "keyword-spacing": "off",
         "line-comment-position": "off",
+        "linebreak-style": "off",
         "lines-around-comment": "off",
         "lines-around-directive": "error",
         "lines-between-class-members": "error",
@@ -150,7 +151,7 @@ module.exports = {
                 "allowForLoopAfterthoughts": true
             }
         ],*/
-        "no-process-env": "error",
+        "no-process-env": "off",
         "no-process-exit": "error",
         "no-proto": "error",
         "no-prototype-builtins": "off",
@@ -219,7 +220,7 @@ module.exports = {
         "require-await": "error",
         "require-jsdoc": "off",
         "rest-spread-spacing": "error",
-        "semi": "off",
+        "semi": "error",
         "semi-spacing": [
             "error",
             {
