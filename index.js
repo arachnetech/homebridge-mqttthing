@@ -2689,15 +2689,24 @@ function makeThing( log, accessoryConfig, api ) {
             function characteristic_ActiveIdentifier( service, values ) {
                 multiCharacteristic( service, 'activeIdentifier', Characteristic.ActiveIdentifier, config.topics.setActiveInput, config.topics.getActiveInput, values, 0 );
             }
-
+            
+            // Characteristic.VolumeSelector
+            function characteristic_RemoteKeyVolume( service ) {
+                characteristic_Remote(service, Characteristic.VolumeSelector);
+            }
+            
             // Characteristic.RemoteKey
             function characteristic_RemoteKey( service ) {
+                characteristic_Remote(service, Characteristic.RemoteKey);
+            }
+
+            function characteristic_Remote( service, characteristic ) {
                 let values = config.remoteKeyValues;
                 if( !values ) {
-                    values = [ 'REWIND', 'FAST_FORWARD', 'NEXT_TRACK', 'PREVIOUS_TRACK', 'UP', 'DOWN', 'LEFT', 'RIGHT',
+                    values = [ 'VOLUME_UP', 'VOLUME_DOWN', 'NEXT_TRACK', 'PREVIOUS_TRACK', 'UP', 'DOWN', 'LEFT', 'RIGHT',
                         'SELECT', 'BACK', 'EXIT', 'PLAY_PAUSE', '12', '13', '14', 'INFO' ];
                 }
-                multiCharacteristic( service, 'remoteKey', Characteristic.RemoteKey, config.topics.setRemoteKey, undefined, values, null, true );
+                multiCharacteristic( service, 'remoteKey', characteristic, config.topics.setRemoteKey, undefined, values, null, true );
             }
 
             // Characteristic.FilterChangeIndication
@@ -3272,9 +3281,22 @@ function makeThing( log, accessoryConfig, api ) {
                 // service.setCharacteristic(Characteristic.TargetMediaState, XXX);  // no impact?
                 // service.setCharacteristic(Characteristic.PictureMode, XXX);  // no impact?
                 // service.addCharacteristic(Characteristic.PowerModeSelection);  // this would add a button in TV settings
-                characteristic_RemoteKey( service );
 
-                services = [ service ];
+                var speakerService = new Service.TelevisionSpeaker(
+                    'Volume',
+                    'volumeService'
+                    );
+                speakerService
+                    .setCharacteristic(Characteristic.Active, Characteristic.Active.ACTIVE)
+                    .setCharacteristic(
+                        Characteristic.VolumeControlType,
+                        Characteristic.VolumeControlType.ABSOLUTE
+                        );
+
+                characteristic_RemoteKey( service );
+                characteristic_RemoteKeyVolume( speakerService );
+
+                services = [ service, speakerService ];
 
                 if( config.inputs ) {
                     var inputValues = [ 'NONE' ];   // MQTT values for ActiveIdentifier
