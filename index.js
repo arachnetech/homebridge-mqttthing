@@ -3218,6 +3218,7 @@ function makeThing( log, accessoryConfig, api ) {
                 addSensorOptionalCharacteristics( service );
             } else if( configType == 'thermostat' ) {
                 service = new Service.Thermostat( name, subtype );
+                characteristic_Active( service );
                 characteristic_CurrentHeatingCoolingState( service );
                 characteristic_TargetHeatingCoolingState( service );
                 characteristic_CurrentTemperature( service );
