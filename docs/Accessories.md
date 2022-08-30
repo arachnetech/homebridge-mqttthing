@@ -12,6 +12,7 @@ The following Homekit accessory types are supported by MQTT-Thing:
    * [Air Quality Sensor](#air-quality-sensor)
    * [Carbon Dioxide Sensor](#carbon-dioxide-sensor)
    * [Contact Sensor](#contact-sensor)
+   * [Dehumidifier](#dehumidifier)
    * [Door](#door)
    * [Doorbell](#doorbell)
    * [Fan](#fan)
@@ -221,7 +222,38 @@ If `history` is enabled, this plugin will count the number of openings and offer
     "history": "<true to enable History service for Eve App (optional)>"
 }
 ```
+## Dehumidifier
+Active state is set with a boolean value (see Boolean Value Settings).
 
+Target dehumidifier state can be HUMIDIFIER_OR_DEHUMIDIFIER, HUMIDIFIER or DEHUMIDIFIER.
+
+Current dehumidifier state can be INACTIVE, IDLE, HUMIDIFYING or DEHUMIDIFYING.
+
+The water level is used to indicate the amount of water in the bucket.
+
+```javascript
+{
+  "accessory": "mqttthing",
+  "type": "dehumidifier", 
+  "name": "<name of sensor>", 
+  "url": "<url of MQTT server (optional)>", 
+  "username": "<username for MQTT (optional)>", 
+  "password": "<password for MQTT (optional)>", 
+  "caption": "<label (optional)>",
+  "topics": {
+    "setActive": "<topic used to control 'active' state>", 
+    "getActive": "<topic used to report 'active' state>",
+    "getWaterLevel": "<topic used to report the water level>",
+    "setWaterLevel": "<topic used to control the water level>",
+    "getRelativeHumidityDehumidifierThreshold": "<topic used to report the the humidity threshold>",
+    "setRelativeHumidityDehumidifierThreshold": "<topic used to control the the humidity threshold>",
+    "getTargetHumidifierDehumidifierState": "<topic used to report the target state>",
+    "setTargetHumidifierDehumidifierState": "<topic used to control the target state>",
+    "getCurrentHumidifierDehumidifierState": "<topic used to report the current state>",
+    "getCurrentRelativeHumidity": "<topic used to report the the humidity threshold>"
+  }
+}
+```
 
 ## Door
 
