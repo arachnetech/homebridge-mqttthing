@@ -105,8 +105,9 @@ function makeThing( log, accessoryConfig, api ) {
                 }
                 log( 'Enabling adaptive lighting' );
                 adaptiveLightingController = new api.hap.AdaptiveLightingController( service, {
-                    controllerMode: api.hap.AdaptiveLightingControllerMode.AUTOMATIC } );
-                controllers.push( adaptiveLightingController );            
+                    controllerMode: api.hap.AdaptiveLightingControllerMode.AUTOMATIC
+                } );
+                controllers.push( adaptiveLightingController );
             };
 
             // Migrate old-style history options
@@ -296,7 +297,7 @@ function makeThing( log, accessoryConfig, api ) {
 
                 const format = charac.props.format;
                 if( format === 'int' || format === "uint8" || format == "uint16" || format == "uint32" ) {
-                    if( ! Number.isInteger( value ) ) {
+                    if( !Number.isInteger( value ) ) {
                         log( `Ignoring invalid value [${value}] for ${charac.displayName} - not an integer` );
                         return false;
                     }
@@ -332,7 +333,7 @@ function makeThing( log, accessoryConfig, api ) {
                         return false;
                     }
                 } else {
-                    log( `Unable to validate ${charac.displayName}, format [${charac.props.format}] - ${JSON.stringify(charac)}` );
+                    log( `Unable to validate ${charac.displayName}, format [${charac.props.format}] - ${JSON.stringify( charac )}` );
                 }
                 return true;
             }
@@ -513,7 +514,7 @@ function makeThing( log, accessoryConfig, api ) {
 
                 charac.on( 'get', function( callback ) {
                     let valReturned = state[ property ];
-                    if( ! isValid( charac, valReturned ) ) {
+                    if( !isValid( charac, valReturned ) ) {
                         valReturned = defaultValue;
                     }
                     handleGetStateCallback( callback, valReturned );
@@ -1282,11 +1283,11 @@ function makeThing( log, accessoryConfig, api ) {
                 if( setTopic ) {
                     charac.on( 'set', function( value, callback, context ) {
                         if( context !== c_mySetContext ) {
-                            
-                            if (typeof value === "boolean") {
-                                value = value ? 1: 0;
+
+                            if( typeof value === "boolean" ) {
+                                value = value ? 1 : 0;
                             }
-                            
+
                             state[ property ] = value;
                             let mqttVal = values[ value ];
                             if( mqttVal !== undefined ) {
@@ -1374,17 +1375,17 @@ function makeThing( log, accessoryConfig, api ) {
                     // publishing (throttled)
                     let publishNow = function() {
                         let bri = state.brightness;
-                        if( ! config.topics.setOn && ! state.on ) {
+                        if( !config.topics.setOn && !state.on ) {
                             bri = 0;
                         }
                         mqttPublish( config.topics.setBrightness, 'brightness', bri );
                     };
-    
+
                     let publish = () => throttledCall( publishNow, 'brightness_pub', 20 );
-    
+
                     // Brightness characteristic
                     addCharacteristic( service, 'brightness', Characteristic.Brightness, 0, () => {
-                        if( state.brightness > 0 && ! state.on ) {
+                        if( state.brightness > 0 && !state.on ) {
                             state.on = true;
                         }
                         publish();
@@ -1423,8 +1424,8 @@ function makeThing( log, accessoryConfig, api ) {
             // Characteristic.ColorTemperature
             function characteristic_ColorTemperature( service ) {
                 integerCharacteristic( service, 'colorTemperature', Characteristic.ColorTemperature, config.topics.setColorTemperature, config.topics.getColorTemperature, {
-                    initialValue: ( config.minColorTemperature || 140 ), 
-                    minValue: config.minColorTemperature, 
+                    initialValue: ( config.minColorTemperature || 140 ),
+                    minValue: config.minColorTemperature,
                     maxValue: config.maxColorTemperature,
                     onMqtt: () => disableAdaptiveLighting( 'colorTemperature' )
                 } );
@@ -1542,12 +1543,12 @@ function makeThing( log, accessoryConfig, api ) {
             function characteristic_StatusTampered( service ) {
                 booleanCharacteristic( service, 'statusTampered', Characteristic.StatusTampered, null, config.topics.getStatusTampered );
             }
-            
+
             // Characteristic.AltSensorState to help detecting triggered state with multiple sensors
             function characteristic_AltSensorState( /*service*/ ) {
                 // additional MQTT subscription instead of set-callback due to correct averaging:
                 mqttSubscribe( config.topics.getAltSensorState, 'AltSensorState', function( topic, message ) {
-                     // determine whether this is an on or off value
+                    // determine whether this is an on or off value
                     let newState = false; // assume off
                     if( isRecvValueOn( message ) ) {
                         newState = true; // received on value so on
@@ -1558,7 +1559,7 @@ function makeThing( log, accessoryConfig, api ) {
 
                     // not a real property/state ??? - no property/propChangedHandler so disabling code below...
                     //  TODO: check with Ferme de Pommerieux
-                    log.warn( `AltSensorState now ${newState?'on':'off'} - TODO: update state and set characteristic??` );
+                    log.warn( `AltSensorState now ${newState ? 'on' : 'off'} - TODO: update state and set characteristic??` );
 
                     /*
                     // if changed, set
@@ -1749,13 +1750,13 @@ function makeThing( log, accessoryConfig, api ) {
                 service.addOptionalCharacteristic( Eve.Characteristics.MaximumWindSpeed ); // to avoid warnings
                 floatCharacteristic( service, 'maxWind', Eve.Characteristics.MaximumWindSpeed, null, config.topics.getmaxWind, 0 );
             }
-            
+
             // Characteristic.Dewpoint(Eve-only)
             function characteristic_DewPoint( service ) {
                 service.addOptionalCharacteristic( Eve.Characteristics.DewPoint ); // to avoid warnings
                 floatCharacteristic( service, 'DewPoint', Eve.Characteristics.DewPoint, null, config.topics.getDewPoint, 0 );
             }
-            
+
             // Characteristic.ContactSensorState
             function characteristic_ContactSensorState( service ) {
                 booleanCharacteristic( service, 'contactSensorState', Characteristic.ContactSensorState,
@@ -1987,10 +1988,10 @@ function makeThing( log, accessoryConfig, api ) {
             // Characteristic.RotationSpeed
             function characteristic_RotationSpeed( service, handleOn ) {
 
-                if( config.topics.setOn || ! handleOn ) {
+                if( config.topics.setOn || !handleOn ) {
                     // separate On topic, or we're not handling 'On', so implement standard rotationSpeed characteristic
-                    integerCharacteristic( service, 'rotationSpeed', Characteristic.RotationSpeed, config.topics.setRotationSpeed, config.topics.getRotationSpeed, 
-                                            { minValue: config.minRotationSpeed, maxValue: config.maxRotationSpeed } );
+                    integerCharacteristic( service, 'rotationSpeed', Characteristic.RotationSpeed, config.topics.setRotationSpeed, config.topics.getRotationSpeed,
+                        { minValue: config.minRotationSpeed, maxValue: config.maxRotationSpeed } );
                 } else {
                     // no separate On topic, so use RotationSpeed 0 to indicate Off state...
 
@@ -2013,17 +2014,17 @@ function makeThing( log, accessoryConfig, api ) {
                     // publishing (throttled)
                     let publishNow = function() {
                         let rot = state.rotationSpeed;
-                        if( ! config.topics.setOn && ! state.on ) {
+                        if( !config.topics.setOn && !state.on ) {
                             rot = 0;
                         }
                         mqttPublish( config.topics.setRotationSpeed, 'rotationSpeed', rot );
                     };
-    
+
                     let publish = () => throttledCall( publishNow, 'rotationSpeed_pub', 20 );
-    
+
                     // RotationSpeed characteristic
                     addCharacteristic( service, 'rotationSpeed', Characteristic.RotationSpeed, 0, () => {
-                        if( state.rotationSpeed > 0 && ! state.on ) {
+                        if( state.rotationSpeed > 0 && !state.on ) {
                             state.on = true;
                         }
                         publish();
@@ -2062,8 +2063,8 @@ function makeThing( log, accessoryConfig, api ) {
 
             // Characteristic.WaterLevel
             function characteristic_WaterLevel( service ) {
-              let options = { minValue: 0, maxValue: 100 };
-              integerCharacteristic( service, 'waterLevel', Characteristic.WaterLevel, config.topics.setWaterLevel, config.topics.getWaterLevel, options);
+                let options = { minValue: 0, maxValue: 100 };
+                integerCharacteristic( service, 'waterLevel', Characteristic.WaterLevel, config.topics.setWaterLevel, config.topics.getWaterLevel, options );
             }
 
             // Characteristic.TargetPosition
@@ -2689,15 +2690,15 @@ function makeThing( log, accessoryConfig, api ) {
             function characteristic_ActiveIdentifier( service, values ) {
                 multiCharacteristic( service, 'activeIdentifier', Characteristic.ActiveIdentifier, config.topics.setActiveInput, config.topics.getActiveInput, values, 0 );
             }
-            
+
             // Characteristic.VolumeSelector
             function characteristic_RemoteKeyVolume( service ) {
-                characteristic_Remote(service, Characteristic.VolumeSelector);
+                characteristic_Remote( service, Characteristic.VolumeSelector );
             }
-            
+
             // Characteristic.RemoteKey
             function characteristic_RemoteKey( service ) {
-                characteristic_Remote(service, Characteristic.RemoteKey);
+                characteristic_Remote( service, Characteristic.RemoteKey );
             }
 
             function characteristic_Remote( service, characteristic ) {
@@ -2774,7 +2775,7 @@ function makeThing( log, accessoryConfig, api ) {
                 } else if( config.topics.setWhite ) {
                     characteristics_WhiteLight( service );
                 } else {
-                    if( config.topics.setOn || ! config.topics.setBrightness ) {
+                    if( config.topics.setOn || !config.topics.setBrightness ) {
                         characteristic_On( service );
                     }
                     if( config.topics.setBrightness ) {
@@ -2940,7 +2941,7 @@ function makeThing( log, accessoryConfig, api ) {
                     characteristic_WindSpeed( weatherSvc );
                     addWeatherSvc = true;
                 }
-                 if( config.topics.getmaxWind ) {
+                if( config.topics.getmaxWind ) {
                     characteristic_MaximumWindSpeed( weatherSvc );
                     addWeatherSvc = true;
                 }
@@ -3070,7 +3071,7 @@ function makeThing( log, accessoryConfig, api ) {
                 }
             } else if( configType == "fan" ) {
                 service = new Service.Fan( name, subtype );
-                if( config.topics.setOn || ! config.topics.setRotationSpeed ) {
+                if( config.topics.setOn || !config.topics.setRotationSpeed ) {
                     characteristic_On( service );
                 }
                 if( config.topics.getRotationDirection || config.topics.setRotationDirection ) {
@@ -3286,13 +3287,13 @@ function makeThing( log, accessoryConfig, api ) {
                 var speakerService = new Service.TelevisionSpeaker(
                     'Volume',
                     'volumeService'
-                    );
+                );
                 speakerService
-                    .setCharacteristic(Characteristic.Active, Characteristic.Active.ACTIVE)
+                    .setCharacteristic( Characteristic.Active, Characteristic.Active.ACTIVE )
                     .setCharacteristic(
                         Characteristic.VolumeControlType,
                         Characteristic.VolumeControlType.ABSOLUTE
-                        );
+                    );
 
                 characteristic_RemoteKey( service );
                 characteristic_RemoteKeyVolume( speakerService );
