@@ -146,6 +146,7 @@ function makeThing( log, accessoryConfig, api ) {
                 }
                 return directory;
             }
+
             function historyCounterFile() {
                 const counterFile = path.join( historyPersistencePath(), os.hostname().split( "." )[ 0 ] + "_" + config.name + "_cnt_persist.json" );
                 return counterFile;
@@ -626,12 +627,12 @@ function makeThing( log, accessoryConfig, api ) {
             }
 
             /*
-             * HSV to RGB conversion from https://stackoverflow.com/questions/17242144/javascript-convert-hsb-hsv-color-to-rgb-accurately
-             * accepts parameters
-             * h  Object = {h:x, s:y, v:z}
-             * OR
-             * h, s, v
-             */
+                   * HSV to RGB conversion from https://stackoverflow.com/questions/17242144/javascript-convert-hsb-hsv-color-to-rgb-accurately
+                   * accepts parameters
+                   * h  Object = {h:x, s:y, v:z}
+                   * OR
+                   * h, s, v
+                   */
             function HSVtoRGB( h, s, v ) {
                 var r, g, b, i, f, p, q, t;
                 if( arguments.length === 1 ) {
@@ -1485,7 +1486,7 @@ function makeThing( log, accessoryConfig, api ) {
                 }, 5000 );
             }
 
-            // History for MotionDetected 
+            // History for MotionDetected
             function history_MotionDetected( historySvc, service ) {
                 var historyMergeTimer = null;
                 characteristic_LastActivation( historySvc, service );
@@ -1648,6 +1649,11 @@ function makeThing( log, accessoryConfig, api ) {
                 tempRange( service, Characteristic.CoolingThresholdTemperature );
             }
 
+            // Characteristic.RelativeHumidityDehumidifierThreshold
+            function characteristic_RelativeHumidityDehumidifierThreshold( service ) {
+                floatCharacteristic( service, 'relativeHumidityDehumidifierThreshold', Characteristic.RelativeHumidityDehumidifierThreshold, config.topics.setRelativeHumidityDehumidifierThreshold, config.topics.getRelativeHumidityDehumidifierThreshold, 0 );
+            }
+
             // Characteristic.HeatingThresholdTemperature
             function characteristic_HeatingThresholdTemperature( service ) {
                 floatCharacteristic( service, 'heatingThresholdTemperature', Characteristic.HeatingThresholdTemperature,
@@ -1774,6 +1780,7 @@ function makeThing( log, accessoryConfig, api ) {
 
                 // counterFile for saving 'timesOpened' and 'resetTotal'
                 const counterFile = historyCounterFile();
+
                 function writeCounterFile() {
                     let saveObj = { timesOpened: state.timesOpened, resetTotal: state.resetTotal };
                     fs.writeFile( counterFile, JSON.stringify( saveObj ), 'utf8', function( err ) {
@@ -1782,6 +1789,7 @@ function makeThing( log, accessoryConfig, api ) {
                         }
                     } );
                 }
+
                 // load TimesOpened counter from counterFile
                 fs.readFile( counterFile, 'utf8', function( err, data ) {
                     let cnt = 0;
@@ -1818,7 +1826,7 @@ function makeThing( log, accessoryConfig, api ) {
                         state.lastActivation = logEntry.time - historySvc.getInitialTime();
                         service.updateCharacteristic( Eve.Characteristics.LastActivation, state.lastActivation );
                         if( logEntry.status ) {
-                            // update Eve's Characteristic.TimesOpened 
+                            // update Eve's Characteristic.TimesOpened
                             state.timesOpened++;
                             service.updateCharacteristic( Eve.Characteristics.TimesOpened, state.timesOpened );
                             writeCounterFile();
@@ -2270,6 +2278,28 @@ function makeThing( log, accessoryConfig, api ) {
                 }
             }
 
+            // Characteristic.TargetHumidifierDehumidifierState
+            function characteristic_TargetHumidifierDehumidifierState( service ) {
+                let values = config.targetHumidifierDehumidifierState;
+                if( !values ) {
+                    values = [ 'HUMIDIFIER_OR_DEHUMIDIFIER', 'HUMIDIFIER', 'DEHUMIDIFIER' ];
+                }
+                multiCharacteristic( service, 'targetHumidifierDehumidifierState', Characteristic.TargetHumidifierDehumidifierState, config.topics.setTargetHumidifierDehumidifierState, config.topics.getTargetHumidifierDehumidifierState, values, Characteristic.TargetHumidifierDehumidifierState.DEHUMIDIFIER );
+                if( config.restrictDehumidifierState ) {
+                    let characteristic = service.getCharacteristic( Characteristic.TargetDehumidifierState );
+                    characteristic.props.validValues = config.restrictDehumidifierState;
+                }
+            }
+
+            // Characteristic.CurrentHumidifierDehumidifierState
+            function characteristic_CurrentHumidifierDehumidifierState( service ) {
+                let values = config.currentHumidifierDehumidifierState;
+                if( !values ) {
+                    values = [ 'INACTIVE', 'IDLE', 'HUMIDIFYING', 'DEHUMIDIFYING' ];
+                }
+                multiCharacteristic( service, 'currentHumidifierDehumidifierState', Characteristic.CurrentHumidifierDehumidifierState, null, config.topics.getCurrentHumidifierDehumidifierState, values, Characteristic.CurrentHumidifierDehumidifierState.INACTIVE );
+            }
+
             // Characteristic.CurrentAirPurifierState
             function characteristic_CurrentAirPurifierState( service ) {
                 let values = config.currentAirPurifierStateValues;
@@ -2353,7 +2383,7 @@ function makeThing( log, accessoryConfig, api ) {
                 floatCharacteristic( service, 'electricCurrent', Eve.Characteristics.ElectricCurrent, null, config.topics.getAmperes, 0 );
             }
 
-            // Eve.Characteristics.TotalConsumption [kWh] (Eve-only) - optional if there is an external energy counter 
+            // Eve.Characteristics.TotalConsumption [kWh] (Eve-only) - optional if there is an external energy counter
             function characteristic_TotalConsumption( service ) {
                 service.addOptionalCharacteristic( Eve.Characteristics.TotalConsumption ); // to avoid warnings
                 floatCharacteristic( service, 'totalConsumption', Eve.Characteristics.TotalConsumption, null, config.topics.getTotalConsumption, 0 );
@@ -2597,6 +2627,7 @@ function makeThing( log, accessoryConfig, api ) {
 
                 // duration timer function
                 let durationTimer = null;
+
                 function timerFunc() {
                     durationTimer = null;
                     state[ property_active ] = false;
@@ -2988,6 +3019,20 @@ function makeThing( log, accessoryConfig, api ) {
                     characteristic_MotionDetected( motionsvc );
                     // return motion sensor too
                     services.push( motionsvc );
+                }
+            } else if( configType == "dehumidifier" ) {
+                service = new Service.HumidifierDehumidifier( name, subtype );
+                characteristic_Active( service );
+                characteristic_CurrentRelativeHumidity( service );
+                characteristic_CurrentHumidifierDehumidifierState( service );
+                characteristic_TargetHumidifierDehumidifierState( service );
+
+                if( config.topics.setRelativeHumidityDehumidifierThreshold ) {
+                    characteristic_RelativeHumidityDehumidifierThreshold( service );
+                }
+
+                if( config.topics.getWaterLevel ) {
+                    characteristic_WaterLevel( service );
                 }
             } else if( configType == "statelessProgrammableSwitch" ) {
                 if( Array.isArray( config.topics.getSwitch ) ) {
