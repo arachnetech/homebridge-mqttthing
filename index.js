@@ -644,27 +644,17 @@ function makeThing( log, accessoryConfig, api ) {
                 q = v * ( 1 - f * s );
                 t = v * ( 1 - ( 1 - f ) * s );
                 switch( i % 6 ) {
-                    case 0:
-                        r = v, g = t, b = p;
-                        break;
-                    case 1:
-                        r = q, g = v, b = p;
-                        break;
-                    case 2:
-                        r = p, g = v, b = t;
-                        break;
-                    case 3:
-                        r = p, g = q, b = v;
-                        break;
-                    case 4:
-                        r = t, g = p, b = v;
-                        break;
-                    case 5:
-                        r = v, g = p, b = q;
-                        break;
+                    case 0: r = v, g = t, b = p; break;
+                    case 1: r = q, g = v, b = p; break;
+                    case 2: r = p, g = v, b = t; break;
+                    case 3: r = p, g = q, b = v; break;
+                    case 4: r = t, g = p, b = v; break;
+                    case 5: r = v, g = p, b = q; break;
                 }
                 return {
-                    r: Math.round( r * 255 ), g: Math.round( g * 255 ), b: Math.round( b * 255 )
+                    r: Math.round( r * 255 ),
+                    g: Math.round( g * 255 ),
+                    b: Math.round( b * 255 )
                 };
             }
 
@@ -673,44 +663,40 @@ function makeThing( log, accessoryConfig, api ) {
             }
 
             /* accepts parameters
-                   * r  Object = {r:x, g:y, b:z}
-                   * OR
-                   * r, g, b
-                   */
+             * r  Object = {r:x, g:y, b:z}
+             * OR
+             * r, g, b
+             */
             function RGBtoHSV( r, g, b ) {
                 if( arguments.length === 1 ) {
                     g = r.g, b = r.b, r = r.r;
                 }
-                var max = Math.max( r, g, b ), min = Math.min( r, g, b ), d = max - min, h, s = ( max === 0 ? 0 : d / max ),
+                var max = Math.max( r, g, b ), min = Math.min( r, g, b ),
+                    d = max - min,
+                    h,
+                    s = ( max === 0 ? 0 : d / max ),
                     v = max / 255;
 
                 switch( max ) {
-                    case min:
-                        h = 0;
-                        break;
-                    case r:
-                        h = ( g - b ) + d * ( g < b ? 6 : 0 );
-                        h /= 6 * d;
-                        break;
-                    case g:
-                        h = ( b - r ) + d * 2;
-                        h /= 6 * d;
-                        break;
-                    case b:
-                        h = ( r - g ) + d * 4;
-                        h /= 6 * d;
-                        break;
+                    case min: h = 0; break;
+                    case r: h = ( g - b ) + d * ( g < b ? 6 : 0 ); h /= 6 * d; break;
+                    case g: h = ( b - r ) + d * 2; h /= 6 * d; break;
+                    case b: h = ( r - g ) + d * 4; h /= 6 * d; break;
                 }
 
                 return {
-                    h: h, s: s, v: v
+                    h: h,
+                    s: s,
+                    v: v
                 };
             }
 
             function RGBtoScaledHSV( r, g, b ) {
                 var hsv = RGBtoHSV( r, g, b );
                 return {
-                    h: hsv.h * 360, s: hsv.s * 100, v: hsv.v * 100
+                    h: hsv.h * 360,
+                    s: hsv.s * 100,
+                    v: hsv.v * 100
                 };
             }
 
@@ -730,27 +716,27 @@ function makeThing( log, accessoryConfig, api ) {
             }
 
             /*function calcWhiteFactor1( rgbin, white ) {
-                      // scale rgb value to full brightness as comparing colours
-                      let compmax = Math.max( rgbin.r, rgbin.g, rgbin.b );
-                      if( compmax < 1 ) {
-                          return 0;
-                      }
-                      let rgbsc = 255 / compmax;
-                      let rgb = {r: rgbin.r * rgbsc, g: rgbin.g * rgbsc, b: rgbin.b * rgbsc};
-                      // calculate factors
-                      var rf = 1, gf = 1, bf = 1;
-                      if( white.r < 255 ) {
-                          rf = ( 255 - rgb.r ) / ( 255 - white.r ) / rgbsc;
-                      }
-                      if( white.g < 255 ) {
-                          gf = ( 255 - rgb.g ) / ( 255 - white.g ) / rgbsc;
-                      }
-                      if( white.b < 255 ) {
-                          bf = ( 255 - rgb.b ) / ( 255 - white.b ) / rgbsc;
-                      }
-      
-                      return Math.min( Math.max( 0, Math.min( rf, gf, bf ) ), 1 );
-                  }*/
+                // scale rgb value to full brightness as comparing colours
+                let compmax = Math.max( rgbin.r, rgbin.g, rgbin.b );
+                if( compmax < 1 ) {
+                    return 0;
+                }
+                let rgbsc = 255 / compmax;
+                let rgb = {r: rgbin.r * rgbsc, g: rgbin.g * rgbsc, b: rgbin.b * rgbsc};
+                // calculate factors
+                var rf = 1, gf = 1, bf = 1;
+                if( white.r < 255 ) {
+                    rf = ( 255 - rgb.r ) / ( 255 - white.r ) / rgbsc;
+                }
+                if( white.g < 255 ) {
+                    gf = ( 255 - rgb.g ) / ( 255 - white.g ) / rgbsc;
+                }
+                if( white.b < 255 ) {
+                    bf = ( 255 - rgb.b ) / ( 255 - white.b ) / rgbsc;
+                }
+        
+                return Math.min( Math.max( 0, Math.min( rf, gf, bf ) ), 1 );
+            }*/
 
             function calcWhiteFactor2( rgbin, white ) {
                 // scale rgb value to full brightness as comparing colours
@@ -867,8 +853,8 @@ function makeThing( log, accessoryConfig, api ) {
                         //console.log( "ww: " + rgb.ww );
                         //console.log( "cw: " + rgb.cw );
                         /*rgb.r = Math.floor( rgb.r * ( 1 - whiteFactor ) );
-                                    rgb.g = Math.floor( rgb.g * ( 1 - whiteFactor ) );
-                                    rgb.b = Math.floor( rgb.b * ( 1 - whiteFactor ) );*/
+                        rgb.g = Math.floor( rgb.g * ( 1 - whiteFactor ) );
+                        rgb.b = Math.floor( rgb.b * ( 1 - whiteFactor ) );*/
                         rgb.r = Math.max( 0, Math.floor( rgb.r - warmFactor * warmWhiteRGB.r - coldFactor * coldWhiteRGB.r ) );
                         rgb.g = Math.max( 0, Math.floor( rgb.g - warmFactor * warmWhiteRGB.g - coldFactor * coldWhiteRGB.g ) );
                         rgb.b = Math.max( 0, Math.floor( rgb.b - warmFactor * warmWhiteRGB.b - coldFactor * coldWhiteRGB.b ) );
@@ -1453,7 +1439,8 @@ function makeThing( log, accessoryConfig, api ) {
             // 'Internal' Characteristic.ColorTemperature for adaptive lighting implementation
             function characteristic_ColorTemperature_Internal( service ) {
                 integerCharacteristic( service, 'colorTemperature', Characteristic.ColorTemperature, null, null, {
-                    initialValue: 140, onSet: ( value ) => {
+                    initialValue: 140,
+                    onSet: ( value ) => {
                         // update saturation and hue to match
                         let calc = api.hap.ColorUtils.colorTemperatureToHueAndSaturation( value );
                         service.getCharacteristic( Characteristic.Saturation ).updateValue( calc.saturation );
@@ -1576,12 +1563,12 @@ function makeThing( log, accessoryConfig, api ) {
                     log.warn( `AltSensorState now ${newState ? 'on' : 'off'} - TODO: update state and set characteristic??` );
 
                     /*
-                              // if changed, set
-                              if( state[ property ] != newState ) {
-                                  state[ property ] = newState;
-                                  propChangedHandler();
-                              }
-                              */
+                    // if changed, set
+                    if( state[ property ] != newState ) {
+                        state[ property ] = newState;
+                        propChangedHandler();
+                    }
+                    */
                 } );
             }
 
@@ -1599,12 +1586,14 @@ function makeThing( log, accessoryConfig, api ) {
 
             // Characteristic.CurrentAmbientLightLevel
             function characteristic_CurrentAmbientLightLevel( service ) {
-                floatCharacteristic( service, 'currentAmbientLightLevel', Characteristic.CurrentAmbientLightLevel, null, config.topics.getCurrentAmbientLightLevel, 0.0001 );
+                floatCharacteristic( service, 'currentAmbientLightLevel', Characteristic.CurrentAmbientLightLevel,
+                    null, config.topics.getCurrentAmbientLightLevel, 0.0001 );
             }
 
             // Characteristic.CurrentTemperature
             function characteristic_CurrentTemperature( service ) {
-                floatCharacteristic( service, 'currentTemperature', Characteristic.CurrentTemperature, null, config.topics.getCurrentTemperature, 0 );
+                floatCharacteristic( service, 'currentTemperature', Characteristic.CurrentTemperature,
+                    null, config.topics.getCurrentTemperature, 0 );
 
                 // configured temperature ranges
                 if( !tempRange( service, Characteristic.CurrentTemperature ) ) {
@@ -1645,7 +1634,8 @@ function makeThing( log, accessoryConfig, api ) {
 
             // Characteristic.TargetTemperature
             function characteristic_TargetTemperature( service ) {
-                floatCharacteristic( service, 'targetTemperature', Characteristic.TargetTemperature, config.topics.setTargetTemperature, config.topics.getTargetTemperature, 10 );
+                floatCharacteristic( service, 'targetTemperature', Characteristic.TargetTemperature,
+                    config.topics.setTargetTemperature, config.topics.getTargetTemperature, 10 );
 
                 // custom min/max
                 tempRange( service, Characteristic.TargetTemperature );
@@ -1653,7 +1643,8 @@ function makeThing( log, accessoryConfig, api ) {
 
             // Characteristic.CoolingThresholdTemperature
             function characteristic_CoolingThresholdTemperature( service ) {
-                floatCharacteristic( service, 'coolingThresholdTemperature', Characteristic.CoolingThresholdTemperature, config.topics.setCoolingThresholdTemperature, config.topics.getCoolingThresholdTemperature, 25 );
+                floatCharacteristic( service, 'coolingThresholdTemperature', Characteristic.CoolingThresholdTemperature,
+                    config.topics.setCoolingThresholdTemperature, config.topics.getCoolingThresholdTemperature, 25 );
 
                 tempRange( service, Characteristic.CoolingThresholdTemperature );
             }
@@ -1665,19 +1656,22 @@ function makeThing( log, accessoryConfig, api ) {
 
             // Characteristic.HeatingThresholdTemperature
             function characteristic_HeatingThresholdTemperature( service ) {
-                floatCharacteristic( service, 'heatingThresholdTemperature', Characteristic.HeatingThresholdTemperature, config.topics.setHeatingThresholdTemperature, config.topics.getHeatingThresholdTemperature, 20 );
+                floatCharacteristic( service, 'heatingThresholdTemperature', Characteristic.HeatingThresholdTemperature,
+                    config.topics.setHeatingThresholdTemperature, config.topics.getHeatingThresholdTemperature, 20 );
 
                 tempRange( service, Characteristic.HeatingThresholdTemperature );
             }
 
             // Characteristic.CurrentRelativeHumidity
             function characteristic_CurrentRelativeHumidity( service ) {
-                floatCharacteristic( service, 'currentRelativeHumidity', Characteristic.CurrentRelativeHumidity, null, config.topics.getCurrentRelativeHumidity, 0 );
+                floatCharacteristic( service, 'currentRelativeHumidity', Characteristic.CurrentRelativeHumidity,
+                    null, config.topics.getCurrentRelativeHumidity, 0 );
             }
 
             // Characteristic.TargetRelativeHumidity
             function characteristic_TargetRelativeHumidity( service ) {
-                floatCharacteristic( service, 'targetRelativeHumidity', Characteristic.TargetRelativeHumidity, config.topics.setTargetRelativeHumidity, config.topics.getTargetRelativeHumidity, 0 );
+                floatCharacteristic( service, 'targetRelativeHumidity', Characteristic.TargetRelativeHumidity,
+                    config.topics.setTargetRelativeHumidity, config.topics.getTargetRelativeHumidity, 0 );
             }
 
             // History for CurrentRelativeHumidity (Eve-only)
@@ -1771,9 +1765,10 @@ function makeThing( log, accessoryConfig, api ) {
 
             // Characteristic.ContactSensorState
             function characteristic_ContactSensorState( service ) {
-                booleanCharacteristic( service, 'contactSensorState', Characteristic.ContactSensorState, null, config.topics.getContactSensorState, false, function( val ) {
-                    return val ? Characteristic.ContactSensorState.CONTACT_NOT_DETECTED : Characteristic.ContactSensorState.CONTACT_DETECTED;
-                }, undefined, config.resetStateAfterms );
+                booleanCharacteristic( service, 'contactSensorState', Characteristic.ContactSensorState,
+                    null, config.topics.getContactSensorState, false, function( val ) {
+                        return val ? Characteristic.ContactSensorState.CONTACT_NOT_DETECTED : Characteristic.ContactSensorState.CONTACT_DETECTED;
+                    }, undefined, config.resetStateAfterms );
             }
 
             // History for ContactSensorState (Eve-only)
@@ -1888,9 +1883,10 @@ function makeThing( log, accessoryConfig, api ) {
 
             // Characteristic.SmokeDetected
             function characteristic_SmokeDetected( service ) {
-                booleanCharacteristic( service, 'smokeDetected', Characteristic.SmokeDetected, null, config.topics.getSmokeDetected, false, function( val ) {
-                    return val ? Characteristic.SmokeDetected.SMOKE_DETECTED : Characteristic.SmokeDetected.SMOKE_NOT_DETECTED;
-                }, undefined, config.resetStateAfterms );
+                booleanCharacteristic( service, 'smokeDetected', Characteristic.SmokeDetected,
+                    null, config.topics.getSmokeDetected, false, function( val ) {
+                        return val ? Characteristic.SmokeDetected.SMOKE_DETECTED : Characteristic.SmokeDetected.SMOKE_NOT_DETECTED;
+                    }, undefined, config.resetStateAfterms );
             }
 
             // Characteristic.CurrentDoorState
@@ -2002,9 +1998,8 @@ function makeThing( log, accessoryConfig, api ) {
 
                 if( config.topics.setOn || !handleOn ) {
                     // separate On topic, or we're not handling 'On', so implement standard rotationSpeed characteristic
-                    integerCharacteristic( service, 'rotationSpeed', Characteristic.RotationSpeed, config.topics.setRotationSpeed, config.topics.getRotationSpeed, {
-                        minValue: config.minRotationSpeed, maxValue: config.maxRotationSpeed
-                    } );
+                    integerCharacteristic( service, 'rotationSpeed', Characteristic.RotationSpeed, config.topics.setRotationSpeed, config.topics.getRotationSpeed,
+                        { minValue: config.minRotationSpeed, maxValue: config.maxRotationSpeed } );
                 } else {
                     // no separate On topic, so use RotationSpeed 0 to indicate Off state...
 
@@ -2083,14 +2078,18 @@ function makeThing( log, accessoryConfig, api ) {
             // Characteristic.TargetPosition
             function characteristic_TargetPosition( service ) {
                 integerCharacteristic( service, 'targetPosition', Characteristic.TargetPosition, config.topics.setTargetPosition, config.topics.getTargetPosition, {
-                    initialValue: config.minPosition || 0, minValue: config.minPosition, maxValue: config.maxPosition
+                    initialValue: config.minPosition || 0,
+                    minValue: config.minPosition,
+                    maxValue: config.maxPosition
                 } );
             }
 
             // Characteristic.CurrentPosition
             function characteristic_CurrentPosition( service ) {
                 integerCharacteristic( service, 'currentPosition', Characteristic.CurrentPosition, null, config.topics.getCurrentPosition, {
-                    initialValue: config.minPosition || 0, minValue: config.minPosition, maxValue: config.maxPosition
+                    initialValue: config.minPosition || 0,
+                    minValue: config.minPosition,
+                    maxValue: config.maxPosition
                 } );
             }
 
@@ -2183,10 +2182,10 @@ function makeThing( log, accessoryConfig, api ) {
             // > This plugin generated a warning from the characteristic 'Temperature Display Units': characteristic value expected valid finite number and received "NaN" (number). See https://git.io/JtMGR for more info.
             // TODO: confirm with D4rk
             /*
-                  function characteristic_EveTemperatureDisplayUnits( service ) {
-                      stringCharacteristic( service, 'eveTemperatureDisplayUnits', Characteristic.TemperatureDisplayUnits, null, null, 'Celsius' )
-                  }
-                  */
+            function characteristic_EveTemperatureDisplayUnits( service ) {
+                stringCharacteristic( service, 'eveTemperatureDisplayUnits', Characteristic.TemperatureDisplayUnits, null, null, 'Celsius' )
+            }
+            */
 
             // History for Air Quality (Eve-only)
             function history_AirQualityPPM( historySvc ) {
@@ -2343,7 +2342,9 @@ function makeThing( log, accessoryConfig, api ) {
                 if( !values ) {
                     values = [ 'CELSIUS', 'FAHRENHEIT' ];
                 }
-                multiCharacteristic( service, 'temperatureDisplayUnits', Characteristic.TemperatureDisplayUnits, config.topics.setTemperatureDisplayUnits, config.topics.getTemperatureDisplayUnits, values, Characteristic.TemperatureDisplayUnits.CELSIUS );
+                multiCharacteristic( service, 'temperatureDisplayUnits', Characteristic.TemperatureDisplayUnits,
+                    config.topics.setTemperatureDisplayUnits, config.topics.getTemperatureDisplayUnits, values,
+                    Characteristic.TemperatureDisplayUnits.CELSIUS );
             }
 
             // Characteristic.ServiceLabelIndex
@@ -3440,7 +3441,8 @@ function makeThing( log, accessoryConfig, api ) {
 
             // optional battery service
             if( configType !== 'battery' ) {
-                if( config.topics.getBatteryLevel || config.topics.getChargingState || ( config.topics.getStatusLowBattery && !service.testCharacteristic( Characteristic.StatusLowBattery ) ) ) {
+                if( config.topics.getBatteryLevel || config.topics.getChargingState ||
+                    ( config.topics.getStatusLowBattery && !service.testCharacteristic( Characteristic.StatusLowBattery ) ) ) {
                     // also create battery service
                     let batsvc = new Service.BatteryService( name + '-battery' );
                     addBatteryCharacteristics( batsvc );
