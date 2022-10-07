@@ -5,6 +5,11 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.42
++ Added speaker service to implement Homekit set for volume buttons (thanks, tukaloff)
++ Added characteristic_Active to thermostat (thanks, nicknicknickos)
++ Added dehumidifier (thanks, rcaceiro)
+
 ### Version 1.1.41
 + Added extendedTopic info to codec calls (thanks, Flavio De Stefano)
 
