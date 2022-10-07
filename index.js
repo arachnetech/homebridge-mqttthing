@@ -627,12 +627,12 @@ function makeThing( log, accessoryConfig, api ) {
             }
 
             /*
-                   * HSV to RGB conversion from https://stackoverflow.com/questions/17242144/javascript-convert-hsb-hsv-color-to-rgb-accurately
-                   * accepts parameters
-                   * h  Object = {h:x, s:y, v:z}
-                   * OR
-                   * h, s, v
-                   */
+             * HSV to RGB conversion from https://stackoverflow.com/questions/17242144/javascript-convert-hsb-hsv-color-to-rgb-accurately
+             * accepts parameters
+             * h  Object = {h:x, s:y, v:z}
+             * OR
+             * h, s, v
+             */
             function HSVtoRGB( h, s, v ) {
                 var r, g, b, i, f, p, q, t;
                 if( arguments.length === 1 ) {
