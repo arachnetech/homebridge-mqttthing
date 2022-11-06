@@ -3291,9 +3291,6 @@ function makeThing( log, accessoryConfig, api ) {
                 if( config.topics.getHeatingThresholdTemperature || config.topics.setHeatingThresholdTemperature ) {
                     characteristic_HeatingThresholdTemperature( service );
                 }
-                if( config.topics.getStatusFault ) {
-                    characteristic_StatusFault( service );
-                }
             } else if( configType == "heaterCooler" ) {
                 service = new Service.HeaterCooler( name, subtype );
                 characteristic_Active( service );
@@ -3317,9 +3314,6 @@ function makeThing( log, accessoryConfig, api ) {
                 }
                 if( config.topics.getRotationSpeed || config.topics.setRotationSpeed ) {
                     characteristic_RotationSpeed( service );
-                }
-                if( config.topics.getStatusFault ) {
-                    characteristic_StatusFault( service );
                 }
             } else if( configType == 'television' ) {
                 service = new Service.Television( name, subtype );
