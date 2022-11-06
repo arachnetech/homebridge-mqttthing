@@ -182,7 +182,7 @@ This section lists the properties available for each accessory type. All accesso
 
 ### Heater Cooler
 
-`active`, `currentHeaterCoolerState`, `targetHeaterCoolerState`, `currentTemperature`, `lockPhysicalControls`, `swingMode`, `coolingThresholdTemperature`, `heatingThresholdTemperature`, `temperatureDisplayUnits`, `rotationSpeed`
+`active`, `currentHeaterCoolerState`, `targetHeaterCoolerState`, `currentTemperature`, `lockPhysicalControls`, `swingMode`, `coolingThresholdTemperature`, `heatingThresholdTemperature`, `temperatureDisplayUnits`, `rotationSpeed`, `statusFault`
 
 ### Humidity Sensor
 
@@ -246,7 +246,7 @@ This section lists the properties available for each accessory type. All accesso
 
 ### Thermostat
 
-`currentHeatingCoolingState`, `targetHeatingCoolingState`, `currentTemperature`, `targetTemperature`, `temperatureDisplayUnits`, `currentRelativeHumidity`, `targetRelativeHumidity`, `coolingThresholdTemperature`, `heatingThresholdTemperature`
+`currentHeatingCoolingState`, `targetHeatingCoolingState`, `currentTemperature`, `targetTemperature`, `temperatureDisplayUnits`, `currentRelativeHumidity`, `targetRelativeHumidity`, `coolingThresholdTemperature`, `heatingThresholdTemperature`, `statusFault`
 
 ### Valve (Sprinkler, Shower, Faucet)
 
