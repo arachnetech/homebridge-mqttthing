@@ -5,6 +5,9 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.43
++ Enabled use with Node.js 18.12
+
 ### Version 1.1.42
 + Added speaker service to implement Homekit set for volume buttons (thanks, tukaloff)
 + Added characteristic_Active to thermostat (thanks, nicknicknickos)
