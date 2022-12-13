@@ -459,7 +459,8 @@ Configure cooling threshold temperature unless target heater/cooler states exclu
         "setSwingMode":                     "<topic used to control 'swing mode' (optional)>",
         "getSwingMode":                     "<topic used to report 'swing mode' (optional)>",
         "setRotationSpeed":                 "<topic used to control 'rotation speed' (optional)>",
-        "getRotationSpeed":                 "<topic used to report 'rotation speed' (optional)>"
+        "getRotationSpeed":                 "<topic used to report 'rotation speed' (optional)>",
+        "getStatusFault":                   "<topic used to provide 'fault' status (optional)>"
     },
     "currentHeaterCoolerValues":            "<array of values to be used to represent INACTIVE, IDLE, HEATING, COOLING respectively (optional)>",
     "targetHeaterCoolerValues":             "<array of values to be used to represent AUTO, HEAT, COOL respectively (optional)>",
@@ -1135,7 +1136,8 @@ Configure `restrictHeatingCoolingState` to an array of integers to restrict the 
         "setCoolingThresholdTemperature": "<topic used to control 'cooling threshold temperature' (optional)>",
         "getCoolingThresholdTemperature": "<topic used to report 'cooling threshold temperature' (optional)>",
         "setHeatingThresholdTemperature": "<topic used to control 'heating threshold temperature' (optional)>",
-        "getHeatingThresholdTemperature": "<topic used to report 'heating threshold temperature' (optional)>"
+        "getHeatingThresholdTemperature": "<topic used to report 'heating threshold temperature' (optional)>",
+        "getStatusFault":                 "<topic used to provide 'fault' status (optional)>"
     },
     "heatingCoolingStateValues": "<array of values to be used to represent Off, Heat, Cool and Auto respectively (optional)>",
     "temperatureDisplayUnitsValues": "<array of values to be used to represent Celsius and Fahrenheit respectively (optional)>",
