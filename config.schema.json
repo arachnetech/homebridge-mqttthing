@@ -1679,6 +1679,26 @@
                 "items": {
                     "type": "string"
                 }
+            },
+            "manufacturer": {
+              "type": "string",
+              "title": "Manufacturer",
+              "description": "Defaults to mqttthing"
+            },
+            "model": {
+              "type": "string",
+              "title": "Model",
+              "description": "Defaults to accessory type"
+            },
+            "serialNumber": {
+              "type": "string",
+              "title": "Serial Number",
+              "description": "defaults to hostname and accessory name joined by a dash"
+            },
+            "firmwareRevision": {
+              "type": "string",
+              "title": "Firmware Revision",
+              "description": "defaults to mqttthing version"
             }
         }
     },
@@ -1943,6 +1963,17 @@
                 },
                 "topics.getName"
             ]
+        },
+        {
+          "type": "fieldset",
+          "expandable": "true",
+          "title": "Accessory Information",
+          "items": [
+            "manufacturer",
+            "model",
+            "serialNumber",
+            "firmwareRevision"
+          ]
         }
     ]
 }
