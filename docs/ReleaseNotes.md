@@ -5,6 +5,9 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.44
++ Fixed Swing Mode default
+
 ### Version 1.1.43
 + Enabled use with Node.js 18.12
 
