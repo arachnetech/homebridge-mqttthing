@@ -2333,7 +2333,7 @@ function makeThing( log, accessoryConfig, api ) {
                 if( !values ) {
                     values = [ 'DISABLED', 'ENABLED' ];
                 }
-                multiCharacteristic( service, 'swingMode', Characteristic.SwingMode, config.topics.setSwingMode, config.topics.getSwingMode, values, Characteristic.SwingMode.DISABLED );
+                multiCharacteristic( service, 'swingMode', Characteristic.SwingMode, config.topics.setSwingMode, config.topics.getSwingMode, values, Characteristic.SwingMode.SWING_DISABLED );
             }
 
             // Characteristic.TemperatureDisplayUnits
