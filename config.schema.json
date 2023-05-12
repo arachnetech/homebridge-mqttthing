@@ -330,12 +330,18 @@
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'online' status"
                     },
+                    "getOnline_apply": {
+                        "type": "string"
+                    },
                     "getAirPressure": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'air pressure'",
                         "condition": {
                             "functionBody": "return ['airPressureSensor','airPressureSensor','weatherStation'].includes(model.type);"
                         }
+                    },
+                    "getAirPressure_apply": {
+                        "type": "string"
                     },
                     "getSwitch": {
                         "type": "string",
@@ -344,12 +350,18 @@
                             "functionBody": "return ['doorbell','statelessProgrammableSwitch'].includes(model.type);"
                         }
                     },
+                    "getSwitch_apply": {
+                        "type": "string"
+                    },
                     "getRotationMode": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'rotation mode'",
                         "condition": {
                             "functionBody": "return ['heaterCooler'].includes(model.type);"
                         }
+                    },
+                    "getRotationMode_apply": {
+                        "type": "string"
                     },
                     "setRotationMode": {
                         "type": "string",
@@ -358,12 +370,18 @@
                             "functionBody": "return ['heaterCooler'].includes(model.type);"
                         }
                     },
+                    "setRotationMode_apply": {
+                        "type": "string"
+                    },
                     "setHSV": {
                         "type": "string",
                         "description": "In HSV mode, control topic published by mqttthing with comma-separated hue (0-360), saturation (0-100) and value (0-100)",
                         "condition": {
                             "functionBody": "return ['lightbulb','lightbulb-HSV'].includes(model.type);"
                         }
+                    },
+                    "setHSV_apply": {
+                        "type": "string"
                     },
                     "getHSV": {
                         "type": "string",
@@ -372,12 +390,18 @@
                             "functionBody": "return ['lightbulb','lightbulb-HSV'].includes(model.type);"
                         }
                     },
+                    "getHSV_apply": {
+                        "type": "string"
+                    },
                     "getRGB": {
                         "type": "string",
                         "description": "In RGB mode, topic to notify mqttthing of comma-separated red, green and blue",
                         "condition": {
                             "functionBody": "return ['lightbulb','lightbulb-RGB'].includes(model.type);"
                         }
+                    },
+                    "getRGB_apply": {
+                        "type": "string"
                     },
                     "setRGB": {
                         "type": "string",
@@ -386,12 +410,18 @@
                             "functionBody": "return ['lightbulb','lightbulb-RGB'].includes(model.type);"
                         }
                     },
+                    "setRGB_apply": {
+                        "type": "string"
+                    },
                     "getRGBW": {
                         "type": "string",
                         "description": "In RGBW mode, topic to notify mqttthing of comma-separated red, green, blue and white",
                         "condition": {
                             "functionBody": "return ['lightbulb','lightbulb-RGBW'].includes(model.type);"
                         }
+                    },
+                    "getRGBW_apply": {
+                        "type": "string"
                     },
                     "setRGBW": {
                         "type": "string",
@@ -400,12 +430,18 @@
                             "functionBody": "return ['lightbulb','lightbulb-RGBW'].includes(model.type);"
                         }
                     },
+                    "setRGBW_apply": {
+                        "type": "string"
+                    },
                     "getRGBWW": {
                         "type": "string",
                         "description": "In RGBWW mode, topic to notify mqttthing of comma-separated red, green, blue, warm_white and cold_white",
                         "condition": {
                             "functionBody": "return ['lightbulb','lightbulb-RGBWW'].includes(model.type);"
                         }
+                    },
+                    "getRGBWW_apply": {
+                        "type": "string"
                     },
                     "setRGBWW": {
                         "type": "string",
@@ -414,12 +450,18 @@
                             "functionBody": "return ['lightbulb','lightbulb-RGBWW'].includes(model.type);"
                         }
                     },
+                    "setRGBWW_apply": {
+                        "type": "string"
+                    },
                     "getWhite": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of white level (0-255) - can be used with getRGB for RGBW with separately-published white level",
                         "condition": {
                             "functionBody": "return ['lightbulb','lightbulb-White','lightbulb-RGB'].includes(model.type);"
                         }
+                    },
+                    "getWhite_apply": {
+                        "type": "string"
                     },
                     "setWhite": {
                         "type": "string",
@@ -428,12 +470,18 @@
                             "functionBody": "return ['lightbulb','lightbulb-White','lightbulb-RGB'].includes(model.type);"
                         }
                     },
+                    "setWhite_apply": {
+                        "type": "string"
+                    },
                     "getWatts": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'current consumption' [Watts] (optional, Eve-App-only)",
                         "condition": {
                             "functionBody": "return ['outlet'].includes(model.type);"
                         }
+                    },
+                    "getWatts_apply": {
+                        "type": "string"
                     },
                     "getVolts": {
                         "type": "string",
@@ -442,12 +490,18 @@
                             "functionBody": "return ['outlet'].includes(model.type);"
                         }
                     },
+                    "getVolts_apply": {
+                        "type": "string"
+                    },
                     "getAmperes": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'electricCurrent' [Amperes] (optional, Eve-App-only)",
                         "condition": {
                             "functionBody": "return ['outlet'].includes(model.type);"
                         }
+                    },
+                    "getAmperes_apply": {
+                        "type": "string"
                     },
                     "getTotalConsumption": {
                         "type": "string",
@@ -456,12 +510,18 @@
                             "functionBody": "return ['outlet'].includes(model.type);"
                         }
                     },
+                    "getTotalConsumption_apply": {
+                        "type": "string"
+                    },
                     "setTargetState": {
                         "type": "string",
                         "description": "Topic published by mqttthing to control 'target alarm state'",
                         "condition": {
                             "functionBody": "return ['securitySystem'].includes(model.type);"
                         }
+                    },
+                    "setTargetState_apply": {
+                        "type": "string"
                     },
                     "getTargetState": {
                         "type": "string",
@@ -470,12 +530,18 @@
                             "functionBody": "return ['securitySystem'].includes(model.type);"
                         }
                     },
+                    "getTargetState_apply": {
+                        "type": "string"
+                    },
                     "getCurrentState": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing that an alarm state has been achieved. HomeKit will expect current state to end up matching target state.",
                         "condition": {
                             "functionBody": "return ['securitySystem'].includes(model.type);"
                         }
+                    },
+                    "getCurrentState_apply": {
+                        "type": "string"
                     },
                     "setActiveInput": {
                         "type": "string",
@@ -484,6 +550,9 @@
                             "functionBody": "return ['television'].includes(model.type);"
                         }
                     },
+                    "setActiveInput_apply": {
+                        "type": "string"
+                    },
                     "getActiveInput": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'active input source' (optional).",
@@ -491,12 +560,18 @@
                             "functionBody": "return ['television'].includes(model.type);"
                         }
                     },
+                    "getActiveInput_apply": {
+                        "type": "string"
+                    },
                     "getWeatherCondition": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'weather condition' (optional, Eve-only)",
                         "condition": {
                             "functionBody": "return ['weatherStation'].includes(model.type);"
                         }
+                    },
+                    "getWeatherCondition_apply": {
+                        "type": "string"
                     },
                     "getRain1h": {
                         "type": "string",
@@ -506,6 +581,9 @@
                             "functionBody": "return ['weatherStation'].includes(model.type);"
                         }
                     },
+                    "getRain1h_apply": {
+                        "type": "string"
+                    },
                     "getRain24h": {
                         "type": "string",
                         "title": "Get Rain 24H",
@@ -513,6 +591,9 @@
                         "condition": {
                             "functionBody": "return ['weatherStation'].includes(model.type);"
                         }
+                    },
+                    "getRain24h_apply": {
+                        "type": "string"
                     },
                     "getUVIndex": {
                         "type": "string",
@@ -522,12 +603,18 @@
                             "functionBody": "return ['weatherStation'].includes(model.type);"
                         }
                     },
+                    "getUVIndex_apply": {
+                        "type": "string"
+                    },
                     "getVisibility": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'visibility [km]' (optional, Eve-only)",
                         "condition": {
                             "functionBody": "return ['weatherStation'].includes(model.type);"
                         }
+                    },
+                    "getVisibility_apply": {
+                        "type": "string"
                     },
                     "getWindDirection": {
                         "type": "string",
@@ -536,12 +623,18 @@
                             "functionBody": "return ['weatherStation'].includes(model.type);"
                         }
                     },
+                    "getWindDirection_apply": {
+                        "type": "string"
+                    },
                     "getWindSpeed": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'wind speed [km/h]' (optional, Eve-only)",
                         "condition": {
                             "functionBody": "return ['weatherStation'].includes(model.type);"
                         }
+                    },
+                    "getWindSpeed_apply": {
+                        "type": "string"
                     },
                      "getmaxWind": {
                         "type": "string",
@@ -550,7 +643,10 @@
                             "functionBody": "return ['weatherStation'].includes(model.type);"
                         }
                     },
-                     "getDewPoint": {
+                    "getmaxWind_apply": {
+                        "type": "string"
+                    },
+                    "getDewPoint": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'DewPoint' (optional, Eve-only)",
                         "condition": {
@@ -564,12 +660,18 @@
                             "functionBody": "return ['airPurifier','fanv2','faucet','heaterCooler','humidifierDehumidifier','irrigationSystem','valve','cameraEventRecordingManagement','television','televisionSpeaker','targetControl'].includes(model.type);"
                         }
                     },
+                    "getActive_apply": {
+                        "type": "string"
+                    },
                     "setActive": {
                         "type": "string",
                         "description": "Topic published by mqttthing to control 'active' state",
                         "condition": {
                             "functionBody": "return ['airPurifier','fanv2','faucet','heaterCooler','humidifierDehumidifier','irrigationSystem','valve','cameraEventRecordingManagement','television','televisionSpeaker','targetControl'].includes(model.type);"
                         }
+                    },
+                    "setActive_apply": {
+                        "type": "string"
                     },
                     "getAirQuality": {
                         "type": "string",
@@ -578,12 +680,18 @@
                             "functionBody": "return ['airQualitySensor'].includes(model.type);"
                         }
                     },
+                    "getAirQuality_apply": {
+                        "type": "string"
+                    },
                     "getAirQualityPPM": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'air quality voc in ppm' (Eve-only)",
                         "condition": {
                             "functionBody": "return ['airQualitySensor'].includes(model.type);"
                         }
+                    },
+                    "getAirQualityPPM_apply": {
+                        "type": "string"
                     },
                     "setDuration": {
                         "type": "string",
@@ -592,6 +700,9 @@
                             "functionBody": "return ['valve'].includes(model.type);"
                         }
                     },
+                    "setDuration_apply": {
+                        "type": "string"
+                    },
                     "getDuration": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'default duration (seconds)' (optional, with external timer)",
@@ -599,12 +710,18 @@
                             "functionBody": "return ['valve'].includes(model.type);"
                         }
                     },
+                    "getDuration_apply": {
+                        "type": "string"
+                    },
                     "getBatteryLevel": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'battery level'",
                         "condition": {
-                            "functionBody": "return ['airPressureSensor','airPressureSensor','airQualitySensor','batteryService','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
+                            "functionBody": "return ['airPressureSensor','airPressureSensor','airQualitySensor','batteryService','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','lockMechanism','motionSensor','occupancySensor','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
                         }
+                    },
+                    "getBatteryLevel_apply": {
+                        "type": "string"
                     },
                     "getCarbonDioxideDetected": {
                         "type": "string",
@@ -613,12 +730,18 @@
                             "functionBody": "return ['carbonDioxideSensor'].includes(model.type);"
                         }
                     },
+                    "getCarbonDioxideDetected_apply": {
+                        "type": "string"
+                    },
                     "getCarbonDioxideLevel": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'carbon dioxide level'",
                         "condition": {
                             "functionBody": "return ['airQualitySensor','carbonDioxideSensor'].includes(model.type);"
                         }
+                    },
+                    "getCarbonDioxideLevel_apply": {
+                        "type": "string"
                     },
                     "getCarbonDioxidePeakLevel": {
                         "type": "string",
@@ -627,12 +750,18 @@
                             "functionBody": "return ['carbonDioxideSensor'].includes(model.type);"
                         }
                     },
+                    "getCarbonDioxidePeakLevel_apply": {
+                        "type": "string"
+                    },
                     "getCarbonMonoxideDetected": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'carbon monoxide detected'",
                         "condition": {
                             "functionBody": "return ['carbonMonoxideSensor'].includes(model.type);"
                         }
+                    },
+                    "getCarbonMonoxideDetected_apply": {
+                        "type": "string"
                     },
                     "getCarbonMonoxideLevel": {
                         "type": "string",
@@ -641,12 +770,18 @@
                             "functionBody": "return ['airQualitySensor','carbonMonoxideSensor'].includes(model.type);"
                         }
                     },
+                    "getCarbonMonoxideLevel_apply": {
+                        "type": "string"
+                    },
                     "getCarbonMonoxidePeakLevel": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'carbon monoxide peak level'",
                         "condition": {
                             "functionBody": "return ['carbonMonoxideSensor'].includes(model.type);"
                         }
+                    },
+                    "getCarbonMonoxidePeakLevel_apply": {
+                        "type": "string"
                     },
                     "getChargingState": {
                         "type": "string",
@@ -655,12 +790,18 @@
                             "functionBody": "return ['airPressureSensor','airPressureSensor','airQualitySensor','batteryService','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
                         }
                     },
+                    "getChargingState_apply": {
+                        "type": "string"
+                    },
                     "getContactSensorState": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'contact sensor state'",
                         "condition": {
                             "functionBody": "return ['contactSensor'].includes(model.type);"
                         }
+                    },
+                    "getContactSensorState_apply": {
+                        "type": "string"
                     },
                     "getCoolingThresholdTemperature": {
                         "type": "string",
@@ -669,12 +810,18 @@
                             "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
                         }
                     },
+                    "getCoolingThresholdTemperature_apply": {
+                        "type": "string"
+                    },
                     "setCoolingThresholdTemperature": {
                         "type": "string",
                         "description": "Topic published by mqttthing to control 'cooling threshold temperature'",
                         "condition": {
                             "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
                         }
+                    },
+                    "setCoolingThresholdTemperature_apply": {
+                        "type": "string"
                     },
                     "getCurrentAmbientLightLevel": {
                         "type": "string",
@@ -683,12 +830,18 @@
                             "functionBody": "return ['lightSensor','weatherStation'].includes(model.type);"
                         }
                     },
+                    "getCurrentAmbientLightLevel_apply": {
+                        "type": "string"
+                    },
                     "getCurrentDoorState": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'current door state' (from 'door current values'). Use either 'current door state' or 'door moving'.",
                         "condition": {
                             "functionBody": "return ['garageDoorOpener','lockManagement'].includes(model.type);"
                         }
+                    },
+                    "getCurrentDoorState_apply": {
+                        "type": "string"
                     },
                     "getDoorMoving": {
                         "type": "string",
@@ -697,12 +850,18 @@
                             "functionBody": "return ['garageDoorOpener'].includes(model.type);"
                         }
                     },
+                    "getDoorMoving_apply": {
+                        "type": "string"
+                    },
                     "getCurrentAirPurifierState": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'current air purifier state'",
                         "condition": {
                             "functionBody": "return ['airPurifier'].includes(model.type);"
                         }
+                    },
+                    "getCurrentAirPurifierState_apply": {
+                        "type": "string"
                     },
                     "getCurrentHeaterCoolerState": {
                         "type": "string",
@@ -711,12 +870,18 @@
                             "functionBody": "return ['heaterCooler'].includes(model.type);"
                         }
                     },
+                    "getCurrentHeaterCoolerState_apply": {
+                        "type": "string"
+                    },
                     "getCurrentHeatingCoolingState": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'current heating cooling state'",
                         "condition": {
                             "functionBody": "return ['thermostat'].includes(model.type);"
                         }
+                    },
+                    "getCurrentHeatingCoolingState_apply": {
+                        "type": "string"
                     },
                     "getCurrentHorizontalTiltAngle": {
                         "type": "string",
@@ -725,12 +890,18 @@
                             "functionBody": "return ['windowCovering','cameraControl'].includes(model.type);"
                         }
                     },
+                    "getCurrentHorizontalTiltAngle_apply": {
+                        "type": "string"
+                    },
                     "getCurrentPosition": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'current position'",
                         "condition": {
                             "functionBody": "return ['door','window','windowCovering'].includes(model.type);"
                         }
+                    },
+                    "getCurrentPosition_apply": {
+                        "type": "string"
                     },
                     "getCurrentRelativeHumidity": {
                         "type": "string",
@@ -739,12 +910,18 @@
                             "functionBody": "return ['airQualitySensor','humidifierDehumidifier','humiditySensor','thermostat','weatherStation'].includes(model.type);"
                         }
                     },
+                    "getCurrentRelativeHumidity_apply": {
+                        "type": "string"
+                    },
                     "getCurrentTemperature": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'current temperature'",
                         "condition": {
                             "functionBody": "return ['airQualitySensor','heaterCooler','temperatureSensor','thermostat','weatherStation'].includes(model.type);"
                         }
+                    },
+                    "getCurrentTemperature_apply": {
+                        "type": "string"
                     },
                     "getCurrentVerticalTiltAngle": {
                         "type": "string",
@@ -753,12 +930,18 @@
                             "functionBody": "return ['windowCovering','cameraControl'].includes(model.type);"
                         }
                     },
+                    "getCurrentVerticalTiltAngle_apply": {
+                        "type": "string"
+                    },
                     "getHeatingThresholdTemperature": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'heating threshold temperature'",
                         "condition": {
                             "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
                         }
+                    },
+                    "getHeatingThresholdTemperature_apply": {
+                        "type": "string"
                     },
                     "setHeatingThresholdTemperature": {
                         "type": "string",
@@ -767,12 +950,18 @@
                             "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
                         }
                     },
+                    "setHeatingThresholdTemperature_apply": {
+                        "type": "string"
+                    },
                     "setHoldPosition": {
                         "type": "string",
                         "description": "Topic published by mqttthing to control 'hold position'",
                         "condition": {
                             "functionBody": "return ['door','window','windowCovering'].includes(model.type);"
                         }
+                    },
+                    "setHoldPosition_apply": {
+                        "type": "string"
                     },
                     "getInUse": {
                         "type": "string",
@@ -781,12 +970,18 @@
                             "functionBody": "return ['outlet','irrigationSystem','valve'].includes(model.type);"
                         }
                     },
+                    "getInUse_apply": {
+                        "type": "string"
+                    },
                     "getLeakDetected": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'leak detected'",
                         "condition": {
                             "functionBody": "return ['leakSensor'].includes(model.type);"
                         }
+                    },
+                    "getLeakDetected_apply": {
+                        "type": "string"
                     },
                     "getLockCurrentState": {
                         "type": "string",
@@ -795,12 +990,18 @@
                             "functionBody": "return ['garageDoorOpener','lockMechanism'].includes(model.type);"
                         }
                     },
+                    "getLockCurrentState_apply": {
+                        "type": "string"
+                    },
                     "getLockTargetState": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'lock target state'",
                         "condition": {
                             "functionBody": "return ['garageDoorOpener','lockMechanism'].includes(model.type);"
                         }
+                    },
+                    "getLockTargetState_apply": {
+                        "type": "string"
                     },
                     "setLockTargetState": {
                         "type": "string",
@@ -809,12 +1010,18 @@
                             "functionBody": "return ['garageDoorOpener','lockMechanism'].includes(model.type);"
                         }
                     },
+                    "setLockTargetState_apply": {
+                        "type": "string"
+                    },
                     "getMotionDetected": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'motion detected' state",
                         "condition": {
                             "functionBody": "return ['doorbell','lockManagement','motionSensor'].includes(model.type);"
                         }
+                    },
+                    "getMotionDetected_apply": {
+                        "type": "string"
                     },
                     "getMute": {
                         "type": "string",
@@ -823,6 +1030,9 @@
                             "functionBody": "return ['microphone','speaker','televisionSpeaker'].includes(model.type);"
                         }
                     },
+                    "getMute_apply": {
+                        "type": "string"
+                    },
                     "setMute": {
                         "type": "string",
                         "description": "Topic published by mqttthing to control 'mute' state",
@@ -830,9 +1040,15 @@
                             "functionBody": "return ['microphone','speaker','televisionSpeaker'].includes(model.type);"
                         }
                     },
+                    "setMute_apply": {
+                        "type": "string"
+                    },
                     "getName": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'name' (optional, rarely-used)"
+                    },
+                    "getName_apply": {
+                        "type": "string"
                     },
                     "getNitrogenDioxideDensity": {
                         "type": "string",
@@ -841,12 +1057,18 @@
                             "functionBody": "return ['airQualitySensor'].includes(model.type);"
                         }
                     },
+                    "getNitrogenDioxideDensity_apply": {
+                        "type": "string"
+                    },
                     "getObstructionDetected": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'obstruction detected'",
                         "condition": {
                             "functionBody": "return ['door','garageDoorOpener','window','windowCovering'].includes(model.type);"
                         }
+                    },
+                    "getObstructionDetected_apply": {
+                        "type": "string"
                     },
                     "getOccupancyDetected": {
                         "type": "string",
@@ -855,12 +1077,18 @@
                             "functionBody": "return ['occupancySensor'].includes(model.type);"
                         }
                     },
+                    "getOccupancyDetected_apply": {
+                        "type": "string"
+                    },
                     "getOn": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of on/off state",
                         "condition": {
                             "functionBody": "return ['fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-Colour','lightbulb-ColTemp','outlet','switch','cameraControl'].includes(model.type);"
                         }
+                    },
+                    "getOn_apply": {
+                        "type": "string"
                     },
                     "setOn": {
                         "type": "string",
@@ -869,12 +1097,18 @@
                             "functionBody": "return ['fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','outlet','switch','cameraControl'].includes(model.type);"
                         }
                     },
+                    "setOn_apply": {
+                        "type": "string"
+                    },
                     "getHue": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of hue (range 0-360)",
                         "condition": {
                             "functionBody": "return ['lightbulb','lightbulb-Colour'].includes(model.type);"
                         }
+                    },
+                    "getHue_apply": {
+                        "type": "string"
                     },
                     "setHue": {
                         "type": "string",
@@ -883,12 +1117,18 @@
                             "functionBody": "return ['lightbulb','lightbulb-Colour'].includes(model.type);"
                         }
                     },
+                    "setHue_apply": {
+                        "type": "string"
+                    },
                     "getSaturation": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of saturation (range 0-100)",
                         "condition": {
                             "functionBody": "return ['lightbulb','lightbulb-Colour'].includes(model.type);"
                         }
+                    },
+                    "getSaturation_apply": {
+                        "type": "string"
                     },
                     "setSaturation": {
                         "type": "string",
@@ -897,12 +1137,18 @@
                             "functionBody": "return ['lightbulb','lightbulb-Colour'].includes(model.type);"
                         }
                     },
+                    "setSaturation_apply": {
+                        "type": "string"
+                    },
                     "getBrightness": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of brightness (range 0-100)",
                         "condition": {
                             "functionBody": "return ['doorbell','lightbulb','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp'].includes(model.type);"
                         }
+                    },
+                    "getBrightness_apply": {
+                        "type": "string"
                     },
                     "setBrightness": {
                         "type": "string",
@@ -911,12 +1157,18 @@
                             "functionBody": "return ['doorbell','lightbulb','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp'].includes(model.type);"
                         }
                     },
+                    "setBrightness_apply": {
+                        "type": "string"
+                    },
                     "getColorTemperature": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of colour temperature (range 140-500)",
                         "condition": {
                             "functionBody": "return ['lightbulb','lightbulb-ColTemp','lightbulb-Colour'].includes(model.type);"
                         }
+                    },
+                    "getColorTemperature_apply": {
+                        "type": "string"
                     },
                     "setColorTemperature": {
                         "type": "string",
@@ -925,12 +1177,18 @@
                             "functionBody": "return ['lightbulb','lightbulb-ColTemp','lightbulb-Colour'].includes(model.type);"
                         }
                     },
+                    "setColorTemperature_apply": {
+                        "type": "string"
+                    },
                     "getOzoneDensity": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'ozone density'",
                         "condition": {
                             "functionBody": "return ['airQualitySensor'].includes(model.type);"
                         }
+                    },
+                    "getOzoneDensity_apply": {
+                        "type": "string"
                     },
                     "getPM10Density": {
                         "type": "string",
@@ -940,6 +1198,9 @@
                             "functionBody": "return ['airQualitySensor'].includes(model.type);"
                         }
                     },
+                    "getPM10Density_apply": {
+                        "type": "string"
+                    },
                     "getPM2_5Density": {
                         "type": "string",
                         "title": "Get PM2.5 Density",
@@ -948,12 +1209,18 @@
                             "functionBody": "return ['airQualitySensor'].includes(model.type);"
                         }
                     },
+                    "getPM2_5Density_apply": {
+                        "type": "string"
+                    },
                     "getPositionState": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'position state'",
                         "condition": {
                             "functionBody": "return ['door','window','windowCovering'].includes(model.type);"
                         }
+                    },
+                    "getPositionState_apply": {
+                        "type": "string"
                     },
                     "getRemainingDuration": {
                         "type": "string",
@@ -962,12 +1229,18 @@
                             "functionBody": "return ['irrigationSystem','valve'].includes(model.type);"
                         }
                     },
+                    "getRemainingDuration_apply": {
+                        "type": "string"
+                    },
                     "getRotationDirection": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'rotation direction'",
                         "condition": {
                             "functionBody": "return ['fan','fanv2'].includes(model.type);"
                         }
+                    },
+                    "getRotationDirection_apply": {
+                        "type": "string"
                     },
                     "setRotationDirection": {
                         "type": "string",
@@ -976,12 +1249,18 @@
                             "functionBody": "return ['fan','fanv2'].includes(model.type);"
                         }
                     },
+                    "setRotationDirection_apply": {
+                        "type": "string"
+                    },
                     "getRotationSpeed": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'rotation speed'",
                         "condition": {
                             "functionBody": "return ['airPurifier','fan','fanv2','heaterCooler','humidifierDehumidifier'].includes(model.type);"
                         }
+                    },
+                    "getRotationSpeed_apply": {
+                        "type": "string"
                     },
                     "setRotationSpeed": {
                         "type": "string",
@@ -990,12 +1269,18 @@
                             "functionBody": "return ['airPurifier','fan','fanv2','heaterCooler','humidifierDehumidifier'].includes(model.type);"
                         }
                     },
+                    "setRotationSpeed_apply": {
+                        "type": "string"
+                    },
                     "getSmokeDetected": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'smoke detected'",
                         "condition": {
                             "functionBody": "return ['smokeSensor'].includes(model.type);"
                         }
+                    },
+                    "getSmokeDetected_apply": {
+                        "type": "string"
                     },
                     "getStatusActive": {
                         "type": "string",
@@ -1004,6 +1289,9 @@
                             "functionBody": "return ['airPressureSensor','airPressureSensor', 'airQualitySensor','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
                         }
                     },
+                    "getStatusActive_apply": {
+                        "type": "string"
+                    },
                     "getStatusFault": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'status fault'",
@@ -1011,12 +1299,18 @@
                             "functionBody": "return ['airPressureSensor','airPressureSensor', 'airQualitySensor','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','faucet','humiditySensor','irrigationSystem','leakSensor','lightSensor','motionSensor','occupancySensor','securitySystem','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
                         }
                     },
+                    "getStatusFault_apply": {
+                        "type": "string"
+                    },
                     "getStatusLowBattery": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'status low battery'",
                         "condition": {
-                            "functionBody": "return ['airPressureSensor','airPressureSensor','airQualitySensor','batteryService','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
+                            "functionBody": "return ['airPressureSensor','airPressureSensor','airQualitySensor','batteryService','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','lockMechanism','motionSensor','occupancySensor','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
                         }
+                    },
+                    "getStatusLowBattery_apply": {
+                        "type": "string"
                     },
                     "getStatusTampered": {
                         "type": "string",
@@ -1025,12 +1319,18 @@
                             "functionBody": "return ['airPressureSensor','airQualitySensor','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','securitySystem','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
                         }
                     },
+                    "getStatusTampered_apply": {
+                        "type": "string"
+                    },
                     "getAltSensorState": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'Alternate Sensor State'",
                         "condition": {
                             "functionBody": "return ['securitySystem'].includes(model.type);"
                         }
+                    },
+                    "getAltSensorState_apply": {
+                        "type": "string"
                     },
                     "getSulphurDioxideDensity": {
                         "type": "string",
@@ -1039,12 +1339,18 @@
                             "functionBody": "return ['airQualitySensor'].includes(model.type);"
                         }
                     },
+                    "getSulphurDioxideDensity_apply": {
+                        "type": "string"
+                    },
                     "getSwingMode": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'swing mode'",
                         "condition": {
                             "functionBody": "return ['airPurifier','fanv2','heaterCooler','humidifierDehumidifier','slat'].includes(model.type);"
                         }
+                    },
+                    "getSwingMode_apply": {
+                        "type": "string"
                     },
                     "setSwingMode": {
                         "type": "string",
@@ -1053,12 +1359,18 @@
                             "functionBody": "return ['airPurifier','fanv2','heaterCooler','humidifierDehumidifier','slat'].includes(model.type);"
                         }
                     },
+                    "setSwingMode_apply": {
+                        "type": "string"
+                    },
                     "getTargetDoorState": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'target door state' (for external door control)",
                         "condition": {
                             "functionBody": "return ['garageDoorOpener'].includes(model.type);"
                         }
+                    },
+                    "getTargetDoorState_apply": {
+                        "type": "string"
                     },
                     "setTargetDoorState": {
                         "type": "string",
@@ -1067,12 +1379,18 @@
                             "functionBody": "return ['garageDoorOpener'].includes(model.type);"
                         }
                     },
+                    "setTargetDoorState_apply": {
+                        "type": "string"
+                    },
                     "getTargetAirPurifierState": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'target air purifier state'",
                         "condition": {
                             "functionBody": "return ['airPurifier'].includes(model.type);"
                         }
+                    },
+                    "getTargetAirPurifierState_apply": {
+                        "type": "string"
                     },
                     "setTargetAirPurifierState": {
                         "type": "string",
@@ -1081,12 +1399,18 @@
                             "functionBody": "return ['airPurifier'].includes(model.type);"
                         }
                     },
+                    "setTargetAirPurifierState_apply": {
+                        "type": "string"
+                    },
                     "getTargetHeaterCoolerState": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'target heater cooler state'",
                         "condition": {
                             "functionBody": "return ['heaterCooler'].includes(model.type);"
                         }
+                    },
+                    "getTargetHeaterCoolerState_apply": {
+                        "type": "string"
                     },
                     "setTargetHeaterCoolerState": {
                         "type": "string",
@@ -1095,12 +1419,18 @@
                             "functionBody": "return ['heaterCooler'].includes(model.type);"
                         }
                     },
+                    "setTargetHeaterCoolerState_apply": {
+                        "type": "string"
+                    },
                     "getTargetHeatingCoolingState": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'target heating cooling state'",
                         "condition": {
                             "functionBody": "return ['thermostat'].includes(model.type);"
                         }
+                    },
+                    "getTargetHeatingCoolingState_apply": {
+                        "type": "string"
                     },
                     "setTargetHeatingCoolingState": {
                         "type": "string",
@@ -1109,12 +1439,18 @@
                             "functionBody": "return ['thermostat'].includes(model.type);"
                         }
                     },
+                    "setTargetHeatingCoolingState_apply": {
+                        "type": "string"
+                    },
                     "getTargetHorizontalTiltAngle": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'target horizontal tilt angle'",
                         "condition": {
                             "functionBody": "return ['windowCovering','cameraControl'].includes(model.type);"
                         }
+                    },
+                    "getTargetHorizontalTiltAngle_apply": {
+                        "type": "string"
                     },
                     "setTargetHorizontalTiltAngle": {
                         "type": "string",
@@ -1123,12 +1459,18 @@
                             "functionBody": "return ['windowCovering','cameraControl'].includes(model.type);"
                         }
                     },
+                    "setTargetHorizontalTiltAngle_apply": {
+                        "type": "string"
+                    },
                     "getTargetPosition": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'target position'",
                         "condition": {
                             "functionBody": "return ['door','window','windowCovering'].includes(model.type);"
                         }
+                    },
+                    "getTargetPosition_apply": {
+                        "type": "string"
                     },
                     "setTargetPosition": {
                         "type": "string",
@@ -1137,12 +1479,18 @@
                             "functionBody": "return ['door','window','windowCovering'].includes(model.type);"
                         }
                     },
+                    "setTargetPosition_apply": {
+                        "type": "string"
+                    },
                     "getTargetRelativeHumidity": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'target relative humidity'",
                         "condition": {
                             "functionBody": "return ['thermostat'].includes(model.type);"
                         }
+                    },
+                    "getTargetRelativeHumidity_apply": {
+                        "type": "string"
                     },
                     "setTargetRelativeHumidity": {
                         "type": "string",
@@ -1151,12 +1499,18 @@
                             "functionBody": "return ['thermostat'].includes(model.type);"
                         }
                     },
+                    "setTargetRelativeHumidity_apply": {
+                        "type": "string"
+                    },
                     "getTargetTemperature": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'target temperature'",
                         "condition": {
                             "functionBody": "return ['thermostat'].includes(model.type);"
                         }
+                    },
+                    "getTargetTemperature_apply": {
+                        "type": "string"
                     },
                     "setTargetTemperature": {
                         "type": "string",
@@ -1165,12 +1519,18 @@
                             "functionBody": "return ['thermostat'].includes(model.type);"
                         }
                     },
+                    "setTargetTemperature_apply": {
+                        "type": "string"
+                    },
                     "getTargetVerticalTiltAngle": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'target vertical tilt angle'",
                         "condition": {
                             "functionBody": "return ['windowCovering','cameraControl'].includes(model.type);"
                         }
+                    },
+                    "getTargetVerticalTiltAngle_apply": {
+                        "type": "string"
                     },
                     "setTargetVerticalTiltAngle": {
                         "type": "string",
@@ -1179,6 +1539,9 @@
                             "functionBody": "return ['windowCovering','cameraControl'].includes(model.type);"
                         }
                     },
+                    "setTargetVerticalTiltAngle_apply": {
+                        "type": "string"
+                    },
                     "getTemperatureDisplayUnits": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'temperature display units'",
@@ -1186,12 +1549,18 @@
                             "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
                         }
                     },
+                    "getTemperatureDisplayUnits_apply": {
+                        "type": "string"
+                    },
                     "setTemperatureDisplayUnits": {
                         "type": "string",
                         "description": "Topic published by mqttthing to control 'temperature display units'",
                         "condition": {
                             "functionBody": "return ['heaterCooler','thermostat'].includes(model.type);"
                         }
+                    },
+                    "setTemperatureDisplayUnits_apply": {
+                        "type": "string"
                     },
                     "getVOCDensity": {
                         "type": "string",
@@ -1201,12 +1570,18 @@
                             "functionBody": "return ['airQualitySensor'].includes(model.type);"
                         }
                     },
+                    "getVOCDensity_apply": {
+                        "type": "string"
+                    },
                     "getVolume": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'volume'",
                         "condition": {
                             "functionBody": "return ['doorbell','microphone','speaker','televisionSpeaker'].includes(model.type);"
                         }
+                    },
+                    "getVolume_apply": {
+                        "type": "string"
                     },
                     "setVolume": {
                         "type": "string",
@@ -1215,12 +1590,18 @@
                             "functionBody": "return ['doorbell','microphone','speaker','televisionSpeaker'].includes(model.type);"
                         }
                     },
+                    "setVolume_apply": {
+                        "type": "string"
+                    },
                     "setRemoteKey": {
                         "type": "string",
                         "description": "Topic published by mqttthing to control 'remote key'",
                         "condition": {
                             "functionBody": "return ['television'].includes(model.type);"
                         }
+                    },
+                    "setRemoteKey_apply": {
+                        "type": "string"
                     },
                     "getFilterChangeIndication": {
                         "type": "string",
@@ -1229,6 +1610,9 @@
                             "functionBody": "return ['airPurifier'].includes(model.type);"
                         }
                     },
+                    "getFilterChangeIndication_apply": {
+                        "type": "string"
+                    },
                     "getFilterLifeLevel": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'filter life level'",
@@ -1236,12 +1620,18 @@
                             "functionBody": "return ['airPurifier'].includes(model.type);"
                         }
                     },
+                    "getFilterLifeLevel_apply": {
+                        "type": "string"
+                    },
                     "setResetFilterIndication": {
                         "type": "string",
                         "description": "Topic published by mqttthing to control 'reset filter indication'",
                         "condition": {
                             "functionBody": "return ['airPurifier'].includes(model.type);"
                         }
+                    },
+                    "setResetFilterIndication_apply": {
+                        "type": "string"
                     }
                 }
             },
