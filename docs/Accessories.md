@@ -16,7 +16,7 @@ The following Homekit accessory types are supported by MQTT-Thing:
    * [Door](#door)
    * [Doorbell](#doorbell)
    * [Fan](#fan)
-   * [FanV2](#fanv2)
+   * [Fanv2](#fanv2)
    * [Garage door opener](#garage-door-opener)
    * [Heater Cooler](#heater-cooler)
    * [Humidity Sensor](#humidity-sensor)
@@ -369,13 +369,13 @@ Fan rotation direction is 0 for clockwise or 1 for anticlockwise.
     "topics": {
         "setActive":                "<topic used to control 'active' state>",
         "getActive":                "<topic used to report 'active' state>",
-        "getCurrentFanState":       "<topic used to report 'current air purifier state'>",
-        "setTargetFanState":        "<topic used to control 'target air purifier state'>",
-        "getTargetFanState":        "<topic used to report 'target air purifier state'>",
+        "getCurrentFanState":       "<topic used to report 'current fan state' (optional)> ",
+        "setTargetFanState":        "<topic used to control 'target fan state' (optional)>",
+        "getTargetFanState":        "<topic used to report 'target fan state'(optional)>",
         "setRotationSpeed":         "<topic used to control 'rotation speed' (optional)>",
         "getRotationSpeed":         "<topic used to report 'rotation speed' (optional)>"
-        "getRotationDirection":     "<topic to notify homebridge of rotation direction (optional)>",
-        "setRotationDirection":     "<topic published by homebridge to set rotation direction (optional)>",
+        "getRotationDirection":     "<topic used to report 'rotation direction' (optional)>",
+        "setRotationDirection":     "<topic used to control 'rotation direction' (optional)>",
         "setSwingMode":             "<topic used to control 'swing mode' (optional)>",
         "getSwingMode":             "<topic used to report 'swing mode' (optional)>",
         "setLockPhysicalControls":  "<topic used to control 'lock physical controls' (optional)>",
@@ -385,7 +385,7 @@ Fan rotation direction is 0 for clockwise or 1 for anticlockwise.
     "onValue":                      "<value representing on (optional)>",
     "offValue":                     "<value representing off (optional)>",
     "targetFanStateValues":         "<array of values to be used to represent MANUAL, AUTO respectively (optional)>",
-    "currentFanStateValues":        "<array of values to be used to represent INACTIVE, IDLE, PURIFYING respectively (optional)>",
+    "currentFanStateValues":        "<array of values to be used to represent INACTIVE, IDLE, BLOWING_AIR respectively (optional)>",
     "swingModeValues":              "<array of values to be used to represent DISABLED and ENABLED respectively (optional)>",
     "lockPhysicalControlsValues":   "<array of values to be used to represent DISABLED and ENABLED respectively (optional)>"
 }
