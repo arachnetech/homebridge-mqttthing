@@ -3460,10 +3460,14 @@ function makeThing( log, accessoryConfig, api ) {
                     services.push( filterSvc );
                 }
             } else if( configType == "fanv2" ) {
-                service = new Service.fanv2(name, subtype);
+                service = new Service.Fanv2(name, subtype);
                 characteristic_Active(service);
-                characteristic_CurrentFanState(service);
-                characteristic_TargetFanState(service);
+                if(config.getCurrentFanState){
+                    characteristic_CurrentFanState(service);
+                }
+                if(config.topics.setTargetFanState || config.topics.getTargetFanState){
+                    characteristic_TargetFanState(service);
+                }
                 if (config.topics.setLockPhysicalControls || config.topics.getLockPhysicalControls) {
                     characteristic_LockPhysicalControls(service);
                 }
