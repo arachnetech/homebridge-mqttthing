@@ -16,6 +16,7 @@ The following Homekit accessory types are supported by MQTT-Thing:
    * [Door](#door)
    * [Doorbell](#doorbell)
    * [Fan](#fan)
+   * [FanV2](#fanv2)
    * [Garage door opener](#garage-door-opener)
    * [Heater Cooler](#heater-cooler)
    * [Humidity Sensor](#humidity-sensor)
@@ -340,6 +341,53 @@ Set `confirmationPeriodms` to enable publishing confirmation for `setOn`/`getOn`
     "onValue": "<value representing on (optional)>",
     "offValue": "<value representing off (optional)>",
     "turnOffAfterms": "<milliseconds after which to turn off automatically (optional)>"
+}
+```
+## Fanv2
+
+Active state is set with a boolean value (see [Boolean Value Settings](../docs/Configuration.md#boolean-value-settings)).
+
+Target fan state can be **MANUAL** or **AUTO**. To use different values, specify an array of strings in **targetFanValues**. 
+
+Current fan state can be **INACTIVE**, **IDLE** or **BLOWING_AIR**. To use different values, specify an array of strings in **currentFanStateValues**. **INACTIVE** should be used in response if "Active" is set to false. **IDLE** or **BLOWING_AIR** should be used in response if "Active" is set to true.
+
+Lock physical controls state may be **DISABLED** or **ENABLED**. To use different values, specify an array of strings in **lockPhysicalControlsValues**.
+
+Swing mode state may be **DISABLED** or **ENABLED**. To use different values, specify an array of strings in **swingModeValues**.
+
+Fan rotation direction is 0 for clockwise or 1 for anticlockwise.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "fanv2",
+    "name": "<name of device>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "logMqtt": true | false,
+    "topics": {
+        "setActive":                "<topic used to control 'active' state>",
+        "getActive":                "<topic used to report 'active' state>",
+        "getCurrentFanState":       "<topic used to report 'current air purifier state'>",
+        "setTargetFanState":        "<topic used to control 'target air purifier state'>",
+        "getTargetFanState":        "<topic used to report 'target air purifier state'>",
+        "setRotationSpeed":         "<topic used to control 'rotation speed' (optional)>",
+        "getRotationSpeed":         "<topic used to report 'rotation speed' (optional)>"
+        "getRotationDirection":     "<topic to notify homebridge of rotation direction (optional)>",
+        "setRotationDirection":     "<topic published by homebridge to set rotation direction (optional)>",
+        "setSwingMode":             "<topic used to control 'swing mode' (optional)>",
+        "getSwingMode":             "<topic used to report 'swing mode' (optional)>",
+        "setLockPhysicalControls":  "<topic used to control 'lock physical controls' (optional)>",
+        "getLockPhysicalControls":  "<topic used to report 'lock physical controls' (optional)>",
+    },
+    "integerValue":                 "true to use 1|0 instead of true|false default onValue and offValue",
+    "onValue":                      "<value representing on (optional)>",
+    "offValue":                     "<value representing off (optional)>",
+    "targetFanStateValues":         "<array of values to be used to represent MANUAL, AUTO respectively (optional)>",
+    "currentFanStateValues":        "<array of values to be used to represent INACTIVE, IDLE, PURIFYING respectively (optional)>",
+    "swingModeValues":              "<array of values to be used to represent DISABLED and ENABLED respectively (optional)>",
+    "lockPhysicalControlsValues":   "<array of values to be used to represent DISABLED and ENABLED respectively (optional)>"
 }
 ```
 
