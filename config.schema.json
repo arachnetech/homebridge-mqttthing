@@ -77,6 +77,12 @@
                         ]
                     },
                     {
+                        "title": "Irrigation System",
+                        "enum": [
+                            "irrigationSystem"
+                        ]
+                    },
+                    {
                         "title": "Leak Sensor",
                         "enum": [
                             "leakSensor"
