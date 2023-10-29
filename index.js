@@ -3458,10 +3458,13 @@ function makeThing( log, accessoryConfig, api ) {
                     state_Online();
                 }
             }
-
+            
             // always use services array
             if( !services ) {
                 if( service ) {
+                    // send service name to HomeKit
+                    // XXX could also watch for HomeKit name changes...
+                    service.setCharacteristic(Characteristic.ConfiguredName, name);
                     services = [ service ];
                 } else {
                     log( 'Error: No service(s) created for ' + name );
