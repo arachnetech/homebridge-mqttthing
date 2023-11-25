@@ -5,6 +5,9 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.45
++ Mark as compatible with Node.js 20
+
 ### Version 1.1.44
 + Fixed Swing Mode default
 
