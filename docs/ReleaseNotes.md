@@ -5,6 +5,13 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.46
++ Added support for Carbon Monoxide Sensors (thanks, Nick Lange)
++ Added support for Fan version 2 (thanks, Ewan Dank)
++ Fixed configuration for Irrigation System (thanks, Christian Brandlehner)
++ Corrected temperature display units documentation (thanks, Nicholas Humfrey)
++ Send service names to Homekit (thanks, Ralph Zazula)
+
 ### Version 1.1.45
 + Mark as compatible with Node.js 20
 
