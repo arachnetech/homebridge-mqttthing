@@ -490,7 +490,7 @@ Configure cooling threshold temperature unless target heater/cooler states exclu
     "targetHeaterCoolerValues":             "<array of values to be used to represent AUTO, HEAT, COOL respectively (optional)>",
     "lockPhysicalControlsValues":           "<array of values to be used to represent DISABLED and ENABLED respectively (optional)>",
     "swingModeValues":                      "<array of values to be used to represent DISABLED and ENABLED respectively (optional)>",
-    "temperatureDisplayUnitsValues":        "<array of values to be used to represent Celsius and Fahrenheit respectively (optional)>",
+    "temperatureDisplayUnitsValues":        "<array of values to be used to represent CELSIUS and FAHRENHEIT respectively (optional)>",
     "minTemperature":                       minimum_target_temperature,
     "maxTemperature":                       maximum_target_temperature,
     "restrictHeaterCoolerState":            "<array of allowed values - see notes above (optional)>"
