@@ -56,6 +56,7 @@ The following Homekit accessory types are supported by MQTT-Thing:
    * [Door](docs/Accessories.md#door)
    * [Doorbell](docs/Accessories.md#doorbell)
    * [Fan](docs/Accessories.md#fan)
+   * [Fanv2](docs/Accessories.md#fanv2)
    * [Garage door opener](docs/Accessories.md#garage-door-opener)
    * [Heater Cooler](docs/Accessories.md#heater-cooler)
    * [Humidity Sensor](docs/Accessories.md#humidity-sensor)

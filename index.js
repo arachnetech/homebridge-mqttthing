@@ -2330,6 +2330,23 @@ function makeThing( log, accessoryConfig, api ) {
                 }
                 multiCharacteristic( service, 'targetAirPurifierState', Characteristic.TargetAirPurifierState, config.topics.setTargetAirPurifierState, config.topics.getTargetAirPurifierState, values, Characteristic.TargetAirPurifierState.AUTO );
             }
+            // Characteristic.CurrentFanState
+            function characteristic_CurrentFanState(service) {
+                let values = config.currentFanValues;
+                if (!values) {
+                    values = ['INACTIVE', 'IDLE', 'BLOWING_AIR'];
+                }
+                multiCharacteristic(service, 'currentFanState', Characteristic.CurrentFanState, null, config.topics.getCurrentFanState, values, Characteristic.CurrentFanState.INACTIVE);
+            }
+
+            // Characteristic.TargetFanState
+            function characteristic_TargetFanState(service) {
+                let values = config.targetFanStateValues;
+                if (!values) {
+                    values = ['MANUAL', 'AUTO'];
+                }
+                multiCharacteristic(service, 'targetFanState', Characteristic.TargetFanState, config.topics.setTargetFanState, config.topics.getTargetFanState, values, Characteristic.TargetFanState.AUTO);
+            }
 
             // Characteristic.LockPhysicalControls
             function characteristic_LockPhysicalControls( service ) {
@@ -3465,6 +3482,29 @@ function makeThing( log, accessoryConfig, api ) {
                     }
                     services.push( filterSvc );
                 }
+            } else if( configType == "fanv2" ) {
+                service = new Service.Fanv2(name, subtype);
+                characteristic_Active(service);
+                if(config.getCurrentFanState){
+                    characteristic_CurrentFanState(service);
+                }
+                if(config.topics.setTargetFanState || config.topics.getTargetFanState){
+                    characteristic_TargetFanState(service);
+                }
+                if (config.topics.setLockPhysicalControls || config.topics.getLockPhysicalControls) {
+                    characteristic_LockPhysicalControls(service);
+                }
+                if (config.topics.getRotationDirection || config.topics.setRotationDirection) {
+                    characteristic_RotationDirection(service);
+                }
+                if (config.topics.getRotationSpeed || config.topics.setRotationSpeed) {
+                    characteristic_RotationSpeed(service);
+                }
+
+                if (config.topics.getSwingMode || config.topics.setSwingMode) {
+                    characteristic_SwingMode(service);
+                }
+                services = [service];
             } else if( configType == 'battery' ) {
                 service = new Service.BatteryService( name );
                 addBatteryCharacteristics( service );
