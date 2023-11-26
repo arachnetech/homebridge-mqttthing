@@ -2166,10 +2166,23 @@ function makeThing( log, accessoryConfig, api ) {
                 floatCharacteristic( service, 'VOCDensity', Characteristic.VOCDensity, null, config.topics.getVOCDensity );
             }
 
-            // Characteristic.CarbonMonoxideDensity
-            function characteristic_CarbonMonoxideLevel( service ) {
-                floatCharacteristic( service, 'carbonMonoxideLevel', Characteristic.CarbonMonoxideLevel, null, config.topics.getCarbonMonoxideLevel );
+            // Characteristic.CarbonMonoxideLevel
+            function characteristic_CarbonMonoxideLevel(service) {
+                floatCharacteristic(service, 'carbonMonoxideLevel', Characteristic.CarbonMonoxideLevel, null, config.topics.getCarbonMonoxideLevel);
             }
+            // Characteristic.CarbonMonoxideDetected
+            function characteristic_CarbonMonoxideDetected(service) {
+                    let values = config.carbonMonoxideDetectedValues;
+                    if (!values) {
+                            values =['NORMAL', 'ABNORMAL'];
+                        }
+                    multiCharacteristic(service, 'carbonMonoxideDetected', Characteristic.CarbonMonoxideDetected, null, config.topics.getCarbonMonoxideDetected, values, Characteristic.CarbonMonoxideDetected.CO_LEVELS_NORMAL);
+                }
+
+            // Characteristic.CarbonMonoxidePeakLevel
+            function characteristic_CarbonMonoxidePeakLevel(service) {
+                    floatCharacteristic(service, 'carbonMonoxidePeakLevel', Characteristic.CarbonMonoxidePeakLevel, null, config.topics.getCarbonMonoxidePeakLevel, 0);
+                }
 
             // Eve.Characteristics.AirParticulateDensity (Eve-only)
             function characteristic_AirQualityPPM( service ) {
@@ -3258,6 +3271,16 @@ function makeThing( log, accessoryConfig, api ) {
                 }
                 if( config.topics.getCarbonDioxidePeakLevel ) {
                     characteristic_CarbonDioxidePeakLevel( service );
+                }
+            } else if ( configType == 'carbonMonoxideSensor' ) {
+                service = new Service.CarbonMonoxideSensor(name, subtype);
+                characteristic_CarbonMonoxideDetected(service);
+                addSensorOptionalCharacteristics(service);
+                if (config.topics.getcarbonMonoxideLevel) {
+                    characteristic_carbonMonoxideLevel(service);
+                }
+                if (config.topics.getcarbonMonoxidePeakLevel) {
+                    characteristic_carbonMonoxidePeakLevel(service);
                 }
             } else if( configType == 'valve' ) {
                 service = new Service.Valve( name, subtype );

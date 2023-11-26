@@ -11,6 +11,7 @@ The following Homekit accessory types are supported by MQTT-Thing:
    * [Air Purifier](#air-purifier)
    * [Air Quality Sensor](#air-quality-sensor)
    * [Carbon Dioxide Sensor](#carbon-dioxide-sensor)
+   * [Carbon Monoxide Sensor](#carbon-monoxide-sensor)
    * [Contact Sensor](#contact-sensor)
    * [Dehumidifier](#dehumidifier)
    * [Door](#door)
@@ -187,6 +188,29 @@ Carbon dioxide detected state can be `NORMAL` or `ABNORMAL`. To use different va
         "getStatusLowBattery":          "<topic used to provide 'low battery' status (optional)>"
     },
     "carbonDioxideDetectedValues": [ "normal-value", "abnormal-value" ]
+}
+```
+
+## Carbon Monoxide Sensor
+
+Carbon Monoxide detected state can be `NORMAL` or `ABNORMAL`. To use different values, specify them in **carbonMonoxideDetectedValues** in that order.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "carbonMonoxideSensor",
+    "name": "<name of device>",
+    "topics":
+    {
+        "getCarbonMonoxideDetected":     "<topic used to report carbon Monoxide detected",
+        "getCarbonMonoxideLevel":        "<topic used to report carbon Monoxide level (optional)>",
+        "getCarbonMonoxidePeakLevel":    "<topic used to report carbon Monoxide level (optional)>",
+        "getStatusActive":              "<topic used to provide 'active' status (optional)>",
+        "getStatusFault":               "<topic used to provide 'fault' status (optional)>",
+        "getStatusTampered":            "<topic used to provide 'tampered' status (optional)>",
+        "getStatusLowBattery":          "<topic used to provide 'low battery' status (optional)>"
+    },
+    "carbonMonoxideDetectedValues": [ "normal-value", "abnormal-value" ]
 }
 ```
 
