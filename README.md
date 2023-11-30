@@ -17,7 +17,7 @@ MQTT-Thing allows a wide range of Homekit accessory types to be integrated using
 
 ## Compatibility with previous versions
 
-**From version 1.1.33, MQTT-Thing requires Node.js 14 or later.**
+**From version 1.1.45, MQTT-Thing requires Node.js 16 or later.**
 
 **From version 1.1.x, raw JavaScript values for Boolean properties are passed to MQTT apply functions.** This may change published message formats, e.g. when apply functions are used to build JSON strings.
 
