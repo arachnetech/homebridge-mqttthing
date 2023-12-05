@@ -653,6 +653,9 @@
                             "functionBody": "return ['weatherStation'].includes(model.type);"
                         }
                     },
+                    "getDewPoint_apply": {
+                        "type": "string"
+                    },
                     "getActive": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'active'",
