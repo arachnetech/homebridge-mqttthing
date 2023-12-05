@@ -70,10 +70,56 @@ function makeThing( log, accessoryConfig, api ) {
     // Controllers
     let controllers = [];
 
+    /**
+     * Transform topics of the form:
+     * 
+     * config = {
+     *      topics: {
+     *          topicName = 'some/topic/name',
+     *          topicName-apply = 'return message * 2;'
+     *      }
+     * }
+     * 
+     * INTO ==>
+     * 
+     * config = {
+     *      topics: {
+     *          topicName: {
+     *              topic: 'some/topic/name',
+     *              apply: 'return message * 2;'
+     *          }
+     *      }
+     * }
+     * 
+     * IFF the 'topicName-apply' property exists AND 'topicName'
+     * is a string, otherwise 'topicName' is unchanged.
+     * 
+     * @returns config.topics.topicName
+     */
+    function transformTopicConfig( config ) {
+        let props = Object.getOwnPropertyNames( config.topics );
+        props.forEach( prop => {
+            if ( prop.endsWith( '_apply' ) ) {
+                let topic = prop.replace( new RegExp( '_apply' + '$' ), '' );
+                if ( typeof config.topics[topic] === 'string' ) {
+                    config.topics[topic] = {
+                        topic: config.topics[topic],
+                        apply: config.topics[prop]
+                    }
+                }
+    
+                delete config.topics[prop];
+            }
+        } );
+    }
+    
     // Create services
     function createServices() {
 
         function configToServices( config ) {
+
+            // Transform the topic configuration
+            transformTopicConfig( config );
 
             // Adaptive lighting support...
 
