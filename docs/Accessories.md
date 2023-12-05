@@ -11,11 +11,13 @@ The following Homekit accessory types are supported by MQTT-Thing:
    * [Air Purifier](#air-purifier)
    * [Air Quality Sensor](#air-quality-sensor)
    * [Carbon Dioxide Sensor](#carbon-dioxide-sensor)
+   * [Carbon Monoxide Sensor](#carbon-monoxide-sensor)
    * [Contact Sensor](#contact-sensor)
    * [Dehumidifier](#dehumidifier)
    * [Door](#door)
    * [Doorbell](#doorbell)
    * [Fan](#fan)
+   * [Fanv2](#fanv2)
    * [Garage door opener](#garage-door-opener)
    * [Heater Cooler](#heater-cooler)
    * [Humidity Sensor](#humidity-sensor)
@@ -190,6 +192,29 @@ Carbon dioxide detected state can be `NORMAL` or `ABNORMAL`. To use different va
 }
 ```
 
+## Carbon Monoxide Sensor
+
+Carbon Monoxide detected state can be `NORMAL` or `ABNORMAL`. To use different values, specify them in **carbonMonoxideDetectedValues** in that order.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "carbonMonoxideSensor",
+    "name": "<name of device>",
+    "topics":
+    {
+        "getCarbonMonoxideDetected":     "<topic used to report carbon Monoxide detected",
+        "getCarbonMonoxideLevel":        "<topic used to report carbon Monoxide level (optional)>",
+        "getCarbonMonoxidePeakLevel":    "<topic used to report carbon Monoxide level (optional)>",
+        "getStatusActive":              "<topic used to provide 'active' status (optional)>",
+        "getStatusFault":               "<topic used to provide 'fault' status (optional)>",
+        "getStatusTampered":            "<topic used to provide 'tampered' status (optional)>",
+        "getStatusLowBattery":          "<topic used to provide 'low battery' status (optional)>"
+    },
+    "carbonMonoxideDetectedValues": [ "normal-value", "abnormal-value" ]
+}
+```
+
 
 ## Contact Sensor
 
@@ -342,6 +367,53 @@ Set `confirmationPeriodms` to enable publishing confirmation for `setOn`/`getOn`
     "turnOffAfterms": "<milliseconds after which to turn off automatically (optional)>"
 }
 ```
+## Fanv2
+
+Active state is set with a boolean value (see [Boolean Value Settings](../docs/Configuration.md#boolean-value-settings)).
+
+Target fan state can be **MANUAL** or **AUTO**. To use different values, specify an array of strings in **targetFanValues**. 
+
+Current fan state can be **INACTIVE**, **IDLE** or **BLOWING_AIR**. To use different values, specify an array of strings in **currentFanStateValues**. **INACTIVE** should be used in response if "Active" is set to false. **IDLE** or **BLOWING_AIR** should be used in response if "Active" is set to true.
+
+Lock physical controls state may be **DISABLED** or **ENABLED**. To use different values, specify an array of strings in **lockPhysicalControlsValues**.
+
+Swing mode state may be **DISABLED** or **ENABLED**. To use different values, specify an array of strings in **swingModeValues**.
+
+Fan rotation direction is 0 for clockwise or 1 for anticlockwise.
+
+```javascript
+{
+    "accessory": "mqttthing",
+    "type": "fanv2",
+    "name": "<name of device>",
+    "url": "<url of MQTT server (optional)>",
+    "username": "<username for MQTT (optional)>",
+    "password": "<password for MQTT (optional)>",
+    "logMqtt": true | false,
+    "topics": {
+        "setActive":                "<topic used to control 'active' state>",
+        "getActive":                "<topic used to report 'active' state>",
+        "getCurrentFanState":       "<topic used to report 'current fan state' (optional)> ",
+        "setTargetFanState":        "<topic used to control 'target fan state' (optional)>",
+        "getTargetFanState":        "<topic used to report 'target fan state'(optional)>",
+        "setRotationSpeed":         "<topic used to control 'rotation speed' (optional)>",
+        "getRotationSpeed":         "<topic used to report 'rotation speed' (optional)>"
+        "getRotationDirection":     "<topic used to report 'rotation direction' (optional)>",
+        "setRotationDirection":     "<topic used to control 'rotation direction' (optional)>",
+        "setSwingMode":             "<topic used to control 'swing mode' (optional)>",
+        "getSwingMode":             "<topic used to report 'swing mode' (optional)>",
+        "setLockPhysicalControls":  "<topic used to control 'lock physical controls' (optional)>",
+        "getLockPhysicalControls":  "<topic used to report 'lock physical controls' (optional)>",
+    },
+    "integerValue":                 "true to use 1|0 instead of true|false default onValue and offValue",
+    "onValue":                      "<value representing on (optional)>",
+    "offValue":                     "<value representing off (optional)>",
+    "targetFanStateValues":         "<array of values to be used to represent MANUAL, AUTO respectively (optional)>",
+    "currentFanStateValues":        "<array of values to be used to represent INACTIVE, IDLE, BLOWING_AIR respectively (optional)>",
+    "swingModeValues":              "<array of values to be used to represent DISABLED and ENABLED respectively (optional)>",
+    "lockPhysicalControlsValues":   "<array of values to be used to represent DISABLED and ENABLED respectively (optional)>"
+}
+```
 
 ## Garage Door Opener
 
@@ -466,7 +538,7 @@ Configure cooling threshold temperature unless target heater/cooler states exclu
     "targetHeaterCoolerValues":             "<array of values to be used to represent AUTO, HEAT, COOL respectively (optional)>",
     "lockPhysicalControlsValues":           "<array of values to be used to represent DISABLED and ENABLED respectively (optional)>",
     "swingModeValues":                      "<array of values to be used to represent DISABLED and ENABLED respectively (optional)>",
-    "temperatureDisplayUnitsValues":        "<array of values to be used to represent Celsius and Fahrenheit respectively (optional)>",
+    "temperatureDisplayUnitsValues":        "<array of values to be used to represent CELSIUS and FAHRENHEIT respectively (optional)>",
     "minTemperature":                       minimum_target_temperature,
     "maxTemperature":                       maximum_target_temperature,
     "restrictHeaterCoolerState":            "<array of allowed values - see notes above (optional)>"

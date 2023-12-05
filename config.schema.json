@@ -59,6 +59,12 @@
                         ]
                     },
                     {
+                        "title": "Fanv2",
+                        "enum": [
+                            "fanv2"
+                        ]
+                    },
+                    {
                         "title": "Garage door opener",
                         "enum": [
                             "garageDoorOpener"
@@ -74,6 +80,12 @@
                         "title": "Humidity Sensor",
                         "enum": [
                             "humiditySensor"
+                        ]
+                    },
+                    {
+                        "title": "Irrigation System",
+                        "enum": [
+                            "irrigationSystem"
                         ]
                     },
                     {
@@ -636,7 +648,7 @@
                     "getWindSpeed_apply": {
                         "type": "string"
                     },
-                     "getmaxWind": {
+                    "getmaxWind": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'wind speed [km/h]' (optional, Eve-only)",
                         "condition": {
@@ -864,6 +876,16 @@
                         }
                     },
                     "getCurrentAirPurifierState_apply": {
+                        "type": "string"
+                    },
+                    "getCurrentFanState": {
+                        "type": "string",
+                        "description": "Topic used to notify mqttthing of 'current fan state'",
+                        "condition": {
+                            "functionBody": "return ['fanv2'].includes(model.type);"
+                        }
+                    },
+                    "getCurrentFanState_apply": {
                         "type": "string"
                     },
                     "getCurrentHeaterCoolerState": {
@@ -1405,6 +1427,26 @@
                     "setTargetAirPurifierState_apply": {
                         "type": "string"
                     },
+                    "getTargetFanState": {
+                        "type": "string",
+                        "description": "Topic used to notify mqttthing of 'target fan state'",
+                        "condition": {
+                            "functionBody": "return ['fanv2'].includes(model.type);"
+                        }
+                    },
+                    "getTargetFanState_apply": {
+                        "type": "string"
+                    },
+                    "setTargetFanState": {
+                        "type": "string",
+                        "description": "Topic published to notify mqttthing of 'target fan state'",
+                        "condition": {
+                            "functionBody": "return ['fanv2'].includes(model.type);"
+                        }
+                    },
+                    "setTargetFanState_apply": {
+                        "type": "string"
+                    },
                     "getTargetHeaterCoolerState": {
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'target heater cooler state'",
@@ -1657,7 +1699,7 @@
                             "description": "Message"
                         }
                     }
-                } 
+                }
             },
             "onlineValue": {
                 "type": "string",
@@ -1714,28 +1756,28 @@
                 "title": "Use integer values (1 and 0) instead of 'true' and 'false'",
                 "description": "Use integer values 1 and 0 to represent on and off for Boolean values, instead of the default 'true' and 'false'. Alternatively specific values may be specified using 'onValue' and 'offValue'.",
                 "condition": {
-                    "functionBody": "return ['airPurifier','contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
+                    "functionBody": "return ['airPurifier','contactSensor','fan','fanv2','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
                 }
             },
             "onValue": {
                 "type": "string",
                 "description": "Value to use to represent an 'on' or 'triggered' state (optional). Takes precedence over 'integerValue'.",
                 "condition": {
-                    "functionBody": "return ['airPurifier','contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
+                    "functionBody": "return ['airPurifier','contactSensor','fan','fanv2','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
                 }
             },
             "offValue": {
                 "type": "string",
                 "description": "Value to use to represent an 'off' or 'not triggered' state (optional). Takes precedence over 'integerValue'.",
                 "condition": {
-                    "functionBody": "return ['airPurifier','contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
+                    "functionBody": "return ['airPurifier','contactSensor','fan','fanv2','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
                 }
             },
             "otherValueOff": {
                 "type": "boolean",
                 "description": "When 'onValue' and 'offValue' are configured, also treat any unrecognized received values as 'off'",
                 "condition": {
-                    "functionBody": "return ['airPurifier','contactSensor','fan','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
+                    "functionBody": "return ['airPurifier','contactSensor','fan','fanv2','lightbulb','lightbulb-OnOff','lightbulb-RGB','lightbulb-RGBW','lightbulb-RGBWW','lightbulb-HSV','lightbulb-Dimmable','lightbulb-Colour','lightbulb-ColTemp','lightSensor','motionSensor','occupancySensor','outlet','smokeSensor','switch','television','valve'].includes(model.type);"
                 }
             },
             "history": {
@@ -1847,6 +1889,18 @@
                 }
             },
             "lockValues": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "currentFanValues": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "targetFanValues": {
                 "type": "array",
                 "items": {
                     "type": "string"
@@ -2074,24 +2128,24 @@
                 }
             },
             "manufacturer": {
-              "type": "string",
-              "title": "Manufacturer",
-              "description": "Defaults to mqttthing"
+                "type": "string",
+                "title": "Manufacturer",
+                "description": "Defaults to mqttthing"
             },
             "model": {
-              "type": "string",
-              "title": "Model",
-              "description": "Defaults to accessory type"
+                "type": "string",
+                "title": "Model",
+                "description": "Defaults to accessory type"
             },
             "serialNumber": {
-              "type": "string",
-              "title": "Serial Number",
-              "description": "defaults to hostname and accessory name joined by a dash"
+                "type": "string",
+                "title": "Serial Number",
+                "description": "defaults to hostname and accessory name joined by a dash"
             },
             "firmwareRevision": {
-              "type": "string",
-              "title": "Firmware Revision",
-              "description": "defaults to mqttthing version"
+                "type": "string",
+                "title": "Firmware Revision",
+                "description": "defaults to mqttthing version"
             }
         }
     },
@@ -2163,6 +2217,7 @@
                 "topics.getCurrentDoorState",
                 "topics.getDoorMoving",
                 "topics.getCurrentAirPurifierState",
+                "topics.getCurrentFanState",
                 "topics.getCurrentHeaterCoolerState",
                 "topics.getCurrentHeatingCoolingState",
                 "topics.getCurrentHorizontalTiltAngle",
@@ -2201,6 +2256,8 @@
                 "topics.getSwingMode",
                 "topics.setTargetAirPurifierState",
                 "topics.getTargetAirPurifierState",
+                "topics.getTargetFanState",
+                "topics.setTargetFanState",
                 "topics.setTargetHeaterCoolerState",
                 "topics.getTargetHeaterCoolerState",
                 "topics.setTargetHeatingCoolingState",
@@ -2358,15 +2415,15 @@
             ]
         },
         {
-          "type": "fieldset",
-          "expandable": "true",
-          "title": "Accessory Information",
-          "items": [
-            "manufacturer",
-            "model",
-            "serialNumber",
-            "firmwareRevision"
-          ]
+            "type": "fieldset",
+            "expandable": "true",
+            "title": "Accessory Information",
+            "items": [
+                "manufacturer",
+                "model",
+                "serialNumber",
+                "firmwareRevision"
+            ]
         }
     ]
 }
