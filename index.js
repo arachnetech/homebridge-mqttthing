@@ -2166,10 +2166,23 @@ function makeThing( log, accessoryConfig, api ) {
                 floatCharacteristic( service, 'VOCDensity', Characteristic.VOCDensity, null, config.topics.getVOCDensity );
             }
 
-            // Characteristic.CarbonMonoxideDensity
-            function characteristic_CarbonMonoxideLevel( service ) {
-                floatCharacteristic( service, 'carbonMonoxideLevel', Characteristic.CarbonMonoxideLevel, null, config.topics.getCarbonMonoxideLevel );
+            // Characteristic.CarbonMonoxideLevel
+            function characteristic_CarbonMonoxideLevel(service) {
+                floatCharacteristic(service, 'carbonMonoxideLevel', Characteristic.CarbonMonoxideLevel, null, config.topics.getCarbonMonoxideLevel);
             }
+            // Characteristic.CarbonMonoxideDetected
+            function characteristic_CarbonMonoxideDetected(service) {
+                    let values = config.carbonMonoxideDetectedValues;
+                    if (!values) {
+                            values =['NORMAL', 'ABNORMAL'];
+                        }
+                    multiCharacteristic(service, 'carbonMonoxideDetected', Characteristic.CarbonMonoxideDetected, null, config.topics.getCarbonMonoxideDetected, values, Characteristic.CarbonMonoxideDetected.CO_LEVELS_NORMAL);
+                }
+
+            // Characteristic.CarbonMonoxidePeakLevel
+            function characteristic_CarbonMonoxidePeakLevel(service) {
+                    floatCharacteristic(service, 'carbonMonoxidePeakLevel', Characteristic.CarbonMonoxidePeakLevel, null, config.topics.getCarbonMonoxidePeakLevel, 0);
+                }
 
             // Eve.Characteristics.AirParticulateDensity (Eve-only)
             function characteristic_AirQualityPPM( service ) {
@@ -2316,6 +2329,23 @@ function makeThing( log, accessoryConfig, api ) {
                     values = [ 'MANUAL', 'AUTO' ];
                 }
                 multiCharacteristic( service, 'targetAirPurifierState', Characteristic.TargetAirPurifierState, config.topics.setTargetAirPurifierState, config.topics.getTargetAirPurifierState, values, Characteristic.TargetAirPurifierState.AUTO );
+            }
+            // Characteristic.CurrentFanState
+            function characteristic_CurrentFanState(service) {
+                let values = config.currentFanValues;
+                if (!values) {
+                    values = ['INACTIVE', 'IDLE', 'BLOWING_AIR'];
+                }
+                multiCharacteristic(service, 'currentFanState', Characteristic.CurrentFanState, null, config.topics.getCurrentFanState, values, Characteristic.CurrentFanState.INACTIVE);
+            }
+
+            // Characteristic.TargetFanState
+            function characteristic_TargetFanState(service) {
+                let values = config.targetFanStateValues;
+                if (!values) {
+                    values = ['MANUAL', 'AUTO'];
+                }
+                multiCharacteristic(service, 'targetFanState', Characteristic.TargetFanState, config.topics.setTargetFanState, config.topics.getTargetFanState, values, Characteristic.TargetFanState.AUTO);
             }
 
             // Characteristic.LockPhysicalControls
@@ -3259,6 +3289,16 @@ function makeThing( log, accessoryConfig, api ) {
                 if( config.topics.getCarbonDioxidePeakLevel ) {
                     characteristic_CarbonDioxidePeakLevel( service );
                 }
+            } else if ( configType == 'carbonMonoxideSensor' ) {
+                service = new Service.CarbonMonoxideSensor(name, subtype);
+                characteristic_CarbonMonoxideDetected(service);
+                addSensorOptionalCharacteristics(service);
+                if (config.topics.getcarbonMonoxideLevel) {
+                    characteristic_carbonMonoxideLevel(service);
+                }
+                if (config.topics.getcarbonMonoxidePeakLevel) {
+                    characteristic_carbonMonoxidePeakLevel(service);
+                }
             } else if( configType == 'valve' ) {
                 service = new Service.Valve( name, subtype );
                 characteristic_ValveType( service );
@@ -3442,6 +3482,29 @@ function makeThing( log, accessoryConfig, api ) {
                     }
                     services.push( filterSvc );
                 }
+            } else if( configType == "fanv2" ) {
+                service = new Service.Fanv2(name, subtype);
+                characteristic_Active(service);
+                if(config.getCurrentFanState){
+                    characteristic_CurrentFanState(service);
+                }
+                if(config.topics.setTargetFanState || config.topics.getTargetFanState){
+                    characteristic_TargetFanState(service);
+                }
+                if (config.topics.setLockPhysicalControls || config.topics.getLockPhysicalControls) {
+                    characteristic_LockPhysicalControls(service);
+                }
+                if (config.topics.getRotationDirection || config.topics.setRotationDirection) {
+                    characteristic_RotationDirection(service);
+                }
+                if (config.topics.getRotationSpeed || config.topics.setRotationSpeed) {
+                    characteristic_RotationSpeed(service);
+                }
+
+                if (config.topics.getSwingMode || config.topics.setSwingMode) {
+                    characteristic_SwingMode(service);
+                }
+                services = [service];
             } else if( configType == 'battery' ) {
                 service = new Service.BatteryService( name );
                 addBatteryCharacteristics( service );
@@ -3458,10 +3521,13 @@ function makeThing( log, accessoryConfig, api ) {
                     state_Online();
                 }
             }
-
+            
             // always use services array
             if( !services ) {
                 if( service ) {
+                    // send service name to HomeKit
+                    // XXX could also watch for HomeKit name changes...
+                    service.setCharacteristic(Characteristic.ConfiguredName, name);
                     services = [ service ];
                 } else {
                     log( 'Error: No service(s) created for ' + name );
