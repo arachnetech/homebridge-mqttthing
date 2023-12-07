@@ -76,7 +76,7 @@ function makeThing( log, accessoryConfig, api ) {
      * config = {
      *      topics: {
      *          topicName = 'some/topic/name',
-     *          topicName-apply = 'return message * 2;'
+     *          topicName_apply = 'return message * 2;'
      *      }
      * }
      * 
@@ -91,10 +91,8 @@ function makeThing( log, accessoryConfig, api ) {
      *      }
      * }
      * 
-     * IFF the 'topicName-apply' property exists AND 'topicName'
+     * IFF the 'topicName_apply' property exists AND 'topicName'
      * is a string, otherwise 'topicName' is unchanged.
-     * 
-     * @returns config.topics.topicName
      */
     function transformTopicConfig( config ) {
         let props = Object.getOwnPropertyNames( config.topics );
