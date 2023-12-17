@@ -3485,10 +3485,10 @@ function makeThing( log, accessoryConfig, api ) {
             } else if( configType == "fanv2" ) {
                 service = new Service.Fanv2(name, subtype);
                 characteristic_Active(service);
-                if(config.getCurrentFanState){
+                if(config.getCurrentFanState) {
                     characteristic_CurrentFanState(service);
                 }
-                if(config.topics.setTargetFanState || config.topics.getTargetFanState){
+                if(config.topics.setTargetFanState || config.topics.getTargetFanState) {
                     characteristic_TargetFanState(service);
                 }
                 if (config.topics.setLockPhysicalControls || config.topics.getLockPhysicalControls) {
@@ -3519,6 +3519,11 @@ function makeThing( log, accessoryConfig, api ) {
 
                 if( config.topics.getOnline ) {
                     state_Online();
+                }
+
+                // name override
+                if( config.nameOverride ) {
+                    service.setCharacteristic( Characteristic.ConfiguredName, config.nameOverride );
                 }
             }
 

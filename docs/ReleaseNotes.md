@@ -5,6 +5,10 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
+### Version 1.1.47
++ Revert: Send service names to Homekit - causes issues by replacing user name changes
++ Send service names to Homekit now uses nameOverride configuration option
+
 ### Version 1.1.46
 + Added support for Carbon Monoxide Sensors (thanks, Nick Lange)
 + Added support for Fan version 2 (thanks, Ewan Dank)
