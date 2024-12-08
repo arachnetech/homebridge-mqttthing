@@ -1070,7 +1070,7 @@ The **switchValues** and **restrictSwitchValues** options also support an array 
 
 On/off switch.
 
-Configuring `turnOffAfter` causes the switch to turn off automatically the specified number of milliseconds after it is turned on by homekit.
+Configuring `turnOffAfterms` causes the switch to turn off automatically the specified number of milliseconds after it is turned on by homekit.
 
 Configuring `resetStateAfterms` causes the switch state as reported through the `getOn` topic to be reset to off after the specified number of milliseconds. Use when there is no `setOn` topic.
 
