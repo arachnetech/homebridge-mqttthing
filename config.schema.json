@@ -615,7 +615,7 @@
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'battery level'",
                         "condition": {
-                            "functionBody": "return ['airPressureSensor','airPressureSensor','airQualitySensor','batteryService','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
+                            "functionBody": "return ['airPressureSensor','airPressureSensor','airQualitySensor','battery','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
                         }
                     },
                     "getCarbonDioxideDetected": {
@@ -664,7 +664,7 @@
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'charging state'",
                         "condition": {
-                            "functionBody": "return ['airPressureSensor','airPressureSensor','airQualitySensor','batteryService','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
+                            "functionBody": "return ['airPressureSensor','airPressureSensor','airQualitySensor','battery','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
                         }
                     },
                     "getContactSensorState": {
@@ -1034,7 +1034,7 @@
                         "type": "string",
                         "description": "Topic used to notify mqttthing of 'status low battery'",
                         "condition": {
-                            "functionBody": "return ['airPressureSensor','airPressureSensor','airQualitySensor','batteryService','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
+                            "functionBody": "return ['airPressureSensor','airPressureSensor','airQualitySensor','battery','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
                         }
                     },
                     "getStatusTampered": {
@@ -1329,7 +1329,7 @@
                     "placeholder": "NotCharging, Charging, or NotChargeable"
                 },
                 "condition": {
-                    "functionBody": "return ['airPressureSensor','airPressureSensor','airQualitySensor','batteryService','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
+                    "functionBody": "return ['airPressureSensor','airPressureSensor','airQualitySensor','battery','carbonDioxideSensor','carbonMonoxideSensor','contactSensor','humiditySensor','leakSensor','lightSensor','motionSensor','occupancySensor','smokeSensor','temperatureSensor','valve','weatherStation'].includes(model.type);"
                 }
             },
             "confirmationPeriodms": {
