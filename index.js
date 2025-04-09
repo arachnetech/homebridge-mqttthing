@@ -3506,7 +3506,7 @@ function makeThing( log, accessoryConfig, api ) {
                 }
                 services = [service];
             } else if( configType == 'battery' ) {
-                service = new Service.BatteryService( name );
+                service = new Service.Battery( name );
                 addBatteryCharacteristics( service );
             } else {
                 log( "ERROR: Unrecognized type: " + configType );
@@ -3542,7 +3542,7 @@ function makeThing( log, accessoryConfig, api ) {
                 if( config.topics.getBatteryLevel || config.topics.getChargingState ||
                     ( config.topics.getStatusLowBattery && !service.testCharacteristic( Characteristic.StatusLowBattery ) ) ) {
                     // also create battery service
-                    let batsvc = new Service.BatteryService( name + '-battery' );
+                    let batsvc = new Service.Battery( name + '-battery' );
                     addBatteryCharacteristics( batsvc );
                     services.push( batsvc );
                 }
