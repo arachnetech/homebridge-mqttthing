@@ -71,7 +71,7 @@
   "homepage": "https://github.com/arachnetech/homebridge-mqttthing#readme",
   "dependencies": {
     "fakegato-history": "^0.6.2",
-    "homebridge-lib": "^6.0.1",
+    "homebridge-lib": "^7.2.0",
     "jsonpath": "^1.1.1",
     "mqtt": "^4.3.2"
   }

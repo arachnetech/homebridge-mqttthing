@@ -1,9 +1,10 @@
 {
     "bridge": {
-        "name": "Dev-2",
-        "username": "CA:7C:A3:34:AA:6C",
-        "port": 51826,
-        "pin": "784-65-425"
+        "name": "Dev-4",
+        "username": "CA:7C:A3:34:AA:6E",
+        "port": 51828,
+        "pin": "784-65-426",
+        "bind": "192.168.2.44"
     },
     "platforms": [
         {

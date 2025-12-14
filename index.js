@@ -9,6 +9,7 @@
 var os = require( "os" );
 var packagedef = require( './package.json' );
 var homebridgeLib = require( 'homebridge-lib' );
+const { EveHomeKitTypes } = require( 'homebridge-lib/EveHomeKitTypes' );
 var fakegatoHistory = require( 'fakegato-history' );
 var fs = require( "fs" );
 var path = require( "path" );
@@ -3623,7 +3624,7 @@ function makeThing( log, accessoryConfig, api ) {
 module.exports = function( homebridge ) {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
-    Eve = new homebridgeLib.EveHomeKitTypes( homebridge );
+    Eve = new EveHomeKitTypes( homebridge );
     HistoryService = fakegatoHistory( homebridge );
     homebridgePath = homebridge.user.storagePath();
 
