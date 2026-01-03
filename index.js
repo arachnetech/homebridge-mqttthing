@@ -3095,7 +3095,7 @@ function makeThing( log, accessoryConfig, api ) {
                                 }
                             }
                         }
-                        let buttonSvc = new Service.StatelessProgrammableSwitch( name + "_" + i, i + 1 );
+                        let buttonSvc = new Service.StatelessProgrammableSwitch( name + " " + i, i + 1 );
                         characteristic_ProgrammableSwitchEvent( buttonSvc, 'switch' + i, buttonTopic, switchValues, restrictSwitchValues );
                         characteristic_ServiceLabelIndex( buttonSvc, i + 1 );
                         services.push( buttonSvc );
