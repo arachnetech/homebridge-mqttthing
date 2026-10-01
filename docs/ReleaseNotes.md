@@ -5,9 +5,12 @@
 
 # Homebridge MQTT-Thing: Release Notes
 
-### Version 1.1.49
+### Version 1.1.50
 + Allow use with Node.js 24 (thanks, rbswift)
-+ Changed StatelessProgrammableSwitch array separator from "_" to " "
+
+### Version 1.1.49
++ Allow use with Node.js 22
++ Changed StatelessProgrammableSwitch array separator from "_" to " "  (thanks, rbswift)
 
 ### Version 1.1.48
 + Swapped BatteryService for Battery, to fix compatability with HB2.0 (thanks, Noel Hibbard)
