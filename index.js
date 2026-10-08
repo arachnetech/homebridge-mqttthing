@@ -1458,7 +1458,9 @@ function makeThing( log, accessoryConfig, api ) {
 
             // Characteristic.OutletInUse
             function characteristic_OutletInUse( service ) {
-                booleanCharacteristic( service, 'outletInUse', Characteristic.OutletInUse, null, config.topics.getInUse );
+                booleanCharacteristic( service, 'outletInUse', Characteristic.OutletInUse, null, config.topics.getInUse, false, function( val ) {
+                    return val ? Characteristic.OutletInUse.IN_USE : Characteristic.OutletInUse.NOT_IN_USE;
+                } );
             }
 
             // Characteristic.Name
@@ -1543,7 +1545,9 @@ function makeThing( log, accessoryConfig, api ) {
 
             // Characteristic.StatusTampered
             function characteristic_StatusTampered( service ) {
-                booleanCharacteristic( service, 'statusTampered', Characteristic.StatusTampered, null, config.topics.getStatusTampered );
+                booleanCharacteristic( service, 'statusTampered', Characteristic.StatusTampered, null, config.topics.getStatusTampered, false, function( val ) {
+                    return val ? Characteristic.StatusTampered.TAMPERED : Characteristic.StatusTampered.NOT_TAMPERED;
+                } );
             }
 
             // Characteristic.AltSensorState to help detecting triggered state with multiple sensors
@@ -1575,7 +1579,9 @@ function makeThing( log, accessoryConfig, api ) {
 
             // Characteristic.StatusLowBattery
             function characteristic_StatusLowBattery( service ) {
-                booleanCharacteristic( service, 'statusLowBattery', Characteristic.StatusLowBattery, null, config.topics.getStatusLowBattery );
+                booleanCharacteristic( service, 'statusLowBattery', Characteristic.StatusLowBattery, null, config.topics.getStatusLowBattery, false, function( val ) {
+                    return val ? Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW : Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL;
+                } );
             }
 
             // Characteristic.OccupancyDetected
@@ -3364,7 +3370,7 @@ function makeThing( log, accessoryConfig, api ) {
                 }
             } else if( configType == 'television' ) {
                 service = new Service.Television( name, subtype );
-                service.isPrimaryService = true;
+                service.setPrimaryService();
                 characteristic_Active( service );
                 service.setCharacteristic( Characteristic.ActiveIdentifier, 0 );
                 service.setCharacteristic( Characteristic.ConfiguredName, name );
@@ -3421,7 +3427,7 @@ function makeThing( log, accessoryConfig, api ) {
                 }
             } else if( config.type == 'irrigationSystem' ) {
                 service = new Service.IrrigationSystem( name, subtype );
-                service.isPrimaryService = true;
+                service.setPrimaryService();
                 if( !config.topics ) {
                     config.topics = {};
                 }
