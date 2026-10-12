@@ -472,9 +472,9 @@ function makeThing( log, accessoryConfig, api ) {
                         if( setTopic ) {
                             mqttPublish( setTopic, property, value );
                         }
-                    }
-                    if( options && options.onSet ) {
-                        options.onSet( value, context );
+                        if( options && options.onSet ) {
+                            options.onSet( value, context );
+                        }
                     }
                 };
 
